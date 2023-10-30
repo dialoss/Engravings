@@ -1,0 +1,56 @@
+.timeline {
+  margin: 0 auto;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+
+  &-item {
+    display: flex;
+    justify-content: flex-start;
+    .timeline {
+      &-dot {
+        div {
+          margin: 0 auto;
+          background-color: blue;
+
+          border-radius: 50%;
+          box-shadow: 0 0 4px 0 grey;
+
+          width: 15px;
+          height: 15px;
+        }
+      }
+      &-connector {
+        height: 100%;
+        padding: 3px 0;
+        div {
+          margin: auto;
+          width: 5px;
+          height: 100%;
+          border-radius: 4px;
+        }
+      }
+      &-body {
+        min-height: 40px;
+        > div {
+          margin-top: -6px;
+        }
+      }
+      &-separator {
+        width: 40px;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+  &-item--secondary {
+    .timeline {
+      &-dot {
+        div {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+.item__base {
+  &.selected {
+    outline: 6px solid #ce0a40;
+  }
+  &.cutted {
+    opacity: 0.4;
+  }
+}

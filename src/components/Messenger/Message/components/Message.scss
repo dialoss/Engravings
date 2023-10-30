@@ -1,0 +1,23 @@
+.message {
+  .attachment-loading {
+    color: #1E72C7;
+  }
+
+  &-date {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .item__image {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  img, video {
+    max-height: 90%;
+  }
+
+  &-text {
+    word-wrap: break-word;
+  }
+}

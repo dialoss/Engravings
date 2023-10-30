@@ -1,0 +1,27 @@
+.resize {
+  &-left, &-right {
+    position: absolute;
+    bottom: 0;
+    z-index: $zindex-transform;
+    width: 40px;
+    height: 40px;
+  }
+
+  &-left {
+    left: 0;
+    transform: translate(-50%, 50%);
+
+    &:hover {
+      cursor: sw-resize;
+    }
+  }
+
+  &-right {
+    right: 0;
+    transform: translate(50%, 50%);
+
+    &:hover {
+      cursor: se-resize;
+    }
+  }
+}

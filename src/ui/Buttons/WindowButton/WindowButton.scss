@@ -1,0 +1,14 @@
+.window-button {
+    border: 0;
+    background: none;
+    position: absolute;
+
+    img {
+        width: 50px;
+    }
+
+    &:hover {
+        opacity: 0.5;
+        cursor: pointer;
+    }
+}

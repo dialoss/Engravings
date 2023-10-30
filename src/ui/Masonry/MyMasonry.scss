@@ -1,0 +1,29 @@
+.masonry__grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.masonry__column {
+    display: flex;
+    flex-direction: column;
+}
+
+.masonry__item-enter {
+    opacity: 0;
+    transform: translateY(200px);
+}
+.masonry__item-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 300ms;
+}
+.masonry__item-exit {
+    opacity: 1;
+    //transform: translateY(0);
+}
+.masonry__item-exit-active {
+    opacity: 0;
+    //transform: translateY(200px);
+    transition: all 300ms;
+}

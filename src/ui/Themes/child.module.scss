@@ -1,0 +1,34 @@
+@import "parent.module";
+
+:export {
+    masonry: 1;
+    widthPoints: [400, 500, 800];
+    buttonText: заказать изготовление;
+}
+
+.item__wrapper {
+    padding: 5px;
+}
+
+.item-base {
+    background-color: white;
+    box-shadow: none;
+    border-radius: 0;
+    height: auto;
+
+    &:hover {
+        .item__wrapper {
+            opacity: 1;
+        }
+        opacity: 1;
+        background-color: white;
+        cursor: default;
+    }
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}

@@ -1,0 +1,26 @@
+
+.item {
+  &__image {
+    transition: all 0.15s linear;
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    &:hover {
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  }
+
+  &__image-block {
+    position: relative;
+
+    .item__data-file {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: auto;
+    }
+  }
+}

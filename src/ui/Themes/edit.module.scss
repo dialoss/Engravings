@@ -1,0 +1,13 @@
+.wrapper-base {
+  outline: 2px dashed gray;
+  &:hover {
+    outline: 3px dashed blue;
+  }
+
+  .item {
+    &:hover {
+      outline: 2px dashed red;
+    }
+  }
+}
+

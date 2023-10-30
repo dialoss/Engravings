@@ -1,0 +1,127 @@
+
+:export {
+    linkColor: $color-link-background;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 50px;
+    font-size: 15px;
+    z-index: $zindex-utility;
+
+    .slider {
+        &.opened {
+            width: 150px;
+        }
+        &.closed {
+            width: 0;
+        }
+    }
+
+    &__wrapper {
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        max-height: 80vh;
+        transition: transform 0.2s linear, visibility 0.2s linear;
+        @include custom-scrollbar;
+        &::-webkit-scrollbar {
+            width: 15px;
+        }
+    }
+
+    &__inner {
+        max-height: 100%;
+        padding: 10px 5px;
+        padding-right: 20px;
+        width: 150px;
+    }
+
+    &__list-wrapper {
+        max-height: 100%;
+    }
+
+    &__item {
+        position: relative;
+        margin-bottom: 4px;
+    }
+
+    &__header {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 50px;
+        z-index: 1;
+    }
+
+    &__btn {
+        background: none;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+        border: 0;
+
+        &:hover {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+        img {
+            width: 50px;
+        }
+    }
+
+    .slider__togglers {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        .window-button {
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            left: 5px;
+            top: 5px;
+        }
+
+        .window-open {
+            img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    }
+}
+
+$color-sidebar-background: rgb(54, 59, 75, 0.8);
+
+@media only screen and (max-width: 700px) {
+    .sidebar {
+        font-size: 20px;
+        top: 0;
+        padding-top: 0;
+
+        .slider {
+            &.opened {
+                width: 200px;
+            }
+        }
+
+        &__wrapper {
+            padding-top: 50px;
+            max-height: 100vh;
+            padding-bottom: 100px;
+            background-color: $color-sidebar-background;
+            &::-webkit-scrollbar {
+                width: 0;
+            }
+        }
+        &__inner {
+            max-height: 100%;
+            width: 200px;
+            padding-right: 5px;
+        }
+    }
+}

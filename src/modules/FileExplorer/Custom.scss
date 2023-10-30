@@ -1,0 +1,228 @@
+.custom-icon {
+  font-size: var(--icon-size);
+}
+
+
+$border: solid #7c7c7c;
+
+.custom-icon-img {
+  max-width: calc(var(--icon-size) / 2);
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.fe_fileexplorer_wrap .fe_fileexplorer_item_wrap {
+  width: calc(var(--icon-size) + 1em);
+}
+
+.fe_fileexplorer_items_scroll_wrap {
+  height: 500px;
+  @include custom-scrollbar;
+}
+
+.fe_fileexplorer_item_text {
+  display: flex !important;
+  flex-direction: column;
+  width: 100%;
+}
+
+.filemanager {
+  width: 100%;
+  .view-default {
+    .filemanager-textbar {
+      display: none;
+    }
+    .fe_fileexplorer_item_text {
+      .time, .size {
+        display: none;
+      }
+    }
+  }
+  .view-list {
+    flex-direction: column;
+
+    .fe_fileexplorer_item_wrap {
+      width: 100%;
+      position: relative;
+    }
+    .fe_fileexplorer_item_text {
+      flex-direction: row;
+      justify-content: space-between;
+      .size {
+        text-align: right;
+        width: 60px;
+      }
+      .time {
+        margin-left: auto;
+        margin-right: 10px;
+        //align-self: flex-end;
+        //display: block;
+      }
+    }
+
+    .fe_fileexplorer_item_wrap_inner {
+      align-items: center;
+      column-gap: 20px;
+      width: 100%;
+      height: var(--icon-size) ;
+      display: flex;
+    }
+  }
+
+  &-header {
+    border: 2px $border;
+    border-bottom: none;
+    background-color: #fff;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &.buttons, &.toolbar {
+      height: 30px;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      padding-right: 10px;
+      column-gap: 5px;
+    }
+    &.toolbar {
+      border: 2px $border;
+      border-top: 1px $border;
+      border-bottom: none;
+
+      .filemanager-header__button {
+        width: 30px;
+        height: 26px;
+        background-color: #1EC73A;
+      }
+    }
+
+    &__button {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      &:hover {
+        cursor: pointer;
+      }
+      &.close {
+        background-color: red;
+      }
+      &.pin {
+        background-color: #32bb00;
+      }
+    }
+  }
+}
+
+.fe_fileexplorer_wrap .fe_fileexplorer_inner_wrap {
+  border: 2px $border;
+  border-top: 1px solid #AAAAAA;
+}
+
+#filemanager {
+  width: 100%;
+  position: relative;
+  z-index: $zindex-filemanager;
+}
+
+.fe_fileexplorer_statusbar_text_segment_wrap {
+  color: #2700ff;
+  font-weight: 500;
+}
+
+.fe_fileexplorer_item_wrap {
+  overflow: visible !important;
+}
+
+
+
+.fe_fileexplorer_items_scroll_wrap_inner {
+  overflow: hidden;
+}
+
+.fe_fileexplorer_toolbar {
+  flex-wrap: wrap;
+}
+
+
+.filemanager-view__button {
+  width: 50px;
+  height: 26px;
+  background-color: red;
+}
+
+.filemanager-search {
+  width: 150px;
+  height: 24px;
+  input {
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+  }
+}
+
+.filemanager-textbar {
+  .filemanager-sort {
+    height: 30px;
+    width: 100%;
+    display: flex;
+    padding-left: 70px;
+    padding-right: 30px;
+    align-items: center;
+    border-bottom: 1px $border;
+    font-size: 12px;
+
+    .name {
+      margin-left: 40px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+.fe_fileexplorer_item_wrap_inner {
+  position: relative;
+
+  &:hover {
+    .filemanager-tooltip {
+      transition-delay: 0.3s;
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.filemanager-tooltip {
+  z-index: 2;
+  pointer-events: none;
+  background-color: #fff;
+  box-shadow: 0 0 2px 0 grey;
+  padding: 2px;
+  flex-direction: column;
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s linear, opacity 0.3s linear;
+
+  .item {
+    display: flex;
+    column-gap: 5px;
+    p {
+      max-width: calc(min(200px, 50vw));
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 12px;
+      display: inline;
+    }
+  }
+}

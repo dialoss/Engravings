@@ -1,0 +1,14 @@
+
+.item__textfield {
+  box-shadow: none;
+  background: none;
+  background-color: white;
+  padding: 5px;
+  p {
+    text-align: left;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}

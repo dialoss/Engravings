@@ -1,0 +1,14 @@
+$style-border: 2px solid grey;
+$color-main: #fdfdfd;
+
+@mixin mobile {
+  @media screen and (max-width: 500px) {
+	@content;
+  }
+}
+
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}

@@ -1,0 +1,141 @@
+{
+  "properties": [
+    {
+      "name": "description",
+      "value": "",
+      "attrs": [],
+      "type": "textarea",
+      "text": "Описание"
+    },
+    {
+      "name": "title",
+      "value": "",
+      "attrs": [],
+      "type": "textarea",
+      "text": "Заголовок"
+    },
+    {
+      "name": "new_page_slug",
+      "value": "",
+      "attrs": ["required"],
+      "type": "input",
+      "text": "Название страницы"
+    },
+    {
+      "name": "customer_email",
+      "value": "",
+      "attrs": [],
+      "type": "input",
+      "text": "Ваш email"
+    },
+    {
+      "name": "customer_name",
+      "value": "",
+      "attrs": [],
+      "type": "input",
+      "text": "Ваше имя"
+    },
+    {
+      "name": "media",
+      "value": "",
+      "attrs": [],
+      "type": "upload",
+      "text": "Медиа"
+    }
+  ],
+  "fields": {
+    "add": {
+      "title": "Добавить запись",
+      "button": "btn_ок",
+      "parent": {
+        "base": [
+          "media",
+          "new_page_slug",
+          "description",
+          "title"
+        ],
+        "parts": [
+          "media",
+          "description",
+          "title"
+        ],
+        "shop": [
+          "media",
+          "description",
+          "title"
+        ]
+      },
+      "child": {
+        "base": [
+          "media",
+          "description",
+          "title"
+        ],
+        "models": [
+          "media",
+          "description",
+          "title"
+        ]
+      }
+    },
+    "edit": {
+      "title": "Редактировать запись",
+      "button": "btn_ок",
+      "parent": {
+        "base": [
+          "media",
+          "description",
+          "title"
+        ],
+        "shop": [
+          "media",
+          "description",
+          "title"
+        ],
+        "blueprints": [
+          "media",
+          "description",
+          "title"
+        ]
+      },
+      "child": {
+        "base": [
+          "media",
+          "description",
+          "title"
+        ],
+        "models": [
+          "media",
+          "description",
+          "title"
+        ]
+      },
+      "image": [
+        "media",
+        "description",
+        "title"
+      ],
+      "video": [
+        "media",
+        "description",
+        "title"
+      ]
+    },
+    "buy": {
+      "title": "Приобрести",
+      "button": "btn_отправить",
+      "parent": {
+        "base": [
+          "customer_email",
+          "customer_name"
+        ]
+      },
+      "child": {
+        "base": [
+          "customer_email",
+          "customer_name"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+$color-background: white;
+$color-border: blue;
+$color-text: rgb(90, 90, 211);
+
+$color-hover-background: blue;
+$color-hover-text: white;
+
+$color-current-background: blue;
+$color-current-text: white;
+
+.nav__button {
+    margin-bottom: 10px;
+
+    border: 2px $color-border solid;
+    border-radius: 4px;
+
+    background-color: $color-background;
+    color: $color-text;
+    text-align: center;
+    font-weight: 600;
+
+    transition: all 0.2s linear;
+
+    a {
+        padding: 15px 25px;
+        display: block;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+
+    .content__nav-tabs & {
+        margin-bottom: 25px;
+        text-align: center;
+        vertical-align:middle;
+    }
+
+    &:last-child {
+        margin-right: 0;
+    }
+
+    &:hover {
+        background-color: $color-hover-background;
+        cursor: pointer;
+
+        a {
+            color: $color-hover-text;
+        }
+    }
+
+    &--current {
+        background-color: $color-current-background;
+        a {
+            color: $color-current-text;
+        }
+    }
+}

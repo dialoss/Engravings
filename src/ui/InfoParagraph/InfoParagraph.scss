@@ -1,0 +1,41 @@
+.info__paragraph {
+    padding: 8px 4px;
+    margin: 0 auto;
+    word-wrap: break-word; 
+    word-break: break-word;
+    text-align: center;
+    font-size: 18px;
+    display: inline-block;
+
+    &:empty {
+        display: none;
+        padding-bottom: 0;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &-title {
+        font-weight: 700;
+        font-size: 20px;
+        padding-bottom: 0;
+    }
+
+    &-description {
+        white-space: pre-line;
+        text-indent: 0;
+    }
+
+    &-date {
+        font-size: 18px;
+        margin: 0 20px;
+    }
+
+    &-price {
+        color: red;
+        font-size: 25px;
+        font-weight: 600;
+        margin: auto 0;
+    }
+}

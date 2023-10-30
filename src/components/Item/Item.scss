@@ -1,0 +1,54 @@
+.item {
+  position: relative;
+  border-radius: 8px;
+  transition: opacity 0.2s linear;
+  box-shadow: 0 0 5px gray;
+  overflow: hidden;
+  z-index: $zindex-item;
+
+  &.selected {
+    outline: 3px solid #2b76e7;
+  }
+  &.copied {
+    opacity: 0.8;
+  }
+  &.cutted {
+    opacity: 0.5;
+  }
+
+  &__wrapper {
+    &:hover.edit {
+      outline: 2px dashed red;
+    }
+  }
+
+  &-file {
+    overflow: visible;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &-model {
+    overflow: hidden;
+  }
+
+  &-table {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  &__file, &__table {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &-container {
+    position: relative;
+  }
+
+  .transform-item {
+    width: auto;
+  }
+}

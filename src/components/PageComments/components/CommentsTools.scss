@@ -1,0 +1,14 @@
+.comments-tools {
+  position: absolute;
+  left: 10px;
+  display: flex;
+
+  select {
+    option {
+      background-color: $color-link-background;
+    }
+    border: none;
+    font-weight: 500;
+    font-size: 15px;
+  }
+}

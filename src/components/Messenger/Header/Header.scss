@@ -1,0 +1,58 @@
+@import "../variables";
+.messenger-header {
+  width: 100%;
+  height: 48px;
+  position: relative;
+
+  background-color: $color-main;
+  border-bottom: $style-border;
+
+  .avatar__wrapper {
+    @include center-absolute;
+    width: 35px;
+    height: 35px;
+    left: 10px;
+  }
+
+  .header-block {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    height: 100%;
+    padding-left: 60px;
+    padding-right: 30px;
+  }
+
+  @include mobile {
+    .avatar__wrapper {
+      display: none;
+    }
+    .header-block {
+      padding-left: 10px;
+    }
+  }
+
+  .title {
+    margin-top: 5px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .window-button {
+    right: 0;
+    @include center-absolute;
+
+    @include mobile {
+      & {
+        right: 10px;
+      }
+      & img {
+        width: 20px;
+      }
+    }
+  }
+}

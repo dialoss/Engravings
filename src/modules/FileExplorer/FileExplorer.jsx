@@ -1,0 +1,233 @@
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import "./file-explorer/file-explorer.css";
+import "./file-explorer/file-explorer";
+import {init} from "./config";
+import "./Custom.scss";
+import {getElementFromCursor} from "../../helpers/events";
+import {ModalManager} from "../../components/ModalManager";
+import FormInput from "../../components/Modals/MyForm/Input/FormInput";
+import {createRoot} from "react-dom/client";
+import Tooltip from "./Tooltip";
+import {useAddEvent} from "../../hooks/useAddEvent";
+
+export function fileToItem(data) {
+    return {
+        urn: data.urn,
+        type: data.type,
+        filename: data.name,
+        method: 'POST',
+        element: {type: 'item'},
+        url: "https://drive.google.com/uc?id=" + data.id,
+    }
+}
+
+export function initLayout() {
+    let items = document.querySelectorAll('.fe_fileexplorer_item_wrap_inner');
+    for (const item of items) {
+        item.ondragstart = e => {
+            let wrapper = item.closest('.fe_fileexplorer_item_wrap');
+            let model = item.getAttribute('data-model');
+            e.dataTransfer.setData('files', JSON.stringify([fileToItem({
+                id: wrapper.getAttribute('data-feid'),
+                urn: model,
+                type: item.getAttribute('data-itemtype'),
+                name: item.getAttribute('data-itemname'),
+            })]));
+        };
+    }
+}
+
+export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setData, searchBy, ...props}) => {
+    const [value, setValue] = useState('');
+
+    function handleSearch(query) {
+        let newData = [];
+        data.forEach(item => {
+            if (item[searchBy].toLowerCase().includes(query.toLowerCase())) {
+                newData.push(item);
+            }
+        })
+        setData(newData);
+    }
+
+    return (
+        <FormInput placeholder={placeholder}
+            data={{
+            name: 'search',
+            value,
+            callback: (e) => {
+                let query = e.target.value;
+                if (!query) setData(data);
+                else handleSearch(query);
+                inputCallback(query);
+                setValue(query);
+            },
+        }} {...props}></FormInput>
+    );
+}
+
+const SortContainer = ({data, setData, config}) => {
+    const field = config.sortBy;
+    function handleSort() {
+        let newData = [...data.current.sort((a, b) => {
+            if (a[field] < b[field]) return -1;
+            if (a[field] > b[field]) return 1;
+            return 0;
+        })];
+        console.log('sorted',newData)
+        setData(newData);
+    }
+    return (
+        <p className={config.name} onClick={handleSort}>{config.text}</p>
+    );
+}
+
+const ExplorerViews = ['default', 'list'];
+const TextBar = [
+    {
+        name: 'name',
+        text: 'Имя',
+        sortBy: 'name',
+    },
+    {
+        name: 'time',
+        text: 'Время изменения',
+        sortBy: 'modifiedTime',
+    },
+    {
+        name: 'size',
+        text: 'Размер',
+        sortBy: 'size',
+    },
+    ];
+
+const FileExplorer = () => {
+    useEffect(() => {
+        window.filemanager = init();
+        const zoomController = (e) => {
+            if(e.ctrlKey) {
+                if (!getElementFromCursor(e, 'fe_fileexplorer_wrap')) return;
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    scale.current = Math.min(15, (scale.current + 1));
+                } else {
+                    scale.current = Math.max(1, (scale.current - 1));
+                }
+                ref.current.style.setProperty('--icon-size', scale.current + 'em');
+            }
+        };
+        window.addEventListener('mousewheel', zoomController, {passive: false});
+        return () => window.removeEventListener('mousewheel', zoomController);
+    }, []);
+
+    const ref = useRef();
+    const scale = useRef();
+    const [view, setView] = useState(0);
+    const [folder, setFolder] = useState([]);
+    const [search, setSearch] = useState([]);
+    const searchRef = useRef();
+    searchRef.current = search;
+    useEffect(() => {
+        ref.current.querySelector('.filemanager-view__button').addEventListener('click', () => setView(v => (v + 1) % ExplorerViews.length));
+        scale.current = 4;
+        ref.current.style.setProperty('--icon-size', scale.current + 'em');
+
+        window.filemanager.addEventListener('test', () => console.log(123));
+
+        window.filemanager.addEventListener('history_changed', () => {
+            const f = window.filemanager.GetCurrentFolder();
+            f.addEventListener('set_entries', (fromSearch) => {
+                if (!fromSearch) {
+                    setFolder(f.GetEntries());
+                    setSearch(f.GetEntries());
+                }
+            })
+        })
+        let textBar = document.createElement('div');
+        textBar.classList.add('filemanager-textbar');
+        let field = ref.current.querySelector('.fe_fileexplorer_toolbar');
+        field.parentNode.insertBefore(textBar, field.nextSibling);
+
+        const filemanagerRoot = createRoot(textBar);
+        filemanagerRoot.render(<div className="filemanager-sort fe_fileexplorer_item_text">
+            {
+                TextBar.map(t => <SortContainer data={searchRef}
+                                                config={t}
+                                                setData={setSearch} key={t.sortBy}>
+                </SortContainer>)
+            }
+        </div>);
+
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!ref.current) return;
+        const wrapper = ref.current.querySelector('.fe_fileexplorer_items_scroll_wrap_inner');
+        for (const item of folder) {
+            let root = ref.current.querySelector(`.fe_fileexplorer_item_wrap[data-feid="${item.id}"]`);
+            if (!root) continue;
+            root = root.children[0];
+            const tt = document.createElement('div');
+            tt.classList.add('filemanager-tooltip');
+            root.appendChild(tt);
+            createRoot(tt).render(<Tooltip data={item}></Tooltip>);
+            root.addEventListener('mouseover', (e) => {
+                if (root.contains(e.relatedTarget)) return;
+                let block = root.getBoundingClientRect();
+                let px = e.clientX - block.left + 20;
+                let wr = wrapper.getBoundingClientRect();
+                if (px + 10 >= wr.left + wr.width) px = e.clientX - tt.getBoundingClientRect().width - 20;
+                tt.style.left = px + 'px';
+                tt.style.top = e.clientY - block.top - 20 + 'px';
+            });
+        }
+    }, [folder]);
+
+    function refreshFolder() {
+        window.filemanager.RefreshFolders(true);
+    }
+    console.log(search)
+    useLayoutEffect(() => {
+        try {
+            window.filemanager.GetCurrentFolder().SetEntries(search, true);
+        } catch (e) {}
+    }, [search]);
+
+    useAddEvent("filemanager-window:toggle", ({callback}) => {
+        window.filemanager.onopenfile = (folder, entry) => callback(entry);
+    })
+
+    const [pin, setPin] = useState(true);
+    const closeConditions = ['btn', 'esc', pin ? '' : 'bg'];
+    return (
+        <ModalManager name={"filemanager-window:toggle"}
+                      transform={{position:'fixed', left:'20', top:'150', max_width:'70', zIndex:25}}
+                      closeConditions={closeConditions}>
+            <div className={"filemanager"} ref={ref} style={{bg: 'bg-none'}}>
+                <div className={"filemanager-header__wrapper transform-origin"}>
+                    <div className="filemanager-header buttons">
+                        <div className="window-close filemanager-header__button close">
+                        </div>
+                        <div className="filemanager-header__button pin" onClick={() => setPin(p => !p)}>
+                        </div>
+                    </div>
+                    <div className="filemanager-header toolbar">
+                        <div className="filemanager-search">
+                            <SearchContainer data={folder}
+                                             searchBy={'name'}
+                                             setData={setSearch}
+                                             placeholder={'Поиск по файлам'}>
+                            </SearchContainer>
+                        </div>
+                        <div className="filemanager-header__button refresh" onClick={refreshFolder}>
+                        </div>
+                        <div className="filemanager-view__button"></div>
+                    </div>
+                </div>
+                <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
+            </div>
+        </ModalManager>
+    );
+};
+
+export default FileExplorer;

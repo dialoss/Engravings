@@ -1,0 +1,14 @@
+.toggle-button {
+  transition: all 232ms linear;
+  width: 24px;
+  height: 24px;
+  &:hover {
+    cursor: pointer;
+  }
+  &.closed {
+    transform: rotate(0);
+  }
+  &.opened {
+    transform: rotate(180deg);
+  }
+}

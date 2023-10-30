@@ -1,0 +1,45 @@
+$color-main: rgb(219, 228, 235);
+
+.context__item {
+    width: 100%;
+    position: relative;
+}
+
+@mixin f($stage) {
+    @if $stage < 4 {
+        .context__item.s#{$stage}:hover {
+            > .context__button {
+                background-color: rgb(174, 184, 192);
+                cursor: pointer;
+            }
+            > .context__hover {
+                opacity: 1;
+                visibility: visible;
+                @include f($stage + 1);
+            }
+        }
+    }
+}
+
+@include f(1);
+
+.context__hover {
+    transition: all 232ms linear;
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: -4px;
+    left: calc(100%);
+}
+
+.context__button {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
+    background-color: $color-main;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+    padding: 4px 8px;
+    font-size: 16px;
+    transition: all 0.1s linear;
+}

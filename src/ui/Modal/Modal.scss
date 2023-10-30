@@ -1,0 +1,69 @@
+@import '../../styles/constants';
+
+@mixin hidable {
+    transition: visibility 0.2s linear, opacity 0.2s linear;
+    opacity: 0;
+    visibility: hidden;
+
+    &.opened {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.modal {
+    &__window {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: $zindex-modal;
+        opacity: 0;
+        @include hidable;
+
+        &.centered {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        &.bg-none {
+            z-index: calc($zindex-background - 1);
+        }
+
+        &.user-prompt {
+            z-index: 30;
+        }
+        &.carousel-window {
+            z-index: 20;
+        }
+
+
+        &.bottom {
+            top: auto;
+            bottom: 10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+    }
+
+    &__wrapper {
+        z-index: $zindex-modal;
+    }
+
+    &__background {
+        background-color: rgba(0,0,0,0.5);
+        position: fixed;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 200vh;
+        left: 50%;
+        top: 50%;
+        z-index: $zindex-background;
+
+        @include hidable;
+
+        &.bg-none {
+            display: none;
+        }
+    }
+}

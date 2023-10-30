@@ -1,0 +1,9 @@
+
+.app > div {
+    width: 100%;
+    height: 80vh;
+}
+
+.forge-spinner {
+    display: none !important;
+}

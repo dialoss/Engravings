@@ -1,0 +1,46 @@
+.item__file {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+  position: relative;
+}
+
+.file {
+  &__download {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: initial;
+
+    &:hover + .file__title {
+      opacity: 1;
+    }
+
+    &-image {
+      font-size: 4em;
+    }
+
+    &-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: $zindex-files;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    display: block;
+    opacity: 0;
+    transition: all 0.1s linear;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+  }
+}

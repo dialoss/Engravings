@@ -5,6 +5,7 @@ import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 import {triggerEvent} from "../../../helpers/events";
 import {getFileType} from "../../../helpers/files";
 import {doc, updateDoc, arrayRemove, arrayUnion} from "firebase/firestore";
+import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 
 const emptyMessage = {text:'', upload:[]};
 
@@ -18,23 +19,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         upload = upload[0];
         const user = store.getState().users.current;
         if (!user.id) {
-            triggerEvent('firebase:user-prompt', {text: 'Введите ваши данные', data:{
-                button: 'Подтвердить',
-                    data: {
-                    email: {
-                        name: 'email',
-                            type: "input",
-                            text: "Ваш email",
-                            value: ''
-                    },
-                    name: {
-                        name: 'name',
-                            type: "input",
-                            text: "Ваше имя",
-                            value: ''
-                    }
-                }
-            }})
+            triggerEvent('user-prompt', loginForm);
             return;
         }
         const [messageSubmit, response] = await manager.config.messageSubmit(message);
@@ -42,7 +27,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
             let form = {};
             if (response === 'time') form = 'Подтвердите, что вы человек';
             if (response === 'upload') form = 'Максимальный размер файла 50мб';
-            triggerEvent("firebase:user-prompt", {text:form});
+            triggerEvent("user-prompt", {text:form});
             return;
         }
         if (manager.config.clearHTML) text = clearTextFromHTML(text);

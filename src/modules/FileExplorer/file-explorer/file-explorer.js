@@ -711,7 +711,7 @@ import {createRoot} from "react-dom/client";
 		// Sets an array of objects containing the folder entries.
 		// Required per-item object keys:  id (unique string), name, type ('folder' or 'file'), hash (unique string).
 		// Optional per-item object keys:  attrs, size, tooltip (tooltip string), thumb (thumbnail image URL), overlay (class name).
-		$this.SetEntries = function(newentries, fromSearch=false) {
+		$this.SetEntries = function(newentries) {
 			if ($this.busy)
 			{
 				$this.busyqueue.push({ callback: $this.SetEntries, callbackopts: [newentries] });
@@ -731,7 +731,7 @@ import {createRoot} from "react-dom/client";
 
 			$this.waiting = false;
 
-			DispatchEvent('set_entries', [fromSearch]);
+			DispatchEvent('set_entries');
 		};
 
 		// Creates/Updates multiple entries.

@@ -8,14 +8,15 @@ import {sendLocalRequest} from "api/requests";
 import {getLocation} from "../../../hooks/getLocation";
 
 function reducer(state, action) {
+    let item = action.payload[0];
     switch (action.method) {
         case "SET":
             return action.payload;
         case "PATCH":
             for (let i = 0; i < state.length; i++) {
-                if (state[i].id === action.payload.id) {
+                if (state[i].id === item.id) {
                     let newState = [...state];
-                    newState[i] = action.payload;
+                    newState[i] = item;
                     return newState;
                 }
             }
@@ -23,16 +24,16 @@ function reducer(state, action) {
         case "POST":
             {
                 let newState = [...state];
-                let item = action.payload[0];
+                console.log(1111)
                 newState.splice(item.display_pos, 0, item);
                 return newState;
             }
         case 'DELETE':
         {
-            if (action.payload.empty) return [...state].filter(el => el.id !== action.payload.id);
+            if (item.empty) return [...state].filter(el => el.id !== item.id);
             let newState = [...state];
             for (let i = 0; i < state.length; i++) {
-                if (state[i].id === action.payload.id) newState[i] = action.payload;
+                if (state[i].id === item.id) newState[i] = item;
             }
             return newState;
         }
@@ -40,7 +41,9 @@ function reducer(state, action) {
 }
 
 function createItemsTree(items) {
-    console.log(items)
+    if (!items.length || items[0].empty) return [];
+    console.log('BEFORE TREE', items)
+
     let tree = {};
     let links = {};
     let childItems = [];
@@ -49,12 +52,25 @@ function createItemsTree(items) {
         tree[c.id] = {...c, items: []};
         links[c.id] = tree[c.id];
     })
+    childItems = childItems.sort((a, b) => {
+        if (+a.parent < +b.parent) return -1;
+        if (+a.parent > +b.parent) return 1;
+        return 0;
+    })
+    console.log('BEFORE TREE CHILD', childItems)
     childItems.forEach(c => {
         let p = links[c.parent];
-        p.items.push(c);
+        p.items.push({...c, items: []});
         links[c.id] = p.items[p.items.length - 1];
     });
-    return Object.values(tree);
+
+    let sorted = (Object.values(tree)).sort((a, b) => {
+        if (a.display_pos < b.display_pos) return -1;
+        if (a.display_pos > b.display_pos) return 1;
+        return 0;
+    });
+    console.log('AFTER TREE', sorted);
+    return sorted;
 }
 
 const ItemListContainer = () => {
@@ -64,9 +80,11 @@ const ItemListContainer = () => {
     const globalDispatch = useDispatch();
 
     function addItems(newItems, createTree=true) {
-        createTree && (newItems = createItemsTree(newItems));
-        let items = [...itemsRef.current, ...newItems];
-        globalDispatch(actions.setElements({items, page: getLocation().pageID}));
+        let afterTree = structuredClone(newItems);
+        createTree && (afterTree = createItemsTree(afterTree));
+        let items = [...itemsRef.current, ...afterTree];
+        globalDispatch(actions.setElements({items: afterTree, page: getLocation().pageID}));
+        globalDispatch(actions.setItemsAll({items: createTree ? newItems : []}));
         dispatch({method: 'SET', payload: items});
     }
     const cache = useSelector(state => state.elements.cache);
@@ -84,8 +102,10 @@ const ItemListContainer = () => {
 
     async function handleElements(event) {
         let request = event.detail;
+        console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
-        console.log(response)
+        console.log('RESPONSE', response)
+        globalDispatch(actions.setItemsAll({items: response}));
         dispatch({method: request.storeMethod, payload: createItemsTree(response)});
     }
 

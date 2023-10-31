@@ -5,9 +5,7 @@ import {configQuill, QuillModules} from "./config";
 import "./TextEditor.scss";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
 import {useAddEvent} from "../../hooks/useAddEvent";
-import {CustomRedo, CustomUndo} from "./Toolbar";
 import {createRoot} from "react-dom/client";
-import {clearTextFromHTML} from "./helpers";
 import {InputAttachment, InputEmoji} from "../../components/Messenger/Input/MessengerInput";
 
 const TextEditor = React.forwardRef(function TextEditor({config, message, callback}, ref) {
@@ -70,13 +68,6 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
                         value={message.text}
                         onChange={inputCallback}
                         modules={modules}/>
-            {!!message.upload.length &&
-                <div className={"uploads"}>
-                    {
-                        message.upload.map(u => <p key={u.name}>{u.name}</p>)
-                    }
-                </div>
-            }
         </>
 
     );

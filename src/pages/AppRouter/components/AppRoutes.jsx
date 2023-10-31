@@ -4,14 +4,12 @@ import {routes} from "../constants/routes";
 import {Intro} from "pages/MainPage";
 import {getLocation} from "hooks/getLocation";
 import {triggerEvent} from "helpers/events";
-import CustomerPage from "pages/CustomerPage/components/CustomerPage";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import ItemsPage from "../../ItemsPage/components/ItemsPage";
 
 const Components = {
     'ItemsPage': ItemsPage,
     'Main': Intro,
-    'CustomerPage': CustomerPage,
 };
 
 const PageWrapper = ({route}) => {

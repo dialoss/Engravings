@@ -48,8 +48,8 @@ let mouseMoved = false;
 
 export function setItemProps(offset, width) {
     let win = container.getBoundingClientRect();
-    if (width != null) item.style.width = Math.min(width / win.width * 100, 100) + "%";
-    if (offset != null) item.style.left = Math.min(offset / win.width * 100, 100) + "%";
+    if (width) item.style.width = Math.min(width / win.width * 100, 100) + "%";
+    if (offset) item.style.left = Math.min(offset / win.width * 100, 100) + "%";
 }
 
 function moveAt(event, shiftX, shiftY) {
@@ -62,21 +62,26 @@ function moveAt(event, shiftX, shiftY) {
 
     let deltaX = event.clientX - btnX;
     let deltaY = event.clientY - btnY;
+    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return false;
     
     if (transform.type === "resize") {
         if (transform.dir === 'resize-left') deltaX *= -1;
         let offsetL = item.offsetLeft;
-        let imgWidth = block.width + deltaX;
+        let width = block.width + deltaX;
+        let height = block.height + deltaY;
 
-        if (transform.dir === 'resize-right' && imgWidth + offsetL > win.width) imgWidth = block.width;
-        imgWidth = Math.max(100, imgWidth);
+        // if (height + item.offsetTop > win.height) height =
+        if (transform.dir === 'resize-right' && width + offsetL > win.width) width = block.width;
+        width = Math.max(50, width);
+        height = Math.max(50, height);
 
         if (transform.dir === 'resize-left') {
-            offsetL = offsetL + (block.width - imgWidth);
-            if (offsetL <= 0) imgWidth = block.width;
+            offsetL = offsetL + (block.width - width);
+            if (offsetL <= 0) width = block.width;
             offsetL = Math.max(0, offsetL);
         }
-        setItemProps(offsetL, imgWidth);
+        // item.style.height = height + 'px';
+        setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
         let py = item.offsetTop + deltaY;
@@ -93,6 +98,7 @@ function moveAt(event, shiftX, shiftY) {
     }
     initContainerDimensions({container, item});
     mouseMoved = true;
+    return true;
 }
 
 export function setItemTransform(event, type, _item, _btn) {
@@ -109,11 +115,12 @@ export function setItemTransform(event, type, _item, _btn) {
     let shiftY = event.clientY - (btn.getBoundingClientRect().top + btn.getBoundingClientRect().height / 2);
 
     function onMouseMove(event) {
+        let moved = moveAt(event, shiftX, shiftY);
+        if (!moved) return;
         if (!item.classList.contains("transformed")) item.classList.add("transformed");
         if (transform.type === "move") {
             if (item.style.position !== 'fixed') item.style.position = 'absolute';
         }
-        moveAt(event, shiftX, shiftY);
     }
 
     function onMouseUp() {
@@ -133,8 +140,9 @@ export function setItemTransform(event, type, _item, _btn) {
 
         let request = [{
             method: 'PATCH',
-            parent,
+            id: getElementID(item),
             position: item.style.position || 'initial',
+            max_height: item.style.height.replace("px", "") || "0",
             max_width: item.style.width.replace("%", "") || "0",
             top: item.style.top.replace("px", "") || "0",
             left: item.style.left.replace("%", "") || "0",

@@ -19,6 +19,20 @@ export const InputAttachment = ({callback}) => {
     );
 }
 
+export const AttachmentPreview = ({message}) => {
+    return (
+        <>
+            {!!message.upload.length &&
+                <div className={"uploads"}>
+                    {
+                        message.upload.map(u => <p key={u.name}>{u.name}</p>)
+                    }
+                </div>
+            }
+        </>
+    )
+}
+
 export const InputSend = ({callback}) => {
     return (
         <div className="icon icon-send" onClick={callback}>
@@ -71,6 +85,7 @@ const MessengerInput = ({inputCallback, message, sendCallback}) => {
                                 config={'simple'}></TextEditor>
                 </div>
             </div>
+            <AttachmentPreview message={message}></AttachmentPreview>
             <InputSend callback={sendCallback} key={'messenger-send'}></InputSend>
         </div>
     );

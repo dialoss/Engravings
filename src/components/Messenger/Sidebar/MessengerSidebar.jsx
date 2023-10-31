@@ -14,6 +14,7 @@ import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
 import {actions} from "../store/reducers";
 import store from "../../../store";
 import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
+import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 
 const MessengerSidebar = () => {
     const {rooms, room, users, user} = useSelector(state => state.messenger);
@@ -54,7 +55,7 @@ const MessengerSidebar = () => {
                     store.dispatch(actions.setField('user', user));
                 })
             }
-            triggerEvent("firebase:user-prompt", {text:'Сначала войдите'});
+            triggerEvent("user-prompt", loginForm);
             return;
         }
 

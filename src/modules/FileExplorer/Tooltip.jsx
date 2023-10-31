@@ -30,7 +30,7 @@ const Tooltip = ({data}) => {
     return (
         <>
             {
-                TooltipFields(data).map(t => <div className={'item'} key={t.title}>
+                TooltipFields(data).map(t => <div className={'tooltip-item'} key={t.title}>
                     <p>{t.title}:</p>
                     <p>{t.text}</p>
                 </div>)

@@ -14,6 +14,7 @@ import store from "../../store";
 import {onDisconnect, ref, serverTimestamp} from "firebase/database";
 import {realtime} from "./api/config";
 import OpenButton from "./OpenButton/OpenButton";
+import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 
 const MessengerContainer = () => {
     const {users} = useSelector(state => state.messenger);
@@ -34,12 +35,14 @@ const MessengerContainer = () => {
     return (
         <>
             <OpenButton callback={() => setOpen(!openMessenger)}></OpenButton>
-            <ModalManager transform={isMobileDevice() ? null : {position:'fixed', left:'20', top:'150', width:'50', zIndex:8}}
-                          name={windowName}
+            <ModalManager name={windowName}
                           callback={(isOpened) => setOpen(isOpened)}
                           defaultOpened={openMessenger}
                           closeConditions={['btn', 'esc']}>
-                <Messenger style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}></Messenger>
+                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20', top:'150', width:'50', zIndex:8}}
+                               style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
+                    <Messenger></Messenger>
+                </TransformItem>
             </ModalManager>
         </>
     );

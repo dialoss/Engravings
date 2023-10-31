@@ -1,89 +1,41 @@
 import formData from './FormData.json';
-import store from 'store';
 
-function initData() {
-    let propsRefactor = {};
-    Object.values(formData.properties).forEach(field => {
-        propsRefactor[field.name] = field;
-    });
-    formData.properties = propsRefactor;
-}
-
-initData();
-
-function setFormField(form, field, value) {
-    if (Object.keys(form).includes(field)) form[field].value = value;
-}
-
-function fillUploads(form, uploads) {
-    if (!uploads) return;
-    const media = uploads.filter(upload => ['image', 'video'].includes(upload.type));
-    const files = uploads.filter(upload => ['file', 'table'].includes(upload.type));
-    setFormField(form.data, 'media', media.map(f => {
-        return {
-            id: f.id,
-            type: f.type,
-            url: f.url,
-            filename: f.filename,
-        }
-    }));
-    setFormField(form.data, 'files', files.map(f => {
-        return {
-            id: f.id,
-            type: f.type,
-            url: f.url,
-            filename: f.filename,
-        }
-    }));
-}
-
-function fillText(form, element) {
-    if (element.id === -1) return;
-    for (const field of ['description', 'title', 'price']) {
-        setFormField(form.data, field, element.data[field]);
+function getFieldData(field, element) {
+    if (!element.id) return '';
+    if (field === 'url') {
+        if (!['video', 'image', 'model', 'file'].includes(element.data.type)) return [];
+        return [{
+            type: element.data.type,
+            id: element.data.id,
+            url: element.data.url,
+            filename: element.data.filename,
+        }];
     }
+    return element.data[field];
 }
 
-export function getFormData(type, element) {
-    const location = store.getState().location;
-    let properties = formData.properties;
-    let formType = formData.fields[type];
-    let formFields = {};
-    if (type === 'edit' && element.type !== 'item') {
-        formFields = formType[element.data.type];
-    }
-    else {
-        let fieldsPage = {};
-        if (location.parentSlug === location.pageSlug) {
-            fieldsPage = formType['parent'];
-        } else {
-            fieldsPage = formType['child'];
-        }
-        formFields = fieldsPage[location.parentSlug];
-        if (formFields === undefined) {
-            formFields = fieldsPage['base'];
-        }
-    }
-
+export function getFormData({method, element}) {
+    let fields = Object.values(formData[element.data.type]);
+    console.log(fields)
     let form = {
-        type: type,
-        element: {type: element.type, id: element.id, data: element.data},
-        title: formType.title,
-        button: formType.button.split('_')[1],
-        method: '',
+        method,
+        button: 'ok',
         data: {},
         windowButton: true,
     };
-    formFields.forEach((field) => {
-        form.data[properties[field].name] = structuredClone(properties[field]);
+    if (method === 'POST') form.specifyParent = true;
+    else form.specifyElement = true;
+    fields.forEach((field) => {
+        if (field.label.length > 1) {
+            for (const l of field.label) {
+                let name = Object.keys(l)[0];
+                form.data[name] = {value:'', ...field, name, label:Object.values(l)[0]};
+            }
+        } else {
+            let value = method !== 'POST' ? getFieldData(field.name, element) : '';
+            form.data[field.name] = {value, ...field};
+        }
     });
-    if (type === 'buy') return form;
-    if (type === 'edit') {
-        fillText(form, element);
-        fillUploads(form, element.data.items || [element.data]);
-        form.method = 'PATCH';
-    } else if (type === 'add') {
-        form.method = 'POST';
-    }
+    console.log(form)
     return form;
 }

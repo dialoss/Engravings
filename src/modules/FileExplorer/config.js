@@ -1,6 +1,7 @@
 import {initLayout} from "./FileExplorer";
 import {driveRequest, getMediaType} from "./api/google";
 import {getLocation} from "../../hooks/getLocation";
+import {triggerEvent} from "../../helpers/events";
 
 export function init() {
     let elem = document.getElementById('filemanager');
@@ -27,6 +28,7 @@ export function init() {
                 callback: (data) => {
                     folder.SetEntries(data);
                     initLayout();
+                    triggerEvent('filemanager:changeFolder');
                 },
                 error: () => {
                 },

@@ -2,66 +2,66 @@ import chroma from "chroma-js";
 
 export const Stages = [
     {
-        type: 'primary',
+        style: 'primary',
         next: 4,
         color: "#d22626",
-        text: 'Подготовка материала',
+        title: 'Подготовка материала',
     },
     {
-        type: 'secondary',
-        text: 'Расточил',
+        style: 'secondary',
+        title: 'Расточил',
     },
     {
-        type: 'secondary',
-        text: 'Вырезал',
+        style: 'secondary',
+        title: 'Вырезал',
     },
     {
-        type: 'secondary',
-        text: 'Сделал',
+        style: 'secondary',
+        title: 'Сделал',
     },
     {
-        type: 'primary',
+        style: 'primary',
         next: 3,
         color: "#a97117",
-        text: 'Фрезеровка',
+        title: 'Фрезеровка',
     },
     {
-        type: 'secondary',
-        text: 'Подготовил',
+        style: 'secondary',
+        title: 'Подготовил',
     },
     {
-        type: 'secondary',
-        text: 'Установил',
+        style: 'secondary',
+        title: 'Установил',
     },
     {
-        type: 'primary',
+        style: 'primary',
         next: 3,
         color: "#a6ae09",
-        text: 'Сборка',
+        title: 'Сборка',
     },
     {
-        type: 'secondary',
-        text: 'Собрал',
+        style: 'secondary',
+        title: 'Собрал',
     },
     {
-        type: 'secondary',
-        text: 'Настроил',
+        style: 'secondary',
+        title: 'Настроил',
     },
     {
-        type: 'primary',
+        style: 'primary',
         next: 2,
         color: "#74d50d",
-        text: 'Упаковка',
+        title: 'Упаковка',
     },
     {
-        type: 'secondary',
-        text: 'Сделал упаковку',
+        style: 'secondary',
+        title: 'Сделал упаковку',
     },
     {
-        type: 'primary',
+        style: 'primary',
         next: 0,
         color: "#0e6900",
-        text: 'Отправлено',
+        title: 'Отправлено',
     },
 ]
 
@@ -73,7 +73,7 @@ export function prepareColors(data) {
     for (let i = 0; i < stages.length; i++) {
         let stage = stages[i];
 
-        if (stages[i].type === 'primary') {
+        if (stages[i].style === 'primary') {
             all = stages[i].next - 1;
             cur = 0;
             grad = chroma.scale([stage.color, stages[i + stage.next].color]);

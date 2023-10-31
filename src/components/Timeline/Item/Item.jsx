@@ -4,11 +4,9 @@ import Dot from "../Dot/Dot";
 import Connector from "../Connector/Connector";
 import Body from "../Body/Body";
 import AccordionContainer from "ui/Accordion/AccordionContainer";
-import store from "store";
+import {default as EntryItem} from "components/Item/Item";
 
-
-const Item = ({data, type, index, connector}) => {
-    const items = store.getState().elements.items;
+const Item = ({data, type, connector}) => {
     return (
         <div className={"timeline-item timeline-item--" + type}>
             <Separator>
@@ -21,10 +19,8 @@ const Item = ({data, type, index, connector}) => {
                 }
             </Separator>
             <Body>
-                <AccordionContainer title={data.text}>
-                    {!!items.length &&
-                        <Item item={items[Math.min(index, items.length - 1)]} style={{width: "80vw"}}></Item>
-                    }
+                <AccordionContainer title={data.title}>
+                    {/*<EntryItem item={data}></EntryItem>*/}
                 </AccordionContainer>
             </Body>
         </div>

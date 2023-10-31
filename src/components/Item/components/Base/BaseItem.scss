@@ -1,8 +1,11 @@
 .item__base {
+  //z-index: 2;
+  //margin-top: auto;
   &.selected {
     outline: 6px solid #ce0a40;
   }
   &.cutted {
     opacity: 0.4;
   }
+
 }

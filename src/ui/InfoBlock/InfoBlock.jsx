@@ -22,12 +22,6 @@ const InfoBlock = ({data, className}) => {
                 {!!data.date_created && data.show_date && <InfoParagraph type={'date'}>{formattedDate}</InfoParagraph>}
                 {!!data.description && <InfoParagraph type={'description'}>{data.description}</InfoParagraph>}
             </span>
-            {!!data.price && <span className={style['info__block-buy'] || "info__block-buy" + "info__block-section"}>
-                <InfoParagraph type={'price'}>{`Цена: ${data.price}₽`}</InfoParagraph>
-                <ActionButton onClick={() => triggerEvent("customer:action", {action:'BUY'})}>
-                    {style.buttonText || ""}
-                </ActionButton>
-            </span>}
             {!!data.filename && <InfoParagraph style={{display:"none"}} type={'filename'}>{data.filename}</InfoParagraph>}
         </div>
     );

@@ -47,41 +47,30 @@ function getElement(event, type) {
 
 export function setActionElement(event) {
     let el = getElement(event, 'item');
+    let display_pos = getClickPosition(event);
 
     if (el) {
         let parentElement = el.html.closest('.item.depth-0');
         if (parentElement === el.html) el.parent_0 = '';
         else el.parent_0 = getElementID(parentElement);
         el.parent = getElementID(el.html.closest('.item.depth-' + (el.html.getAttribute('data-depth') - 1))) || el.parent_0;
-
-        el.display_pos = getElementPosition(+el.parent_0 || el.id);
-
+        el.display_pos = display_pos;
+        console.log(store.getState().elements.itemsAll)
+        el.data = store.getState().elements.itemsAll[el.id];
         actionElement = el;
         event.ctrlKey && setElements();
     } else {
         actionElement = {
-            id: -1,
+            id: '',
             parent: '',
             parent_0: '',
             type: 'screen',
-            display_pos: getClickPosition(event),
+            display_pos: display_pos,
+            data: {display_pos: display_pos}
         }
     }
-
+    store.dispatch(actions.setActionElement({actionElement: {...actionElement, html:''}}));
     console.log(actionElement, actionElements);
-}
-
-function getElementPosition(id) {
-    const items = store.getState().elements.items;
-    let pos = -1;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].id === id) {
-            pos = i;
-            break;
-        }
-    }
-    if (pos === -1) pos = items.length;
-    return pos;
 }
 
 function getClickPosition(event) {

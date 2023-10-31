@@ -4,7 +4,7 @@ import Modal from "ui/Modal/Modal";
 import {useAddEvent} from "hooks/useAddEvent";
 import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
 
-const ModalManager = ({name, children, callback=null, transform=null, defaultOpened=false, closeConditions=['bg', 'btn', 'esc']}) => {
+const ModalManager = ({name, children, callback=null, defaultOpened=false, closeConditions=['bg', 'btn', 'esc']}) => {
     const [isOpened, setOpened] = useState(defaultOpened);
     const openRef = useRef();
     openRef.current = isOpened;
@@ -36,27 +36,22 @@ const ModalManager = ({name, children, callback=null, transform=null, defaultOpe
                 setOpened(false)
             });
         });
-        transform && (ref.current.querySelector('.modal__window').style.position = 'initial');
     }, [children]);
 
     useEffect(() => {
         if (callback)
             callback(isOpened);
     }, [isOpened]);
-    // console.log(name, isOpened)
+
     const modal = <Modal contentInner={children}
                          name={name}
                          isOpened={isOpened}
                          closeCallback={backgroundClick}
-                         key={name}
-                         item={transform}></Modal>;
+                         key={name}></Modal>;
 
     return (
         <div className={"modal-manager"} ref={ref}>
             {modal}
-            {/*{transform ? <TransformItem>*/}
-            {/*    {modal}*/}
-            {/*</TransformItem> : modal}*/}
         </div>
     );
 }

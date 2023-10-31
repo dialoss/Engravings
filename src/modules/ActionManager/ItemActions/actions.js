@@ -11,8 +11,8 @@ export default class Actions {
         for (let i = requests.length - 1; i >= 0; i--) {
             let request = requests[i];
 
-            if (!request.parent) request.parent = actionElement.parent;
-            if (!request.parent_0) request.parent_0 = actionElement.parent_0;
+            if (request.specifyElement) request.id = actionElement.id;
+            if (request.specifyParent) request.parent = actionElement.id;
 
             let url = '/api/items/';
             if (request.method !== 'POST') {
@@ -25,7 +25,7 @@ export default class Actions {
             }
 
             let storeMethod = request.method;
-            if (request.parent !== request.parent_0 && request.method === 'POST') storeMethod = 'PATCH';
+            request.parent && request.parent !== request.parent_0 && request.method === 'POST' && (storeMethod = 'PATCH');
 
             request = {
                 data: request,
@@ -41,6 +41,7 @@ export default class Actions {
         return [{
             method: 'POST',
             type: 'base',
+            specifyParent: true,
             description: 'Text Field',
             title: 'Text Field',
             display_pos: actionElement.display_pos,
@@ -49,7 +50,7 @@ export default class Actions {
 
     static add(item='') {
         if (!item) {
-            triggerEvent('form:set-data', {type:'add', element: actionElement});
+            triggerEvent('form:set-data', {method:'POST', element: actionElement});
             return [];
         }
         let itemData = {
@@ -62,10 +63,13 @@ export default class Actions {
             case 'price':
                 itemData.price = '999';
                 break;
+            case 'timeline_entry':
+                itemData.title = 'test';
+                break;
         }
         return [{
             method: 'POST',
-            element: {type: 'item'},
+            specifyParent: true,
             ...itemData,
         }]
     }
@@ -73,13 +77,13 @@ export default class Actions {
     static edit(item='') {
         if (actionElement.id === -1) return [];
         if (!item) {
-            triggerEvent('form:set-data', {type:'edit', element: actionElement});
+            triggerEvent('form:set-data', {method:'PATCH', element: actionElement});
             return [];
         }
-        return [{...{
+        return [{
             method: 'PATCH',
-            element: {},
-        }, ...getSettings(item, actionElement.data)}];
+            specifyElement: true,
+         ...getSettings(item, actionElement.data)}];
     }
 
     static baseAction(type, name) {
@@ -105,29 +109,17 @@ export default class Actions {
         setUnselected();
         let historyData = Actions.history.slice(-1)[0];
         let action = actionElement;
-        if (action.type === 'item') {
-            return [];
-        }
+
         let actionData = structuredClone(action.data);
-        actionData.items = [];
+
         let request = [];
-        let items = false;
         historyData.elements.forEach(el => {
-            if (el.type === 'item') {
-                request.push({...el.data, display_pos: actionData.display_pos,
-                    method: 'POST', element:{type:'item'}});
-            } else {
-                items = true;
-                actionData.items = [...actionData.items, el.data];
-            }
+            request.push({...el.data, display_pos: actionData.display_pos,
+                method: 'POST', parent: action.id, id: '', parent_0: '', create_items: true});
         });
-        let method = 'PATCH';
-        if (action.type === 'screen') method = 'POST';
-        if (items) request.push({...actionData, method, element: {type:'item', id: actionData.id}});
 
         if (historyData.type === 'cut') {
-            actionElements = historyData.elements;
-            request = [...request, ...Actions.delete()];
+            request = [...request, ...Actions.delete(historyData.elements)];
         }
         function clearSelection(elements, name) {
             elements.forEach(el => el.html.classList.remove(name));
@@ -136,9 +128,9 @@ export default class Actions {
         return request;
     }
 
-    static delete() {
+    static delete(elements=[]) {
         const f = el => ({id: el.id, method: 'DELETE'});
-        let data = actionElements.map(el => f(el));
+        let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
         return data;
     }
@@ -174,12 +166,11 @@ const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: fal
 
 export function serializeActions(actions, actionElement, depth=0) {
     actions = structuredClone(actions);
-    if (actionElement.id !== -1 && depth === 0) actions.edit.actions = actions.edit.actions[actionElement.type].actions;
     return Object.keys(actions).map(name => {
         let action = actions[name];
         let subActions = action.actions || [];
         let text = action.text;
-        if (['show_shadow', 'show_date'].includes(name)) {
+        if (actionElement.id && ['show_shadow', 'show_date'].includes(name)) {
             text = getSettingText(text, actionElement.data && actionElement.data[name]);
         }
         let functionName = action.callback || name;

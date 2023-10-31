@@ -9,7 +9,7 @@ const PageComments = () => {
         <div className={"comments " + location.pageID}>
             <Container>
                 <div className="comments__inner">
-                    <Comments page={'gavno'}></Comments>
+                    <Comments page={location.relativeURL.slice(1, -1).replaceAll('/', '$')}></Comments>
                 </div>
             </Container>
         </div>

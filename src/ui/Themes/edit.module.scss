@@ -1,13 +1,13 @@
-.wrapper-base {
+.wrapper-inner {
   outline: 2px dashed gray;
   &:hover {
     outline: 3px dashed blue;
   }
+}
 
-  .item {
-    &:hover {
-      outline: 2px dashed red;
-    }
+.item {
+  &:hover {
+    outline: 2px dashed red;
   }
 }
 

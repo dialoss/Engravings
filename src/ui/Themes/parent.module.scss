@@ -16,7 +16,7 @@ $color-item-hover: rgb(141, 176, 236);
         }
     }
 
-    .item {
+    .item-base {
         background-color: $color-item-background;
         text-align: center;
         box-shadow: 0 0 7px 0 grey;
@@ -39,29 +39,6 @@ $color-item-hover: rgb(141, 176, 236);
             left: 0;
             top: 0;
             z-index: $zindex-item-link;
-        }
-
-        .items {
-            display: flex;
-            position: relative;
-            align-content: flex-start;
-            justify-content: center;
-            flex-wrap: wrap;
-
-            height: 100%;
-            width: 100%;
-
-            &--1 .item__wrapper {
-                max-width: 100%
-            }
-
-            &--2 .item__wrapper {
-                max-width: 50%
-            }
-
-            &--3 .item__wrapper {
-                max-width: 33.3333%;
-            }
         }
     }
 

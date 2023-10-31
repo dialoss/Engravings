@@ -11,7 +11,7 @@ function bounds(n, bound) {
 }
 
 const CarouselContainer = () => {
-    const items = useSelector(state => state.elements.items);
+    const items = useSelector(state => state.elements.itemsAll);
     const [content, setContent] = useState([]);
     const contentRef = useRef();
     contentRef.current = content;
@@ -50,20 +50,18 @@ const CarouselContainer = () => {
 
     useLayoutEffect(() => {
         let newContent = [];
-        items.forEach(item => {
-            item.items.forEach(item => {
-                if (item.type !== 'image') return;
-                newContent.push({
-                    navigation: true,
-                    id: item.id,
-                    url: item.url,
-                    info: {
-                        title: item.title || item.title,
-                        description: item.description || item.description,
-                        filename: item.file,
-                    }
-                });
-            })
+        Object.values(items).forEach(item => {
+            if (item.type !== 'image') return;
+            newContent.push({
+                navigation: true,
+                id: item.id,
+                url: item.url,
+                info: {
+                    title: item.title || item.title,
+                    description: item.description || item.description,
+                    filename: item.file,
+                }
+            });
         })
         setContent(newContent);
     }, [items]);

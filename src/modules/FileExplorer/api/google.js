@@ -162,6 +162,7 @@ export function serializeFile(file) {
         'size': +file.fileSize || 0,
         'hash': id + (new Date().getTime()),
         'thumb': thumb,
+        'url': "https://drive.google.com/uc?id=" + id,
         'urn': props,
         'filetype': fileType,
         'modifiedTime': dayjs(file.modifiedDate).format("HH:mm DD.MM.YYYY"),

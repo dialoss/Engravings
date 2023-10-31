@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import TextEditor from "ui/TextEditor/TextEditor";
 import {triggerEvent} from "../../helpers/events";
+// import "components/Messenger/Input/MessengerInput.scss";
 
 const InlineEditor = ({data, closeCallback, mount}) => {
     const [value, setValue] = useState({text: data.value});
@@ -23,10 +24,16 @@ const InlineEditor = ({data, closeCallback, mount}) => {
     }, []);
 
     return (
-        <TextEditor ref={ref}
-                    config={data.config}
-                    message={value}
-                    callback={setValue}></TextEditor>
+        // <div className={"custom-input messenger-input"}>
+        //     <div className={"input-field"}>
+        //         <div className="editor-wrapper">
+                    <TextEditor ref={ref}
+                                config={data.config}
+                                message={value}
+                                callback={setValue}></TextEditor>
+                // </div>
+            // </div>
+        // </div>
     );
 };
 

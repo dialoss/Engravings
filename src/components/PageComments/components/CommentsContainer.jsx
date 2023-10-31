@@ -4,7 +4,7 @@ import {doc, updateDoc} from "firebase/firestore";
 import InputContainer from "../../Messenger/Input/InputContainer";
 import Comments from "./Comments";
 import TextEditor from "../../../ui/TextEditor/TextEditor";
-import {InputAttachment, InputEmoji, InputSend} from "../../Messenger/Input/MessengerInput";
+import {AttachmentPreview, InputAttachment, InputEmoji, InputSend} from "../../Messenger/Input/MessengerInput";
 import Container from "../../../ui/Container/Container";
 import "./Comments.scss";
 import {actions} from "../store/reducers";
@@ -30,6 +30,7 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
                     </div>
                 </div>
             </div>
+            <AttachmentPreview message={message}></AttachmentPreview>
             <ActionButton onClick={sendCallback} key={'comments-send'}>Отправить</ActionButton>
         </div>
     );
@@ -40,7 +41,7 @@ export const CommentsContext = createContext(null);
 const CommentsContainer = ({page}) => {
     const [comments, setComments] = useState({});
     const [commentsTree, setCommentsTree] = useState({});
-    const [sorting, setSorting] = useState(null);
+    const [sorting, setSorting] = useState(() => () => {});
 
     const config = {
         onsuccess: (message) => {},
@@ -51,7 +52,7 @@ const CommentsContainer = ({page}) => {
         messageSubmit: () => [true, ''],
     }
     useEffect(() => {
-        setCommentsTree(createCommentsTree(Object.values(comments), sorting || (()=>{})));
+        setCommentsTree(createCommentsTree(Object.values(comments), sorting));
     }, [sorting, comments]);
 
     const manager = new MessageManager('comments', actions, config);
@@ -63,7 +64,7 @@ const CommentsContainer = ({page}) => {
             <div className={"comments-section"}>
                 <div className="comments-section__header">
                     <InputContainer children={CommentsInput} manager={manager}></InputContainer>
-                    <CommentsTools callback={(e) => setSorting(sortFunction(e.target.value))}></CommentsTools>
+                    <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
                 </div>
                 <div className={"comments"}>
                     <Comments comments={commentsTree}></Comments>

@@ -52,25 +52,29 @@ export const QuillModules = {
     editor: {
         toolbar: [
             ['bold', 'italic', 'underline', 'strike'],
-            ['blockquote', 'code-block'],
             [{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
 
-            [{'header': 1}, {'header': 2}],
             [{'header': [1, 2, 3, 4, 5, 6, false]}],
             [{'list': 'ordered'}, {'list': 'bullet'}],
-            [{'script': 'sub'}, {'script': 'super'}],
             [{'indent': '-1'}, {'indent': '+1'}],
 
             [{'size': fontSizeArr}],
 
             [{'color': []}],
-            [{'font': []}],
 
             ['clean']
         ]
     },
     simple: {
         toolbar: false
+    },
+    messenger: {
+        toolbar: {
+            container: [
+                ['emoji', 'attachment'],
+                ['clean']
+            ],
+        },
     },
     comments: {
         toolbar: {

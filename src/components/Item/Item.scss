@@ -16,6 +16,32 @@
     opacity: 0.5;
   }
 
+  .item-data {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  .items-wrapper {
+    align-content: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    display: flex;
+    width: 100%;
+    &--1 .transform-item {
+      width: 100%
+    }
+
+    &--2 .transform-item {
+      width: 50%
+    }
+
+    &--3 .transform-item {
+      width: 33.3333%;
+    }
+  }
+
   &__wrapper {
     &:hover.edit {
       outline: 2px dashed red;

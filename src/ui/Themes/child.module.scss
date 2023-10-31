@@ -10,25 +10,24 @@
     padding: 5px;
 }
 
-.item-base {
-    background-color: white;
-    box-shadow: none;
-    border-radius: 0;
-    height: auto;
-
-    &:hover {
-        .item__wrapper {
-            opacity: 1;
-        }
-        opacity: 1;
+.wrapper-base {
+    .item-base {
         background-color: white;
-        cursor: default;
-    }
+        box-shadow: none;
+        border-radius: 0;
+        height: auto;
 
-    &__wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
+        &:hover {
+            opacity: 1;
+            //background-color: white;
+            cursor: default;
+        }
+
+        &__wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
     }
 }

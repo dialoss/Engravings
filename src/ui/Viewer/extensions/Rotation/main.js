@@ -75,8 +75,8 @@ export class TurnTableExtension extends Autodesk.Viewing.Extension {
 
             const nav = viewer.navigation;
             const up = nav.getCameraUpVector();
-            const axis = new THREE.Vector3(0, 0, 1);
-            const speed = 10.0 * Math.PI / 180;
+            const axis = new THREE.Vector3(0, 1, 0);
+            const speed = 4.0 * Math.PI / 180;
             const matrix = new THREE.Matrix4().makeRotationAxis(axis, speed * 0.1);
 
             let pos = nav.getPosition();

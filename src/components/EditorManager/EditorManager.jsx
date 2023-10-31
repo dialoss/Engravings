@@ -3,6 +3,7 @@ import {useAddEvent} from "hooks/useAddEvent";
 import InlineEditor from "components/InlineEditor/InlineEditor";
 import {createPortal} from "react-dom";
 import {triggerEvent} from "helpers/events";
+import {clearTextFromHTML} from "../../ui/TextEditor/helpers";
 
 const EditorManager = () => {
     const [editors, setEditors] = useState([]);
@@ -43,12 +44,11 @@ const EditorManager = () => {
             }).filter(Boolean)
         );
         let type = mount.classList[1].split('-')[1];
-        let data = {method: "PATCH"};
+        let data = {method: "PATCH", specifyElement: true};
         if (type === 'textfield') {
-            data = {...data, type, text: value, element: {type: 'item'}};
+            data = {...data, type, text: value};
         } else {
-            data.element = {};
-            data[type] = value;
+            data[type] = clearTextFromHTML(value);
         }
         triggerEvent("action:callback", [data]);
     }, []);

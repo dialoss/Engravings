@@ -3,20 +3,22 @@ import "./file-explorer/file-explorer.css";
 import "./file-explorer/file-explorer";
 import {init} from "./config";
 import "./Custom.scss";
-import {getElementFromCursor} from "../../helpers/events";
+import {getElementFromCursor, triggerEvent} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
 import FormInput from "../../components/Modals/MyForm/Input/FormInput";
 import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
 import {useAddEvent} from "../../hooks/useAddEvent";
+import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
+import {ImageEditor} from "./ImageEditor/ImageEditor";
 
 export function fileToItem(data) {
     return {
+        specifyParent: true,
         urn: data.urn,
         type: data.type,
         filename: data.name,
         method: 'POST',
-        element: {type: 'item'},
         url: "https://drive.google.com/uc?id=" + data.id,
     }
 }
@@ -36,6 +38,8 @@ export function initLayout() {
         };
     }
 }
+
+let globalsearch = [];
 
 export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setData, searchBy, ...props}) => {
     const [value, setValue] = useState('');
@@ -68,14 +72,19 @@ export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setD
 
 const SortContainer = ({data, setData, config}) => {
     const field = config.sortBy;
+
     function handleSort() {
-        let newData = [...data.current.sort((a, b) => {
+        window.filemanager.fromSearch = true;
+
+        console.log(globalsearch)
+        let test = JSON.parse(JSON.stringify(globalsearch));
+        let a = test.sort((a,b) => {
             if (a[field] < b[field]) return -1;
             if (a[field] > b[field]) return 1;
             return 0;
-        })];
-        console.log('sorted',newData)
-        setData(newData);
+        });
+        console.log(a)
+        setData(structuredClone(a));
     }
     return (
         <p className={config.name} onClick={handleSort}>{config.text}</p>
@@ -125,24 +134,12 @@ const FileExplorer = () => {
     const [view, setView] = useState(0);
     const [folder, setFolder] = useState([]);
     const [search, setSearch] = useState([]);
-    const searchRef = useRef();
-    searchRef.current = search;
+
     useEffect(() => {
         ref.current.querySelector('.filemanager-view__button').addEventListener('click', () => setView(v => (v + 1) % ExplorerViews.length));
         scale.current = 4;
         ref.current.style.setProperty('--icon-size', scale.current + 'em');
 
-        window.filemanager.addEventListener('test', () => console.log(123));
-
-        window.filemanager.addEventListener('history_changed', () => {
-            const f = window.filemanager.GetCurrentFolder();
-            f.addEventListener('set_entries', (fromSearch) => {
-                if (!fromSearch) {
-                    setFolder(f.GetEntries());
-                    setSearch(f.GetEntries());
-                }
-            })
-        })
         let textBar = document.createElement('div');
         textBar.classList.add('filemanager-textbar');
         let field = ref.current.querySelector('.fe_fileexplorer_toolbar');
@@ -151,13 +148,12 @@ const FileExplorer = () => {
         const filemanagerRoot = createRoot(textBar);
         filemanagerRoot.render(<div className="filemanager-sort fe_fileexplorer_item_text">
             {
-                TextBar.map(t => <SortContainer data={searchRef}
+                TextBar.map(t => <SortContainer data={search}
                                                 config={t}
                                                 setData={setSearch} key={t.sortBy}>
                 </SortContainer>)
             }
         </div>);
-
     }, []);
 
     useLayoutEffect(() => {
@@ -187,31 +183,45 @@ const FileExplorer = () => {
         window.filemanager.RefreshFolders(true);
     }
     console.log(search)
+
     useLayoutEffect(() => {
         try {
-            window.filemanager.GetCurrentFolder().SetEntries(search, true);
+            console.log(search)
+            window.filemanager.GetCurrentFolder().SetEntries(search);
         } catch (e) {}
     }, [search]);
 
-    useAddEvent("filemanager-window:toggle", ({callback}) => {
-        window.filemanager.onopenfile = (folder, entry) => callback(entry);
+    useAddEvent('filemanager:changeFolder', () => {
+        if (window.filemanager.fromSearch) {
+            window.filemanager.fromSearch = false;
+            return;
+        }
+        const f = window.filemanager.GetCurrentFolder();
+        setFolder(f.GetEntries());
+        setSearch(f.GetEntries());
+        globalsearch = f.GetEntries();
+    });
+
+    useAddEvent("filemanager:open", (event) => {
+        const openFile = (folder, entry) => {
+            event.detail.callback(entry);
+            window.filemanager.removeEventListener('open_file', openFile);
+        }
+        window.filemanager.addEventListener('open_file', openFile);
+        triggerEvent("filemanager-window:toggle", {isOpened: true});
     })
 
-    const [pin, setPin] = useState(true);
-    const closeConditions = ['btn', 'esc', pin ? '' : 'bg'];
     return (
-        <ModalManager name={"filemanager-window:toggle"}
-                      transform={{position:'fixed', left:'20', top:'150', max_width:'70', zIndex:25}}
-                      closeConditions={closeConditions}>
-            <div className={"filemanager"} ref={ref} style={{bg: 'bg-none'}}>
+        <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
+            <TransformItem config={{position:'fixed', left:'20', top:'150', max_width:'70', zIndex:25}} style={{bg: 'bg-none'}}>
+            <div className={"filemanager"} ref={ref}>
                 <div className={"filemanager-header__wrapper transform-origin"}>
                     <div className="filemanager-header buttons">
                         <div className="window-close filemanager-header__button close">
                         </div>
-                        <div className="filemanager-header__button pin" onClick={() => setPin(p => !p)}>
-                        </div>
                     </div>
                     <div className="filemanager-header toolbar">
+                        <ImageEditor></ImageEditor>
                         <div className="filemanager-search">
                             <SearchContainer data={folder}
                                              searchBy={'name'}
@@ -219,13 +229,15 @@ const FileExplorer = () => {
                                              placeholder={'Поиск по файлам'}>
                             </SearchContainer>
                         </div>
-                        <div className="filemanager-header__button refresh" onClick={refreshFolder}>
+                        <div className="button refresh" onClick={refreshFolder}>
+                            Обновить
                         </div>
-                        <div className="filemanager-view__button"></div>
+                        <div className="button filemanager-view__button">Вид</div>
                     </div>
                 </div>
                 <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
             </div>
+            </TransformItem>
         </ModalManager>
     );
 };

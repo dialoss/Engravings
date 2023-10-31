@@ -28,7 +28,7 @@ export function createCommentsTree(comments, sorting) {
 }
 
 export function sortFunction(type) {
-    let sorting = null;
+    let sorting = () => {};
     const d = (ds) => new Date(ds).getTime();
     switch (type) {
         case "newest":
@@ -46,5 +46,5 @@ export function sortFunction(type) {
             }
             break;
     }
-    return sorting || (() => {});
+    return sorting;
 }

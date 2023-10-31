@@ -40,10 +40,28 @@
     position: relative;
     margin-bottom: 40px;
   }
+  .input-field {
+    padding: 10px;
+    border-top: none;
+  }
 
   .comments-input {
     display: flex;
     flex-direction: column;
+    .ql-container {
+      min-height: 80px;
+      max-height: 150px;
+    }
+    .ql-editor {
+      border-radius: 6px;
+      padding: 10px;
+      box-shadow: inset 0 0 3px 0 grey;
+    }
+    .ql-container p {
+      position: initial;
+      width: auto;
+      padding: 0;
+    }
     .action-button {
       z-index: 2;
       bottom: -30px;
@@ -65,14 +83,7 @@
     max-width: 90vw;
   }
 
-  .input-field {
-    padding: 10px;
-    border-top: none;
-    min-height: 200px;
-  }
-
   .info__paragraph-comment {
-    display: flex;
     text-align: left;
     width: 100%;
     padding: 10px 0;
@@ -160,13 +171,7 @@
     border: none;
   }
 
-  .ql-editor {
-    p {
-      padding: 10px;
-      height: 100%;
-    }
-    box-shadow: inset 0 0 3px 0 grey;
-  }
+
   .icon-emojis {
     .modal__window {
       top: 50px;

@@ -7,22 +7,30 @@ import ItemVideo from "./Video/ItemVideo";
 import Viewer from "./Model/Viewer";
 import {triggerEvent} from "helpers/events";
 import ItemBase from "./Base/BaseItem";
+import PageFrom from "./PageFrom/PageFrom";
+import ItemTimeline from "./Timeline/ItemTimeline";
+import ItemPrice from "./Price/ItemPrice";
+import TimelineEntry from "./Timeline/TimelineEntry";
 import ItemLink from "./Link/ItemLink";
 
 export const Components = {
     'base': ItemBase,
     'link': ItemLink,
+    'page_from': PageFrom,
     'image': ItemImage,
     'table': ItemTable,
     'video': ItemVideo,
     'file': ItemFile,
     'model': Viewer,
     'textfield': ItemTextfield,
+    'timeline': ItemTimeline,
+    'timeline_entry': TimelineEntry,
+    'price': ItemPrice,
 }
 
 const ItemData = ({data, props}) => {
     const loadCallback = () =>
-        data.parent.includes('item') && triggerEvent("container:init", {container: props.container, item: props.itemTransform});
+        triggerEvent("container:init", {container: props.container, item: props.itemTransform});
     useEffect(() => {
         if (!!props.itemTransform && props.itemTransform.style.position === "absolute") {
             loadCallback();

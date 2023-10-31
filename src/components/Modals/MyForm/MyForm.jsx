@@ -9,7 +9,7 @@ import ActionButton from "ui/Buttons/ActionButton/ActionButton";
 const FormBlock = ({formField}) => {
     return (
         <div className="form__block">
-            <p>{formField.text}</p>
+            <p>{formField.label}</p>
             <FormComponent field={formField}></FormComponent>
         </div>
     );

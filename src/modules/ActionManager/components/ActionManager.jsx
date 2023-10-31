@@ -6,7 +6,7 @@ import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
 import CarouselContainer from "components/Modals/Carousel/CarouselContainer";
 import {ActionForm} from "modules/ActionForm";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
-import Actions from "components/Modals/ContextMenu/components/ItemActions/actions";
+import Actions from "modules/ActionManager/ItemActions/actions";
 import {useSelector} from "react-redux";
 import {triggerEvent} from "../../../helpers/events";
 import FileExplorer from "../../FileExplorer/FileExplorer";
@@ -14,7 +14,7 @@ import {FirebaseContainer} from "../../../api/FirebaseContainer";
 import Modal from "../../../ui/Modal/Modal";
 import {ModalManager} from "../../../components/ModalManager";
 import {FormContainer} from "../../ActionForm/FormContainer";
-import ItemActions from "../../../components/Modals/ContextMenu/components/ItemActions/EntryActions";
+import ItemActions from "../ItemActions/EntryActions";
 
 
 const ActionManager = () => {
@@ -24,11 +24,14 @@ const ActionManager = () => {
     function actionCallback(event) {
         Actions.action(event.detail);
     }
+    function closePrompt() {
+        setPrompt(p => ({...p, isOpened:false}));
+    }
     useAddEvent('action:init', initAction);
     useAddEvent('action:callback', actionCallback)
 
-    const [prompt, setPrompt] = useState({isOpened: false, text: ''});
-    useAddEvent('firebase:user-prompt', (event) => setPrompt({isOpened: true, ...event.detail}))
+    const [prompt, setPrompt] = useState({isOpened: false, text: '', data:{}, button:''});
+    useAddEvent('user-prompt', (event) => setPrompt({isOpened: true, ...event.detail}))
     console.log('pr', prompt)
     const user = useSelector(state => state.users.current);
     return (
@@ -42,13 +45,10 @@ const ActionManager = () => {
             }
             <ModalManager name={'user-prompt:toggle'}
                           defaultOpened={prompt.isOpened}
-                          closeConditions={[]}
-                          >
+                          callback={closePrompt}
+                          closeConditions={['btn']}>
                 <div className={"user-prompt"} style={{bg:'bg-none', win:'centered', boxShadow:'0 0 2px 2px grey', borderRadius:8}}>
-                    <FormContainer formData={{
-                        button: 'ок',
-                        title: prompt.text,
-                        data: prompt.data || {}}} callback={() => setPrompt(p => ({...p, isOpened:false}))}>
+                    <FormContainer formData={prompt} callback={closePrompt}>
                     </FormContainer>
                 </div>
             </ModalManager>

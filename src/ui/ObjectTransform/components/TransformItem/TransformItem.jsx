@@ -15,6 +15,7 @@ const TransformItem = ({children, config}) => {
         return "auto";
     }
     const initialTransform = {
+        height: formatProperty('height',config.max_height, "%"),
         width: formatProperty('width',config.max_width, "%"),
         left: formatProperty('left',config.left, "%"),
         top: formatProperty('top', config.top,"px"),

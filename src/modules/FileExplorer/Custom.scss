@@ -93,10 +93,12 @@ $border: solid #7c7c7c;
       border-top: 1px $border;
       border-bottom: none;
 
-      .filemanager-header__button {
-        width: 30px;
+      .button {
         height: 26px;
-        background-color: #1EC73A;
+        background-color: $color-link-background;
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
 
@@ -149,9 +151,9 @@ $border: solid #7c7c7c;
 
 
 .filemanager-view__button {
-  width: 50px;
+  //width: 50px;
   height: 26px;
-  background-color: red;
+  background-color: $color-link-background;
 }
 
 .filemanager-search {
@@ -214,7 +216,7 @@ $border: solid #7c7c7c;
   opacity: 0;
   transition: visibility 0.3s linear, opacity 0.3s linear;
 
-  .item {
+  .tooltip-item {
     display: flex;
     column-gap: 5px;
     p {
@@ -225,4 +227,8 @@ $border: solid #7c7c7c;
       display: inline;
     }
   }
+}
+
+.filemanager-window {
+  z-index: 25 !important;
 }

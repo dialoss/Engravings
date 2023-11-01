@@ -28,6 +28,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
         })
         let field = root.root;
         simple && (field.dataset.placeholder = 'Сообщение');
+        field.addEventListener('keydown', (e) => e.stopPropagation());
         field.focus();
         field.addEventListener('blur', (e) => {
             let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window', 'sidebar-item__wrapper']);
@@ -41,8 +42,8 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
         const toolbar = field.closest('.quill').querySelector('.ql-toolbar');
         createRoot(toolbar.querySelector('.ql-emoji')).render(
             <InputEmoji callback={(v) => {
-                console.log(v)
-                const pos = root.getSelection().index;
+                // console.log(v)
+                // const pos = root.getSelection().index;
                 callback(m => ({...m, text: m.text + v}));
             }}></InputEmoji>);
         createRoot(toolbar.querySelector('.ql-attachment')).render(
@@ -65,6 +66,9 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             <ReactQuill className={"ql-" + config}
                         ref={ref || msgRef}
                         theme="snow"
+                        // value={!value ? '<br>' : `<p>${value}</p>`}
+                        // onChange={(val) => {
+                        //     inputCallback(val.replaceAll(/<\/?p[^>]*>/g, '').replace('<br>', ''));
                         value={message.text}
                         onChange={inputCallback}
                         modules={modules}/>

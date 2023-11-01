@@ -1,9 +1,5 @@
 export function createCommentsTree(comments, sorting) {
-    let newComments = comments.sort(sorting).sort((a, b) => {
-        if (a.parent < b.parent) return -1;
-        if (a.parent > b.parent) return 1;
-        return 0;
-    });
+    let newComments = comments.sort(sorting).sort((a, b) => a.parent - b.parent);
 
     let tree = {};
     let links = {};
@@ -32,18 +28,10 @@ export function sortFunction(type) {
     const d = (ds) => new Date(ds).getTime();
     switch (type) {
         case "newest":
-            sorting = (a, b) => {
-                if (d(a.timeSent) > d(b.timeSent)) return -1;
-                if (d(a.timeSent) < d(b.timeSent)) return 1;
-                return 0;
-            }
+            sorting = (a, b) => d(b.timeSent) - d(a.timeSent);
             break;
         case "oldest":
-            sorting = (a, b) => {
-                if (d(a.timeSent) < d(b.timeSent)) return -1;
-                if (d(a.timeSent) > d(b.timeSent)) return 1;
-                return 0;
-            }
+            sorting = (a, b) => d(a.timeSent) - d(b.timeSent);
             break;
     }
     return sorting;

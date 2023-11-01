@@ -6,7 +6,6 @@ import TransformItem from "../../ui/ObjectTransform/components/TransformItem/Tra
 import TransformContainer from "../../ui/ObjectTransform/components/TransformContainer/TransformContainer";
 
 const Item = ({item, depth=0}) => {
-
     let mediaItems = 0;
     let itemsRow = 1;
     item.items.forEach(item => {
@@ -41,14 +40,15 @@ const Item = ({item, depth=0}) => {
     const theme = useContext(ActiveThemes);
     const style = (name) => Object.values(theme).map(th => th[name]).join(' ');
     return (
-        <TransformItem key={item.id} config={item}>
+        <TransformItem key={item.id} config={item} className={'item-' + item.type}>
             <div className={style('wrapper-' + item.type) + ' ' + style('wrapper-inner')}>
                 <div className={`item item-${item.type} depth-${depth} transform-origin ${style('item-' + item.type)}`}
                      data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
                      onDragStart={e => e.preventDefault()}>
 
-                    <TransformContainer width={item.container_width} height={item.type !== 'base' ? 'fixed' : ''}>
-                        {item.type !== 'timeline' && <div className={'items-wrapper items-wrapper--' + itemsRow}>
+                    <TransformContainer width={item.container_width} height={item.height === 'auto' ? 'fixed' : item.height}>
+                        {!['timeline'].includes(item.type)
+                            && <div className={'items-wrapper items-wrapper--' + itemsRow}>
                             {
                                 item.items && item.items.map(item =>
                                     <Item depth={depth + 1} item={item} key={item.id}></Item>)

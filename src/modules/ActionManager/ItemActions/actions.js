@@ -25,7 +25,7 @@ export default class Actions {
             }
 
             let storeMethod = request.method;
-            request.parent && request.parent !== request.parent_0 && request.method === 'POST' && (storeMethod = 'PATCH');
+            if ((request.parent || request.parent_0) && request.method === 'POST') storeMethod = 'PATCH';
 
             request = {
                 data: request,
@@ -55,8 +55,12 @@ export default class Actions {
         }
         let itemData = {
             type: item,
+            display_pos: actionElement.display_pos,
         }
         switch (item) {
+            case 'table':
+                itemData.width = 30;
+                itemData.height = 100;
             case 'textfield':
                 itemData.text = 'Text Field';
                 break;
@@ -65,6 +69,52 @@ export default class Actions {
                 break;
             case 'timeline_entry':
                 itemData.title = 'test';
+                break;
+            case 'intro':
+                itemData.type = 'base';
+                itemData.create_items = true;
+                itemData.container_width = 900;
+                itemData.items = [
+                    {
+                        show_shadow: false,
+                        movable: false,
+                        type: 'subscription',
+                        left: 10,
+                        width: 35,
+                        height: 500,
+                        top: 50,
+                        position: 'absolute',
+                    },
+                    {
+                        text: '<h1>Заголовок</h1>',
+                        type: 'textfield',
+                        movable: false,
+                        left: 50,
+                        top: 80,
+                        width: 50,
+                        show_shadow: false,
+                        position: 'absolute',
+                    },
+                    {
+                        type: 'textfield',
+                        text: 'Текст',
+                        top: 160,
+                        width: 50,
+                        left: 50,
+                        show_shadow: false,
+                        position: 'absolute',
+                    },
+                    {
+                        type: 'price',
+                        price: 999,
+                        button: "Заказать изготовление",
+                        left: 25,
+                        width: 45,
+                        top: 500,
+                        show_shadow: false,
+                        position: 'absolute',
+                    }
+                ];
                 break;
         }
         return [{
@@ -150,7 +200,7 @@ function getSettings(name, data) {
             };
         case 'clear_size':
             return {
-                'max_width': 'auto',
+                'width': 'auto',
             };
     }
 }

@@ -59,7 +59,7 @@ export class TurnTableExtension extends Autodesk.Viewing.Extension {
 
         this._button = new Autodesk.Viewing.UI.Button('turnTableButton');
         this._button.addClass('toolbarCameraRotation');
-        this._button.setToolTip('Start/Stop Camera rotation');
+        this._button.setToolTip('Включить/Остановить вращение модели');
 
         // _group
         this._group = new Autodesk.Viewing.UI.ControlGroup('CameraRotateToolbar');

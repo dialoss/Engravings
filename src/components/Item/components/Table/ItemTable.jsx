@@ -7,6 +7,7 @@ const ItemTable = ({data, loadCallback}) => {
     const [table, setTable] = useState([]);
 
     useEffect(() => {
+        if (!data.url) return;
         fetchRequest(data.url).then(res => res.arrayBuffer()).then(file => {
             let data = new Uint8Array(file);
             let arr = [];

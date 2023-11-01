@@ -30,6 +30,16 @@ export const ContextActions = {
                     },
                 }
             },
+            'intro': {
+                callback: 'add',
+                argument: true,
+                text: 'Шапка',
+            },
+            'table': {
+                callback: 'add',
+                argument: true,
+                text: 'Таблица',
+            },
         }
     },
     'edit':{

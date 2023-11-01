@@ -21,7 +21,7 @@ export const elementsSlice = createSlice({
         },
         setElements: (state, {payload: {items, page}}) => {
             state.items = items;
-            state.cache[page] = items;
+            state.cache[page] = [...(state.cache[page]||[]), ...items];
             return state;
         },
         setActionElement: (state, {payload: {actionElement}}) => {

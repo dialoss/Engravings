@@ -4,9 +4,9 @@ import MyMasonry from "ui/Masonry/MyMasonry";
 import Container from "ui/Container/Container";
 import {ActiveThemes} from "ui/Themes/index";
 import NavButton from "../../ui/Navbar/Button/NavButton";
-import styles from "./ItemList.module.scss";
+import "./ItemList.scss";
 
-const ItemList = ({items}) => {
+const ItemList = ({items, className}) => {
     const style = useContext(ActiveThemes).listStyle;
     let columns = style && +style.masonry;
     let points = style && JSON.parse(style.widthPoints);
@@ -18,8 +18,8 @@ const ItemList = ({items}) => {
         setColumns(Math.max(1, ((mCols + (curColumns + 1)) % mCols)));
     }
     return (
-        <div className="item-list">
-            <NavButton className={styles.nav__button} data={{text: 'Change Layout', callback: calcForceColumns}}></NavButton>
+        <div className={"item-list " + className}>
+            <NavButton className={"itemlist"} data={{text: '', callback: calcForceColumns}}></NavButton>
             <Container style={{marginBottom: "50px"}}>
                 {!!style && <MyMasonry
                     maxColumns={columns}

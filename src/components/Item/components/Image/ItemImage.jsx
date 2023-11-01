@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef} from 'react';
 import './ItemImage.scss';
 import {triggerEvent} from "helpers/events";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";
+import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 
 const ItemImage = ({data, loadCallback, ...props}) => {
     const ref = useRef();
@@ -15,6 +16,7 @@ const ItemImage = ({data, loadCallback, ...props}) => {
             <img src={data.url} alt=""
                  onClick={carouselCallback}
                  onDragStart={e => e.preventDefault()}/>
+            <InfoBlock data={data}></InfoBlock>
         </div>
     );
 };

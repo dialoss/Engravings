@@ -134,6 +134,7 @@ const FileExplorer = () => {
     const [view, setView] = useState(0);
     const [folder, setFolder] = useState([]);
     const [search, setSearch] = useState([]);
+    const [curImage, setImage] = useState(null);
 
     useEffect(() => {
         ref.current.querySelector('.filemanager-view__button').addEventListener('click', () => setView(v => (v + 1) % ExplorerViews.length));
@@ -154,6 +155,19 @@ const FileExplorer = () => {
                 </SortContainer>)
             }
         </div>);
+
+
+        const openFile = (folder, entry) => {
+            if (entry.filetype !== 'image') return;
+            let pic = new Image();
+            pic.src = entry.url;
+            pic.onload = () => {
+                setImage(pic);
+            }
+            console.log(entry)
+        }
+        window.filemanager.addEventListener('open_file', openFile);
+        // return () => window.filemanager.removeEventListener('open_file', openFile);
     }, []);
 
     useLayoutEffect(() => {
@@ -202,10 +216,13 @@ const FileExplorer = () => {
         globalsearch = f.GetEntries();
     });
 
+
     useAddEvent("filemanager:open", (event) => {
+        // window.filemanager.removeEventListener('open_file', openFile);
+
         const openFile = (folder, entry) => {
             event.detail.callback(entry);
-            window.filemanager.removeEventListener('open_file', openFile);
+            triggerEvent("filemanager-window:toggle", {isOpened: false});
         }
         window.filemanager.addEventListener('open_file', openFile);
         triggerEvent("filemanager-window:toggle", {isOpened: true});
@@ -213,29 +230,31 @@ const FileExplorer = () => {
 
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={{position:'fixed', left:'20', top:'150', max_width:'70', zIndex:25}} style={{bg: 'bg-none'}}>
+            <TransformItem config={{position:'fixed', left:'20', top:'150', width:'70', zIndex:25}} style={{bg: 'bg-none'}}>
             <div className={"filemanager"} ref={ref}>
-                <div className={"filemanager-header__wrapper transform-origin"}>
-                    <div className="filemanager-header buttons">
-                        <div className="window-close filemanager-header__button close">
+                <div className="filemanager-left">
+                    <div className={"filemanager-header__wrapper transform-origin"}>
+                        <div className="filemanager-header buttons">
+                            <div className="window-close filemanager-header__button close">
+                            </div>
+                        </div>
+                        <div className="filemanager-header toolbar">
+                            <div className="filemanager-search">
+                                <SearchContainer data={folder}
+                                                 searchBy={'name'}
+                                                 setData={setSearch}
+                                                 placeholder={'Поиск по файлам'}>
+                                </SearchContainer>
+                            </div>
+                            <div className="button refresh" onClick={refreshFolder}>
+                                Обновить
+                            </div>
+                            <div className="button filemanager-view__button">Вид</div>
                         </div>
                     </div>
-                    <div className="filemanager-header toolbar">
-                        <ImageEditor></ImageEditor>
-                        <div className="filemanager-search">
-                            <SearchContainer data={folder}
-                                             searchBy={'name'}
-                                             setData={setSearch}
-                                             placeholder={'Поиск по файлам'}>
-                            </SearchContainer>
-                        </div>
-                        <div className="button refresh" onClick={refreshFolder}>
-                            Обновить
-                        </div>
-                        <div className="button filemanager-view__button">Вид</div>
-                    </div>
+                    <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
                 </div>
-                <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
+                <ImageEditor image={curImage}></ImageEditor>
             </div>
             </TransformItem>
         </ModalManager>

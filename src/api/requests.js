@@ -9,7 +9,7 @@ export async function fetchRequest(url) {
     }
     return await fetch(url, {
         headers: {
-            'Authorization': 'Bearer ' + Credentials.getToken(),
+            'Authorization': 'Bearer ' + await Credentials.getToken(),
         }
     });
 }
@@ -36,7 +36,9 @@ export async function sendRequest(url, data, method) {
 export function sendLocalRequest(url, data={}, method='GET') {
     const location = store.getState().location;
     url = new URL(location.baseURL + url);
-    if (method === 'GET') url.search += '&' + new URLSearchParams({slug: location.pageID || location.pageSlug}).toString();
+    if (method === 'GET')
+        url.search += '&' + new URLSearchParams({slug: location.pageID || location.pageSlug,
+            path: location.relativeURL.slice(1, -1)}).toString();
     data.page = {
         'path': location.relativeURL.slice(1, -1),
         'slug': location.pageSlug,

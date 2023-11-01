@@ -12,6 +12,8 @@ import ItemTimeline from "./Timeline/ItemTimeline";
 import ItemPrice from "./Price/ItemPrice";
 import TimelineEntry from "./Timeline/TimelineEntry";
 import ItemLink from "./Link/ItemLink";
+import IntroItem from "./Intro/IntroItem";
+import SubscriptionItem from "./Subscription/SubscriptionItem";
 
 export const Components = {
     'base': ItemBase,
@@ -26,17 +28,18 @@ export const Components = {
     'timeline': ItemTimeline,
     'timeline_entry': TimelineEntry,
     'price': ItemPrice,
+    'intro': IntroItem,
+    'subscription': SubscriptionItem,
 }
 
 const ItemData = ({data, props}) => {
-    const loadCallback = () =>
+    const loadCallback = () => {
+        console.log('init')
         triggerEvent("container:init", {container: props.container, item: props.itemTransform});
+    }
     useEffect(() => {
-        if (!!props.itemTransform && props.itemTransform.style.position === "absolute") {
-            loadCallback();
-        }
+        loadCallback();
     }, [props]);
-
     return (
         <>
             {React.createElement(Components[data.type], {

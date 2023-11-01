@@ -1,32 +1,39 @@
 import React, {useEffect, useState} from 'react';
+import "./ImageEditor.scss";
+const { TABS, TOOLS } = window.FilerobotImageEditor;
 
-export function ImageEditor() {
+export function ImageEditor({image}) {
     useEffect(()=>{
+        if (!image) return;
         const config = {
-            source: 'https://scaleflex.airstore.io/demo/stephen-walker-unsplash.jpg',
-            onSave: (editedImageObject, designState) => console.log('saved', editedImageObject, designState),
+            source: image,
+            onSave: (img, designState) => {
+                console.log(img)
+                // console.log(img.imageCanvas.toDataURL())
+                // window.filemanager.settings.oninitupload(null, {folder: null, img});
+            },
             annotationsCommon: {
-                fill: '#ff0000'
+                fill: '#ffffff'
             },
             Text: { text: 'Привет' },
             Rotate: { angle: 90, componentType: 'slider' },
-            tabsIds: [window.FilerobotImageEditor.TABS.ADJUST,window.FilerobotImageEditor.TABS.ANNOTATE,window.FilerobotImageEditor.TABS.WATERMARK],
-            defaultTabId: window.FilerobotImageEditor.TABS.ANNOTATE,
-            defaultToolId: window.FilerobotImageEditor.TOOLS.TEXT,
+            tabsIds: [TABS.ADJUST,TABS.ANNOTATE],
+            defaultTabId: TABS.ANNOTATE,
+            defaultToolId: TOOLS.TEXT,
         };
 
         const filerobotImageEditor = new window.FilerobotImageEditor(
-            document.querySelector('#editor_container'),
+            document.querySelector('.image-editor'),
             config
         );
 
-        // window.FilerobotImageEditor.render({
-        //     onClose: (closingReason) => {
-        //         console.log('Closing reason', closingReason);
-        //         window.FilerobotImageEditor.terminate();
-        //     }
-        // });
-    },[])
+        filerobotImageEditor.render({
+            onClose: (closingReason) => {
+                console.log('Closing reason', closingReason);
+                filerobotImageEditor.terminate();
+            }
+        });
+    },[image])
 
-    return (<div id={'editor_container'}></div>);
+    return (<div className={'image-editor'}></div>);
 }

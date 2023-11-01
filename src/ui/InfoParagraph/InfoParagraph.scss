@@ -38,4 +38,17 @@
         font-weight: 600;
         margin: auto 0;
     }
+    .ql-editor {
+        overflow: hidden;
+    }
+    .ql-simple {
+        .ql-toolbar {
+            display: none;
+        }
+        .ql-editor {
+            padding: 5px;
+            background-color: $color-link-background;
+        }
+    }
+
 }

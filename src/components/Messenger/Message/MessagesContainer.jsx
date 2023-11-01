@@ -17,7 +17,7 @@ function getMessagesSnapshot(id, document, callback) {
             if (!!url) {
                 let name = url.split('/').slice(-1)[0];
                 if (!url.includes('drive.google')) msg.value.upload.url =
-                    `https://firebasestorage.googleapis.com/v0/b/mymount-d1cad.appspot.com/o/messenger%2Fmessages%2F${name}?alt=media`
+                    `https://firebasestorage.googleapis.com/v0/b/mymount-d1cad.appspot.com/o/uploads%2Fmessages%2F${name}?alt=media`
             }
             newMessages.push(msg);
         });

@@ -48,7 +48,7 @@ export class MessageManager {
 
     uploadMedia(upload) {
         const time = new Date().getTime();
-        const uploadRef = storageRef(storage, this.appName + '/messages/' + time + upload.name);
+        const uploadRef = storageRef(storage, 'uploads/messages/' + time + '_' + upload.name);
         return uploadBytes(uploadRef, upload).then((snapshot) => snapshot.metadata.fullPath);
     }
 }
@@ -147,11 +147,12 @@ export function useGetUsers() {
 }
 
 function createNotification(info) {
-    new Notification(info.title, info.body);
+    new Notification(info.title, {body: info.body});
 }
 
 
 function notifyUser(info) {
+    console.log(info)
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
         createNotification(info);
@@ -196,13 +197,20 @@ export function useGetRooms() {
             objRooms[r.id] =  changeRoomData(r, user, users);
         });
         store.dispatch(actions.setField({field:'rooms', data:objRooms}));
+        let haveNewMessage = false;
         for (const r in objRooms) {
             const curRoom = objRooms[r];
+            console.log(curRoom)
+            if (curRoom.newMessage && curRoom.lastMessage.user !== user.id && !haveNewMessage) {
+                triggerEvent("messenger:notification", true);
+                haveNewMessage = true;
+            }
             if (!(curRoom.newMessage && curRoom.lastMessage.user !== user.id) || curRoom.notified) continue;
             updateRoom({...curRoom, notified: true});
             notifyUser({title: 'Новое сообщение',
                 body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text});
         }
+        !haveNewMessage && triggerEvent("messenger:notification", false);
         room.id && objRooms[room.id].newMessage &&
         objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
         console.log('obj rooms')

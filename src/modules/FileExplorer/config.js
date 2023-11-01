@@ -13,11 +13,11 @@ export function init() {
         initpath: [
             [ '', 'Mymount (/)', { canmodify: true } ]
         ],
-        onopenfile: function(folder, entry) {
-            if (entry.type === 'folder') return;
-            let url = "https://drive.google.com/uc?id=" + entry.id;
-            window.open(url, "_blank");
-        },
+        // onopenfile: function(folder, entry) {
+        //     if (entry.type === 'folder') return;
+        //     let url = "https://drive.google.com/uc?id=" + entry.id;
+        //     window.open(url, "_blank");
+        // },
         onrefresh: function(folder, required) {
             driveRequest({
                 request: {

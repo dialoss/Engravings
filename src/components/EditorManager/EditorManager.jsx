@@ -62,6 +62,7 @@ const EditorManager = () => {
         }
     }, [editors]);
 
+
     useAddEvent('text-editor:toggle', toggleEditor);
     return (
         <>

@@ -65,14 +65,11 @@ export const QuillModules = {
             ['clean']
         ]
     },
+
     simple: {
-        toolbar: false
-    },
-    messenger: {
         toolbar: {
             container: [
                 ['emoji', 'attachment'],
-                ['clean']
             ],
         },
     },

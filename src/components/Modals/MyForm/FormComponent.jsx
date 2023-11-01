@@ -5,12 +5,14 @@ import FormTextarea from "components/Modals/MyForm/Textarea/FormTextarea";
 import FormSelect from "./Select/FormSelect";
 import {triggerEvent} from "../../../helpers/events";
 import {FormContext} from "../../../modules/ActionForm/FormContainer";
+import FormCheckbox from "./Checkbox/FormCheckbox";
 
 const Components = {
     'upload': FormUpload,
     'input': FormInput,
     'textarea': FormTextarea,
-    'select': FormSelect
+    'select': FormSelect,
+    'checkbox': FormCheckbox,
 }
 
 const FormComponent = ({field}) => {

@@ -41,7 +41,7 @@ export const CommentsContext = createContext(null);
 const CommentsContainer = ({page}) => {
     const [comments, setComments] = useState({});
     const [commentsTree, setCommentsTree] = useState({});
-    const [sorting, setSorting] = useState(() => () => {});
+    const [sorting, setSorting] = useState(() => sortFunction('newest'));
 
     const config = {
         onsuccess: (message) => {},

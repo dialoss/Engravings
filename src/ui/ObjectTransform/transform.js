@@ -140,10 +140,10 @@ export function setItemTransform(event, type, _item, _btn) {
 
         let request = [{
             method: 'PATCH',
-            id: getElementID(item),
+            id: getElementID(item.querySelector('.item')),
             position: item.style.position || 'initial',
-            max_height: item.style.height.replace("px", "") || "0",
-            max_width: item.style.width.replace("%", "") || "0",
+            // height: item.style.height.replace("px", "") || "0",
+            width: item.style.width.replace("%", "") || "0",
             top: item.style.top.replace("px", "") || "0",
             left: item.style.left.replace("%", "") || "0",
         }, {

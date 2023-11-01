@@ -5,7 +5,7 @@ const TransformButton = ({children, type, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
         event.stopPropagation();
-        if (event.button !== 0) return;
+        if (event.button !== 0 || (type === 'move' && !props.style.movable)) return;
         triggerEvent("transform:init", {event, type, btn:ref.current});
     }
 

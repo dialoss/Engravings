@@ -30,7 +30,11 @@ $border: solid #7c7c7c;
 }
 
 .filemanager {
-  width: 100%;
+  position: relative;
+  display: flex;
+  &-left {
+    width: 100%;
+  }
   .view-default {
     .filemanager-textbar {
       display: none;

@@ -45,7 +45,7 @@ export const FormContainer = ({formData, callback}) => {
     useLayoutEffect(() => {
         setFormFields(formData.data);
     }, [formData]);
-
+    console.log(formFields)
     return (
         <FormContext.Provider value={inputCallback}>
             <MyForm formData={formData}

@@ -9,9 +9,21 @@
   width: 80px;
   height: 80px;
   margin: 0;
+  padding: 13px;
   &:hover {
     background-color: #fff;
     opacity: 0.8;
+  }
+
+  .notification-icon {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: red;
+    right: 2px;
+    top: 2px;
+    box-shadow: 0 0 2px 0 grey;
   }
 
   @include mobile {

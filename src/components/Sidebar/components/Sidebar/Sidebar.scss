@@ -123,5 +123,9 @@ $color-sidebar-background: rgb(54, 59, 75, 0.8);
             width: 200px;
             padding-right: 5px;
         }
+        .window-button {
+            left: auto !important;
+            right: 5px !important;
+        }
     }
 }

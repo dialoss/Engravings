@@ -35,9 +35,12 @@ export const AttachmentPreview = ({message}) => {
 
 export const InputSend = ({callback}) => {
     return (
-        <div className="icon icon-send" onClick={callback}>
-            <Send></Send>
+        <div className="ql-toolbar">
+            <div className="icon icon-send" onClick={callback}>
+                <Send></Send>
+            </div>
         </div>
+
     );
 }
 
@@ -60,7 +63,7 @@ export const InputEmoji = ({callback}) => {
         let root = document.querySelector('em-emoji-picker');
         root.shadowRoot.adoptedStyleSheets.push(sheet);
     }, [])
-    const modalName = `emojis-window:toggle`;
+    const modalName = `emojis-window:toggle ` + new Date().getTime();
 
     return (
         <div className={"icon icon-emojis"}>

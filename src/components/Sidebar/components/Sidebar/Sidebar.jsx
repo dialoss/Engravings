@@ -38,7 +38,7 @@ const Sidebar = ({data, picker, customer}) => {
     ];
 
     function toggleSidebar(event) {
-        const el = getElementFromCursor(event, 'sidebar');
+        const el = getElementFromCursor(event, '', ['sidebar', 'window-button']);
         if (!el && opRef.current && isMobileDevice())
             close();
     }

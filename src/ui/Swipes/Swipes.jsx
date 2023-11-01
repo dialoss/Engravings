@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {useSwipeable} from "react-swipeable";
 import {config} from "./config";
-import {triggerEvent} from "../../helpers/events";
+import {getElementFromCursor, triggerEvent} from "../../helpers/events";
 
 const Swipes = ({callback, state, children, className}) => {
     const canSwipe = useRef(true);
@@ -20,11 +20,12 @@ const Swipes = ({callback, state, children, className}) => {
             canSwipe.current = true;
         },
         onSwipeStart: (e) => {
+            let [x, y] = e.initial;
             if (className === 'sidebar') {
                 const f = (isOpened) => canSwipe.current = !isOpened;
                 triggerEvent('messenger-window:toggle:check-opened', f);
+                f(getElementFromCursor({clientX: x, clientY: y}, 'item-model'));
             } else {
-                    let [x, y] = e.initial;
                     let block = elRef.current.getBoundingClientRect();
                     if (block.left + block.width < x) {
                         canSwipe.current = false;
@@ -33,15 +34,6 @@ const Swipes = ({callback, state, children, className}) => {
                     }
                 }
             },
-            // e = {...e, clientX:x, clientY:y};
-            // let el = getElementFromCursor(e, className);
-            // let msg = getElementFromCursor(e, 'messenger');
-            // let sidebar = getElementFromCursor(e, 'sidebar');
-            // if (msg && sidebar && className === 'sidebar') {
-            //     canSwipe.current = false;
-            // }
-            // else if (!el)
-            //     canSwipe.current = false;
         ...config,
     });
 

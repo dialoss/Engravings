@@ -11,7 +11,7 @@ const ItemPrice = ({data}) => {
             <InfoParagraph type={'price'}>{`Цена: ${data.price}₽`}</InfoParagraph>
             <ItemLink data={data}></ItemLink>
             <ActionButton onClick={() => window.open(data.link, "_blank")}>
-                {data.text || 'Купить'}
+                {data.button || 'купить'}
             </ActionButton>
         </div>
     );

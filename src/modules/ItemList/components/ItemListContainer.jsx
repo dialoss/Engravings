@@ -6,6 +6,7 @@ import {fetchItems} from "../api/fetchItems";
 import {useAddEvent} from "hooks/useAddEvent";
 import {sendLocalRequest} from "api/requests";
 import {getLocation} from "../../../hooks/getLocation";
+import store from "../../../store";
 
 function reducer(state, action) {
     let item = action.payload[0];
@@ -41,7 +42,7 @@ function reducer(state, action) {
 }
 
 function createItemsTree(items) {
-    if (!items.length || items[0].empty) return [];
+    if (!items.length || items[0].empty) return items;
     console.log('BEFORE TREE', items)
 
     let tree = {};
@@ -52,11 +53,7 @@ function createItemsTree(items) {
         tree[c.id] = {...c, items: []};
         links[c.id] = tree[c.id];
     })
-    childItems = childItems.sort((a, b) => {
-        if (+a.parent < +b.parent) return -1;
-        if (+a.parent > +b.parent) return 1;
-        return 0;
-    })
+    childItems = childItems.sort((a, b) => +a.parent - +b.parent)
     console.log('BEFORE TREE CHILD', childItems)
     childItems.forEach(c => {
         let p = links[c.parent];
@@ -64,11 +61,7 @@ function createItemsTree(items) {
         links[c.id] = p.items[p.items.length - 1];
     });
 
-    let sorted = (Object.values(tree)).sort((a, b) => {
-        if (a.display_pos < b.display_pos) return -1;
-        if (a.display_pos > b.display_pos) return 1;
-        return 0;
-    });
+    let sorted = (Object.values(tree)).sort((a, b) => a.display_pos - b.display_pos);
     console.log('AFTER TREE', sorted);
     return sorted;
 }
@@ -79,25 +72,27 @@ const ItemListContainer = () => {
     itemsRef.current = items;
     const globalDispatch = useDispatch();
 
-    function addItems(newItems, createTree=true) {
-        let afterTree = structuredClone(newItems);
-        createTree && (afterTree = createItemsTree(afterTree));
-        let items = [...itemsRef.current, ...afterTree];
-        globalDispatch(actions.setElements({items: afterTree, page: getLocation().pageID}));
-        globalDispatch(actions.setItemsAll({items: createTree ? newItems : []}));
-        dispatch({method: 'SET', payload: items});
+    function addItems(newItems, fromCache=false) {
+        let items = structuredClone(newItems);
+        !fromCache && (items = createItemsTree(items));
+        !fromCache && globalDispatch(actions.setElements({items, page: getLocation().relativeURL}));
+        globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
+        dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
-    const cache = useSelector(state => state.elements.cache);
-
+    const [style, setStyle] = useState('hidden');
     useEffect(() => {
         let offset = 0;
-        let page = getLocation().pageID;
-        let cachedItems = cache[page];
+        let page = getLocation().relativeURL;
+        let cachedItems = store.getState().elements.cache[page];
         if (cachedItems) {
-            addItems(cachedItems, false);
+            addItems(cachedItems, true);
             offset = cachedItems.length;
         }
+        console.log(offset)
         fetchItems(offset, addItems);
+        setTimeout(() => {
+            setStyle('visible')
+        }, 200);
     }, []);
 
     async function handleElements(event) {
@@ -105,14 +100,16 @@ const ItemListContainer = () => {
         console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
         console.log('RESPONSE', response)
-        globalDispatch(actions.setItemsAll({items: response}));
         dispatch({method: request.storeMethod, payload: createItemsTree(response)});
+        if (response.length && !response[0].empty) {
+            globalDispatch(actions.setItemsAll({items: response}));
+        }
     }
 
     useAddEvent('itemlist:handle-changes', handleElements);
 
     return (
-        <ItemList items={items}></ItemList>
+        <ItemList items={items} className={style}></ItemList>
     );
 };
 

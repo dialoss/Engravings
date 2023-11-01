@@ -8,22 +8,23 @@ const resizers = {
     position:"relative"
 }
 
-const TransformItem = ({children, config}) => {
+const TransformItem = ({children, config, className}) => {
     function formatProperty(name, property, sign) {
         if (property !== "0")
             return property + sign;
         return "auto";
     }
     const initialTransform = {
-        height: formatProperty('height',config.max_height, "%"),
-        width: formatProperty('width',config.max_width, "%"),
+        movable: config.movable !== undefined ? config.movable : true,
+        // height: formatProperty('height',config.height, "px"),
+        width: formatProperty('width',config.width, "%"),
         left: formatProperty('left',config.left, "%"),
         top: formatProperty('top', config.top,"px"),
         position: config.position,
         ...(config.zIndex ? {zIndex: config.zIndex}: {}),
     };
     return (
-        <TransformButton className={"transform-item transform--move"} type={'move'} style={initialTransform}>
+        <TransformButton className={"transform-item transform--move " + className || ''} type={'move'} style={initialTransform}>
             {children}
             <div className={"transform-resizers"} style={resizers}>
                 {Object.keys(Transforms.child).map(name => {

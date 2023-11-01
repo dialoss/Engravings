@@ -68,6 +68,8 @@ class Viewer extends React.Component {
                 })
                 this.viewer.canvasWrap.addEventListener('mousedown', (e) => {
                     console.log(e)
+                    e.preventDefault()
+                    e.stopPropagation()
                     // if (e.button === 2) return;
                     if (e.ctrlKey) {
                         e.preventDefault();
@@ -91,11 +93,13 @@ class Viewer extends React.Component {
                 'TransformationExtension',
                 Autodesk.ADN.Viewing.Extension.TransformTool);
 
-
-            setTimeout(() => {
-                this.viewer.loadExtension("TransformationExtension")
-                this.viewer.loadExtension("CameraRotation");
-            }, 3000)
+            const loader = setInterval(() => {
+                try {
+                    this.viewer.loadExtension("TransformationExtension")
+                    this.viewer.loadExtension("CameraRotation");
+                    clearInterval(loader);
+                } catch (e) {}
+            }, 3000);
         }).catch(err => console.error(err));
     }
 

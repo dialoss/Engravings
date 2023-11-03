@@ -17,6 +17,7 @@ import {useSelector} from "react-redux";
 import {createCommentsTree, sortFunction} from "./helpers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import {sendLocalRequest} from "../../../api/requests";
+import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     // console.log(message)
@@ -32,7 +33,9 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
                 </div>
             </div>
             <AttachmentPreview message={message}></AttachmentPreview>
-            <ActionButton onClick={sendCallback} key={'comments-send'}>Отправить</ActionButton>
+            <ActionButton onClick={sendCallback}
+                          key={'comments-send'}
+                          className={'modal__toggle-button'}>Отправить</ActionButton>
         </div>
     );
 };
@@ -40,7 +43,8 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
 export const CommentsContext = createContext(null);
 
 const CommentsContainer = ({page}) => {
-    const [comments, setComments] = useState({});
+    const [search, setSearch] = useState([]);
+    const [comments, setComments] = useState([]);
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('newest'));
 
@@ -60,7 +64,7 @@ const CommentsContainer = ({page}) => {
                     message: message.value.text,
                 }
             }, 'POST');
-            updateDoc(doc(CDB, ''), {newMessage: true});
+            // updateDoc(doc(CDB, ''), {newMessage: true});
         },
         getDocument: () => String(page),
         userNoTyping: () => {},
@@ -69,11 +73,14 @@ const CommentsContainer = ({page}) => {
         messageSubmit: () => [true, ''],
     }
     useEffect(() => {
-        setCommentsTree(createCommentsTree(Object.values(comments), sorting));
-    }, [sorting, comments]);
+        setSearch(comments);
+    }, [comments]);
+    useEffect(() => {
+        setCommentsTree(createCommentsTree(Object.values(search), sorting));
+    }, [sorting, search]);
 
     const manager = new MessageManager('comments', actions, config);
-
+    console.log(comments)
     return (
         <CommentsContext.Provider value={manager}>
             <BaseMessagesContainer id={page} callback={setComments} document={doc(CDB, String(page))}>
@@ -81,7 +88,14 @@ const CommentsContainer = ({page}) => {
             <div className={"comments-section"}>
                 <div className="comments-section__header">
                     <InputContainer children={CommentsInput} manager={manager}></InputContainer>
-                    <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
+                    <div className={"comments-tools__wrapper"}>
+                        <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
+                        <SearchContainer placeholder={'Поиск по комментариям'}
+                                         data={search}
+                                         inputCallback={v => (!v && setSearch(comments))}
+                                         searchBy={'value.text'}
+                                         setData={setSearch}></SearchContainer>
+                    </div>
                 </div>
                 <div className={"comments"}>
                     <Comments comments={commentsTree}></Comments>

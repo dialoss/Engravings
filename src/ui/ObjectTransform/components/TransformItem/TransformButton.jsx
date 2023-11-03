@@ -5,6 +5,8 @@ const TransformButton = ({children, type, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
         event.stopPropagation();
+        // if (ref.current.closest('.transform-container').classList.contains('viewport-container')
+        //     && ref.current.getAttribute('data-type') === 'base') return;
         if (getElementFromCursor(event, 'ql-container')) return;
         if (event.button !== 0 || (type === 'move' && !props.style.movable)) return;
         triggerEvent("transform:init", {event, type, btn:ref.current});

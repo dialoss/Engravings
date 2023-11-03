@@ -19,7 +19,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         upload = upload[0];
         const user = store.getState().users.current;
         if (!user.id) {
-            triggerEvent('user-prompt', loginForm);
+            triggerEvent('user-auth', true);
             return;
         }
         const [messageSubmit, response] = await manager.config.messageSubmit(message);

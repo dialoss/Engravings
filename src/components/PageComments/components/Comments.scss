@@ -34,6 +34,11 @@
   .comments-section__header {
     position: relative;
     margin-bottom: 40px;
+    @media only screen and (max-width: 600px) {
+      & {
+        margin-bottom: 100px;
+      }
+    }
   }
   .input-field {
     padding: 10px;
@@ -170,5 +175,9 @@
         }
       }
     }
+  }
+
+  .search {
+    position: absolute;
   }
 }

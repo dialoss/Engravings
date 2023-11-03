@@ -21,7 +21,7 @@ const TransformItem = ({children, config, className}) => {
         width: formatProperty('width',config.width, "%"),
         left: formatProperty('left',config.left, "%"),
         position: config.position,
-        ...(config.zIndex ? {zIndex: config.zIndex}: {}),
+        ...(config.zindex ? {zIndex: config.zindex}: {}),
     };
     return (
         <TransformButton className={"transform-item transform--move " + className || ''}

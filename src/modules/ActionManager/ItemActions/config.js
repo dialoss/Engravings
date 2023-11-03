@@ -10,6 +10,11 @@ export const ContextActions = {
                 argument: true,
                 text: 'Quick New',
             },
+            'empty': {
+                callback: 'add',
+                argument: true,
+                text: 'Пустая',
+            },
             'textfield': {
                 callback: 'add',
                 argument: true,
@@ -92,6 +97,10 @@ export const ContextActions = {
 
 export function setActionData(item) {
     switch (item) {
+        case 'empty':
+            return {
+                type: 'base',
+            }
         case 'quick':
             return {
                 type: 'base',

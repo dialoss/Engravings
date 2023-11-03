@@ -1,7 +1,15 @@
-.comments-tools {
+.comments-tools__wrapper {
   position: absolute;
   left: 10px;
   display: flex;
+  column-gap: 10px;
+  @media only screen and (max-width: 600px) {
+    & {
+      row-gap: 10px;
+      flex-direction: column;
+      width: 150px;
+    }
+  }
 
   select {
     option {
@@ -11,4 +19,11 @@
     font-weight: 500;
     font-size: 15px;
   }
+  .comments-tools {
+    display: flex;
+  }
+  input {
+    padding: 0;
+  }
 }
+

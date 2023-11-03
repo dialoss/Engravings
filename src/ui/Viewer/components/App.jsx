@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Viewer from './Viewer';
 import './App.css';
+import ActionButton from "../../Buttons/ActionButton/ActionButton";
 
 class App extends React.Component {
     constructor(props) {
@@ -8,14 +9,18 @@ class App extends React.Component {
         this.wrapper = null;
         this.state = {
             camera: null,
-            selectedIds: []
+            selectedIds: [],
+            ui: props.ui,
         };
     }
 
     render() {
-        const { token, urn, className } = this.props;
+        const { token, urn } = this.props;
         return (
-            <div className={"app " + className}>
+            <div className={"app " + (this.state.ui ? 'default' : 'hidden')}>
+                <ActionButton onClick={() => this.setState({ui: !this.state.ui})} className={'ui-toggler'}>{
+                    this.state.ui ? 'Скрыть UI' : 'Показать UI'
+                }</ActionButton>
                 <div style={{ position: 'relative'}}>
                     <Viewer
                         runtime={{ accessToken: token }}

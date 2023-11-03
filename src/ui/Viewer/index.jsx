@@ -75,11 +75,9 @@ export async function uploadAutodeskFile(file) {
 })();
 
 export const AutodeskModel = ({data}) => {
-    const [showUI, setShow] = useState(!data.show_ui);
     return (
         <>
-            <button onClick={() => setShow(s => !s)}>hide ui</button>
-            {token && data.urn && <App urn={data.urn} token={token} className={showUI ? 'default' : 'hidden'}/>}
+            {token && data.urn && <App urn={data.urn} token={token} ui={data.show_ui}/>}
         </>
     );
 }

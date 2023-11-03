@@ -52,7 +52,9 @@ export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setD
     function handleSearch(query) {
         let newData = [];
         data.forEach(item => {
-            if (item[searchBy].toLowerCase().includes(query.toLowerCase())) {
+            let val = item;
+            for (const p of searchBy.split('.')) val = val[p];
+            if (val.toLowerCase().includes(query.toLowerCase())) {
                 newData.push(item);
             }
         })

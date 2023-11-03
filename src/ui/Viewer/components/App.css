@@ -13,6 +13,16 @@
 }
 
 .app {
+    position: relative;
+
+    .ui-toggler {
+        font-size: 12px;
+        padding: 4px;
+        z-index: 10;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+    }
     &.hidden {
         #guiviewer3d-toolbar {
             display: none;

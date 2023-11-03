@@ -27,9 +27,11 @@ const InfoParagraph = ({type, children, ...props}) => {
     }
 
     useEffect(() => {
-        let cont = ref.current.closest(".transform-container");
-        // console.log(cont)
-        triggerEvent("container:init", {container: cont});
+        if (type === 'textfield') {
+            let cont = ref.current.closest(".transform-container");
+            cont.setAttribute('data-height', ref.current.getBoundingClientRect().height + 10);
+            triggerEvent("container:init", {container: cont});
+        }
     }, [editor.isOpened]);
 
     // const callback = isTouchDevice() ? {onTouchEnd: editorCallback} : {onMouseDown: editorCallback};
@@ -40,6 +42,7 @@ const InfoParagraph = ({type, children, ...props}) => {
             {editor.isOpened ? <InlineEditor data={{
                 config: (type === "textfield" ? 'editor' : 'simple'),
                 value: editor.value,
+                mount: ref,
             }} closeCallback={closeEditor}></InlineEditor> :
                 <div dangerouslySetInnerHTML={{__html: editor.value}}></div>}
         </span>

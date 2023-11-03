@@ -10,6 +10,9 @@ import {loginForm, registerForm} from "../forms/loginForm";
 import store from "../../../store";
 import {FormContainer} from "../../ActionForm/FormContainer";
 import {useSelector} from "react-redux";
+import {triggerEvent} from "../../../helpers/events";
+import {useAddEvent} from "../../../hooks/useAddEvent";
+import {ModalManager} from "../../../components/ModalManager";
 
 
 class LocalAuth {
@@ -52,29 +55,31 @@ function serializeFields(fields) {
     return newFields;
 }
 
-const LoginForm = ({callback}) => {
+const LoginForm = ({callback, type}) => {
     const data = [loginForm, registerForm];
     const [stage, setStage] = useState(0);
     return (
-        <div className={'login-form'}>
-            <div className="buttons">
+        <ModalManager name={'login-form:toggle'} defaultOpened={true} callback={(v) => !v && callback()}>
+            <div className={'login-form ' + type}>
+                <div className="buttons">
+                    {
+                        data.map((d, i) =>
+                            <button onClick={()=>setStage(i)} key={i}>{d.title}</button>
+                        )
+                    }
+                </div>
                 {
                     data.map((d, i) =>
-                        <button onClick={()=>setStage(i)} key={i}>{d.title}</button>
+                        <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
+                            <FormContainer formData={d}
+                                           callback={(data) =>
+                                               callback({credentials:serializeFields(data), stage: d.stage})}>
+                            </FormContainer>
+                        </div>
                     )
                 }
             </div>
-            {
-                data.map((d, i) =>
-                <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}}>
-                    <FormContainer formData={d}
-                                   callback={(data) =>
-                                       callback({credentials:serializeFields(data), stage: d.stage})}>
-                    </FormContainer>
-                </div>
-                )
-            }
-        </div>
+        </ModalManager>
     );
 }
 
@@ -88,6 +93,18 @@ const Auth = ({children}) => {
     useLayoutEffect(() => {
         LocalAuth.auth();
     }, []);
+
+    function localAuth(popup) {
+        LocalAuth.type = 'custom';
+        setPrompt({isOpened: true, type: (popup ? 'popup' : 'default'),
+            callback: (data) => {
+            if (!!data) LocalAuth.login(data);
+            setPrompt({isOpened: false});
+        }})
+    }
+
+    useAddEvent('user-auth', e => localAuth(e.detail));
+
     const [prompt, setPrompt] = useState({isOpened: false, callback:null});
     return (
         <div className={"auth"}>
@@ -100,17 +117,11 @@ const Auth = ({children}) => {
                                     LocalAuth.type = 'google';
                                     googleAuth();
                                 }}>Google</AuthButton>
-                                <AuthButton type={'my-login'} callback={() => {
-                                    LocalAuth.type = 'custom';
-                                    setPrompt({isOpened: true, callback: (data) => {
-                                        LocalAuth.login(data);
-                                        setPrompt({isOpened: false});
-                                    }})
-                                }}>Локально</AuthButton>
+                                <AuthButton type={'my-login'} callback={() => localAuth(false)}>Локально</AuthButton>
                             </div>
                         </AccordionContainer>
                 }
-                {prompt.isOpened && <LoginForm callback={prompt.callback}></LoginForm>}
+                {prompt.isOpened && <LoginForm callback={prompt.callback} type={prompt.type}></LoginForm>}
                 {user.authenticated && <>
                     {children}
                     <img src={user.picture} alt=""/>

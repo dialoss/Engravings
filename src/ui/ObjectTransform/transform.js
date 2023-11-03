@@ -72,14 +72,18 @@ function moveAt(event, shiftX, shiftY) {
 
         if (transform.dir === 'resize-right' && width + offsetL > win.width) width = block.width;
         width = Math.max(50, width);
-        height = Math.max(50, height);
+        height = Math.max(20, height);
 
         if (transform.dir === 'resize-left') {
             offsetL = offsetL + (block.width - width);
             if (offsetL <= 0) width = block.width;
             offsetL = Math.max(0, offsetL);
         }
-        item.style.height = height + 'px';
+        try {
+            item.querySelector('.transform-container').style.height = height + 'px';
+            item.querySelector('.transform-container').setAttribute('data-height', height);
+            // initContainerDimensions({container:item.querySelector('.transform-container'), item});
+        } catch (e) {}
         setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
@@ -95,10 +99,6 @@ function moveAt(event, shiftX, shiftY) {
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
-    try {
-        item.querySelector('.transform-container').setAttribute('data-height', item.style.height);
-        item.querySelector('.transform-container').style.height = item.style.height;
-    } catch (e) {}
     initContainerDimensions({container, item});
     mouseMoved = true;
     return true;
@@ -134,11 +134,10 @@ export function setItemTransform(event, type, _item, _btn) {
 
         setTimeout(() => {
             item.classList.remove("transformed");
-        }, 100)
+        }, 200)
 
         mouseMoved = false;
         if (container.classList.contains('viewport-container')) return;
-
         let parent = getElementID(item.closest('.item'));
 
         let request = [{
@@ -159,7 +158,7 @@ export function setItemTransform(event, type, _item, _btn) {
             },
             method: 'PATCH',
         }];
-
+        console.log(request)
         triggerEvent('action:callback', request);
     }
 

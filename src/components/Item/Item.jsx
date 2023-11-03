@@ -24,8 +24,11 @@ const Item = ({item, depth=0}) => {
         setItemProps({itemsRow});
 
         if (['video', 'image', 'model'].includes(item.type)) {
+            if (itemTransform.style.position !== 'absolute')
+                itemTransform.style.width = itemTransform.closest('.transform-container').getBoundingClientRect().width / itemsRow + 'px';
             const h = itemTransform.getBoundingClientRect().width /
                 ((item.media_width / item.media_height) || 1);
+            console.log(h, container.getAttribute('data-height'))
             if (!+container.getAttribute('data-height')) container.setAttribute('data-height', h);
         }
         triggerEvent("container:init", {container: container});

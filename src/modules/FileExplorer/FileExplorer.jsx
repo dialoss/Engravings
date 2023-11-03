@@ -14,12 +14,17 @@ import {ImageEditor} from "./ImageEditor/ImageEditor";
 
 export function fileToItem(data) {
     return {
+        data: {
+            // position: 'absolute',
+            show_shadow: false,
+            width: 50,
+            urn: data.urn,
+            type: data.type,
+            filename: data.name,
+            url: "https://drive.google.com/uc?id=" + data.id,
+        },
         specifyParent: true,
-        urn: data.urn,
-        type: data.type,
-        filename: data.name,
         method: 'POST',
-        url: "https://drive.google.com/uc?id=" + data.id,
     }
 }
 
@@ -76,14 +81,14 @@ const SortContainer = ({data, setData, config}) => {
     function handleSort() {
         window.filemanager.fromSearch = true;
 
-        console.log(globalsearch)
+        // console.log(globalsearch)
         let test = JSON.parse(JSON.stringify(globalsearch));
         let a = test.sort((a,b) => {
             if (a[field] < b[field]) return -1;
             if (a[field] > b[field]) return 1;
             return 0;
         });
-        console.log(a)
+        // console.log(a)
         setData(structuredClone(a));
     }
     return (
@@ -196,11 +201,11 @@ const FileExplorer = () => {
     function refreshFolder() {
         window.filemanager.RefreshFolders(true);
     }
-    console.log(search)
+    // console.log(search)
 
     useLayoutEffect(() => {
         try {
-            console.log(search)
+            // console.log(search)
             window.filemanager.GetCurrentFolder().SetEntries(search);
         } catch (e) {}
     }, [search]);

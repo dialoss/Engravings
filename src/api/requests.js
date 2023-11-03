@@ -5,7 +5,7 @@ export async function fetchRequest(url) {
     if (!url.includes('firebase')) {
         const query = new URL(url);
         const FILE_ID = query.searchParams.get('id');
-            url = `https://www.googleapis.com/drive/v2/files/${FILE_ID}`;
+            url = `https://www.googleapis.com/drive/v2/files/${FILE_ID}?alt=media`;
     }
     return await fetch(url, {
         headers: {
@@ -36,13 +36,8 @@ export async function sendRequest(url, data, method) {
 export function sendLocalRequest(url, data={}, method='GET') {
     const location = store.getState().location;
     url = new URL(location.baseURL + url);
-    if (method === 'GET')
-        url.search += '&' + new URLSearchParams({slug: location.pageID || location.pageSlug,
+    url.search += '&' + new URLSearchParams({slug: location.pageSlug || location.pageID,
             path: location.relativeURL.slice(1, -1)}).toString();
-    data.page = {
-        'path': location.relativeURL.slice(1, -1),
-        'slug': location.pageSlug,
-    }
     return sendRequest(url.toString(), data, method);
 }
 

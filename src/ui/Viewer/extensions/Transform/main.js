@@ -442,7 +442,7 @@ Autodesk.ADN.Viewing.Extension.TransformTool =  function (viewer, options) {
     ///////////////////////////////////////////////////////
     _self.load = function () {
        
-        console.log('Autodesk.ADN.Viewing.Extension.TransformTool loaded');
+        // console.log('Autodesk.ADN.Viewing.Extension.TransformTool loaded');
 
         return true;
     };
@@ -503,7 +503,7 @@ Autodesk.ADN.Viewing.Extension.TransformTool =  function (viewer, options) {
                 this.viewer.toolbar.removeControl(this._group);
             }
         }
-        console.log('Autodesk.ADN.Viewing.Extension.TransformTool unloaded');
+        // console.log('Autodesk.ADN.Viewing.Extension.TransformTool unloaded');
 
         return true;
     };

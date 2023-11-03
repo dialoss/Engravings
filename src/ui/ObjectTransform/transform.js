@@ -70,7 +70,6 @@ function moveAt(event, shiftX, shiftY) {
         let width = block.width + deltaX;
         let height = block.height + deltaY;
 
-        // if (height + item.offsetTop > win.height) height =
         if (transform.dir === 'resize-right' && width + offsetL > win.width) width = block.width;
         width = Math.max(50, width);
         height = Math.max(50, height);
@@ -80,7 +79,7 @@ function moveAt(event, shiftX, shiftY) {
             if (offsetL <= 0) width = block.width;
             offsetL = Math.max(0, offsetL);
         }
-        // item.style.height = height + 'px';
+        item.style.height = height + 'px';
         setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
@@ -96,6 +95,10 @@ function moveAt(event, shiftX, shiftY) {
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
+    try {
+        item.querySelector('.transform-container').setAttribute('data-height', item.style.height);
+        item.querySelector('.transform-container').style.height = item.style.height;
+    } catch (e) {}
     initContainerDimensions({container, item});
     mouseMoved = true;
     return true;
@@ -139,17 +142,22 @@ export function setItemTransform(event, type, _item, _btn) {
         let parent = getElementID(item.closest('.item'));
 
         let request = [{
+            data: {
+                id: getElementID(item.querySelector('.item')),
+                position: item.style.position || 'initial',
+                height: item.getBoundingClientRect().height || "0",
+                width: item.style.width.replace("%", "") || "0",
+                top: item.style.top.replace("px", "") || "0",
+                left: item.style.left.replace("%", "") || "0",
+                container_width: item.querySelector('.transform-container').getBoundingClientRect().width || "0",
+            },
             method: 'PATCH',
-            id: getElementID(item.querySelector('.item')),
-            position: item.style.position || 'initial',
-            // height: item.style.height.replace("px", "") || "0",
-            width: item.style.width.replace("%", "") || "0",
-            top: item.style.top.replace("px", "") || "0",
-            left: item.style.left.replace("%", "") || "0",
         }, {
+            data: {
+                id: parent,
+                container_width: container.getBoundingClientRect().width || "0",
+            },
             method: 'PATCH',
-            id: parent,
-            container_width: container.getBoundingClientRect().width || "0",
         }];
 
         triggerEvent('action:callback', request);

@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useLayoutEffect, useRef, useState} from '
 import TextEditor from "ui/TextEditor/TextEditor";
 import {triggerEvent} from "../../helpers/events";
 
-const InlineEditor = ({data, closeCallback, mount}) => {
+const InlineEditor = ({data, closeCallback}) => {
     const [value, setValue] = useState({text: data.value});
     const valRef = useRef();
     valRef.current = value;
@@ -13,7 +13,7 @@ const InlineEditor = ({data, closeCallback, mount}) => {
             if (event.key === 'Escape' || (event.key === 'Enter' && event.ctrlKey)) {
                 let text = valRef.current.text;
                 if (text === '<p><br></p>') text = '';
-                closeCallback(text, mount);
+                closeCallback(text);
             }
         });
         ref.current.focus();

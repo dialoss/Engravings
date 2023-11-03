@@ -1,8 +1,9 @@
 import React, {useRef, useState} from 'react';
 import "./Avatar.scss";
 import {useLongPress} from "helpers/events";
+import Jdenticon from "react-jdenticon";
 
-const Avatar = ({style, extraInfo=false, symbol='', children, ...props}) => {
+const Avatar = ({style, user={}, extraInfo=false, symbol='', children, ...props}) => {
     let src = props.src;
     const [hover, setHover] = useState('');
     const {onTouchEnd, onMouseUp, ...hoverEvents} = useLongPress((e) => {setHover('hover')}, (e) => {},
@@ -23,7 +24,7 @@ const Avatar = ({style, extraInfo=false, symbol='', children, ...props}) => {
                 {!!src ?
                     <img src={src} alt=""/> :
                     <div className={'placeholder'}>
-                        <div className={"placeholder-symbol"}>{symbol}</div>
+                        <Jdenticon size="40" value={(user.name + user.email) || 'a'} />
                     </div>
                 }
             </div>

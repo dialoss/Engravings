@@ -66,21 +66,10 @@ const CarouselContainer = () => {
         setContent(newContent);
     }, [items]);
 
-    const [carouselChanged, setChanged] = useState('default');
     const [item, setItem] = useState(null);
     useLayoutEffect(() => {
         if (!content.length) return;
-        if (openedRef.current) {
-            setItem(content[currentItem]);
-            return;
-        }
-        setChanged('changed');
-        setTimeout(() => {
-            setChanged('default');
-        }, 100);
-        setTimeout(() => {
-            setItem(content[currentItem]);
-        }, 50);
+        if (openedRef.current) setItem(content[currentItem]);
     }, [currentItem, content]);
 
     useKeypress('ArrowRight', () => triggerEvent('carousel:right'));
@@ -89,7 +78,7 @@ const CarouselContainer = () => {
         <>
             {!!item &&
                 <ModalManager name={windowName} key={windowName}>
-                    <Carousel className={carouselChanged} style={{win: 'centered'}} item={item}/>
+                    <Carousel style={{win: 'centered'}} item={item}/>
                 </ModalManager>
             }
         </>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Transforms} from "../../config";
 import TransformButton from "./TransformButton";
+import "./TransformItem.scss";
 
 const resizers = {
     width:"100%",
@@ -19,12 +20,15 @@ const TransformItem = ({children, config, className}) => {
         // height: formatProperty('height',config.height, "px"),
         width: formatProperty('width',config.width, "%"),
         left: formatProperty('left',config.left, "%"),
-        top: formatProperty('top', config.top,"px"),
         position: config.position,
         ...(config.zIndex ? {zIndex: config.zIndex}: {}),
     };
     return (
-        <TransformButton className={"transform-item transform--move " + className || ''} type={'move'} style={initialTransform}>
+        <TransformButton className={"transform-item transform--move " + className || ''}
+                         type={'move'}
+                         data-top={config.top}
+                         // data-height={config.height}
+                         style={initialTransform}>
             {children}
             <div className={"transform-resizers"} style={resizers}>
                 {Object.keys(Transforms.child).map(name => {

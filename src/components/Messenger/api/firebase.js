@@ -152,7 +152,7 @@ function createNotification(info) {
 
 
 function notifyUser(info) {
-    console.log(info)
+    // console.log(info)
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
         createNotification(info);
@@ -173,7 +173,7 @@ export function useGetRooms() {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
-            console.log('snapshot rooms')
+            // console.log('snapshot rooms')
         });
         return () => unsubscribe;
     }, []);
@@ -200,7 +200,7 @@ export function useGetRooms() {
         let haveNewMessage = false;
         for (const r in objRooms) {
             const curRoom = objRooms[r];
-            console.log(curRoom)
+            // console.log(curRoom)
             if (curRoom.newMessage && curRoom.lastMessage.user !== user.id && !haveNewMessage) {
                 triggerEvent("messenger:notification", true);
                 haveNewMessage = true;
@@ -213,7 +213,7 @@ export function useGetRooms() {
         !haveNewMessage && triggerEvent("messenger:notification", false);
         room.id && objRooms[room.id].newMessage &&
         objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
-        console.log('obj rooms')
+        // console.log('obj rooms')
     }, [user, rooms_raw, Object.values(users).length]);
 }
 

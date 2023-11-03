@@ -1,49 +1,64 @@
-import data from "@emoji-mart/data";
 
-function getMaxBottom(container, resize) {
+function getFirstItems(container) {
+    return container.querySelector('.items-wrapper').querySelectorAll(':scope > .transform-item');
+}
+
+function isResizable(container) {
+    return !['image', 'model', 'video', 'subscription'].includes(container.getAttribute('data-type'));
+}
+
+function getMaxBottom(container) {
     let m = 0;
-    for (const block of container.querySelectorAll(".transform-item")) {
-        if ((resize || !block.attributes['inited']) && block.style.position === 'absolute') {
-            block.style.top = block.offsetTop * container.getBoundingClientRect().width /
-                +container.getAttribute('data-width') + 'px';
-            block.setAttribute('inited', true);
+    const dataWidth = +container.getAttribute('data-width');
+    const ratio = (container.getBoundingClientRect().width / dataWidth) || 1;
+
+    for (const block of getFirstItems(container)) {
+        if (block.style.position === 'absolute' && !block.classList.contains('transformed')) {
+            block.style.top = +block.getAttribute('data-top') * ratio + 'px';
         }
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
     }
     let dataHeight = container.getAttribute('data-height');
+    if (+dataHeight) m = +dataHeight * ratio;
+    const contHeight = container.getBoundingClientRect().height;
+    if (!dataWidth && contHeight) m = contHeight;
+
     if (m === 0) {
-        if (dataHeight !== 'auto') m = +dataHeight;
-        if (dataHeight === 'fixed') m = container.querySelector(':scope:nth-child(1)').getBoundingClientRect().height;
+        let itemsHeight = 0;
+        if (container.children[1]) itemsHeight = container.children[1].getBoundingClientRect().height;
+        m = itemsHeight;
     }
-    // console.log(m)
-    container.setAttribute('data-width', container.getBoundingClientRect().width);
+    // console.log(container, dataHeight, m)
     return m;
 }
 
-export function initContainerDimensions({container, item, resize, parent}) {
+export function initContainerDimensions({container, item, toChild}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
-    if (container.getAttribute('data-height') === 'fixed' && item) {
-        // let itemBlock = item.getBoundingClientRect();
-        // let contBlock = container.getBoundingClientRect();
-        // if (item.offsetTop + itemBlock.height > contBlock.height)
-        //     item.style.top = contBlock.height - itemBlock.height + 'px';
-    }
-    let contHeight = getMaxBottom(container, resize);
-    container.style.height = contHeight + "px";
+    let contHeight = getMaxBottom(container);
 
-    if (!resize && item) {
-        if (!parent) {
-            let parentContainer = container.closest('.item.depth-0').querySelector('.transform-container');
-            initContainerDimensions({container: parentContainer, resize: false, parent: true});
-        }
-        let childContainer = item.querySelector('.transform-container');
-        if (!childContainer) return;
-        initContainerDimensions({container: childContainer, resize: false});
-        for (const childItem of childContainer.querySelectorAll('.transform-item')) {
-            initContainerDimensions({container: childContainer, item: childItem, resize: false})
-        }
+    // if (container.getAttribute('data-height') === 'fixed') {
+    //     if (container.children[1]) contHeight = container.children[1].getBoundingClientRect().height;
+    // }
+    if (!isResizable(container) && item) {
+        let itemBlock = item.getBoundingClientRect();
+        let contBlock = container.getBoundingClientRect();
+        if (item.offsetTop + itemBlock.height > contBlock.height)
+            item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
+        return;
+    }
+    container.style.height = contHeight + "px";
+    // console.log(container, container.style.height)
+
+    if (!toChild) {
+        let parentContainer = container.parentElement.closest('.transform-container');
+        parentContainer && initContainerDimensions({container: parentContainer});
+    }
+    for (const child of getFirstItems(container)) {
+        let childContainer = child.querySelector('.transform-container');
+        // console.log(child)
+        // childContainer && initContainerDimensions({container: childContainer, toChild: true});
     }
 }
 

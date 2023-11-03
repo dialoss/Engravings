@@ -11,7 +11,9 @@ const FormInput = ({data, ...props}) => {
                name={data.name}
                value={data.value}
                 {...props}
+                type={data.validate || 'input'}
                onChange={data.callback}
+               minLength={data.min_length || 0}
                className="form-input"/>
     );
 };

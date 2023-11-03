@@ -3,7 +3,7 @@ import "./ItemTable.scss";
 import {fetchRequest} from "api/requests";
 import * as XLSX from 'xlsx/xlsx.mjs';
 
-const ItemTable = ({data, loadCallback}) => {
+const ItemTable = ({data}) => {
     const [table, setTable] = useState([]);
 
     useEffect(() => {
@@ -15,7 +15,6 @@ const ItemTable = ({data, loadCallback}) => {
             let workbook = XLSX.read(arr.join(""), {type:"binary"});
             let sheetName = workbook.SheetNames[0];
             let sheet = workbook.Sheets[sheetName];
-            console.log(workbook);
             let rows = new Set();
             let columns = new Set();
             for (const cell in sheet) {
@@ -35,10 +34,6 @@ const ItemTable = ({data, loadCallback}) => {
             setTable(table);
         });
     }, []);
-
-    useEffect(() => {
-        if (loadCallback) loadCallback();
-    }, [table]);
 
     return (
         <table className="item__table">

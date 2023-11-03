@@ -10,15 +10,16 @@ import "./Comments.scss";
 import {actions} from "../store/reducers";
 import {CDB} from "../../Messenger/api/config";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
-import {MessageManager, updateUser} from "../../Messenger/api/firebase";
+import {MessageManager, updateRoom, updateUser} from "../../Messenger/api/firebase";
 import store from "store";
 import CommentsTools from "./CommentsTools";
 import {useSelector} from "react-redux";
 import {createCommentsTree, sortFunction} from "./helpers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
+import {sendLocalRequest} from "../../../api/requests";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
-    console.log(message)
+    // console.log(message)
     return (
         <div className={"custom-input comments-input"}>
             <div className="input-wrapper">
@@ -43,8 +44,24 @@ const CommentsContainer = ({page}) => {
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('newest'));
 
+    useLayoutEffect(() => {
+        updateDoc(doc(CDB, String(page)), {newMessage: false});
+    }, [page]);
+
     const config = {
-        onsuccess: (message) => {},
+        onsuccess: (message) => {
+            // console.log(message)
+            sendLocalRequest('/api/notification/email/', {
+                recipient: 'matthewwimsten@gmail.com',
+                // recipient: 'fomenko75@mail.ru',
+                subject: 'Новый комментарий',
+                data: {
+                    page,
+                    message: message.value.text,
+                }
+            }, 'POST');
+            updateDoc(doc(CDB, ''), {newMessage: true});
+        },
         getDocument: () => String(page),
         userNoTyping: () => {},
         userTyping: () => {},

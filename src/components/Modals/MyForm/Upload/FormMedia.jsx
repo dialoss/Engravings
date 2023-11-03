@@ -9,7 +9,7 @@ const FormMedia = ({files}) => {
             {
                 Object.values(files).map((file,index) =>
                     <div className={"media-item"} key={index}>
-                        {React.createElement(Components[file.type], {data: file})}
+                        {file.type !== 'model' && React.createElement(Components[file.type], {data: file})}
                         <p className={"media-text"}>{file.filename}</p>
                     </div>
                 )

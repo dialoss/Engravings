@@ -13,9 +13,9 @@ class App extends React.Component {
     }
 
     render() {
-        const { token, urn } = this.props;
+        const { token, urn, className } = this.props;
         return (
-            <div className="app">
+            <div className={"app " + className}>
                 <div style={{ position: 'relative'}}>
                     <Viewer
                         runtime={{ accessToken: token }}

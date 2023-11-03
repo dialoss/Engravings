@@ -1,4 +1,4 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useRef, useState} from 'react';
 
 import './MyForm.scss';
 
@@ -16,8 +16,9 @@ const FormBlock = ({formField}) => {
 }
 
 const MyForm = ({formData, formFields, submitCallback}) => {
+    const ref = useRef();
     return (
-        <div className="form__content">
+        <form className="form__content" action={''} ref={ref}>
             <div className="form__header">
                 <p className={"form__title"}>{formData.title}</p>
                 {formData.windowButton && <WindowButton type={'close'}/>}
@@ -28,9 +29,21 @@ const MyForm = ({formData, formFields, submitCallback}) => {
                         return <FormBlock formField={formFields[key]} key={key}/>
                     })
                 }
-                <ActionButton onClick={submitCallback}>{formData.button}</ActionButton>
+                <ActionButton onClick={(e) => {
+                    e.preventDefault();
+
+                    const form = ref.current;
+                    let correct = true;
+                    for (const field of [...form].slice(0, -1)) {
+                        if (!field.checkValidity()) {
+                            correct = false;
+                            field.reportValidity();
+                        }
+                    }
+                    correct && submitCallback();
+                }} type={'submit'}>{formData.button}</ActionButton>
             </div>
-        </div>
+        </form>
     );
 };
 

@@ -50,8 +50,11 @@ class Viewer extends React.Component {
             .then(_ => {
 
                 const profile = new Autodesk.Viewing.Profile(CustomProfile);
+                const config3d = {
+                    disabledExtensions: { boxSelection: true }
+                };
 
-                this.viewer = new Autodesk.Viewing.GuiViewer3D(this.container);
+                this.viewer = new Autodesk.Viewing.GuiViewer3D(this.container, config3d);
                 this.viewer.start();
                 this.viewer.setProfile(profile);
                 this.viewer.impl.disableHighlight(true);
@@ -62,23 +65,43 @@ class Viewer extends React.Component {
                     }, 200)
                 });
 
-                console.log(Autodesk.Viewing);
-                this.viewer.canvasWrap.addEventListener('contextmenu', (e) => {
-                    if (!e.ctrlKey) e.stopPropagation();
-                })
-                this.viewer.canvasWrap.addEventListener('mousedown', (e) => {
-                    console.log(e)
-                    e.preventDefault()
-                    e.stopPropagation()
-                    // if (e.button === 2) return;
-                    if (e.ctrlKey) {
-                        e.preventDefault();
-                    } else {
-                        e.stopPropagation();
-                    }
-                })
+                // console.log(Autodesk.Viewing);
+                // setTimeout(() => {
+                //     this.viewer.canvas.closest('.adsk-viewing-viewer').onmousedown = (e) => {
+                //         console.log(e)
+                //         if (e.ctrlKey) {
+                //             e.preventDefault()
+                //             e.stopPropagation()
+                //         }
+                //     }
+                // }, 3000)
+                //
+                // this.viewer.canvas.onmousedown = (e) => {
+                //     // console.log(e)
+                //     if (e.ctrlKey) {
+                //         e.preventDefault()
+                //         // e.stopPropagation()
+                //     }
+                // }
+                // this.viewer.canvasWrap.addEventListener('contextmenu', (e) => {
+                //     e.stopPropagation()
+                //     e.preventDefault()
+                //     if (!e.ctrlKey) e.stopPropagation();
+                // })
+                // this.viewer.canvasWrap.onmousedown = (e) => {
+                //     // e.preventDefault()
+                //     e.stopPropagation()
+                //     // e.preventDefault()
+                //     // e.stopPropagation()
+                //     // if (e.button === 2) return;
+                //     // if (e.ctrlKey) {
+                //     //     e.preventDefault();
+                //     // } else {
+                //     //     e.stopPropagation();
+                //     // }
+                // }
                 window.autodeskViewer = this.viewer;
-                console.log(this.viewer)
+                // console.log(this.viewer)
 
                 this.updateViewerState({});
             }).then(r => {

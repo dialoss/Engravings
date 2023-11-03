@@ -29,20 +29,29 @@
 
     display: flex;
     width: 100%;
+    .transform-item {
+      //transform: scale(1);
+    }
 
     &--1 .transform-item {
-      width: 100%
+      &.item-image, .item-video, .item-model {
+        width: 100%
+      }
     }
 
     &--2 .transform-item {
-      width: 50%;
+      &.item-image, .item-video, .item-model {
+        width: 50%
+      }
       .item {
         margin: 5px;
       }
     }
 
     &--3 .transform-item {
-      width: 33.3333%;
+      &.item-image, .item-video, .item-model {
+        width: 33.3333%
+      }
       .item {
         margin: 5px;
       }

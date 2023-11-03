@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {setActionElement} from "./helpers";
-import EditorManager from "components/EditorManager/EditorManager";
 import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
 import CarouselContainer from "components/Modals/Carousel/CarouselContainer";
 import {ActionForm} from "modules/ActionForm";
@@ -24,35 +23,40 @@ const ActionManager = () => {
     function actionCallback(event) {
         Actions.action(event.detail);
     }
-    function closePrompt() {
-        setPrompt(p => ({...p, isOpened:false}));
-    }
+
     useAddEvent('action:init', initAction);
     useAddEvent('action:callback', actionCallback)
 
-    const [prompt, setPrompt] = useState({isOpened: false, text: '', data:{}, button:''});
-    useAddEvent('user-prompt', (event) => setPrompt({isOpened: true, ...event.detail}))
-    console.log('pr', prompt)
+
+    const [prompt, setPrompt] = useState({isOpened: false, data:{}, button:'', submitCallback: ()=>{}});
+
+    function closePrompt(fields) {
+        if (fields && prompt.submitCallback) {
+            prompt.submitCallback(fields);
+        }
+        setPrompt(p => ({...p, isOpened:false}));
+    }
+    useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
+    // console.log('prompt', prompt)
     const user = useSelector(state => state.users.current);
     return (
         <>
             {user.isAdmin &&
                 <>
                     <ItemActions></ItemActions>
-                    <EditorManager></EditorManager>
                     <FileExplorer></FileExplorer>
+                    <ActionForm></ActionForm>
                 </>
             }
             <ModalManager name={'user-prompt:toggle'}
                           defaultOpened={prompt.isOpened}
-                          callback={closePrompt}
+                          callback={(v) => !v && closePrompt()}
                           closeConditions={['btn']}>
                 <div className={"user-prompt"} style={{bg:'bg-none', win:'centered', boxShadow:'0 0 2px 2px grey', borderRadius:8}}>
                     <FormContainer formData={prompt} callback={closePrompt}>
                     </FormContainer>
                 </div>
             </ModalManager>
-            <ActionForm></ActionForm>
             <ObjectTransform></ObjectTransform>
             <FirebaseContainer></FirebaseContainer>
             <CarouselContainer></CarouselContainer>

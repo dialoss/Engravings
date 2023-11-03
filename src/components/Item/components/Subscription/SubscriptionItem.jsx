@@ -3,7 +3,7 @@ import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 
 const SubscriptionItem = ({data}) => {
     return (
-        <div className={"item__info"}>
+        <div className={"item__info"} style={{height:'100%'}}>
             <InfoBlock data={data}></InfoBlock>
         </div>
     );

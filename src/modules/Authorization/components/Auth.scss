@@ -37,4 +37,27 @@
     border-radius: 8px;
     box-shadow: 0 0 4px 0 grey;
   }
+  .auth-button {
+    font-size: 14px;
+    margin: 4px auto;
+  }
+  .auth-button--choice, .auth-button--logout  {
+    font-size: 18px;
+  }
+  .accordion-header {
+    border: none;
+  }
+  .auth-choice {
+    display: flex;
+    flex-direction: column;
+  }
+  .login-form {
+    z-index: 10;
+    position: fixed;
+    left: 150px;
+    .action-button {
+      font-size: 14px;
+    }
+  }
+
 }

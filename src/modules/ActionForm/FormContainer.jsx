@@ -26,7 +26,7 @@ const ElementForm = () => {
                             slug: data.slug,
                         }
                         if (data.url) data.url = data.url[0].url;
-                        triggerEvent("action:callback", [{...form, ...data}]);
+                        triggerEvent("action:callback", [{...form, data}]);
                         triggerEvent(windowName, {isOpened: false});
                         setForm(null);
                     }}>
@@ -40,12 +40,11 @@ const ElementForm = () => {
 export const FormContext = createContext();
 
 export const FormContainer = ({formData, callback}) => {
-    const [formFields, setFormFields] = useState(formData.data);
+    const [formFields, setFormFields] = useState(formData.data || {});
     const inputCallback = ({value, field}) => setFormFields(current => ({...current, [field]: {...current[field], value: value}}));
     useLayoutEffect(() => {
-        setFormFields(formData.data);
+        setFormFields(formData.data || {});
     }, [formData]);
-    console.log(formFields)
     return (
         <FormContext.Provider value={inputCallback}>
             <MyForm formData={formData}

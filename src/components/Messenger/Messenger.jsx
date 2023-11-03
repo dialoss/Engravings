@@ -12,7 +12,7 @@ import {useGetRooms} from "./api/firebase";
 const Messenger = () => {
     useGetRooms();
     const {room} = useSelector(state => state.messenger);
-    console.log(room)
+    // console.log(room)
     return (
         <div className={"messenger"}>
             <MessengerSidebar></MessengerSidebar>

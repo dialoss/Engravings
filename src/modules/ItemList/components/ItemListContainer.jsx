@@ -7,6 +7,7 @@ import {useAddEvent} from "hooks/useAddEvent";
 import {sendLocalRequest} from "api/requests";
 import {getLocation} from "../../../hooks/getLocation";
 import store from "../../../store";
+import {triggerEvent} from "../../../helpers/events";
 
 function reducer(state, action) {
     let item = action.payload[0];
@@ -25,18 +26,12 @@ function reducer(state, action) {
         case "POST":
             {
                 let newState = [...state];
-                console.log(1111)
                 newState.splice(item.display_pos, 0, item);
                 return newState;
             }
         case 'DELETE':
         {
-            if (item.empty) return [...state].filter(el => el.id !== item.id);
-            let newState = [...state];
-            for (let i = 0; i < state.length; i++) {
-                if (state[i].id === item.id) newState[i] = item;
-            }
-            return newState;
+            return [...state].filter(el => el.id !== item.id);
         }
     }
 }
@@ -88,7 +83,6 @@ const ItemListContainer = () => {
             addItems(cachedItems, true);
             offset = cachedItems.length;
         }
-        console.log(offset)
         fetchItems(offset, addItems);
         setTimeout(() => {
             setStyle('visible')
@@ -103,6 +97,13 @@ const ItemListContainer = () => {
         dispatch({method: request.storeMethod, payload: createItemsTree(response)});
         if (response.length && !response[0].empty) {
             globalDispatch(actions.setItemsAll({items: response}));
+        }
+
+        if (request.method === 'DELETE') {
+            let item = request.initialRequest.element.closest('.transform-item');
+            item.setAttribute('data-top', 0);
+            item.style.height = '0px';
+            triggerEvent("container:init", {container: item.closest('.transform-container'), item});
         }
     }
 

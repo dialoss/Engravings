@@ -42,7 +42,7 @@ export class TurnTableExtension extends Autodesk.Viewing.Extension {
         return true;
     }
     unload() {
-        console.log('TurnTableExtension is now unloaded!');
+        // console.log('TurnTableExtension is now unloaded!');
         // Clean our UI elements if we added any
         if (this._group) {
             this._group.removeControl(this._button);

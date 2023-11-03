@@ -55,7 +55,6 @@ export function setActionElement(event) {
         else el.parent_0 = getElementID(parentElement);
         el.parent = getElementID(el.html.closest('.item.depth-' + (el.html.getAttribute('data-depth') - 1))) || el.parent_0;
         el.display_pos = display_pos;
-        console.log(store.getState().elements.itemsAll)
         el.data = store.getState().elements.itemsAll[el.id];
         actionElement = el;
         event.ctrlKey && setElements();

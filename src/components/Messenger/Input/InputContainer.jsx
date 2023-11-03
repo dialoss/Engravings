@@ -50,7 +50,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         });
         if (upload) {
             const document = manager.config.getDocument();
-            console.log(document)
+            // console.log(document)
             manager.uploadMedia(upload).then(uploadUrl => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({
@@ -89,7 +89,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
             }, 5000);
         }
     }
-    console.log(message)
+    // console.log(message)
     useAddEvent("messenger:keydown", handleKeydown);
     return (
         <>

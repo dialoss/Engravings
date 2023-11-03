@@ -6,9 +6,9 @@ import "./Carousel.scss";
 import styles from "./Carousel.module.scss";
 import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 
-const Carousel = ({item, className}) => {
+const Carousel = ({item}) => {
     return (
-        <div className={"carousel " + className}>
+        <div className={"carousel"}>
             <div className="carousel__content content-inner">
                 <img className="carousel__image" src={item.url} alt=""/>
             </div>

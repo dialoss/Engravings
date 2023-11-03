@@ -19,7 +19,7 @@ export function createCommentsTree(comments, sorting) {
             links[c.id] = tree[c.id];
         }
     });
-    console.log(newComments)
+    // console.log(newComments)
     return tree;
 }
 

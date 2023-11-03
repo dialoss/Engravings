@@ -8,10 +8,6 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     const [isOpened, setOpened] = useState(defaultOpened);
     const openRef = useRef();
     openRef.current = isOpened;
-    useKeypress('Escape', (event) => {
-        if (!closeConditions.includes('esc')) return;
-        setOpened(false);
-    });
 
     useLayoutEffect(() => {
         setOpened(defaultOpened);
@@ -32,15 +28,17 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     useEffect(() => {
         if (closeConditions.includes('btn')) ref.current.querySelectorAll(".window-close").forEach(button => {
             button.addEventListener("click", () => {
-                console.log('modal button')
+                // console.log('modal button')
                 setOpened(false)
             });
+        });
+        if (closeConditions.includes('esc')) ref.current.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') setOpened(false);
         });
     }, [children]);
 
     useEffect(() => {
-        if (callback)
-            callback(isOpened);
+        callback && callback(isOpened);
     }, [isOpened]);
 
     const modal = <Modal contentInner={children}

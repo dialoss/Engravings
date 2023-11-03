@@ -6,7 +6,6 @@ import Avatar from "../../../ui/Avatar/Avatar";
 import {Components} from "../../Item/components/ItemData";
 import InputContainer from "../../Messenger/Input/InputContainer";
 import {CommentsContext, CommentsInput} from "./CommentsContainer";
-import Jdenticon from "react-jdenticon";
 import "./Comment.scss";
 
 const Comment = ({data}) => {
@@ -22,10 +21,7 @@ const Comment = ({data}) => {
     return (
         <div className={"comment"}>
             <div className="comment-block">
-                {user.picture ? <Avatar symbol={user.name} src={user.picture}></Avatar> :
-                <div className={'avatar'}>
-                    <Jdenticon size="40" value={user.name + user.email} />
-                </div>}
+                <Avatar user={user} src={user.picture}></Avatar>
                 <div className="comment-block__text">
                     <p className={"comment-username"}>{user.name || 'Гость'}</p>
                     <p className={"comment-date"}>{dayjs(data.timeSent).format("HH:mm DD.MM.YYYY")}</p>

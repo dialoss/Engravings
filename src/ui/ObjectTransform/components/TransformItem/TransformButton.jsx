@@ -1,10 +1,11 @@
 import React, {useEffect, useRef} from 'react';
-import {triggerEvent} from "helpers/events";
+import {getElementFromCursor, triggerEvent} from "helpers/events";
 
 const TransformButton = ({children, type, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
         event.stopPropagation();
+        if (getElementFromCursor(event, 'ql-container')) return;
         if (event.button !== 0 || (type === 'move' && !props.style.movable)) return;
         triggerEvent("transform:init", {event, type, btn:ref.current});
     }

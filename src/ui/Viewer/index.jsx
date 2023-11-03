@@ -1,5 +1,5 @@
 import App from './components/App';
-import {useEffect} from "react";
+import {useState} from "react";
 
 let token = '';
 
@@ -74,10 +74,12 @@ export async function uploadAutodeskFile(file) {
     });
 })();
 
-export const Test = ({urn}) => {
+export const AutodeskModel = ({data}) => {
+    const [showUI, setShow] = useState(!data.show_ui);
     return (
         <>
-            {token && urn && <App urn={urn} token={token}/>}
+            <button onClick={() => setShow(s => !s)}>hide ui</button>
+            {token && data.urn && <App urn={data.urn} token={token} className={showUI ? 'default' : 'hidden'}/>}
         </>
     );
 }

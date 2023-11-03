@@ -4,7 +4,7 @@ import {triggerEvent} from "helpers/events";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 
-const ItemImage = ({data, loadCallback, ...props}) => {
+const ItemImage = ({data, ...props}) => {
     const ref = useRef();
     const carouselCallback = useCallback((event) => {
         if (preventOnTransformClick(ref) || event.ctrlKey) return;

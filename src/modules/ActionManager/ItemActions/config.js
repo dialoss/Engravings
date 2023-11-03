@@ -1,11 +1,13 @@
+import {actionElement} from "../components/helpers";
 
 export const ContextActions = {
     'add':{
         text: 'Добавить',
         argument: null,
         actions: {
-            'addQuick': {
-                argument: false,
+            'quick': {
+                callback: 'add',
+                argument: true,
                 text: 'Quick New',
             },
             'textfield': {
@@ -87,3 +89,79 @@ export const ContextActions = {
 }
 // argument - null not callback, false no need arg, true pass name as argument
 // if callback - function with  name of this value - else function with action name
+
+export function setActionData(item) {
+    switch (item) {
+        case 'quick':
+            return {
+                type: 'base',
+                description: 'Описание',
+                title: 'Заголовок',
+            }
+        case 'table':
+            return {
+                width: 30,
+                height: 100,
+            }
+        case 'textfield':
+            return {
+                text: "Текстовое поле"
+            }
+        case 'price':
+            return {
+                price: "999"
+            }
+        case 'timeline_entry':
+            return {
+                title: 'test'
+            }
+        case 'intro':
+            return {
+                type: 'base',
+                container_width: 900,
+                items: [
+                    {
+                        show_shadow: false,
+                        movable: false,
+                        type: 'subscription',
+                        left: 10,
+                        height: 500,
+                        top: 50,
+                        width: 35,
+                        // container_width: 100,
+                        position: 'absolute',
+                    },
+                    {
+                        text: '<h1>Заголовок</h1>',
+                        type: 'textfield',
+                        movable: false,
+                        left: 50,
+                        top: 80,
+                        width: 50,
+                        show_shadow: false,
+                        position: 'absolute',
+                    },
+                    {
+                        type: 'textfield',
+                        text: 'Описание',
+                        top: 160,
+                        width: 50,
+                        left: 50,
+                        show_shadow: false,
+                        position: 'absolute',
+                    },
+                    {
+                        type: 'price',
+                        price: 999,
+                        button: "Заказать изготовление",
+                        left: 25,
+                        width: 45,
+                        top: 500,
+                        show_shadow: false,
+                        position: 'absolute',
+                    }
+                ]
+            }
+    }
+    return {};
+}

@@ -20,7 +20,6 @@ const MyCanvas = ({url}) => {
             <Canvas onMouseDown={disableSelect} onMouseUp={enableSelect} resize={{ scroll: false }}
                     camera={{fov: 45}}>
                 <color attach={"background"} args={["rgb(255,255,255)"]}></color>
-                <Lights />
                 <Suspense fallback={null}>
                     <Stage preset={"soft"} environment={"sunset"} center={[-5,0,-10]}>
                         <Model url={url} />
@@ -34,27 +33,10 @@ const MyCanvas = ({url}) => {
 
 export default MyCanvas;
 
-const Lights = () => {
-    return (
-        <>
-            {/*<ambientLight intensity={0.5}/> */}
-            {/*<directionalLight position={[10, 10, 10]} intensity={1} color={"#fff"}></directionalLight>*/}
-            {/*<directionalLight position={[-10, -10, -10]} intensity={1} color={"#fff"}></directionalLight>*/}
-            {/*<directionalLight position={[10, 10, 0]} intensity={1} />*/}
-            {/*<directionalLight position={[-10, 0, 0]} intensity={1} />*/}
-            {/*<directionalLight position={[0, 10, 0]} intensity={1} />*/}
-            {/*<directionalLight position={[0, 0, 10]} intensity={1} />*/}
-            {/*<directionalLight position={[0, 0, -10]} intensity={1} />*/}
-            {/*<directionalLight position={[0, -10, 0]} intensity={1} />*/}
-        </>
-    );
-};
-
 const Model = ({url}) => {
     const [model, setModel] = useState(null);
     useEffect(() => {
-        fetchRequest(url).then(res => console.log(res.json())).then(file => {
-            console.log(file)
+        fetchRequest(url).then(res => res.arrayBuffer()).then(file => {
             const loader = new GLTFLoader();
             loader.parse(file, '', model => {
                 model.scene.traverse((obj) => {

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import MyCanvas from "./Canvas";
-import {Test} from "ui/Viewer";
+import {AutodeskModel} from "ui/Viewer";
 
 const Viewer = ({data}) => {
     const ref = useRef();
@@ -19,8 +19,8 @@ const Viewer = ({data}) => {
     }, []);
     return (
         <>
-            <div className={"model-wrapper"} ref={ref} style={{height:'500px'}}>
-                {!!data.urn ? <Test urn={data.urn}></Test> :
+            <div className={"model-wrapper"} ref={ref} style={{height: '100%'}}>
+                {!!data.urn ? <AutodeskModel data={data}></AutodeskModel> :
                     <MyCanvas url={data.url}></MyCanvas>}
             </div>
         </>

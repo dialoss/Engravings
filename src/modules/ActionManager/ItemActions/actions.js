@@ -1,5 +1,7 @@
 import {triggerEvent} from "helpers/events";
 import {actionElement, actionElements, setUnselected} from "modules/ActionManager/components/helpers";
+import {setActionData} from "./config";
+import {getSettings, getSettingText} from "./helpers";
 
 export default class Actions {
     static element = null;
@@ -10,42 +12,34 @@ export default class Actions {
         console.log(requests)
         for (let i = requests.length - 1; i >= 0; i--) {
             let request = requests[i];
+            let sendData = request.data || {};
 
-            if (request.specifyElement) request.id = actionElement.id;
-            if (request.specifyParent) request.parent = actionElement.id;
+            if (request.specifyElement) sendData.id = actionElement.id;
+            if (request.specifyParent) sendData.parent = actionElement.id;
 
             let url = '/api/items/';
             if (request.method !== 'POST') {
                 if (!actionElement.id) request.method = 'POST';
                 else {
-                    let id = request.id;
+                    let id = sendData.id;
                     if (!id) id = actionElement.id;
                     url += id + '/';
                 }
             }
 
             let storeMethod = request.method;
-            if ((request.parent || request.parent_0) && request.method === 'POST') storeMethod = 'PATCH';
+            if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
+                (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
 
-            request = {
-                data: request,
+            let sendRequest = {
+                initialRequest: request,
+                data: sendData,
                 url,
                 method: request.method,
                 storeMethod,
             };
-            triggerEvent('itemlist:handle-changes', request);
+            triggerEvent('itemlist:handle-changes', sendRequest);
         }
-    }
-
-    static addQuick() {
-        return [{
-            method: 'POST',
-            type: 'base',
-            specifyParent: true,
-            description: 'Text Field',
-            title: 'Text Field',
-            display_pos: actionElement.display_pos,
-        }];
     }
 
     static add(item='') {
@@ -53,74 +47,14 @@ export default class Actions {
             triggerEvent('form:set-data', {method:'POST', element: actionElement});
             return [];
         }
-        let itemData = {
-            type: item,
-            display_pos: actionElement.display_pos,
-        }
-        switch (item) {
-            case 'table':
-                itemData.width = 30;
-                itemData.height = 100;
-            case 'textfield':
-                itemData.text = 'Text Field';
-                break;
-            case 'price':
-                itemData.price = '999';
-                break;
-            case 'timeline_entry':
-                itemData.title = 'test';
-                break;
-            case 'intro':
-                itemData.type = 'base';
-                itemData.create_items = true;
-                itemData.container_width = 900;
-                itemData.items = [
-                    {
-                        show_shadow: false,
-                        movable: false,
-                        type: 'subscription',
-                        left: 10,
-                        width: 35,
-                        height: 500,
-                        top: 50,
-                        position: 'absolute',
-                    },
-                    {
-                        text: '<h1>Заголовок</h1>',
-                        type: 'textfield',
-                        movable: false,
-                        left: 50,
-                        top: 80,
-                        width: 50,
-                        show_shadow: false,
-                        position: 'absolute',
-                    },
-                    {
-                        type: 'textfield',
-                        text: 'Текст',
-                        top: 160,
-                        width: 50,
-                        left: 50,
-                        show_shadow: false,
-                        position: 'absolute',
-                    },
-                    {
-                        type: 'price',
-                        price: 999,
-                        button: "Заказать изготовление",
-                        left: 25,
-                        width: 45,
-                        top: 500,
-                        show_shadow: false,
-                        position: 'absolute',
-                    }
-                ];
-                break;
-        }
         return [{
             method: 'POST',
             specifyParent: true,
-            ...itemData,
+            data: {
+                type: item,
+                display_pos: actionElement.display_pos,
+                ...setActionData(item),
+            }
         }]
     }
 
@@ -133,7 +67,10 @@ export default class Actions {
         return [{
             method: 'PATCH',
             specifyElement: true,
-         ...getSettings(item, actionElement.data)}];
+            data: {
+                ...getSettings(item, actionElement.data)
+            }
+        }];
     }
 
     static baseAction(type, name) {
@@ -156,7 +93,6 @@ export default class Actions {
     }
 
     static paste() {
-        setUnselected();
         let historyData = Actions.history.slice(-1)[0];
         let action = actionElement;
 
@@ -164,12 +100,18 @@ export default class Actions {
 
         let request = [];
         historyData.elements.forEach(el => {
-            request.push({...el.data, display_pos: actionData.display_pos,
-                method: 'POST', parent: action.id, id: '', parent_0: '', create_items: true});
+            request.push({data: {
+                    ...el.data,
+                    display_pos: actionData.display_pos,
+                    parent: action.id,
+                    id: '',
+                    parent_0: '',
+                },
+                method: 'POST', });
         });
 
         if (historyData.type === 'cut') {
-            request = [...request, ...Actions.delete(historyData.elements)];
+            request = [...Actions.delete(historyData.elements), ...request];
         }
         function clearSelection(elements, name) {
             elements.forEach(el => el.html.classList.remove(name));
@@ -179,37 +121,13 @@ export default class Actions {
     }
 
     static delete(elements=[]) {
-        const f = el => ({id: el.id, method: 'DELETE'});
+        const f = el => ({data: {
+            id: el.id
+        }, method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
         return data;
     }
-}
-
-function getSettings(name, data) {
-    switch (name) {
-        case 'show_date': case 'show_shadow':
-            return {
-                [name]: !data[name],
-            };
-        case 'clear_position':
-            return {
-                'position': 'initial',
-                'top': '0',
-                'left': '0',
-            };
-        case 'clear_size':
-            return {
-                'width': 'auto',
-            };
-    }
-}
-
-function getSettingText(text, positive) {
-    if (positive) {
-        text = "Не " + text.toLowerCase();
-    }
-    return text;
 }
 
 const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});

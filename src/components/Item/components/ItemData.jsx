@@ -33,19 +33,11 @@ export const Components = {
 }
 
 const ItemData = ({data, props}) => {
-    const loadCallback = () => {
-        console.log('init')
-        triggerEvent("container:init", {container: props.container, item: props.itemTransform});
-    }
-    useEffect(() => {
-        loadCallback();
-    }, [props]);
     return (
         <>
             {React.createElement(Components[data.type], {
                     style:props.style,
                     data,
-                    loadCallback,
                     key: data.id
                 })}
         </>

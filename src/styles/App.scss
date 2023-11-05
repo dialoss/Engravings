@@ -89,11 +89,18 @@ body {
   width: 70%;
   margin: 0 auto;
 }
-.avatar .user--refresh {
-  background-color: red;
-}
 
 .chat {
   font-size: 40px;
   text-align: center;
+}
+.App, #root, body, html {
+  height: 100%;
+}
+.App {
+  display: flex;
+  flex-direction: column;
+}
+.container-grow {
+  flex-grow: 1;
 }

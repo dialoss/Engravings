@@ -8,7 +8,7 @@
 }
 
 .item-list {
-  min-height: calc(100vh - 140px);
+  //min-height: calc(100vh - 140px);
   transition: all 0.4s linear;
   &.hidden {
     visibility: hidden;

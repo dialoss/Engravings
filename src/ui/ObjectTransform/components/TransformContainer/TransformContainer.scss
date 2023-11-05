@@ -1,7 +1,9 @@
 .transform-container[data-type="model"] {
   height: 1px;
 }
-
+.transform-container {
+  width: 100%;
+}
 .transform-resizers {
   z-index: 1;
 }

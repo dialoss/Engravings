@@ -1,5 +1,5 @@
-.content-wrapper, .content {
-    min-height: calc(100vh - 100px);
+.content-wrapper {
+    height: 100%;
     .container {
         height: 100%;
         display: flex;
@@ -8,4 +8,9 @@
     .item-list {
         margin-top: auto;
     }
+}
+
+.viewport-container {
+    //height: 1px;
+    //min-height: calc(100dvh - 100px);
 }

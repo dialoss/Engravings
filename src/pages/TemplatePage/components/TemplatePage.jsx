@@ -13,7 +13,7 @@ const TemplatePage = () => {
             <BrowserRouter>
                 <ThemeManager>
                     <ContentWrapper>
-                        <Container>
+                        <Container className={'container container-main'}>
                             <AppRouter/>
                         </Container>
                         <ActionManager></ActionManager>

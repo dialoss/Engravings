@@ -10,6 +10,7 @@ const resizers = {
 }
 
 const TransformItem = ({children, config, className}) => {
+    // console.log(config.width, config)
     const initialTransform = {
         movable: config.movable !== undefined ? config.movable : true,
         ...config,

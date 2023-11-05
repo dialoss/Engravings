@@ -6,7 +6,7 @@ import "./TransformContainer.scss";
 const TransformContainer = ({children, className, ...props}) => {
     const ref = useRef();
     function resizeContainer() {
-        initContainerDimensions({container: ref.current})
+        initContainerDimensions({container: ref.current, resize:true})
     }
     useAddEvent('resize', resizeContainer);
     return (

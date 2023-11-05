@@ -1,10 +1,11 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import './Item.scss';
 import ItemData from "./components/ItemData";
 import {ActiveThemes} from "ui/Themes";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import TransformContainer from "../../ui/ObjectTransform/components/TransformContainer/TransformContainer";
 import {triggerEvent} from "../../helpers/events";
+import {useSelector} from "react-redux";
 
 const Item = ({item, depth=0}) => {
     const ref = useRef();
@@ -17,25 +18,31 @@ const Item = ({item, depth=0}) => {
         let mediaItems = 0;
         let itemsRow = 1;
         item.items.forEach(item => {
-            if (['video', 'image', 'model'].includes(item.type) && itemTransform.style.position !== 'absolute') mediaItems += 1;
+            if (['video', 'image', 'model'].includes(item.type) && item.position !== 'absolute') mediaItems += 1;
         })
         if (mediaItems >= 3) itemsRow = 3;
         else if (mediaItems >= 2) itemsRow = 2;
-
-        for (const it of container.querySelector('.items-wrapper').querySelectorAll(':scope > .transform-item')) {
-            if (['video', 'image', 'model'].includes(it.querySelector('.transform-container').getAttribute('data-type'))) {
-                if (it.style.position !== 'absolute' && it.style.width === 'auto') it.style.width = 100 / itemsRow + '%';
-                console.log(it)
+        const items = container.querySelector('.items-wrapper');
+        if (items) {
+            for (const it of items.querySelectorAll(':scope > .transform-item')) {
+                if (it.style.position !== 'absolute' && it.style.width === 'auto') {
+                    if (['video', 'image', 'model'].includes(it.querySelector('.transform-container').getAttribute('data-type'))) {
+                        it.style.width = 100 / itemsRow + '%';
+                    } else {
+                        it.style.width = '80%';
+                    }
+                }
             }
         }
-
-        setItemProps({itemsRow});
-        triggerEvent("container:init", {container: container});
+        setTimeout(()=>{
+            triggerEvent("container:init", {container, resize:true});
+        }, 100)
     }, []);
     const theme = useContext(ActiveThemes);
     const style = (name) => Object.values(theme).map(th => th[name]).join(' ');
+    const admin = useSelector(state => state.users.current.isAdmin);
     return (
-        <TransformItem key={item.id} config={item} className={'item-' + item.type}>
+        <TransformItem key={item.id} config={item} className={(admin ? 'edit' : '') + ' item-' + item.type}>
             <div className={style('wrapper-' + item.type) + ' ' + style('wrapper-inner')}>
                 <div className={`item item-${item.type} depth-${depth} transform-origin ${style('item-' + item.type)}`}
                      data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
@@ -51,9 +58,9 @@ const Item = ({item, depth=0}) => {
                                     <Item depth={depth + 1} item={item} key={item.id}></Item>)
                             }
                         </div>}
-                        {item.type !== 'base' && <ItemData data={item} props={itemProps}></ItemData>}
+                        {item.type !== 'base' && <ItemData data={item}></ItemData>}
                     </TransformContainer>
-                    {item.type === 'base' && <ItemData data={item} props={itemProps}></ItemData>}
+                    {item.type === 'base' && <ItemData data={item}></ItemData>}
                 </div>
             </div>
         </TransformItem>

@@ -1,8 +1,9 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./MyMasonry.scss";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 import {getViewportSize} from "ui/helpers/viewport";
 import {useAddEvent} from "../../hooks/useAddEvent";
+import {triggerEvent} from "../../helpers/events";
 
 const MyMasonry = React.forwardRef(function({maxColumns=1, widthPoints=[400,600,800], forceColumns=0, children}, ref) {
     const [layout, setLayout] = useState([]);
@@ -39,11 +40,18 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, widthPoints=[400,600,
             newLayout[i % count].push(children[i]);
         }
         for (let i = 0; i < newLayout.length; i++) {
-            const lastItem = newLayout[i].slice(-1)[0];
+            // const lastItem = newLayout[i].slice(-1)[0];
             // if (!!lastItem && !!lastItem.ref) console.log(lastItem.ref.current.offsetBottom); // make masonry columns equal height
         }
         setLayout(newLayout);
     }, [children, count]);
+
+    useEffect(() => {
+        for (const container of ref.current.querySelectorAll('.transform-container')) {
+            // console.log(container)
+            triggerEvent("container:init", {container, resize:true});
+        }
+    }, [layout]);
 
     useAddEvent('resize', setColumns);
 

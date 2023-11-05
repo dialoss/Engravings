@@ -36,7 +36,6 @@ const ItemData = ({data, props}) => {
     return (
         <>
             {React.createElement(Components[data.type], {
-                    style:props.style,
                     data,
                     key: data.id
                 })}

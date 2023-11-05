@@ -146,9 +146,11 @@ const Auth = ({children}) => {
                 }
                 <LoginForm props={prompt}></LoginForm>
                 {user.authenticated && <>
-                    {children}
-                    <img src={user.picture} alt=""/>
-                    <h3>{user.name}</h3>
+                    <div className="wrapper">
+                        {children}
+                        <img src={user.picture} alt=""/>
+                        <h3>{user.name}</h3>
+                    </div>
                     <AuthButton type={'logout'} callback={LocalAuth.logout}>Выйти</AuthButton>
                 </>}
             </div>

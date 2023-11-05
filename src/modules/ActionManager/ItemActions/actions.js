@@ -66,7 +66,7 @@ export default class Actions {
     }
 
     static edit(item='') {
-        if (actionElement.id === -1) return [];
+        if (!actionElement.id) return [];
         if (!item) {
             triggerEvent('form:set-data', {method:'PATCH', element: actionElement});
             return [];
@@ -128,6 +128,7 @@ export default class Actions {
     }
 
     static delete(elements=[]) {
+        if (!elements.length) elements = actionElements;
         const f = el => ({data: {
             id: el.id
         }, method: 'DELETE', element: el.html});

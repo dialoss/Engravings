@@ -81,14 +81,8 @@ function moveAt(event, shiftX, shiftY) {
         }
         try {
             const cont = item.querySelector('.transform-container');
-            // if (!['image', 'video'].includes(cont.getAttribute('data-type'))) {
-                cont.style.minHeight = height + 'px';
-                cont.setAttribute('data-height', height);
-            // } else {
-            //     cont.style.minHeight = 'auto';
-                // cont.setAttribute('data-height', 'auto');
-            // }
-            // initContainerDimensions({container:item.querySelector('.transform-container'), item});
+            cont.style.minHeight = height + 'px';
+            cont.setAttribute('data-height', height);
         } catch (e) {}
         setItemProps(offsetL, width);
     } else {

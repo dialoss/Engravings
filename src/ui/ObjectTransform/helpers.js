@@ -11,37 +11,32 @@ export function isResizable(container) {
 
 function getMaxBottom(container) {
     let m = 0;
-    const dataWidth = +container.getAttribute('data-width').replace('px','') || container.getBoundingClientRect().width;
-    const ratio = (container.getBoundingClientRect().width / dataWidth) || 1;
-    // console.log(container, container.getBoundingClientRect().width)
+    const parentWidth = +(container.getAttribute('data-width') || '').replace('px','');
+
+    const curWidth = container.getBoundingClientRect().width;
+
+    const ratio = (curWidth / parentWidth) || 1;
+    // console.log(container, curWidth, parentWidth)
     for (const block of getFirstItems(container)) {
-        const childCont = block.querySelector('.transform-container');
-        const dataHeight = +childCont.getAttribute('data-height').replace('px','');
-        childCont.style.minHeight = dataHeight * ratio + 'px';
-        // console.log(block, block.s)
         if (isResizable(container) && block.style.position === 'absolute' && !block.classList.contains('transformed')) {
             block.style.top = +block.getAttribute('data-top').replace('px', '') * ratio + 'px';
         }
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
     }
-    // const contHeight = container.getBoundingClientRect().height;
-    // let dataHeight = container.getAttribute('data-height');
-    // if (+dataHeight) {
-        // m = +dataHeight * ratio
-        // if (isResizable(container)) m = Math.max(m, contHeight);
-    // }
-    // else {
-        // if (!dataWidth && contHeight > 2) m = contHeight;
-    // }
+    const dataHeight = +container.getAttribute('data-height').replace('px','');
+    if (!isResizable(container) && dataHeight && m < dataHeight) m = dataHeight * ratio;
+
+
+    // console.log(container, m)
     return m;
 }
 
-export function initContainerDimensions({container, item, toChild}) {
+export function initContainerDimensions({container, item, toChild, resize}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
-    let contHeight = getMaxBottom(container);
-    // console.log(container, contHeight)
+    let contHeight = getMaxBottom(container, resize);
+
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();
@@ -51,16 +46,10 @@ export function initContainerDimensions({container, item, toChild}) {
     }
     container.style.minHeight = contHeight + "px";
 
-    // if (!toChild) {
-    //     let parentContainer = container.parentElement.closest('.transform-container');
-    //     parentContainer && initContainerDimensions({container: parentContainer});
-    // }
-    // if (item) {
-    //     for (const child of getFirstItems(item.querySelector('.transform-container'))) {
-    //         let childContainer = child.querySelector('.transform-container');
-    //         childContainer && initContainerDimensions({container: childContainer, item, toChild: true});
-    //     }
-    // }
+    if (!resize) {
+        let parentContainer = container.parentElement.closest('.transform-container');
+        parentContainer && initContainerDimensions({container: parentContainer});
+    }
 }
 
 export function preventOnTransformClick(ref) {

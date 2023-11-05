@@ -75,7 +75,7 @@ export function setActionElement(event) {
 function getClickPosition(event) {
     let pos = event.pageY;
     let curPos = 0;
-    for (const item of document.querySelectorAll(".item")) {
+    for (const item of document.querySelectorAll(".item.depth-0")) {
         let block = item.getBoundingClientRect();
         let b = block.top + block.height + window.scrollY;
         if (curPos === 0 && pos <= b) {

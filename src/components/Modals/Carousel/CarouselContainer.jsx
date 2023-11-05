@@ -69,7 +69,7 @@ const CarouselContainer = () => {
     const [item, setItem] = useState(null);
     useLayoutEffect(() => {
         if (!content.length) return;
-        if (openedRef.current) setItem(content[currentItem]);
+        setItem(content[currentItem]);
     }, [currentItem, content]);
 
     useKeypress('ArrowRight', () => triggerEvent('carousel:right'));

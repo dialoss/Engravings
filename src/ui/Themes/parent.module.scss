@@ -7,7 +7,10 @@ $color-item-hover: rgb(141, 176, 236);
     widthPoints: [400, 500, 800]
 }
 
+
 .wrapper-base {
+    position: relative;
+    z-index: 2;
     padding: 6px;
     &.edit {
         outline: 2px dashed gray;

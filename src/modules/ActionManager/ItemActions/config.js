@@ -1,4 +1,5 @@
-import {actionElement} from "../components/helpers";
+import store from "store";
+import {getLocation} from "../../../hooks/getLocation";
 
 export const ContextActions = {
     'add':{
@@ -49,6 +50,10 @@ export const ContextActions = {
             },
         }
     },
+    'storage': {
+        text: 'Хранилище',
+        argument: false,
+    },
     'edit':{
         text: 'Редактировать',
         argument: false,
@@ -97,9 +102,15 @@ export const ContextActions = {
 
 export function setActionData(item) {
     switch (item) {
+        case 'page_from':
+            return {
+                type: 'page_from',
+
+            }
         case 'empty':
             return {
                 type: 'base',
+                movable: true,
             }
         case 'quick':
             return {
@@ -109,8 +120,8 @@ export function setActionData(item) {
             }
         case 'table':
             return {
-                width: 30,
-                height: 100,
+                width: '30%',
+                height: '100px',
             }
         case 'textfield':
             return {
@@ -127,48 +138,78 @@ export function setActionData(item) {
         case 'intro':
             return {
                 type: 'base',
-                container_width: 900,
+                container_width: '900px',
                 items: [
                     {
                         show_shadow: false,
                         movable: false,
                         type: 'subscription',
-                        left: 10,
-                        height: 500,
-                        top: 50,
-                        width: 35,
-                        // container_width: 100,
+                        left: '10%',
+                        height: '400px',
+                        top: '50px',
+                        width: '35%',
                         position: 'absolute',
+                        group_order: 1,
                     },
                     {
-                        text: '<h1>Заголовок</h1>',
-                        type: 'textfield',
-                        movable: false,
-                        left: 50,
-                        top: 80,
-                        width: 50,
-                        show_shadow: false,
+                        type: 'base',
+                        left: '50%',
+                        top: '50px',
+                        width: '50%',
                         position: 'absolute',
-                    },
-                    {
-                        type: 'textfield',
-                        text: 'Описание',
-                        top: 160,
-                        width: 50,
-                        left: 50,
-                        show_shadow: false,
-                        position: 'absolute',
+                        group_order: 2,
+                        zindex: 3,
+                        items: [
+                            {
+                                text: '<h1>Заголовок</h1>',
+                                type: 'textfield',
+                                show_shadow: false,
+                                height: '100px',
+                                width: '100%',
+                                zindex: 3,
+                            },
+                            {
+                                type: 'textfield',
+                                text: 'Описание',
+                                height: '100px',
+                                width: '100%',
+                                show_shadow: false,
+                            },
+                        ]
                     },
                     {
                         type: 'price',
                         price: 999,
                         button: "Заказать изготовление",
-                        left: 25,
-                        width: 45,
-                        top: 500,
+                        left: '25%',
+                        width: '45%',
+                        top: '500px',
                         show_shadow: false,
                         position: 'absolute',
+                        group_order: 3,
                     }
+                ]
+            }
+        case 'order':
+            const user = store.getState().users.current;
+            const location = getLocation();
+            const name = user.name.replaceAll(' ', '-');
+            return {
+                type: 'base',
+                title: location.pageSlug,
+                description: `Заказ ` + user.name,
+                parent: '',
+                page: {
+                    slug: name,
+                    path: 'orders/' + name,
+                },
+                items: [
+                    {
+                        show_shadow: false,
+                        type: 'subscription',
+                        title: 'Дата начала изготовления ' + new Date().getUTCDate(),
+                        group_order: 1,
+                    },
                 ]
             }
     }

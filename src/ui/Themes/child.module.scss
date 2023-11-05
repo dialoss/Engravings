@@ -5,11 +5,12 @@
     widthPoints: [400, 500, 800];
 }
 
-.item__wrapper {
-    padding: 5px;
+.wrapper-inner {
+    padding: 6px;
 }
 
 .wrapper-base {
+    padding: 0;
     .item-base {
         background-color: white;
         box-shadow: none;

@@ -94,6 +94,9 @@ const ItemListContainer = () => {
         console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
         console.log('RESPONSE', response)
+        if (response.detail) {
+            return;
+        }
         dispatch({method: request.storeMethod, payload: createItemsTree(response)});
         if (response.length && !response[0].empty) {
             globalDispatch(actions.setItemsAll({items: response}));

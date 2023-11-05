@@ -2,8 +2,6 @@
 .user-profile {
   background-color: $color-link-background;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   row-gap: 5px;
   text-align: center;
@@ -12,7 +10,6 @@
   position: relative;
 
   &.active {
-    //background-color: #5ac2dc;
     box-shadow: 0 0 4px 2px #285cdc;
   }
 
@@ -32,11 +29,13 @@
     height: 100%;
     text-decoration: none;
   }
-
-  img {
-    border-radius: 8px;
-    box-shadow: 0 0 4px 0 grey;
+  .user-picture {
+    img {
+      border-radius: 8px;
+      box-shadow: 0 0 4px 0 grey;
+    }
   }
+
 
   .auth-button {
     font-size: 14px;
@@ -47,6 +46,19 @@
     font-size: 18px;
   }
 
+  .auth-type__buttons {
+    padding-top: 10px;
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+    .auth-button {
+      margin: 0;
+    }
+  }
+
+  .accordion {
+    width: 100%;
+  }
   .accordion-header {
     border: none;
   }
@@ -58,12 +70,27 @@
 }
 
 .login-form {
+  min-width: 50vw;
+  min-height: 40vh;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 2px 0 grey;
+  .window-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+  .buttons {
+    padding-top: 10px;
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+  }
   &.default {
     z-index: 10;
-    position: fixed;
-    left: 150px;
-    .action-button {
-      font-size: 14px;
-    }
+  }
+  .action-button {
+    font-size: 16px;
+    width: 30%;
   }
 }

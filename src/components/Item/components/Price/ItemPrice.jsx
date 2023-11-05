@@ -10,7 +10,7 @@ const ItemPrice = ({data}) => {
         let action = data.link;
         if (!action) return;
         if (action[0] === '$') {
-            triggerEvent('user-prompt', {title: 'Привет'})
+            triggerEvent("action:function", {name: 'add', args:'order'});
         } else {
             window.open(action, "_blank")
         }
@@ -19,7 +19,7 @@ const ItemPrice = ({data}) => {
         <div className={"item__price"}>
             <InfoParagraph type={'price'}>{`Цена: ${data.price}₽`}</InfoParagraph>
             <ItemLink data={data}></ItemLink>
-            <ActionButton onClick={buttonCallback}>
+            <ActionButton onClick={buttonCallback} authorizeAction={true}>
                 {data.button || 'купить'}
             </ActionButton>
         </div>

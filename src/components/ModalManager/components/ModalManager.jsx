@@ -28,7 +28,6 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     useEffect(() => {
         if (closeConditions.includes('btn')) ref.current.querySelectorAll(".window-close").forEach(button => {
             button.addEventListener("click", () => {
-                // console.log('modal button')
                 setOpened(false)
             });
         });

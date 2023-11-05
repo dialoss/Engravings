@@ -2,6 +2,7 @@ import {triggerEvent} from "helpers/events";
 import {actionElement, actionElements, setUnselected} from "modules/ActionManager/components/helpers";
 import {setActionData} from "./config";
 import {getSettings, getSettingText} from "./helpers";
+import {getLocation} from "../../../hooks/getLocation";
 
 export default class Actions {
     static element = null;
@@ -15,7 +16,7 @@ export default class Actions {
             let sendData = request.data || {};
 
             if (request.specifyElement) sendData.id = actionElement.id;
-            if (request.specifyParent) sendData.parent = actionElement.id;
+            if (request.specifyParent && !('parent' in sendData)) sendData.parent = actionElement.id;
 
             let url = '/api/items/';
             if (request.method !== 'POST') {
@@ -26,7 +27,13 @@ export default class Actions {
                     url += id + '/';
                 }
             }
-
+            if (!sendData.page) {
+                const location = getLocation();
+                sendData.page = {
+                    slug: location.pageSlug || location.pageID,
+                    path: location.relativeURL.slice(1, -1),
+                }
+            }
             let storeMethod = request.method;
             if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
                 (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
@@ -127,6 +134,11 @@ export default class Actions {
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
         return data;
+    }
+
+    static storage() {
+        triggerEvent("filemanager-window:toggle", {toggle:true});
+        return [];
     }
 }
 

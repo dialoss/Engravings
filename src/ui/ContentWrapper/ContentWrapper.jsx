@@ -6,7 +6,7 @@ import {triggerEvent} from "../../helpers/events";
 
 const ContentWrapper = ({children}) => {
     return (
-        <TransformContainer className={'viewport-container'} height={'fixed'}>
+        <TransformContainer className={'viewport-container'} data-height={'fixed'}>
             <div className="content-wrapper" onDrop={async e => {
                 e.preventDefault();
                 let files = [];

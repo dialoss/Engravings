@@ -18,9 +18,7 @@ class App extends React.Component {
         const { token, urn } = this.props;
         return (
             <div className={"app " + (this.state.ui ? 'default' : 'hidden')}>
-                <ActionButton onClick={() => this.setState({ui: !this.state.ui})} className={'ui-toggler'}>{
-                    this.state.ui ? 'Скрыть UI' : 'Показать UI'
-                }</ActionButton>
+                <ActionButton onClick={() => this.setState({ui: !this.state.ui})} className={'ui-toggler'}>UI</ActionButton>
                 <div style={{ position: 'relative'}}>
                     <Viewer
                         runtime={{ accessToken: token }}

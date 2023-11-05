@@ -51,6 +51,13 @@ html {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+@include mobile {
+  h1 {
+    font-size: 24px;
+  }
+}
+
 button, a {
   outline: none;
   &:focus {

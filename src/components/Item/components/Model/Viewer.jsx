@@ -19,7 +19,7 @@ const Viewer = ({data}) => {
     }, []);
     return (
         <>
-            <div className={"model-wrapper"} ref={ref} style={{height: '100%'}}>
+            <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
                 {!!data.urn ? <AutodeskModel data={data}></AutodeskModel> :
                     <MyCanvas url={data.url}></MyCanvas>}
             </div>

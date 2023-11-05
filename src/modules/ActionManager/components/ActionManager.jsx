@@ -23,9 +23,15 @@ const ActionManager = () => {
     function actionCallback(event) {
         Actions.action(event.detail);
     }
+    function actionFunction(event) {
+        const fName = event.detail.name;
+        const args = event.detail.args;
+        Actions.action(Actions[fName](args));
+    }
 
     useAddEvent('action:init', initAction);
-    useAddEvent('action:callback', actionCallback)
+    useAddEvent('action:callback', actionCallback);
+    useAddEvent('action:function', actionFunction);
 
 
     const [prompt, setPrompt] = useState({isOpened: false, data:{}, button:'', submitCallback: ()=>{}});

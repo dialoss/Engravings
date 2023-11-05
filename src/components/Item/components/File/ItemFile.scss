@@ -19,8 +19,12 @@
     }
 
     &-image {
-      //width: 100%;
       font-size: 4em;
+      @include mobile {
+        & {
+          font-size: 2em;
+        }
+      }
     }
 
     &-link {

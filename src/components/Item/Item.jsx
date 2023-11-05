@@ -21,16 +21,15 @@ const Item = ({item, depth=0}) => {
         })
         if (mediaItems >= 3) itemsRow = 3;
         else if (mediaItems >= 2) itemsRow = 2;
-        setItemProps({itemsRow});
 
-        if (['video', 'image', 'model'].includes(item.type)) {
-            if (itemTransform.style.position !== 'absolute')
-                itemTransform.style.width = itemTransform.closest('.transform-container').getBoundingClientRect().width / itemsRow + 'px';
-            const h = itemTransform.getBoundingClientRect().width /
-                ((item.media_width / item.media_height) || 1);
-            console.log(h, container.getAttribute('data-height'))
-            if (!+container.getAttribute('data-height')) container.setAttribute('data-height', h);
+        for (const it of container.querySelector('.items-wrapper').querySelectorAll(':scope > .transform-item')) {
+            if (['video', 'image', 'model'].includes(it.querySelector('.transform-container').getAttribute('data-type'))) {
+                if (it.style.position !== 'absolute' && it.style.width === 'auto') it.style.width = 100 / itemsRow + '%';
+                console.log(it)
+            }
         }
+
+        setItemProps({itemsRow});
         triggerEvent("container:init", {container: container});
     }, []);
     const theme = useContext(ActiveThemes);
@@ -46,7 +45,7 @@ const Item = ({item, depth=0}) => {
                                         data-type={item.type}
                                         data-height={item.height === 'auto' ? 'fixed' : item.height}>
                         {!['timeline'].includes(item.type)
-                            && <div className={'items-wrapper items-wrapper--' + itemProps.itemsRow}>
+                            && <div className={'items-wrapper'}>
                             {
                                 item.items && item.items.map(item =>
                                     <Item depth={depth + 1} item={item} key={item.id}></Item>)

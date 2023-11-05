@@ -17,9 +17,9 @@ export function ImageEditor({image}) {
             },
             Text: { text: 'Привет' },
             Rotate: { angle: 90, componentType: 'slider' },
-            tabsIds: [TABS.ADJUST,TABS.ANNOTATE],
+            tabsIds: [TABS.ADJUST,TABS.ANNOTATE, TABS.FINETUNE, TABS.RESIZE,],
             defaultTabId: TABS.ANNOTATE,
-            defaultToolId: TOOLS.TEXT,
+            defaultToolId: TOOLS.PEN,
         };
 
         const filerobotImageEditor = new window.FilerobotImageEditor(

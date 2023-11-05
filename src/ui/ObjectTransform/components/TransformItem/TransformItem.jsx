@@ -10,24 +10,16 @@ const resizers = {
 }
 
 const TransformItem = ({children, config, className}) => {
-    function formatProperty(name, property, sign) {
-        if (property !== "0")
-            return property + sign;
-        return "auto";
-    }
     const initialTransform = {
         movable: config.movable !== undefined ? config.movable : true,
-        // height: formatProperty('height',config.height, "px"),
-        width: formatProperty('width',config.width, "%"),
-        left: formatProperty('left',config.left, "%"),
-        position: config.position,
+        ...config,
+        height: 'auto',
         ...(config.zindex ? {zIndex: config.zindex}: {}),
     };
     return (
         <TransformButton className={"transform-item transform--move " + className || ''}
                          type={'move'}
                          data-top={config.top}
-                         // data-height={config.height}
                          style={initialTransform}>
             {children}
             <div className={"transform-resizers"} style={resizers}>

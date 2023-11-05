@@ -237,7 +237,7 @@ const FileExplorer = () => {
 
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={{position:'fixed', left:'20', top:'150', width:'70', zIndex:25}} style={{bg: 'bg-none'}}>
+            <TransformItem config={{position:'fixed', left:'20', top:'10', width:'70', zIndex:25}} style={{bg: 'bg-none'}}>
             <div className={"filemanager"} ref={ref}>
                 <div className="filemanager-left">
                     <div className={"filemanager-header__wrapper transform-origin"}>

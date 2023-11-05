@@ -18,32 +18,34 @@ const FormBlock = ({formField}) => {
 const MyForm = ({formData, formFields, submitCallback}) => {
     const ref = useRef();
     return (
-        <form className="form__content" action={''} ref={ref}>
+        <div className="form__content">
             <div className="form__header">
                 <p className={"form__title"}>{formData.title}</p>
                 {formData.windowButton && <WindowButton type={'close'}/>}
             </div>
-            <div className={"form__fields"}>
-                {
-                    Object.keys(formFields).map((key) => {
-                        return <FormBlock formField={formFields[key]} key={key}/>
-                    })
-                }
-                <ActionButton onClick={(e) => {
-                    e.preventDefault();
-
-                    const form = ref.current;
-                    let correct = true;
-                    for (const field of [...form].slice(0, -1)) {
-                        if (!field.checkValidity()) {
-                            correct = false;
-                            field.reportValidity();
-                        }
+            <form action={''} ref={ref}>
+                <div className={"form__fields"}>
+                    {
+                        Object.keys(formFields).map((key) => {
+                            return <FormBlock formField={formFields[key]} key={key}/>
+                        })
                     }
-                    correct && submitCallback();
-                }} type={'submit'}>{formData.button}</ActionButton>
-            </div>
-        </form>
+                    <ActionButton onClick={(e) => {
+                        e.preventDefault();
+
+                        const form = ref.current;
+                        let correct = true;
+                        for (const field of [...form].slice(0, -1)) {
+                            if (!field.checkValidity()) {
+                                correct = false;
+                                field.reportValidity();
+                            }
+                        }
+                        correct && submitCallback();
+                    }} type={'submit'}>{formData.button}</ActionButton>
+                </div>
+            </form>
+        </div>
     );
 };
 

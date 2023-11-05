@@ -5,30 +5,35 @@ function getFirstItems(container) {
     return [];
 }
 
-function isResizable(container) {
+export function isResizable(container) {
     return !['image', 'model', 'video', 'subscription'].includes(container.getAttribute('data-type'));
 }
 
 function getMaxBottom(container) {
     let m = 0;
-    const dataWidth = +container.getAttribute('data-width');
+    const dataWidth = +container.getAttribute('data-width').replace('px','') || container.getBoundingClientRect().width;
     const ratio = (container.getBoundingClientRect().width / dataWidth) || 1;
+    // console.log(container, container.getBoundingClientRect().width)
     for (const block of getFirstItems(container)) {
-        if (block.style.position === 'absolute' && !block.classList.contains('transformed')) {
-            block.style.top = +block.getAttribute('data-top') * ratio + 'px';
+        const childCont = block.querySelector('.transform-container');
+        const dataHeight = +childCont.getAttribute('data-height').replace('px','');
+        childCont.style.minHeight = dataHeight * ratio + 'px';
+        // console.log(block, block.s)
+        if (isResizable(container) && block.style.position === 'absolute' && !block.classList.contains('transformed')) {
+            block.style.top = +block.getAttribute('data-top').replace('px', '') * ratio + 'px';
         }
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
     }
-    const contHeight = container.getBoundingClientRect().height;
-    let dataHeight = container.getAttribute('data-height');
-    if (+dataHeight) {
-        m = +dataHeight * ratio
-        if (!isResizable(container)) m = Math.max(m, contHeight);
-    }
-    else {
-        if (!dataWidth && contHeight > 2) m = contHeight;
-    }
+    // const contHeight = container.getBoundingClientRect().height;
+    // let dataHeight = container.getAttribute('data-height');
+    // if (+dataHeight) {
+        // m = +dataHeight * ratio
+        // if (isResizable(container)) m = Math.max(m, contHeight);
+    // }
+    // else {
+        // if (!dataWidth && contHeight > 2) m = contHeight;
+    // }
     return m;
 }
 
@@ -36,7 +41,7 @@ export function initContainerDimensions({container, item, toChild}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container);
-
+    // console.log(container, contHeight)
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();
@@ -44,7 +49,7 @@ export function initContainerDimensions({container, item, toChild}) {
             item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
         return;
     }
-    container.style.height = contHeight + "px";
+    container.style.minHeight = contHeight + "px";
 
     // if (!toChild) {
     //     let parentContainer = container.parentElement.closest('.transform-container');

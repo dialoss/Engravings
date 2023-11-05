@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {BaseMessagesContainer} from "../../Messenger/Message/MessagesContainer";
-import {doc, updateDoc} from "firebase/firestore";
+import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import InputContainer from "../../Messenger/Input/InputContainer";
 import Comments from "./Comments";
 import TextEditor from "../../../ui/TextEditor/TextEditor";
@@ -20,7 +20,6 @@ import {sendLocalRequest} from "../../../api/requests";
 import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
-    // console.log(message)
     return (
         <div className={"custom-input comments-input"}>
             <div className="input-wrapper">
@@ -34,8 +33,8 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
             </div>
             <AttachmentPreview message={message}></AttachmentPreview>
             <ActionButton onClick={sendCallback}
-                          key={'comments-send'}
-                          className={'modal__toggle-button'}>Отправить</ActionButton>
+                          authorizeAction={true}
+                          key={'comments-send'}>Отправить</ActionButton>
         </div>
     );
 };
@@ -47,14 +46,21 @@ const CommentsContainer = ({page}) => {
     const [comments, setComments] = useState([]);
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('newest'));
+    const [document, setDocument] = useState(null);
 
     useLayoutEffect(() => {
-        updateDoc(doc(CDB, String(page)), {newMessage: false});
+        getDoc(doc(CDB, String(page))).then(d => {
+            if (!d.data()) {
+                setDoc(doc(CDB, String(page)), {messages:[]});
+            } else {
+                updateDoc(doc(CDB, String(page)), {newMessage: false});
+                setDocument(doc(CDB, String(page)));
+            }
+        });
     }, [page]);
 
     const config = {
         onsuccess: (message) => {
-            // console.log(message)
             sendLocalRequest('/api/notification/email/', {
                 recipient: 'matthewwimsten@gmail.com',
                 // recipient: 'fomenko75@mail.ru',
@@ -83,8 +89,8 @@ const CommentsContainer = ({page}) => {
     console.log(comments)
     return (
         <CommentsContext.Provider value={manager}>
-            <BaseMessagesContainer id={page} callback={setComments} document={doc(CDB, String(page))}>
-            </BaseMessagesContainer>
+            {document && <BaseMessagesContainer id={page} callback={setComments} document={document}>
+            </BaseMessagesContainer>}
             <div className={"comments-section"}>
                 <div className="comments-section__header">
                     <InputContainer children={CommentsInput} manager={manager}></InputContainer>

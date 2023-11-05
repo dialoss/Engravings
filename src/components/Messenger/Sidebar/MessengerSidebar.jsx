@@ -44,18 +44,7 @@ const MessengerSidebar = () => {
         let room = null;
 
         if (!user) {
-            let user = {};
-            const callback = (form) => {
-                let data = {
-                    name:form.name.value,
-                    email:form.email.value,
-                }
-                createUser(data).then(doc => {
-                    user = doc.data();
-                    store.dispatch(actions.setField('user', user));
-                })
-            }
-            triggerEvent("user-prompt", loginForm);
+            triggerEvent('user-auth', true);
             return;
         }
 

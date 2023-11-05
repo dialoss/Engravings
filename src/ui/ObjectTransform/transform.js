@@ -1,4 +1,4 @@
-import {initContainerDimensions} from "./helpers";
+import {initContainerDimensions, isResizable} from "./helpers";
 import {triggerEvent} from "../../helpers/events";
 import {getElementID} from "../../modules/ActionManager/components/helpers";
 
@@ -80,8 +80,14 @@ function moveAt(event, shiftX, shiftY) {
             offsetL = Math.max(0, offsetL);
         }
         try {
-            item.querySelector('.transform-container').style.height = height + 'px';
-            item.querySelector('.transform-container').setAttribute('data-height', height);
+            const cont = item.querySelector('.transform-container');
+            // if (!['image', 'video'].includes(cont.getAttribute('data-type'))) {
+                cont.style.minHeight = height + 'px';
+                cont.setAttribute('data-height', height);
+            // } else {
+            //     cont.style.minHeight = 'auto';
+                // cont.setAttribute('data-height', 'auto');
+            // }
             // initContainerDimensions({container:item.querySelector('.transform-container'), item});
         } catch (e) {}
         setItemProps(offsetL, width);
@@ -139,22 +145,24 @@ export function setItemTransform(event, type, _item, _btn) {
         mouseMoved = false;
         if (container.classList.contains('viewport-container')) return;
         let parent = getElementID(item.closest('.item'));
+        let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
+        if (isResizable(container)) top = item.offsetTop + 'px';
 
         let request = [{
             data: {
                 id: getElementID(item.querySelector('.item')),
                 position: item.style.position || 'initial',
-                height: item.getBoundingClientRect().height || "0",
-                width: item.style.width.replace("%", "") || "0",
-                top: item.style.top.replace("px", "") || "0",
-                left: item.style.left.replace("%", "") || "0",
-                container_width: item.querySelector('.transform-container').getBoundingClientRect().width || "0",
+                height: item.querySelector('.transform-container').getBoundingClientRect().height + 'px' || "0",
+                width: item.style.width || "0",
+                top,
+                left: item.style.left || "0",
+                container_width: item.querySelector('.transform-container').getBoundingClientRect().width + 'px' || "0",
             },
             method: 'PATCH',
         }, {
             data: {
                 id: parent,
-                container_width: container.getBoundingClientRect().width || "0",
+                container_width: container.getBoundingClientRect().width + 'px' || "0",
             },
             method: 'PATCH',
         }];

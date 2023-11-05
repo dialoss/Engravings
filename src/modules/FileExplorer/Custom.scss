@@ -84,6 +84,10 @@ $border: solid #7c7c7c;
     display: flex;
     flex-direction: column;
 
+    &__wrapper {
+      margin-bottom: -2px;
+    }
+
     &.buttons, &.toolbar {
       height: 30px;
       display: flex;
@@ -236,3 +240,9 @@ $border: solid #7c7c7c;
 .filemanager-window {
   z-index: 25 !important;
 }
+
+.image-editor {
+  border: 2px $border;
+  border-left: none;
+}
+

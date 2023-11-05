@@ -13,6 +13,8 @@ import {useSelector} from "react-redux";
 import {triggerEvent} from "../../../helpers/events";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import {ModalManager} from "../../../components/ModalManager";
+import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
+import WindowButton from "../../../ui/Buttons/WindowButton/WindowButton";
 
 
 class LocalAuth {
@@ -55,29 +57,61 @@ function serializeFields(fields) {
     return newFields;
 }
 
-const LoginForm = ({callback, type}) => {
+const MyLoginForm = ({callback}) => {
     const data = [loginForm, registerForm];
     const [stage, setStage] = useState(0);
     return (
-        <ModalManager name={'login-form:toggle'} defaultOpened={true} callback={(v) => !v && callback()}>
-            <div className={'login-form ' + type}>
-                <div className="buttons">
-                    {
-                        data.map((d, i) =>
-                            <button onClick={()=>setStage(i)} key={i}>{d.title}</button>
-                        )
-                    }
+      <>
+          <div className="buttons">
+              {
+                  data.map((d, i) =>
+                      <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>
+                  )
+              }
+          </div>
+          {
+              data.map((d, i) =>
+                  <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
+                      <FormContainer formData={d}
+                                     callback={(data) =>
+                                         callback({credentials:serializeFields(data), stage: d.stage})}>
+                      </FormContainer>
+                  </div>
+              )
+          }
+      </>
+    );
+}
+
+const LoginForm = ({props}) => {
+    const {callback, type, isOpened} = props;
+
+    const googleAuth = useGoogleLogin({
+        onSuccess: tokenResponse => {
+            LocalAuth.login({credentials: {token: tokenResponse.access_token}});
+        },
+    });
+
+    const [authType, setType] = useState('');
+
+    return (
+        <ModalManager name={'login-form:toggle'}
+                      defaultOpened={isOpened}
+                      callback={(v) => !v && callback && callback()}>
+            <div className={'login-form ' + type} style={{bg: 'bg-none', win:'centered'}}>
+                <WindowButton type={'close'}></WindowButton>
+                <div className="auth-type__buttons">
+                    <AuthButton type={'signin'} callback={() => {
+                        LocalAuth.type = 'google';
+                        setType('google');
+                        googleAuth();
+                    }}>Google</AuthButton>
+                    <AuthButton type={'signin'} callback={() => {
+                        LocalAuth.type = 'custom';
+                        setType('custom');
+                    }}>Локально</AuthButton>
                 </div>
-                {
-                    data.map((d, i) =>
-                        <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
-                            <FormContainer formData={d}
-                                           callback={(data) =>
-                                               callback({credentials:serializeFields(data), stage: d.stage})}>
-                            </FormContainer>
-                        </div>
-                    )
-                }
+                {authType === 'custom' && <MyLoginForm callback={callback}></MyLoginForm>}
             </div>
         </ModalManager>
     );
@@ -85,17 +119,12 @@ const LoginForm = ({callback, type}) => {
 
 const Auth = ({children}) => {
     const user = useSelector(state => state.users.current);
-    const googleAuth = useGoogleLogin({
-        onSuccess: tokenResponse => {
-            LocalAuth.login({credentials: {token: tokenResponse.access_token}});
-        },
-    });
+
     useLayoutEffect(() => {
         LocalAuth.auth();
     }, []);
 
-    function localAuth(popup) {
-        LocalAuth.type = 'custom';
+    function auth(popup) {
         setPrompt({isOpened: true, type: (popup ? 'popup' : 'default'),
             callback: (data) => {
             if (!!data) LocalAuth.login(data);
@@ -103,25 +132,19 @@ const Auth = ({children}) => {
         }})
     }
 
-    useAddEvent('user-auth', e => localAuth(e.detail));
+    useAddEvent('user-auth', e => auth(e.detail));
 
     const [prompt, setPrompt] = useState({isOpened: false, callback:null});
     return (
         <div className={"auth"}>
             <div className={"user-profile " + ((getLocation().relativeURL === '/customer/') ? 'active' : '')}>
                 {!user.authenticated &&
-                        <AccordionContainer header={<AuthButton type={'choice'}>Вход</AuthButton>}>
-                            <div className={'auth-choice'}>
-                                <p>Выберите способ входа</p>
-                                <AuthButton type={'signin'} callback={() => {
-                                    LocalAuth.type = 'google';
-                                    googleAuth();
-                                }}>Google</AuthButton>
-                                <AuthButton type={'my-login'} callback={() => localAuth(false)}>Локально</AuthButton>
-                            </div>
-                        </AccordionContainer>
+                    <AccordionContainer header={
+                        <AuthButton type={'choice'} callback={auth}>Вход</AuthButton>
+                    }>
+                    </AccordionContainer>
                 }
-                {prompt.isOpened && <LoginForm callback={prompt.callback} type={prompt.type}></LoginForm>}
+                <LoginForm props={prompt}></LoginForm>
                 {user.authenticated && <>
                     {children}
                     <img src={user.picture} alt=""/>

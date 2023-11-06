@@ -11,12 +11,14 @@ import Tooltip from "./Tooltip";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {ImageEditor} from "./ImageEditor/ImageEditor";
+import {clearTextFromHTML} from "../../ui/TextEditor/helpers";
 
 export function fileToItem(data) {
     return {
         data: {
             show_shadow: data.type !== 'file',
-            width: '50%',
+            container_width: data.type === 'model' ? '300px' : '',
+            height: data.type === 'model' ? '300px': '',
             urn: data.urn,
             type: data.type,
             filename: data.name,
@@ -48,12 +50,21 @@ let globalsearch = [];
 export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setData, searchBy, ...props}) => {
     const [value, setValue] = useState('');
 
+    function highlight(text, query) {
+        let re = new RegExp(query, "gi");
+        return text.replace(re, `<mark>${query}</mark>`);
+    }
+
     function handleSearch(query) {
         let newData = [];
         data.forEach(item => {
             let val = item;
             for (const p of searchBy.split('.')) val = val[p];
-            if (val.toLowerCase().includes(query.toLowerCase())) {
+            val = clearTextFromHTML(val);
+            if (val.toLowerCase().includes(query.toLowerCase()) || val.includes(query)) {
+                let highlighted = highlight(val, query);
+                item.value.text = highlighted;
+                console.log(highlighted)
                 newData.push(item);
             }
         })

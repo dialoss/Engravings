@@ -47,6 +47,7 @@ const AppRoutes = () => {
                            key={route.path}/>
                 )
             }
+            <Route path={'/admin/'} element={<Navigate to={'/main/'}/>}/>
             <Route path={'*'} element={<Navigate to={'/main/'}/>}/>
         </Routes>
     );

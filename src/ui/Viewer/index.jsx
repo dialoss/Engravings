@@ -50,8 +50,8 @@ export async function uploadAutodeskFile(file) {
 
 (function auth() {
     let details = {
-        client_id: 'Y1Mi2GINEBuZlZjvIICX8rKG3VKE36At',
-        client_secret: 'sx1UqJ2T5j5QdIrW',
+        client_id: process.env.REACT_APP_AUTODESK_ID,
+        client_secret: process.env.REACT_APP_AUTODESK_SECRET,
         grant_type: 'client_credentials',
         scope: 'data:read data:write data:create bucket:create bucket:read'
     };
@@ -77,7 +77,7 @@ export async function uploadAutodeskFile(file) {
 export const AutodeskModel = ({data}) => {
     return (
         <>
-            {token && data.urn && <App urn={data.urn} token={token} ui={data.show_ui}/>}
+            {token && data.urn && <App urn={data.urn} token={token} ui={data.show_ui} rotate={data.rotation}/>}
         </>
     );
 }

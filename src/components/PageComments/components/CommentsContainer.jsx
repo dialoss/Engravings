@@ -1,23 +1,22 @@
 import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {BaseMessagesContainer} from "../../Messenger/Message/MessagesContainer";
-import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import InputContainer from "../../Messenger/Input/InputContainer";
 import Comments from "./Comments";
 import TextEditor from "../../../ui/TextEditor/TextEditor";
-import {AttachmentPreview, InputAttachment, InputEmoji, InputSend} from "../../Messenger/Input/MessengerInput";
-import Container from "../../../ui/Container/Container";
+import {AttachmentPreview} from "../../Messenger/Input/MessengerInput";
 import "./Comments.scss";
 import {actions} from "../store/reducers";
-import {CDB} from "../../Messenger/api/config";
-import {FirebaseContainer} from "../../../api/FirebaseContainer";
-import {MessageManager, updateRoom, updateUser} from "../../Messenger/api/firebase";
+import {CDB, firestore} from "../../Messenger/api/config";
+import {MessageManager} from "../../Messenger/api/firebase";
 import store from "store";
 import CommentsTools from "./CommentsTools";
-import {useSelector} from "react-redux";
 import {createCommentsTree, sortFunction} from "./helpers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
-import {sendLocalRequest} from "../../../api/requests";
+import {sendEmail} from "../../../api/requests";
 import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
+import {getLocation} from "../../../hooks/getLocation";
+import {useSelector} from "react-redux";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
@@ -45,32 +44,42 @@ const CommentsContainer = ({page}) => {
     const [search, setSearch] = useState([]);
     const [comments, setComments] = useState([]);
     const [commentsTree, setCommentsTree] = useState({});
-    const [sorting, setSorting] = useState(() => sortFunction('newest'));
+    const [sorting, setSorting] = useState(() => sortFunction('default'));
     const [document, setDocument] = useState(null);
+    const user = useSelector(state => state.users.current);
 
     useLayoutEffect(() => {
-        getDoc(doc(CDB, String(page))).then(d => {
-            if (!d.data()) {
-                setDoc(doc(CDB, String(page)), {messages:[]});
-            } else {
-                updateDoc(doc(CDB, String(page)), {newMessage: false});
+        function fetchDocument(created) {
+            if (created) {
+                if (user.isAdmin) updateDoc(doc(firestore, 'apps', 'comments'), {newComments: arrayRemove(page)});
                 setDocument(doc(CDB, String(page)));
+                return;
             }
-        });
+            getDoc(doc(CDB, String(page))).then(d => {
+                if (!d.data()) {
+                    setDoc(doc(CDB, String(page)), {messages:[]}).then(d => fetchDocument(true));
+                } else {
+                    fetchDocument(true);
+                }
+            });
+        }
+        fetchDocument(false);
     }, [page]);
 
     const config = {
         onsuccess: (message) => {
-            sendLocalRequest('/api/notification/email/', {
-                recipient: 'matthewwimsten@gmail.com',
-                // recipient: 'fomenko75@mail.ru',
-                subject: 'Новый комментарий',
+            const location = getLocation();
+            sendEmail({
+                type: 'comment',
+                subject: 'MyMount | Новый комментарий',
                 data: {
-                    page,
+                    page: location.relativeURL,
                     message: message.value.text,
+                    reply: location.fullURL,
+                    user,
                 }
-            }, 'POST');
-            // updateDoc(doc(CDB, ''), {newMessage: true});
+            })
+            updateDoc(doc(firestore, 'apps', 'comments'), {newComments: arrayUnion(page)});
         },
         getDocument: () => String(page),
         userNoTyping: () => {},
@@ -82,7 +91,7 @@ const CommentsContainer = ({page}) => {
         setSearch(comments);
     }, [comments]);
     useEffect(() => {
-        setCommentsTree(createCommentsTree(Object.values(search), sorting));
+        setCommentsTree(createCommentsTree(comments, sorting, search));
     }, [sorting, search]);
 
     const manager = new MessageManager('comments', actions, config);
@@ -93,12 +102,12 @@ const CommentsContainer = ({page}) => {
             </BaseMessagesContainer>}
             <div className={"comments-section"}>
                 <div className="comments-section__header">
-                    <InputContainer children={CommentsInput} manager={manager}></InputContainer>
+                    <InputContainer extraFields={{parent: ''}} children={CommentsInput} manager={manager}></InputContainer>
                     <div className={"comments-tools__wrapper"}>
                         <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
                         <SearchContainer placeholder={'Поиск по комментариям'}
-                                         data={search}
-                                         inputCallback={v => (!v && setSearch(comments))}
+                                         data={comments}
+                                         inputCallback={v => !v && setSearch(comments)}
                                          searchBy={'value.text'}
                                          setData={setSearch}></SearchContainer>
                     </div>

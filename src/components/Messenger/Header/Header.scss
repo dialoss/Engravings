@@ -7,6 +7,10 @@
   background-color: $color-main;
   border-bottom: $style-border;
 
+  &:hover {
+    cursor: pointer;
+  }
+
   .avatar__wrapper {
     @include center-absolute;
     width: 35px;

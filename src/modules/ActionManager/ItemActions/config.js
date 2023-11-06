@@ -1,5 +1,10 @@
 import store from "store";
 import {getLocation} from "../../../hooks/getLocation";
+import dayjs from "dayjs";
+import {sendEmail} from "../../../api/requests";
+import {MessageManager} from "../../../components/Messenger/api/firebase";
+import {arrayUnion, doc, updateDoc} from "firebase/firestore";
+import {adminEmail, firestore} from "../../../components/Messenger/api/config";
 
 export const ContextActions = {
     'add':{
@@ -191,12 +196,43 @@ export function setActionData(item) {
                 ]
             }
         case 'order':
+            const admin = Object.values(store.getState().users.users).find(u => u.email === adminEmail);
             const user = store.getState().users.current;
+            const {rooms} = store.getState().messenger;
+            const adminRoom = Object.values(rooms).find(r => r.users.includes(adminEmail) && r.users.includes(user.email));
+
+            const config = {
+                getDocument: () => adminRoom.messages,
+            }
+            const manager = new MessageManager('messenger', null, config);
+            manager.sendMessage({
+                message: {
+                    text: `Здравствуйте! Я принял ваш заказ и в скором времени свяжусь с Вами,
+                     чтобы обсудить детали заказа. По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
+                     на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
+                      в курсе новостей.`,
+                    upload: {},
+                },
+                user_id: admin.id,
+            });
+
             const location = getLocation();
             const name = user.name.replaceAll(' ', '-');
-            return {
+            const date = dayjs(new Date().getTime()).format("HH:mm DD.MM");
+            const orderName = location.pageSlug.toUpperCase();
+
+            sendEmail({
+                type: 'order',
+                subject: 'MyMount | Новый заказ',
+                data: {
+                    user,
+                    order: orderName,
+                }
+            });
+          
+            return [{
                 type: 'base',
-                title: location.pageSlug,
+                title: orderName,
                 description: `Заказ ` + user.name,
                 parent: '',
                 page: {
@@ -207,11 +243,26 @@ export function setActionData(item) {
                     {
                         show_shadow: false,
                         type: 'subscription',
-                        title: 'Дата начала изготовления ' + new Date().getUTCDate(),
+                        title: 'Дата начала изготовления ' + date,
                         group_order: 1,
                     },
                 ]
-            }
+            },
+                {
+                    type: 'base',
+                    title: orderName,
+                    description: `Заказ ` + user.name,
+                    parent: '',
+                    page: {
+                        slug: 'orders',
+                        path: 'orders',
+                    },
+                    page_from: {
+                        slug: name,
+                        path: 'orders/' + name,
+                    },
+                },
+            ]
     }
     return {};
 }

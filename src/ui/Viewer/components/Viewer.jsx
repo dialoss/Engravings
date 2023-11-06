@@ -39,9 +39,7 @@ function initializeViewerRuntime(options) {
 class Viewer extends React.Component {
     constructor(props) {
         super(props);
-        /** @type {HTMLDivElement} */
         this.container = null;
-        /** @type {Autodesk.Viewing.GuiViewer3D} */
         this.viewer = null;
     }
 
@@ -65,43 +63,7 @@ class Viewer extends React.Component {
                     }, 200)
                 });
 
-                // console.log(Autodesk.Viewing);
-                // setTimeout(() => {
-                //     this.viewer.canvas.closest('.adsk-viewing-viewer').onmousedown = (e) => {
-                //         console.log(e)
-                //         if (e.ctrlKey) {
-                //             e.preventDefault()
-                //             e.stopPropagation()
-                //         }
-                //     }
-                // }, 3000)
-                //
-                // this.viewer.canvas.onmousedown = (e) => {
-                //     // console.log(e)
-                //     if (e.ctrlKey) {
-                //         e.preventDefault()
-                //         // e.stopPropagation()
-                //     }
-                // }
-                // this.viewer.canvasWrap.addEventListener('contextmenu', (e) => {
-                //     e.stopPropagation()
-                //     e.preventDefault()
-                //     if (!e.ctrlKey) e.stopPropagation();
-                // })
-                // this.viewer.canvasWrap.onmousedown = (e) => {
-                //     // e.preventDefault()
-                //     e.stopPropagation()
-                //     // e.preventDefault()
-                //     // e.stopPropagation()
-                //     // if (e.button === 2) return;
-                //     // if (e.ctrlKey) {
-                //     //     e.preventDefault();
-                //     // } else {
-                //     //     e.stopPropagation();
-                //     // }
-                // }
                 window.autodeskViewer = this.viewer;
-                // console.log(this.viewer)
 
                 this.updateViewerState({});
             }).then(r => {
@@ -120,6 +82,7 @@ class Viewer extends React.Component {
                 try {
                     this.viewer.loadExtension("TransformationExtension")
                     this.viewer.loadExtension("CameraRotation");
+                    if (this.props.rotate) document.querySelector('#turnTableButton').click();
                     clearInterval(loader);
                 } catch (e) {}
             }, 3000);

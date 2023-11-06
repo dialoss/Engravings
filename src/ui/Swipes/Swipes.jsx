@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {useSwipeable} from "react-swipeable";
 import {config} from "./config";
 import {getElementFromCursor, triggerEvent} from "../../helpers/events";
+import {getViewportWidth} from "../helpers/viewport";
 
 const Swipes = ({callback, state, children, className}) => {
     const canSwipe = useRef(true);
@@ -22,9 +23,13 @@ const Swipes = ({callback, state, children, className}) => {
         onSwipeStart: (e) => {
             let [x, y] = e.initial;
             if (className === 'sidebar') {
+                if (x > getViewportWidth() / 3) {
+                    canSwipe.current = false;
+                    return;
+                }
                 const f = (isOpened) => canSwipe.current = !isOpened;
                 triggerEvent('messenger-window:toggle:check-opened', f);
-                f(getElementFromCursor({clientX: x, clientY: y}, 'item-model'));
+                if (getElementFromCursor({clientX: x, clientY: y}, 'item-model')) f(true);
             } else {
                     let block = elRef.current.getBoundingClientRect();
                     if (block.left + block.width < x) {

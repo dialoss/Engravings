@@ -6,8 +6,8 @@ const CommentsTools = ({callback}) => {
         <div className={"comments-tools"}>
             <p>Сортировка</p>
             <div className={"sort-options"}>
-                <select name="sort" id="" onChange={callback} defaultValue={'newest'}>
-                    {/*<option value="default">По умолчанию</option>*/}
+                <select name="sort" id="" onChange={callback} defaultValue={'default'}>
+                    <option value="default">По умолчанию</option>
                     {/*<option value="controversial">Обсуждаемые</option>*/}
                     <option value="oldest">Старые</option>
                     <option value="newest">Новые</option>

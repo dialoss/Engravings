@@ -54,15 +54,19 @@ export default class Actions {
             triggerEvent('form:set-data', {method:'POST', element: actionElement});
             return [];
         }
-        return [{
+        let data = setActionData(item);
+        if (!Array.isArray(data)) {
+            data = [data];
+        }
+        console.log(data)
+        return data.map(d => ({
             method: 'POST',
             specifyParent: true,
             data: {
                 type: item,
                 display_pos: actionElement.display_pos,
-                ...setActionData(item),
-            }
-        }]
+                ...d,
+            }}));
     }
 
     static edit(item='') {

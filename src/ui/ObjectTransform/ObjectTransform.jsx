@@ -7,10 +7,8 @@ import store from "store";
 
 const ObjectTransform = () => {
     function initTransform(event) {
-        if (!store.getState().users.current.isAdmin) return;
         const btn = event.detail.btn;
         const item = btn.closest(".transform-item");
-
         setItemTransform(event.detail.event, event.detail.type, item, btn);
         triggerEvent("action:init", event.detail.event);
     }

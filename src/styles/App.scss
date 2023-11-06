@@ -62,11 +62,9 @@ button, a {
   outline: none;
   &:focus {
     outline: none;
-    box-shadow: none;
   }
   &:active {
     outline: none;
-    box-shadow: none;
   }
 }
 
@@ -80,8 +78,6 @@ body {
   font-weight: 400;
   height: 100%;
   overflow-y: scroll !important;
-  overflow-x: hidden !important;
-
   @include custom-scrollbar;
 }
 

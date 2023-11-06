@@ -47,3 +47,11 @@ export async function getGlobalTime() {
         then(res => res.json()).then(data => r = data);
     return r;
 }
+
+export function sendEmail(email) {
+    sendLocalRequest('/api/notification/email/', {
+        // recipient: 'matthewwimsten@gmail.com',
+        recipient: 'fomenko75@mail.ru',
+        ...email,
+    }, 'POST');
+}

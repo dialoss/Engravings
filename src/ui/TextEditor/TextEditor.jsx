@@ -31,7 +31,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
         field.addEventListener('keydown', (e) => e.stopPropagation());
         field.focus();
         field.addEventListener('blur', (e) => {
-            let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window', 'sidebar-item__wrapper']);
+            let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
             if (target) {
                 e.preventDefault();
                 field.focus();

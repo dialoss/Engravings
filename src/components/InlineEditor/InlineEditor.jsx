@@ -26,7 +26,6 @@ const InlineEditor = ({data, closeCallback}) => {
     useLayoutEffect(() => {
         if (!ref.current) return;
         let cont = ref.current.editor.container.closest(".transform-container");
-        cont.setAttribute('data-height', data.mount.current.getBoundingClientRect().height + 10);
         triggerEvent("container:init", {container: cont});
     }, [value]);
 

@@ -11,6 +11,7 @@ class App extends React.Component {
             camera: null,
             selectedIds: [],
             ui: props.ui,
+            rotate: props.rotate,
         };
     }
 
@@ -23,9 +24,7 @@ class App extends React.Component {
                     <Viewer
                         runtime={{ accessToken: token }}
                         urn={urn}
-                        selectedIds={this.state.selectedIds}
-                        onCameraChange={({ viewer, camera }) => this.setState({ camera: camera.getWorldPosition() })}
-                        onSelectionChange={({ viewer, ids }) => this.setState({ selectedIds: ids })}
+                        rotate={this.state.rotate}
                         ref={ref => this.wrapper = ref}
                     />
                 </div>

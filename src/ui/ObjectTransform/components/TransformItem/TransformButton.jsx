@@ -1,10 +1,12 @@
 import React, {useEffect, useRef} from 'react';
 import {getElementFromCursor, triggerEvent} from "helpers/events";
+import store from "../../../../store";
 
-const TransformButton = ({children, type, ...props}) => {
+const TransformButton = ({children, type, secure, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
         event.stopPropagation();
+        if (secure && !store.getState().users.current.isAdmin) return;
         const parentCont = ref.current.closest('.transform-container');
         const item = ref.current.closest('.transform-item');
         const cont = item.querySelector('.transform-container');

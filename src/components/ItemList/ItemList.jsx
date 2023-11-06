@@ -19,7 +19,7 @@ const ItemList = ({items, className}) => {
     }
     return (
         <div className={"item-list " + className}>
-            <NavButton className={"itemlist"} data={{text: '', callback: calcForceColumns}}></NavButton>
+            <NavButton className={"itemlist"} data={{text: 'ВИД', callback: calcForceColumns}}></NavButton>
             <Container style={{marginBottom: "50px"}}>
                 {!!style && <MyMasonry
                     maxColumns={columns}

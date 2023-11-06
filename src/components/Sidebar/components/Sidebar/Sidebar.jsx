@@ -6,8 +6,6 @@ import "../Link/SidebarLink.scss";
 import Slider from "ui/Slider/Slider";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../../../helpers/events";
-import {useSwipeable} from "react-swipeable";
-import {config} from "../../../../ui/Swipes/config";
 import {Auth} from "modules/Authorization";
 import {Link} from "react-router-dom";
 import Swipes from "../../../../ui/Swipes/Swipes";
@@ -53,14 +51,14 @@ const Sidebar = ({data, picker, customer}) => {
                 <Slider togglers={togglers} defaultOpened={isOpened}>
                     <div className="sidebar__wrapper" ref={ref}>
                         <div className="sidebar__inner">
+                            <Auth>
+                                {customer && <Link to={'/customer/'}></Link>}
+                            </Auth>
+                            {picker && <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
+                                            className={"sidebar__link"}
+                                            style={{marginTop: 5}}>
+                                Хранилище</div>}
                             <div className="sidebar__list-wrapper">
-                                <Auth>
-                                    {customer && <Link to={'/customer/'}></Link>}
-                                </Auth>
-                                {picker && <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
-                                                className={"sidebar__link"}
-                                                style={{marginTop: 5}}>
-                                    Хранилище</div>}
                                 <SidebarList list={data}></SidebarList>
                             </div>
                         </div>

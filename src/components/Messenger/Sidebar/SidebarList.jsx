@@ -19,8 +19,7 @@ const SidebarList = ({list, className, currentItem, text, subtext=false, selectC
                                 onClick={() => selectCallback(item.id)}
                                 key={item.id}>
                         <div className={"sidebar-item " + (online ? 'online' : 'offline')}>
-                            <Avatar extraInfo={true} src={item.picture}
-                                    style={{width:50, height:50}}>
+                            <Avatar extraInfo={true} src={item.picture} user={userItem}>
                                 <span className={"subtext"} style={{color:'#000'}}>{!online ? 'Был в сети ' +
                                     (lastTime?dayjs(lastTime).format("HH:mm DD.MM"):'') : 'Онлайн'}
                                 </span>

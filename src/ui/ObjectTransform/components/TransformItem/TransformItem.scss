@@ -1,4 +1,13 @@
+.transform-item {
+  .transform-resizers {
+    display: none;
+  }
+}
+
 .transform-item.edit {
+  .transform-resizers {
+    display: block;
+  }
   &:hover {
     z-index: 5 !important;
   }

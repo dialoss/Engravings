@@ -7,7 +7,7 @@
   padding-bottom: 10px;
   border-right: $style-border;
   background-color: $color-main;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
   @include custom-scrollbar;
   &::-webkit-scrollbar {
@@ -27,12 +27,12 @@
     }
 
     &.online {
-      .avatar img {
-           @include glow(#629622);
+      .avatar > * {
+        @include glow(#629622);
       }
     }
     &.offline  {
-      .avatar img{
+      .avatar > * {
         @include glow(rgba(30, 114, 234, 0.54));
       }
     }

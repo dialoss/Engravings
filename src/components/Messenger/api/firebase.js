@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import {ref, set, onValue, update} from "firebase/database";
 import {useLayoutEffect, useRef, useState} from "react";
-import {realtime, firestore, storage, MDB} from "./config";
+import {realtime, firestore, storage, MDB, adminEmail} from "./config";
 import {getFileType} from "helpers/files";
 import {useSelector} from "react-redux";
 import store from "store";
@@ -102,6 +102,7 @@ export function createRoom(usersInRoom) {
     const messagesDoc = {
         messages: [],
     }
+    console.log(room)
     addDoc(MDB, messagesDoc).then(m => {
         room.messages = m.id;
         updateDoc(doc(MDB, 'rooms'), {rooms: arrayUnion(room)});
@@ -181,17 +182,21 @@ export function useGetRooms() {
     useLayoutEffect(() => {
         if (!user) return;
         let newRooms = [];
+        let roomWithAdmin = false;
         Object.values(rooms_raw).map(r => {
             if (r.users.includes(user.email)) {
                 newRooms.push(r);
+                if (r.users.includes(adminEmail)) roomWithAdmin = true;
             }
         });
-        // if (!newRooms.length && Object.keys(users).length) {
-        //     let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]].filter(Boolean);
-        //     if (u.length > 1) {
-        //         createRoom(u);
-        //     }
-        // }
+        console.log(users)
+        if (!roomWithAdmin) {
+            let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
+            console.log(u)
+            if (u.length > 1) {
+                createRoom(u);
+            }
+        }
         let objRooms = {};
         newRooms.forEach(r => {
             objRooms[r.id] =  changeRoomData(r, user, users);

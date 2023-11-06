@@ -34,15 +34,15 @@ const Item = ({item, depth=0}) => {
                 }
             }
         }
-        setTimeout(()=>{
-            triggerEvent("container:init", {container, resize:true});
-        }, 100)
     }, []);
     const theme = useContext(ActiveThemes);
     const style = (name) => Object.values(theme).map(th => th[name]).join(' ');
     const admin = useSelector(state => state.users.current.isAdmin);
     return (
-        <TransformItem key={item.id} config={item} className={(admin ? 'edit' : '') + ' item-' + item.type}>
+        <TransformItem key={item.id}
+                       config={item}
+                       className={(admin ? 'edit' : '') + ' item-' + item.type}
+                       secure={true}>
             <div className={style('wrapper-' + item.type) + ' ' + style('wrapper-inner')}>
                 <div className={`item item-${item.type} depth-${depth} transform-origin ${style('item-' + item.type)}`}
                      data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}

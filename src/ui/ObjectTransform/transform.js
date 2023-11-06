@@ -82,7 +82,6 @@ function moveAt(event, shiftX, shiftY) {
         try {
             const cont = item.querySelector('.transform-container');
             cont.style.minHeight = height + 'px';
-            cont.setAttribute('data-height', height);
         } catch (e) {}
         setItemProps(offsetL, width);
     } else {

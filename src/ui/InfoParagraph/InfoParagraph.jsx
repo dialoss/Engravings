@@ -29,7 +29,6 @@ const InfoParagraph = ({type, children, ...props}) => {
     useEffect(() => {
         if (type === 'textfield') {
             let cont = ref.current.closest(".transform-container");
-            cont.setAttribute('data-height', ref.current.getBoundingClientRect().height + 10);
             triggerEvent("container:init", {container: cont});
         }
     }, [editor.isOpened]);

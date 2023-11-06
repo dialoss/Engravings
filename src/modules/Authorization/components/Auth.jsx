@@ -15,36 +15,33 @@ import {useAddEvent} from "../../../hooks/useAddEvent";
 import {ModalManager} from "../../../components/ModalManager";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import WindowButton from "../../../ui/Buttons/WindowButton/WindowButton";
+import Avatar from "../../../ui/Avatar/Avatar";
 
+const userStore = (data) => store.dispatch(actions.setUser(data));
 
 class LocalAuth {
     static type = '';
-    static setUser(user) {
-        store.dispatch(actions.setUser(user));
+    static setUser(data) {
+        if (data.auth) {
+            userStore({...data.user, authenticated: true});
+        } else {
+            data.error && alert(data.error);
+        }
     }
     static login(data) {
         sendLocalRequest('/api/user/login/', {...data, type: LocalAuth.type}, 'POST').then(data => {
-            console.log(data)
-            if (data.auth) {
-                LocalAuth.setUser({...data.user, authenticated: true});
-            } else {
-                alert(data.error);
-            }
+            LocalAuth.setUser(data);
         });
     }
 
     static auth() {
         sendLocalRequest('/api/user/auth/').then(data => {
-            if (data.auth) {
-                LocalAuth.setUser({...data.user, authenticated: true});
-            } else {
-                alert(data.error);
-            }
+            LocalAuth.setUser(data);
         });
     }
 
     static logout() {
-        LocalAuth.setUser({authenticated: false});
+        userStore({authenticated: false});
         sendLocalRequest('/api/user/logout/');
     }
 }
@@ -93,6 +90,7 @@ const LoginForm = ({props}) => {
     });
 
     const [authType, setType] = useState('');
+    console.log(isOpened)
 
     return (
         <ModalManager name={'login-form:toggle'}
@@ -100,6 +98,7 @@ const LoginForm = ({props}) => {
                       callback={(v) => !v && callback && callback()}>
             <div className={'login-form ' + type} style={{bg: 'bg-none', win:'centered'}}>
                 <WindowButton type={'close'}></WindowButton>
+                <p style={{fontSize: 25, padding:'20px'}}>Авторизация</p>
                 <div className="auth-type__buttons">
                     <AuthButton type={'signin'} callback={() => {
                         LocalAuth.type = 'google';
@@ -148,7 +147,7 @@ const Auth = ({children}) => {
                 {user.authenticated && <>
                     <div className="wrapper">
                         {children}
-                        <img src={user.picture} alt=""/>
+                        <Avatar src={user.picture} user={user}></Avatar>
                         <h3>{user.name}</h3>
                     </div>
                     <AuthButton type={'logout'} callback={LocalAuth.logout}>Выйти</AuthButton>

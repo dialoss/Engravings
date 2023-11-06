@@ -5,6 +5,10 @@ import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {useSelector} from "react-redux";
 import {ModalManager} from "components/ModalManager";
+import InfoBlock from "../../../ui/InfoBlock/InfoBlock";
+import styles from "./components/Carousel/Carousel.module.scss";
+import CarouselNav from "./components/Navigation/Navigation";
+import WindowButton from "../../../ui/Buttons/WindowButton/WindowButton";
 
 function bounds(n, bound) {
     return (n + bound) % bound;
@@ -78,7 +82,11 @@ const CarouselContainer = () => {
         <>
             {!!item &&
                 <ModalManager name={windowName} key={windowName}>
-                    <Carousel style={{win: 'centered'}} item={item}/>
+                    <Carousel style={{win: 'centered'}} item={item} contentOuter={ <div className="content-outer">
+                        {item.info && <InfoBlock data={item.info} className={styles['info__block']}></InfoBlock>}
+                        {item.navigation && <CarouselNav></CarouselNav>}
+                        <WindowButton type={'close'} className={styles['window-close']}/>
+                    </div>}/>
                 </ModalManager>
             }
         </>

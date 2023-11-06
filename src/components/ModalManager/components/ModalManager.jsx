@@ -41,6 +41,7 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     }, [isOpened]);
 
     const modal = <Modal contentInner={children}
+                         contentOuter={children.props.contentOuter || <></>}
                          name={name}
                          isOpened={isOpened}
                          closeCallback={backgroundClick}

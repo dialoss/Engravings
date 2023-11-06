@@ -16,7 +16,6 @@ function getMaxBottom(container) {
     const curWidth = container.getBoundingClientRect().width;
 
     const ratio = (curWidth / parentWidth) || 1;
-    // console.log(container, curWidth, parentWidth)
     for (const block of getFirstItems(container)) {
         if (isResizable(container) && block.style.position === 'absolute' && !block.classList.contains('transformed')) {
             block.style.top = +block.getAttribute('data-top').replace('px', '') * ratio + 'px';
@@ -25,10 +24,8 @@ function getMaxBottom(container) {
         m = Math.max(m, block.offsetTop + rect.height);
     }
     const dataHeight = +container.getAttribute('data-height').replace('px','');
-    if (!isResizable(container) && dataHeight && m < dataHeight) m = dataHeight * ratio;
+    if (dataHeight && m < dataHeight) m = dataHeight * ratio;
 
-
-    // console.log(container, m)
     return m;
 }
 

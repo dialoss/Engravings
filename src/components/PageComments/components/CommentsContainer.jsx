@@ -78,7 +78,7 @@ const CommentsContainer = ({page}) => {
                     reply: location.fullURL,
                     user,
                 }
-            })
+            });
             updateDoc(doc(firestore, 'apps', 'comments'), {newComments: arrayUnion(page)});
         },
         getDocument: () => String(page),

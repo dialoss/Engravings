@@ -44,10 +44,10 @@ const Item = ({item, depth=0}) => {
                        className={(admin ? 'edit' : '') + ' item-' + item.type}
                        secure={true}>
             <div className={style('wrapper-' + item.type) + ' ' + style('wrapper-inner')}>
-                <div className={`item item-${item.type} depth-${depth} transform-origin ${style('item-' + item.type)}`}
+                <div className={`item depth-${depth} item-${item.type} transform-origin ${style('item-' + item.type)}`}
                      data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
                      onDragStart={e => e.preventDefault()}>
-
+                    {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
                     <TransformContainer data-width={item.container_width}
                                         data-type={item.type}
                                         data-height={item.height === 'auto' ? 'fixed' : item.height}>
@@ -58,9 +58,9 @@ const Item = ({item, depth=0}) => {
                                     <Item depth={depth + 1} item={item} key={item.id}></Item>)
                             }
                         </div>}
-                        {item.type !== 'base' && <ItemData data={item}></ItemData>}
+                        {!['base', 'timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
                     </TransformContainer>
-                    {item.type === 'base' && <ItemData data={item}></ItemData>}
+                    {['base'].includes(item.type) && <ItemData data={item}></ItemData>}
                 </div>
             </div>
         </TransformItem>

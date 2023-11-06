@@ -216,9 +216,9 @@ export function useGetRooms() {
                 body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text});
         }
         !haveNewMessage && triggerEvent("messenger:notification", false);
-        room.id && objRooms[room.id].newMessage &&
+        room.id && objRooms[room.id] && objRooms[room.id].newMessage &&
         objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
-        // console.log('obj rooms')
+        console.log('obj rooms', objRooms)
     }, [user, rooms_raw, Object.values(users).length]);
 }
 

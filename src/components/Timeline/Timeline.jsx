@@ -8,8 +8,7 @@ const Timeline = ({stages}) => {
             <div className="timeline-wrapper">
                 {
                     stages.map((stage, index) => {
-                        return <Item type={stage.type}
-                                     data={stage}
+                        return <Item data={stage}
                                      connector={index !== stages.length - 1}
                                      key={index}
                                      index={index}></Item>

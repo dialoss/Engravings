@@ -136,9 +136,52 @@ export function setActionData(item) {
             return {
                 price: "999"
             }
+        case "timeline":
+            return {
+                items: [
+                    {
+                        type: 'timeline_entry',
+                        title: 'Подготовка материала',
+                        color: '#f00',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'timeline_entry',
+                        title: 'Обработка материала',
+                        color: '#a97117',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'timeline_entry',
+                        title: 'Сборка',
+                        color: '#a6ae09',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'timeline_entry',
+                        title: 'Тестирование',
+                        color: '#74d50d',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'timeline_entry',
+                        title: 'Упаковка',
+                        color: '#0e6900',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                ]
+            }
         case 'timeline_entry':
             return {
-                title: 'test'
+                type: 'timeline_entry',
+                title: 'Привет',
+                show_shadow: false,
+                movable: false,
             }
         case 'intro':
             return {

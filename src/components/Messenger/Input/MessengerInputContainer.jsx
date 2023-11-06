@@ -5,15 +5,28 @@ import {actions} from "../store/reducers";
 import MessengerInput from "./MessengerInput";
 import InputContainer from "./InputContainer";
 import store from "store";
-import {getGlobalTime} from "../../../api/requests";
+import {getGlobalTime, sendEmail} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
+import {getLocation} from "../../../hooks/getLocation";
 
 export const MessengerInputContainer = () => {
     let config = {
         onsuccess: (message) => {
-            updateRoom({lastMessage: message, newMessage: true}).then(() =>
-                store.dispatch(actions.setRoom(store.getState().messenger.room.id))
+            const {room, user} = store.getState().messenger;
+            updateRoom({lastMessage: message, newMessage: true, notified:false}).then(() =>
+                store.dispatch(actions.setRoom(room.id))
             );
+            const location = getLocation();
+            sendEmail({
+                type: 'message',
+                subject: 'MyMount | Новое сообщение',
+                data: {
+                    message: message.value.text,
+                    reply: location.fullURL,
+                    user,
+                    room,
+                }
+            })
         },
         getDocument: () => store.getState().messenger.room.messages,
         userNoTyping: () => {

@@ -1,6 +1,7 @@
 import store from "store";
 import {getElementFromCursor} from "../../../helpers/events";
 import {actions} from "../../ItemList/store/reducers";
+import {getViewportWidth} from "../../../ui/helpers/viewport";
 
 const emptyElement = {
     id: -1,
@@ -34,22 +35,24 @@ export function setUnselected() {
     actionElements = [];
 }
 
-function getElement(event, type) {
-    const element = getElementFromCursor(event, type);
+function getElement(event, depth=null) {
+    let element = getElementFromCursor(event, 'item');
+    if (depth !== null) element = element.closest('.item.depth-0');
+
     if (!element) return null;
     let id = +getElementID(element);
     return {
         id,
-        type,
         html: element,
     }
 }
 
 export function setActionElement(event) {
-    let el = getElement(event, 'item');
+    let el = getElement(event);
     let display_pos = getClickPosition(event);
 
-    if (el) {
+    if (el || event.ctrlKey) {
+        if (event.ctrlKey && !el) el = getElement({clientX: getViewportWidth() / 2, clientY: event.clientY}, 0);
         let parentElement = el.html.closest('.item.depth-0');
         if (parentElement === el.html) el.parent_0 = '';
         else el.parent_0 = getElementID(parentElement);

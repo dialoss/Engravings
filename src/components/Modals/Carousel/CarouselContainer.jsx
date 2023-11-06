@@ -56,14 +56,15 @@ const CarouselContainer = () => {
         let newContent = [];
         Object.values(items).forEach(item => {
             if (item.type !== 'image') return;
+            const parent = Object.values(items).find(it => it.id === item.parent) || {};
             newContent.push({
                 navigation: true,
                 id: item.id,
                 url: item.url,
                 info: {
-                    title: item.title || item.title,
-                    description: item.description || item.description,
-                    filename: item.file,
+                    title: item.title || parent.title,
+                    description: item.description || parent.description,
+                    filename: item.filename,
                 }
             });
         })
@@ -78,15 +79,18 @@ const CarouselContainer = () => {
 
     useKeypress('ArrowRight', () => triggerEvent('carousel:right'));
     useKeypress('ArrowLeft', () => triggerEvent('carousel:left'));
+
+    const contentOuter = useCallback(() => item && <div className="content-outer">
+        {item.info && <InfoBlock data={item.info} className={styles['info__block']}></InfoBlock>}
+        {item.navigation && <CarouselNav></CarouselNav>}
+        <WindowButton type={'close'} className={styles['window-close']}/>
+    </div>, [item]);
+
     return (
         <>
             {!!item &&
                 <ModalManager name={windowName} key={windowName}>
-                    <Carousel style={{win: 'centered'}} item={item} contentOuter={ <div className="content-outer">
-                        {item.info && <InfoBlock data={item.info} className={styles['info__block']}></InfoBlock>}
-                        {item.navigation && <CarouselNav></CarouselNav>}
-                        <WindowButton type={'close'} className={styles['window-close']}/>
-                    </div>}/>
+                    <Carousel style={{win: 'centered'}} item={item} contentOuter={contentOuter()}/>
                 </ModalManager>
             }
         </>

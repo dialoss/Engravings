@@ -1,5 +1,8 @@
 .timeline {
   padding-top: 20px;
+  &-body {
+    flex-grow: 1;
+  }
   &-item {
     display: flex;
     justify-content: flex-start;
@@ -27,13 +30,14 @@
         }
       }
       &-body {
+        padding-right: 15px;
         min-height: 40px;
         > div {
           margin-top: -6px;
         }
       }
       &-separator {
-        width: 40px;
+        padding: 0 15px;
         display: flex;
         flex-direction: column;
       }
@@ -41,6 +45,9 @@
   }
   &-item--secondary {
     .timeline {
+      &-separator {
+        padding: 0 17px;
+      }
       &-dot {
         div {
           width: 10px;

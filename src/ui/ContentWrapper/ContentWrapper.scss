@@ -1,4 +1,5 @@
 .content-wrapper {
+    overflow: hidden !important;
     height: 100%;
     .container {
         height: 100%;
@@ -8,9 +9,4 @@
     .item-list {
         margin-top: auto;
     }
-}
-
-.viewport-container {
-    //height: 1px;
-    //min-height: calc(100dvh - 100px);
 }

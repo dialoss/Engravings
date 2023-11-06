@@ -6,7 +6,7 @@ import {useAddEvent} from "../../../hooks/useAddEvent";
 
 const OpenButton = ({callback}) => {
     const [notif, setNotif] = useState(false);
-    useAddEvent('messenger:notification', (v) => setNotif(v));
+    useAddEvent('messenger:notification', (v) => setNotif(v.detail));
     return (
         <ActionButton onClick={callback} className={'messenger-open__button'}>
             {notif && <div className={'notification-icon'}></div>}

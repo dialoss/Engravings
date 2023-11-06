@@ -3,7 +3,6 @@ import './Modal.scss';
 import {getCorrectedPosition} from "../helpers/viewport";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import {getElementFromCursor} from "../../helpers/events";
-import transformItem from "../ObjectTransform/components/TransformItem/TransformItem";
 
 const Modal = ({contentInner, contentOuter, name, isOpened, closeCallback}) => {
     const ref = useRef();
@@ -22,7 +21,7 @@ const Modal = ({contentInner, contentOuter, name, isOpened, closeCallback}) => {
     const modalName = name.split(':')[0];
     function checkCloseDown(event) {
         if (opRef.current) {
-            !getElementFromCursor(event, modalName) && !getElementFromCursor(event, 'modal__toggle-button') && closeCallback();
+                !getElementFromCursor(event, modalName) && !getElementFromCursor(event, 'modal__toggle-button') && closeCallback();
         }
     }
     useAddEvent("mousedown", checkCloseDown);

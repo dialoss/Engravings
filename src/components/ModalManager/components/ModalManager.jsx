@@ -31,10 +31,10 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
                 setOpened(false)
             });
         });
-        if (closeConditions.includes('esc')) ref.current.addEventListener('keydown', (e) => {
+        if (closeConditions.includes('esc')) window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') setOpened(false);
         });
-    }, [children]);
+    }, [closeConditions]);
 
     useEffect(() => {
         callback && callback(isOpened);
@@ -46,9 +46,8 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
                          isOpened={isOpened}
                          closeCallback={backgroundClick}
                          key={name}></Modal>;
-
     return (
-        <div className={"modal-manager"} ref={ref}>
+        <div className={"modal-manager"} ref={ref} data-level={isOpened && new Date().getTime()}>
             {modal}
         </div>
     );

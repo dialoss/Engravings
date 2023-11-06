@@ -1,12 +1,11 @@
 import React from 'react';
 import Timeline from "../../../Timeline/Timeline";
-import {prepareColors, Stages} from "../../../../pages/CustomerPage/components/stages";
+import {prepareStages} from "../../../../pages/CustomerPage/components/stages";
 
 const ItemTimeline = ({data}) => {
-    const stages = structuredClone(Stages);
     return (
         <div>
-            <Timeline stages={prepareColors(Stages)}></Timeline>
+            <Timeline stages={prepareStages(data)}></Timeline>
         </div>
     );
 };

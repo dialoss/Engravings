@@ -5,7 +5,6 @@ import ItemPrice from "../Price/ItemPrice";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 
 const ItemBase = ({data}) => {
-    console.log(data)
     return (
         <div className={"item__base"}>
             <PageFrom data={data}></PageFrom>

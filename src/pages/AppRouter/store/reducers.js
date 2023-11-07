@@ -39,7 +39,6 @@ export const locationSlice = createSlice({
                 pagesObj[page.link] = page.id;
             });
             state.pages = pagesObj;
-            // console.log(pagesObj)
         }
     }
 });

@@ -1,1 +1,0 @@
-export {default as ThemeManager} from "./components/ThemeManager";

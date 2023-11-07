@@ -2,13 +2,8 @@
 $color-item-background: rgb(180, 207, 242);
 $color-item-hover: rgb(141, 176, 236);
 
-:export {
-    masonry: 3;
-    widthPoints: [400, 500, 800]
-}
-
-
 .wrapper-base {
+    width: 100%;
     position: relative;
     z-index: 2;
     padding: 6px;

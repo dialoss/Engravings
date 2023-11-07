@@ -34,7 +34,7 @@ export function initContainerDimensions({container, item, toChild, resize}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container, resize);
-    console.log(counter++)
+    // console.log(counter++)
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();

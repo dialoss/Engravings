@@ -1,4 +1,4 @@
-.itemlist {
+.item-list__button {
   max-width: 150px;
   margin: -20px auto 20px auto;
   a {
@@ -8,7 +8,6 @@
 }
 
 .item-list {
-  //min-height: calc(100vh - 140px);
   transition: all 0.4s linear;
   &.hidden {
     visibility: hidden;

@@ -1,0 +1,22 @@
+.item-list {
+  --masonry: 3;
+  --widthPoints: [400, 500, 800];
+  @import 'parent';
+  &.shop {
+    --masonry: 1;
+    --widthPoints: [300, 400];
+    @import "shop";
+  }
+  &.blueprints {
+    --masonry: 2;
+    --widthPoints: [300, 400];
+  }
+  &.child {
+    --masonry: 1;
+    --widthPoints: [400, 500, 800];
+    @import "child";
+  }
+  &.edit {
+    @import "edit";
+  }
+}

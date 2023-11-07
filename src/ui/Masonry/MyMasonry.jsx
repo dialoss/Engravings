@@ -24,7 +24,7 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, widthPoints=[400,600,
 
     useLayoutEffect(() => {
         setColumns();
-    }, []);
+    }, [maxColumns, widthPoints]);
 
     useLayoutEffect(() => {
         if (forceColumns !== 0) setCount(forceColumns);

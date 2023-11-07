@@ -1,9 +1,4 @@
-@import "parent.module";
-
-:export {
-    masonry: 1;
-    widthPoints: [400, 500, 800];
-}
+@import "parent";
 
 .wrapper-inner {
     padding: 6px;
@@ -19,7 +14,6 @@
 
         &:hover {
             opacity: 1;
-            //background-color: white;
             cursor: default;
         }
 

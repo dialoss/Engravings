@@ -1,15 +1,14 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Item from "components/Item/Item";
 import MyMasonry from "ui/Masonry/MyMasonry";
 import Container from "ui/Container/Container";
-import {ActiveThemes} from "ui/Themes/index";
 import NavButton from "../../ui/Navbar/Button/NavButton";
 import "./ItemList.scss";
+import "./Themes/main.scss";
+import {getLocation} from "../../hooks/getLocation";
 
 const ItemList = ({items, className}) => {
-    const style = useContext(ActiveThemes).listStyle;
-    let columns = style && +style.masonry;
-    let points = style && JSON.parse(style.widthPoints);
+    const [config, setConfig] = useState({});
     const [forceColumns, setColumns] = useState(0);
     const ref = React.useRef();
     function calcForceColumns() {
@@ -17,13 +16,23 @@ const ItemList = ({items, className}) => {
         const mCols = 4;
         setColumns(Math.max(1, ((mCols + (curColumns + 1)) % mCols)));
     }
+    const listRef = useRef();
+    useEffect(()=>{
+        const style = window.getComputedStyle(listRef.current);
+        setConfig({
+            columns: +style.getPropertyValue('--masonry'),
+            points: JSON.parse(style.getPropertyValue('--widthPoints')),
+        })
+    }, []);
+    let style = getLocation().pageSlug;
+    if (getLocation().parentSlug) style = 'child';
     return (
-        <div className={"item-list " + className}>
-            <NavButton className={"itemlist"} data={{text: 'ВИД', callback: calcForceColumns}}></NavButton>
+        <div className={"item-list " + className + ' ' + style} ref={listRef}>
+            <NavButton className={"item-list__button"} data={{text: 'ВИД', callback: calcForceColumns}}></NavButton>
             <Container style={{marginBottom: "50px"}}>
-                {!!style && <MyMasonry
-                    maxColumns={columns}
-                    widthPoints={points}
+                <MyMasonry
+                    maxColumns={config.columns}
+                    widthPoints={config.points}
                     forceColumns={forceColumns}
                     ref={ref}
                 >
@@ -31,7 +40,7 @@ const ItemList = ({items, className}) => {
                         items.map((item) => <Item item={item} key={item.id}></Item>
                         )
                     }
-                </MyMasonry>}
+                </MyMasonry>
             </Container>
         </div>
     );

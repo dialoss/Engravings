@@ -14,11 +14,14 @@ const Components = {
 
 const PageWrapper = ({route}) => {
     const location = getLocation();
-    useEffect(() => {
-        triggerEvent("themes:add", {name:'listStyle', path:route.style, clear:true, active:true});
-    }, []);
 
     document.title = "MyMount | " + location.pageTitle;
+    useAddEvent('keydown', e => {
+        e.ctrlKey && e.altKey && e.key === 'e' && (window.editPage = !window.editPage);
+        const itemList = document.querySelector('.item-list');
+        if (window.editPage) itemList.classList.add('edit');
+        else itemList.classList.remove('edit');
+    })
 
     return (
         <>
@@ -43,7 +46,7 @@ const AppRoutes = () => {
                 routes.map((route) =>
                     <Route element={<PageWrapper route={route} key={route.path}/>}
                            path={route.path}
-                           exact={route.exact}
+                           exact={true}
                            key={route.path}/>
                 )
             }

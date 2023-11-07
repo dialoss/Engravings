@@ -1,15 +1,12 @@
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import './Item.scss';
 import ItemData from "./components/ItemData";
-import {ActiveThemes} from "ui/Themes";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import TransformContainer from "../../ui/ObjectTransform/components/TransformContainer/TransformContainer";
-import {triggerEvent} from "../../helpers/events";
 import {useSelector} from "react-redux";
 
 const Item = ({item, depth=0}) => {
     const ref = useRef();
-    const [itemProps, setItemProps] = useState({});
     useEffect(() => {
         const itemRef = ref.current;
         const itemTransform = itemRef.closest(".transform-item");
@@ -35,16 +32,14 @@ const Item = ({item, depth=0}) => {
             }
         }
     }, []);
-    const theme = useContext(ActiveThemes);
-    const style = (name) => Object.values(theme).map(th => th[name]).join(' ');
     const admin = useSelector(state => state.users.current.isAdmin);
     return (
         <TransformItem key={item.id}
                        config={item}
-                       className={(admin ? 'edit' : '') + ' item-' + item.type}
+                       className={(admin ? 'edit' : '')}
                        secure={true}>
-            <div className={style('wrapper-' + item.type) + ' ' + style('wrapper-inner')}>
-                <div className={`item depth-${depth} item-${item.type} transform-origin ${style('item-' + item.type)}`}
+            <div className={'wrapper-' + item.type + ' wrapper-inner'}>
+                <div className={`item depth-${depth} item-${item.type} transform-origin`}
                      data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
                      onDragStart={e => e.preventDefault()}>
                     {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}

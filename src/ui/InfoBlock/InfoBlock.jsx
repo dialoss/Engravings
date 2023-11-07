@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import {triggerEvent} from "helpers/events";
 import {ActiveThemes} from "../Themes";
 
-const InfoBlock = ({data, className}) => {
+const InfoBlock = ({data, className, extra}) => {
     const theme = useContext(ActiveThemes);
     const style = theme.listStyle || {};
     const formattedDate = dayjs(data.date_created).format("HH:mm DD.MM.YYYY");
@@ -23,6 +23,7 @@ const InfoBlock = ({data, className}) => {
                 {!!data.description && <InfoParagraph type={'description'}>{data.description}</InfoParagraph>}
             </span>
             {!!data.filename && <InfoParagraph style={{display:"none"}} type={'filename'}>{data.filename}</InfoParagraph>}
+            {extra}
         </div>
     );
 };

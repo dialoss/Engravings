@@ -1,8 +1,29 @@
 import {triggerEvent} from "helpers/events";
 import {actionElement, actionElements, setUnselected} from "modules/ActionManager/components/helpers";
 import {setActionData} from "./config";
-import {getSettings, getSettingText} from "./helpers";
+import {getSettings} from "./helpers";
 import {getLocation} from "../../../hooks/getLocation";
+
+let hs = [];
+let current = 0;
+
+window.addEventListener('keydown', e => {
+    if (e.ctrlKey && hs.length) {
+        let key = false;
+        switch (e.key) {
+            case 'z':
+                key = true;
+                current = Math.max(0, current - 1);
+                break;
+            case 'y':
+                key = true;
+                current = Math.min(hs.length - 1, current + 1);
+                break;
+        }
+        //console.log(e.key, key, current)
+        key && triggerEvent('itemlist:handle-changes', hs[current]);
+    }
+})
 
 export default class Actions {
     static element = null;
@@ -46,6 +67,12 @@ export default class Actions {
                 storeMethod,
             };
             triggerEvent('itemlist:handle-changes', sendRequest);
+            let prevData = {};
+            for (const f in sendData) {
+                prevData[f] = actionElement.data[f] || sendData[f];
+            }
+            hs.push({...sendRequest, data: prevData});
+            current = hs.length - 1;
         }
     }
 
@@ -58,7 +85,7 @@ export default class Actions {
         if (!Array.isArray(data)) {
             data = [data];
         }
-        console.log(data)
+        //console.log(data)
         return data.map(d => ({
             method: 'POST',
             specifyParent: true,
@@ -145,41 +172,4 @@ export default class Actions {
         triggerEvent("filemanager-window:toggle", {toggle:true});
         return [];
     }
-}
-
-const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});
-
-export function serializeActions(actions, actionElement, depth=0) {
-    actions = structuredClone(actions);
-    return Object.keys(actions).map(name => {
-        let action = actions[name];
-        let subActions = action.actions || [];
-        let text = action.text;
-        if (actionElement.id && ['show_shadow', 'show_date'].includes(name)) {
-            text = getSettingText(text, actionElement.data && actionElement.data[name]);
-        }
-        let functionName = action.callback || name;
-        let callback = () => {};
-        switch (action.argument) {
-            case null:
-                break;
-            case false:
-                callback = () => {
-                    closeCallback();
-                    Actions.action(Actions[functionName]());
-                }
-                break;
-            case true:
-                callback = () => {
-                    closeCallback();
-                    Actions.action(Actions[functionName](name));
-                }
-                break;
-        }
-        return {
-            text,
-            actions: serializeActions(subActions, actionElement, depth + 1),
-            callback,
-        };
-    });
 }

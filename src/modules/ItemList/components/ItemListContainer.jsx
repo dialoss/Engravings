@@ -1,67 +1,17 @@
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import ItemList from "components/ItemList/ItemList";
-import {actions} from "../store/reducers";
+import {actions, localReducer} from "../store/reducers";
 import {fetchItems} from "../api/fetchItems";
 import {useAddEvent} from "hooks/useAddEvent";
 import {sendLocalRequest} from "api/requests";
 import {getLocation} from "../../../hooks/getLocation";
 import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
-
-function reducer(state, action) {
-    let item = action.payload[0];
-    switch (action.method) {
-        case "SET":
-            return action.payload;
-        case "PATCH":
-            for (let i = 0; i < state.length; i++) {
-                if (state[i].id === item.id) {
-                    let newState = [...state];
-                    newState[i] = item;
-                    return newState;
-                }
-            }
-            return state;
-        case "POST":
-            {
-                let newState = [...state];
-                newState.splice(item.display_pos, 0, item);
-                return newState;
-            }
-        case 'DELETE':
-        {
-            return [...state].filter(el => el.id !== item.id);
-        }
-    }
-}
-
-function createItemsTree(items) {
-    if (!items.length || items[0].empty) return items;
-    // console.log('BEFORE TREE', items)
-
-    let tree = {};
-    let links = {};
-    let childItems = [];
-    items.forEach(c => {
-        childItems = [...childItems, ...c.items];
-        tree[c.id] = {...c, items: []};
-        links[c.id] = tree[c.id];
-    })
-    childItems = childItems.sort((a, b) => +a.parent - +b.parent)
-    // console.log('BEFORE TREE CHILD', childItems)
-    childItems.forEach(c => {
-        let p = links[c.parent];
-        p.items.push({...c, items: []});
-        links[c.id] = p.items[p.items.length - 1];
-    });
-
-    return (Object.values(tree)).sort((a, b) => a.display_pos - b.display_pos);
-    // console.log('AFTER TREE', sorted);
-}
+import {createItemsTree} from "../helpers";
 
 const ItemListContainer = () => {
-    const [items, dispatch] = useReducer(reducer, []);
+    const [items, dispatch] = useReducer(localReducer, []);
     const itemsRef = useRef();
     itemsRef.current = items;
     const globalDispatch = useDispatch();
@@ -90,7 +40,7 @@ const ItemListContainer = () => {
 
     async function handleElements(event) {
         let request = event.detail;
-        console.log('REQUEST', request)
+        //console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
         // console.log('RESPONSE', response)
         if (response.detail) {

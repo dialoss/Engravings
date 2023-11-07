@@ -1,3 +1,14 @@
+export function itemsFromStages(data) {
+    let _items = [];
+    function traverse(items) {
+        items.forEach(it => {
+            it.type !== 'timeline_entry' && _items.push(it);
+            traverse(it.items);
+        });
+    }
+    traverse(data.items);
+    return _items;
+}
 
 export function prepareStages(data) {
     let stages = [];

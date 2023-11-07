@@ -1,9 +1,9 @@
+import {triggerEvent} from "../../../helpers/events";
+import Actions from "./actions";
+import formData from 'modules/ActionForm/helpers/FormData.json';
+
 export function getSettings(name, data) {
     switch (name) {
-        case 'show_date': case 'show_shadow':
-            return {
-                [name]: !data[name],
-            };
         case 'clear_position':
             return {
                 'position': 'initial',
@@ -14,6 +14,10 @@ export function getSettings(name, data) {
             return {
                 'width': 'auto',
             };
+        default:
+            return {
+                [name]: !data[name],
+            };
     }
 }
 
@@ -22,4 +26,38 @@ export function getSettingText(text, positive) {
         text = "Не " + text.toLowerCase();
     }
     return text;
+}
+
+const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});
+
+export function serializeActions(actions, actionElement, depth=0) {
+    actions = structuredClone(actions);
+    return Object.keys(actions).map(name => {
+        let action = actions[name];
+        let subActions = action.actions || [];
+        let text = action.text;
+        let functionName = action.callback || name;
+        let callback = () => {};
+        switch (action.argument) {
+            case null:
+                break;
+            case false:
+                callback = () => {
+                    closeCallback();
+                    Actions.action(Actions[functionName]());
+                }
+                break;
+            case true:
+                callback = () => {
+                    closeCallback();
+                    Actions.action(Actions[functionName](name));
+                }
+                break;
+        }
+        return {
+            text,
+            actions: serializeActions(subActions, actionElement, depth + 1),
+            callback,
+        };
+    });
 }

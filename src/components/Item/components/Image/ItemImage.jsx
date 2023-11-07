@@ -7,7 +7,7 @@ import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 const ItemImage = ({data, ...props}) => {
     const ref = useRef();
     const carouselCallback = useCallback((event) => {
-        if (preventOnTransformClick(ref) || event.ctrlKey) return;
+        if (preventOnTransformClick(ref) || event.ctrlKey || window.editPage) return;
         triggerEvent('carousel:open', data.id || data);
     }, []);
 

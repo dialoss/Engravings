@@ -60,11 +60,11 @@ export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setD
         data.forEach(item => {
             let val = item;
             for (const p of searchBy.split('.')) val = val[p];
-            val = clearTextFromHTML(val);
-            if (val.toLowerCase().includes(query.toLowerCase()) || val.includes(query)) {
-                let highlighted = highlight(val, query);
-                item.value.text = highlighted;
-                console.log(highlighted)
+            // val = clearTextFromHTML(val);
+            if (val && (val.toLowerCase().includes(query.toLowerCase()) || val.includes(query))) {
+                // let highlighted = highlight(val, query);
+                // item.value.text = highlighted;
+                // console.log(highlighted)
                 newData.push(item);
             }
         })
@@ -181,7 +181,7 @@ const FileExplorer = () => {
             pic.onload = () => {
                 setImage(pic);
             }
-            console.log(entry)
+            //console.log(entry)
         }
         window.filemanager.addEventListener('open_file', openFile);
         // return () => window.filemanager.removeEventListener('open_file', openFile);

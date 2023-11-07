@@ -53,10 +53,21 @@
   .auth-type__buttons {
     padding-top: 10px;
     display: flex;
-    column-gap: 10px;
-    justify-content: center;
+    flex-direction: column;
+    row-gap: 10px;
+    align-items: center;
     .auth-button {
+      width: 70%;
       margin: 0;
+    }
+    .delimiter {
+      position: relative;
+      width: 100%;
+      span {
+        position: absolute;
+        height: 1px;
+        background-color: #1EC7AB;
+      }
     }
   }
 
@@ -95,9 +106,19 @@
   }
   .action-button {
     font-size: 16px;
-    width: 30%;
+    //width: 30%;
   }
-
+  .question {
+    margin-top: 20px;
+    font-size: 20px;
+    .action-button {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      background: none;
+      color: #1EC73A;
+      padding: 0;
+    }
+  }
   .avatar {
     width: 80px;
   }

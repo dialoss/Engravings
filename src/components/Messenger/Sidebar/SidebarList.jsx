@@ -11,13 +11,13 @@ const SidebarList = ({list, className, currentItem, text, subtext=false, selectC
                 Object.values(list).map(item => {
                     const msg = item.lastMessage;
                     let userItem = users[item.companion || item.id];
-                    if (!userItem) return;
+                    if (!userItem || !userItem.id) return;
                     const lastTime = userItem.lastSeen;
                     const online = userItem.online;
                     return <div className={"sidebar-item__wrapper " + (currentItem(item.id) ? "current " : '') +
                         (item.newMessage && item.lastMessage.user !== user.id ? "new" : '')}
                                 onClick={() => selectCallback(item.id)}
-                                key={item.id}>
+                                key={userItem.id}>
                         <div className={"sidebar-item " + (online ? 'online' : 'offline')}>
                             <Avatar extraInfo={true} src={item.picture} user={userItem}>
                                 <span className={"subtext"} style={{color:'#000'}}>{!online ? 'Был в сети ' +

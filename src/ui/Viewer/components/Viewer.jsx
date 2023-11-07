@@ -77,7 +77,6 @@ class Viewer extends React.Component {
             Autodesk.Viewing.theExtensionManager.registerExtension(
                 'TransformationExtension',
                 Autodesk.ADN.Viewing.Extension.TransformTool);
-
             const loader = setInterval(() => {
                 try {
                     this.viewer.loadExtension("TransformationExtension")

@@ -48,8 +48,8 @@ let mouseMoved = false;
 
 export function setItemProps(offset, width) {
     let win = container.getBoundingClientRect();
-    if (width) item.style.width = Math.min(width / win.width * 100, 100) + "%";
-    if (offset) item.style.left = Math.min(offset / win.width * 100, 100) + "%";
+    if (width) item.style.width = Math.max(0, Math.min(width / win.width * 100, 100)) + "%";
+    if (offset) item.style.left = Math.max(0, Math.min(offset / win.width * 100, 100)) + "%";
 }
 
 function moveAt(event, shiftX, shiftY) {
@@ -137,9 +137,10 @@ export function setItemTransform(event, type, _item, _btn) {
 
         mouseMoved = false;
         if (container.classList.contains('viewport-container')) return;
-        let parent = getElementID(item.closest('.item'));
         let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
         if (isResizable(container)) top = item.offsetTop + 'px';
+        item.setAttribute('data-top', item.style.top);
+        let parent = getElementID(item.closest('.item'));
 
         let request = [{
             data: {
@@ -152,13 +153,15 @@ export function setItemTransform(event, type, _item, _btn) {
                 container_width: item.querySelector('.transform-container').getBoundingClientRect().width + 'px' || "0",
             },
             method: 'PATCH',
-        }, {
-            data: {
-                id: parent,
-                container_width: container.getBoundingClientRect().width + 'px' || "0",
-            },
-            method: 'PATCH',
-        }];
+        },
+            {
+                data: {
+                    id: parent,
+                    container_width: container.getBoundingClientRect().width + 'px' || "0",
+                },
+                method: 'PATCH',
+            }
+        ];
         console.log(request)
         triggerEvent('action:callback', request);
     }

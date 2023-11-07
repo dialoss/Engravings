@@ -8,7 +8,7 @@ export function ImageEditor({image}) {
         const config = {
             source: image,
             onSave: (img, designState) => {
-                console.log(img)
+                //console.log(img)
                 // console.log(img.imageCanvas.toDataURL())
                 // window.filemanager.settings.oninitupload(null, {folder: null, img});
             },

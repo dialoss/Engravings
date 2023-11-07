@@ -102,7 +102,7 @@ export function createRoom(usersInRoom) {
     const messagesDoc = {
         messages: [],
     }
-    console.log(room)
+    //console.log(room)
     addDoc(MDB, messagesDoc).then(m => {
         room.messages = m.id;
         updateDoc(doc(MDB, 'rooms'), {rooms: arrayUnion(room)});
@@ -189,10 +189,10 @@ export function useGetRooms() {
                 if (r.users.includes(adminEmail)) roomWithAdmin = true;
             }
         });
-        console.log(users)
+        //console.log(users)
         if (!roomWithAdmin) {
             let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
-            console.log(u)
+            //console.log(u)
             if (u.length > 1) {
                 createRoom(u);
             }
@@ -218,7 +218,7 @@ export function useGetRooms() {
         !haveNewMessage && triggerEvent("messenger:notification", false);
         room.id && objRooms[room.id] && objRooms[room.id].newMessage &&
         objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
-        console.log('obj rooms', objRooms)
+        //console.log('obj rooms', objRooms)
     }, [user, rooms_raw, Object.values(users).length]);
 }
 

@@ -24,16 +24,17 @@ function getMaxBottom(container) {
         m = Math.max(m, block.offsetTop + rect.height);
     }
     const dataHeight = +container.getAttribute('data-height').replace('px','');
-    if (dataHeight && m < dataHeight) m = dataHeight * ratio;
+    if (dataHeight && m < dataHeight &&
+        !['timeline', 'base'].includes(container.getAttribute('data-type'))) m = dataHeight * ratio;
 
     return m;
 }
-
+let counter = 0;
 export function initContainerDimensions({container, item, toChild, resize}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container, resize);
-
+    console.log(counter++)
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();

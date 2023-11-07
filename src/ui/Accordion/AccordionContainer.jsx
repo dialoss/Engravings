@@ -1,5 +1,6 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Accordion from "./Accordion";
+import {triggerEvent} from "../../helpers/events";
 
 const AccordionContainer = ({children, title, header=null, callback=null, defaultOpened=false}) => {
     const [isOpened, setOpened] = useState(defaultOpened);
@@ -9,13 +10,25 @@ const AccordionContainer = ({children, title, header=null, callback=null, defaul
         setOpened(opened => !opened);
     };
 
+    const lastResized = useRef();
+    useEffect(() => {
+        if (!ref) return;
+        const item = ref.current.closest('.item.depth-0');
+        const container = item && item.querySelector('.transform-container');
+        const resizeObserver = new ResizeObserver(() => {
+
+            container && triggerEvent('container:init', {container});
+        });
+        resizeObserver.observe(ref.current);
+        // return () => resizeObserver.unobserve(ref.current);
+    }, []);
+
     useLayoutEffect(() => {
         setOpened(defaultOpened)
     }, [defaultOpened]);
 
     const [height, setHeight] = useState(0);
     const ref = useRef();
-    // console.log(isOpened)
     useEffect(() => {
         if (height.current && height.current !== 0) return;
         let child = ref.current.children[0];

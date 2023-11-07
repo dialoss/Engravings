@@ -13,6 +13,10 @@ const InfoParagraph = ({type, children, ...props}) => {
         setEditor(e => ({...e, isOpened: true}));
     }
     function closeEditor(text) {
+        if (text === null) {
+            setEditor({isOpened: false, value: children});
+            return;
+        }
         let type = ref.current.classList[1].split('-')[1];
         let request = {method: "PATCH", specifyElement: true, data:{}};
         let value = text;

@@ -73,16 +73,6 @@ export const ContextActions = {
                 argument: true,
                 text: 'Сбросить размер',
             },
-            'show_shadow': {
-                callback: 'edit',
-                argument: true,
-                text: 'Показывать тень',
-            },
-            'show_date': {
-                callback: 'edit',
-                argument: true,
-                text: 'Показывать дату',
-            },
         }
     },
     'copy':{
@@ -138,6 +128,7 @@ export function setActionData(item) {
             }
         case "timeline":
             return {
+                show_shadow: false,
                 items: [
                     {
                         type: 'timeline_entry',
@@ -179,7 +170,7 @@ export function setActionData(item) {
         case 'timeline_entry':
             return {
                 type: 'timeline_entry',
-                title: 'Привет',
+                title: 'Заголовок',
                 show_shadow: false,
                 movable: false,
             }

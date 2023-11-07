@@ -17,7 +17,7 @@ function getFieldData(field, element) {
 
 export function getFormData({method, element}) {
     let fields = Object.values(formData[element.data.type]);
-    console.log(fields)
+    //console.log(fields)
     let form = {
         method,
         button: 'ok',
@@ -37,6 +37,6 @@ export function getFormData({method, element}) {
             form.data[field.name] = {value, ...field};
         }
     });
-    console.log(form)
+    //console.log(form)
     return form;
 }

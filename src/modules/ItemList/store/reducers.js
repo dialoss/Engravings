@@ -1,5 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getLocation} from "../../../hooks/getLocation";
 
 export const elementsSlice = createSlice({
     name: "elements",
@@ -32,3 +31,30 @@ export const elementsSlice = createSlice({
 });
 
 export const { actions, reducer } = elementsSlice;
+
+export function localReducer(state, action) {
+    let item = action.payload[0];
+    switch (action.method) {
+        case "SET":
+            return action.payload;
+        case "PATCH":
+            for (let i = 0; i < state.length; i++) {
+                if (state[i].id === item.id) {
+                    let newState = [...state];
+                    newState[i] = item;
+                    return newState;
+                }
+            }
+            return state;
+        case "POST":
+        {
+            let newState = [...state];
+            newState.splice(item.display_pos, 0, item);
+            return newState;
+        }
+        case 'DELETE':
+        {
+            return [...state].filter(el => el.id !== item.id);
+        }
+    }
+}

@@ -57,18 +57,14 @@ function serializeFields(fields) {
 const MyLoginForm = ({callback}) => {
     const data = [loginForm, registerForm];
     const [stage, setStage] = useState(0);
+    const buttons = data.map((d, i) =>
+                <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>);
     return (
       <>
-          <div className="buttons">
-              {
-                  data.map((d, i) =>
-                      <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>
-                  )
-              }
-          </div>
           {
               data.map((d, i) =>
                   <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
+                      <p className={'question'}>{d.message}{buttons[1 - i]}</p>
                       <FormContainer formData={d}
                                      callback={(data) =>
                                          callback({credentials:serializeFields(data), stage: d.stage})}>
@@ -90,7 +86,7 @@ const LoginForm = ({props}) => {
     });
 
     const [authType, setType] = useState('');
-    console.log(isOpened)
+    //console.log(isOpened)
 
     return (
         <ModalManager name={'login-form:toggle'}
@@ -104,11 +100,12 @@ const LoginForm = ({props}) => {
                         LocalAuth.type = 'google';
                         setType('google');
                         googleAuth();
-                    }}>Google</AuthButton>
+                    }}>Войти через Google</AuthButton>
+                    <p className={'delimiter'}>ИЛИ<span></span></p>
                     <AuthButton type={'signin'} callback={() => {
                         LocalAuth.type = 'custom';
                         setType('custom');
-                    }}>Локально</AuthButton>
+                    }}>Через email</AuthButton>
                 </div>
                 {authType === 'custom' && <MyLoginForm callback={callback}></MyLoginForm>}
             </div>

@@ -11,6 +11,7 @@ const emptyElement = {
     display_pos: -1,
 }
 
+export let prevElement = emptyElement;
 export let actionElement = emptyElement;
 export let actionElements = [];
 
@@ -48,6 +49,7 @@ function getElement(event, depth=null) {
 }
 
 export function setActionElement(event) {
+    prevElement = actionElement;
     let el = getElement(event);
     let display_pos = getClickPosition(event);
 

@@ -7,22 +7,14 @@
 
 .wrapper-base {
   padding: 0;
+  margin: 6px;
   border-radius: 8px;
-  box-shadow: 0 0 5px gray;
   flex-direction: row;
 
   @media only screen and (max-width: 700px) {
     & {
       flex-direction: column;
     }
-  }
-
-  &__wrapper {
-  }
-
-  &:hover {
-    cursor: pointer;
-    opacity: 0.8;
   }
 }
 

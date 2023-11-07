@@ -1,7 +1,8 @@
 export const loginForm = {
     title: 'Вход',
     stage: 'login',
-    button: 'Подтвердить',
+    button: 'Войти',
+    message: 'Впервые на сайте? ',
     data:
         {
             email: {
@@ -24,8 +25,9 @@ export const loginForm = {
 
 export const registerForm = {
     title: 'Регистрация',
-    button: 'Подтвердить',
+    button: 'Зарегистрироваться',
     stage: 'register',
+    message: 'Уже зарегистрированы? ',
     data: {
         email: {
             name: 'email',

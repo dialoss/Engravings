@@ -10,10 +10,13 @@ const InlineEditor = ({data, closeCallback}) => {
     useEffect(() => {
         ref.current.editor.container.addEventListener('keydown', event => {
             event.stopPropagation();
-            if (event.key === 'Escape' || (event.key === 'Enter' && event.ctrlKey)) {
+            if (event.key === 'Enter' && event.ctrlKey) {
                 let text = valRef.current.text;
                 if (text === '<p><br></p>') text = '';
                 closeCallback(text);
+            }
+            if (event.key === 'Escape') {
+                closeCallback(null);
             }
         });
         ref.current.focus();

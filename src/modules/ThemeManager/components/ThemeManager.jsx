@@ -1,7 +1,8 @@
-import React, {useEffect, useReducer, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useReducer, useRef, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {ActiveThemes} from "ui/Themes";
 import {useUserAuth} from "hooks/useUserAuth";
+import {useLoader} from "@react-three/fiber";
 
 function reducer(state, action) {
     let name = action.payload.name;
@@ -76,7 +77,10 @@ const ThemeManager = ({children}) => {
             }
         })
     }, [themes]);
-
+    useEffect(() => {
+        window.editPage = !!activeThemes.editStyle;
+    }, [activeThemes]);
+    console.log(activeThemes)
     return (
         <ActiveThemes.Provider value={activeThemes}>
             {component}

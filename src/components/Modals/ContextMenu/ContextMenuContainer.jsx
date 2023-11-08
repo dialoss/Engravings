@@ -26,7 +26,7 @@ const ContextMenuContainer = ({actions}) => {
     }
     useAddEvent("mousedown", onMouseDown);
     useAddEvent("contextmenu", contextMenu);
-    useAddEvent("scroll", onScroll);
+    useAddEvent("scroll", onScroll, {passive: true});
 
     return (
         <ModalManager name={name} key={name}>

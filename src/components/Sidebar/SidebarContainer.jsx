@@ -19,7 +19,7 @@ const SidebarContainer = () => {
     }, []);
 
     const userAuth = useUserAuth();
-
+    console.log(pages)
     return (
         <Sidebar picker={userAuth} customer={true}
                  data={{sublist:pages, depth:-1}}/>

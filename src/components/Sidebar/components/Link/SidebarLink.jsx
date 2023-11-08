@@ -21,7 +21,6 @@ const SidebarLink = ({link, children, depth, haveSublist}) => {
                   to={link}
                   style={style}>{children}
             </Link>
-            {/*{haveSublist && <button className="sidebar__link-btn" onClick={callback}></button>}*/}
         </div>
     );
 };

@@ -25,7 +25,6 @@ const ContentWrapper = ({children}) => {
                     {children}
                 </div>
             </TransformContainer>
-            <div className={'container-grow'}></div>
         </>
     );
 };

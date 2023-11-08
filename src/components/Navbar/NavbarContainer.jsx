@@ -9,12 +9,14 @@ const NavbarContainer = () => {
         return location.relativeURL.split('/')[1] === path;
     }
     return (
-        <Navbar routes={NavbarRoutes.map(route => {
-            return {
-                ...route,
-                active: isActive(route.path.split('/')[1]),
-            }
-        })}/>
+        <Navbar routes={NavbarRoutes.map(route => ({
+            ...route,
+            style: isActive(route.path.split('/')[1]) ? 'current' : ''})
+        ).concat([{
+            path: location.relativeURL,
+            text: location.pageSlug.toUpperCase(),
+            style: location.parentSlug ? 'current extra' : '',
+        }])}/>
     );
 };
 

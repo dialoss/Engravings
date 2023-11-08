@@ -13,6 +13,7 @@ const TemplatePage = () => {
                 <ContentWrapper>
                     <Container className={'container container-main'}>
                         <AppRouter/>
+                        <div style={{flexGrow: 1, minHeight:1}}></div>
                     </Container>
                     <ActionManager></ActionManager>
                 </ContentWrapper>

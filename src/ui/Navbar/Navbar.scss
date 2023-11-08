@@ -5,6 +5,10 @@
     column-gap: 20px;
     padding-top: 40px;
     padding-bottom: 40px;
+
+    .extra {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 700px) {
@@ -21,6 +25,15 @@
         border-bottom: 2px solid blue;
         a {
             color: blue;
+        }
+    }
+
+    .extra {
+        display: block !important;
+        width: 40%;
+        border: none;
+        a {
+            padding-top: 0;
         }
     }
 }

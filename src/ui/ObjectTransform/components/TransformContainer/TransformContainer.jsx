@@ -8,7 +8,7 @@ const TransformContainer = ({children, className, ...props}) => {
     function resizeContainer() {
         initContainerDimensions({container: ref.current, resize:true})
     }
-    useAddEvent('resize', resizeContainer);
+    useAddEvent('resize', resizeContainer, {passive: true});
     return (
         <div className={"transform-container " + (className || '')}
              {...props}

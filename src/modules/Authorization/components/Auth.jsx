@@ -24,13 +24,15 @@ class LocalAuth {
     static setUser(data) {
         if (data.auth) {
             userStore({...data.user, authenticated: true});
+            return true;
         } else {
             data.error && alert(data.error);
+            return false;
         }
     }
-    static login(data) {
+    static login(data, callback) {
         sendLocalRequest('/api/user/login/', {...data, type: LocalAuth.type}, 'POST').then(data => {
-            LocalAuth.setUser(data);
+            callback(LocalAuth.setUser(data));
         });
     }
 
@@ -81,12 +83,11 @@ const LoginForm = ({props}) => {
 
     const googleAuth = useGoogleLogin({
         onSuccess: tokenResponse => {
-            LocalAuth.login({credentials: {token: tokenResponse.access_token}});
+            callback({credentials: {token: tokenResponse.access_token}});
         },
     });
 
     const [authType, setType] = useState('');
-    //console.log(isOpened)
 
     return (
         <ModalManager name={'login-form:toggle'}
@@ -123,9 +124,17 @@ const Auth = ({children}) => {
     function auth(popup) {
         setPrompt({isOpened: true, type: (popup ? 'popup' : 'default'),
             callback: (data) => {
-            if (!!data) LocalAuth.login(data);
-            setPrompt({isOpened: false});
-        }})
+                if (!!data) {
+                    LocalAuth.login(data, (success) => {
+                        setPrompt({isOpened: !success});
+                        success && triggerEvent("sidebar:toggle", {isOpened: true});
+                    });
+                }
+                else {
+                    setPrompt({isOpened: false});
+                }
+            }
+        })
     }
 
     useAddEvent('user-auth', e => auth(e.detail));

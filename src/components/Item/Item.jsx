@@ -48,10 +48,10 @@ export const SimpleItem = ({item, depth=0}) => {
                     {!['timeline'].includes(item.type)
                         && <div className={'items-wrapper'}>
                             {/*{item.items && <CarouselInline items={item.items.filter(it => it.type === 'image')} key={item.id}></CarouselInline>}*/}
-                            {
-                                item.items && item.items.filter(it => it.type !== 'image').map(item =>
-                                    <Item depth={depth + 1} item={item} key={item.id}></Item>)
-                            }
+                            {/*{*/}
+                            {/*    item.items && item.items.filter(it => it.type !== 'image').map(item =>*/}
+                            {/*        <Item depth={depth + 1} item={item} key={item.id}></Item>)*/}
+                            {/*}*/}
                             {item.items && item.items.map(item =>
                                 <Item depth={depth + 1} item={item} key={item.id}></Item>)}
                         </div>}

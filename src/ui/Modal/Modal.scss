@@ -70,5 +70,8 @@
 
     &__outer {
         z-index: calc($zindex-modal + 5);
+        &:not(& *) {
+            display: none;
+        }
     }
 }

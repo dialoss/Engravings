@@ -12,7 +12,6 @@ import Swipes from "../../../../ui/Swipes/Swipes";
 
 const Sidebar = ({data, picker, customer}) => {
     const [isOpened, setOpened] = useState(false);
-    const ref = useRef();
     const opRef = useRef();
     opRef.current = isOpened;
 
@@ -36,6 +35,10 @@ const Sidebar = ({data, picker, customer}) => {
     ];
 
     function toggleSidebar(event) {
+        if (event.detail.isOpened !== undefined) {
+            setOpened(event.detail.isOpened);
+            return;
+        }
         const el = getElementFromCursor(event, '', ['sidebar', 'window-button']);
         if (!el && opRef.current && isMobileDevice())
             close();
@@ -49,19 +52,25 @@ const Sidebar = ({data, picker, customer}) => {
         <Swipes callback={setOpened} state={isOpened} className={'sidebar'}>
             <div className="sidebar">
                 <Slider togglers={togglers} defaultOpened={isOpened}>
-                    <div className="sidebar__wrapper" ref={ref}>
+                    <div className={"sidebar__block"}>
+                    <div className={'sidebar__wrapper sidebar__outer'}>
                         <div className="sidebar__inner">
-                            <Auth>
-                                {customer && <Link to={'/customer/'}></Link>}
-                            </Auth>
-                            {picker && <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
-                                            className={"sidebar__link"}
-                                            style={{marginTop: 5}}>
-                                Хранилище</div>}
+                        <Auth>
+                            {customer && <Link to={'/customer/'}></Link>}
+                        </Auth>
+                        {picker && <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
+                                        className={"sidebar__link"}
+                                        style={{marginTop: 5}}>
+                            Хранилище</div>}
+                        </div>
+                    </div>
+                    <div className="sidebar__wrapper">
+                        <div className="sidebar__inner">
                             <div className="sidebar__list-wrapper">
                                 <SidebarList list={data}></SidebarList>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </Slider>
             </div>

@@ -2,13 +2,15 @@
   .transform-resizers {
     display: none;
   }
-}
 
-.transform-item.edit {
-  .transform-resizers {
-    display: block;
-  }
-  &:hover {
-    //z-index: 5 !important;
+  &.edit {
+    .transform-resizers {
+      display: block;
+    }
+
+    &.focused {
+      z-index: 5 !important;
+      outline: 3px solid #2b76e7;
+    }
   }
 }

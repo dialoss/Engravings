@@ -7,6 +7,7 @@ export const elementsSlice = createSlice({
         items: [],
         cache: {},
         actionElement: {},
+        prevElement: {},
     },
     reducers: {
         setItemsAll: (state, {payload: {items}}) => {
@@ -23,8 +24,8 @@ export const elementsSlice = createSlice({
             state.cache[page] = [...(state.cache[page]||[]), ...items];
             return state;
         },
-        setActionElement: (state, {payload: {actionElement}}) => {
-            state.actionElement = actionElement;
+        setField: (state, {payload: {field, element}}) => {
+            state[field] = element;
             return state;
         },
     }

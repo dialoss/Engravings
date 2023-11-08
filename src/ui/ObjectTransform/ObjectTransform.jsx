@@ -9,9 +9,8 @@ const ObjectTransform = () => {
     function initTransform(event) {
         const btn = event.detail.btn;
         const item = btn.closest(".transform-item");
-        console.log(prevElement)
-        prevElement.html && (prevElement.html.closest('.transform-item').style.zIndex = 1);
-        item.style.zIndex = 5;
+        prevElement.html && (prevElement.html.closest('.transform-item').classList.remove('focused'));
+        item.classList.add('focused');
         setItemTransform(event.detail.event, event.detail.type, item, btn);
         triggerEvent("action:init", event.detail.event);
     }

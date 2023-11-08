@@ -3,7 +3,8 @@ import {ModalManager} from "components/ModalManager";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getFormData} from "./helpers/FormData";
 import MyForm from "components/Modals/MyForm/MyForm";
-import {triggerEvent} from "helpers/events";
+import {isMobileDevice, triggerEvent} from "helpers/events";
+import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 
 const ElementForm = () => {
     const windowName = "form-window:toggle";
@@ -18,19 +19,22 @@ const ElementForm = () => {
         <>
             {form &&
                 <ModalManager name={windowName} key={windowName} defaultOpened={!!form} closeConditions={['esc', 'btn']}>
-                    <FormContainer formData={form} callback={(fields) => {
-                        let data = {};
-                        Object.keys(fields).forEach(f => data[f] = fields[f].value);
-                        if (data.path && data.slug) data.page_from = {
-                            path: data.path,
-                            slug: data.slug,
-                        }
-                        if (data.url) data.url = data.url[0].url;
-                        triggerEvent("action:callback", [{...form, data}]);
-                        triggerEvent(windowName, {isOpened: false});
-                        setForm(null);
-                    }}>
-                    </FormContainer>
+                    <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'50%', zIndex:8}}
+                                   style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
+                        <FormContainer formData={form} callback={(fields) => {
+                            let data = {};
+                            Object.keys(fields).forEach(f => data[f] = fields[f].value);
+                            if (data.path && data.slug) data.page_from = {
+                                path: data.path,
+                                slug: data.slug,
+                            }
+                            if (data.url) data.url = data.url[0].url;
+                            triggerEvent("action:callback", [{...form, data}]);
+                            triggerEvent(windowName, {isOpened: false});
+                            setForm(null);
+                        }}>
+                        </FormContainer>
+                    </TransformItem>
                 </ModalManager>
             }
         </>

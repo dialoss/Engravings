@@ -158,7 +158,7 @@ function notifyUser(info) {
     if (Notification.permission === "granted") {
         createNotification(info);
     } else if (Notification.permission !== "denied") {
-        triggerEvent('user-prompt', {text:'Разрешите уведомления, чтобы всегда быть в курсе новостей.'})
+        triggerEvent('user-prompt', {data:{title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.'}})
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
                 createNotification(info);

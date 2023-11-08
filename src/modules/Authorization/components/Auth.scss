@@ -85,7 +85,7 @@
 }
 
 .login-form {
-  min-width: 50vw;
+  width: 500px;
   min-height: 40vh;
   background-color: #fff;
   border-radius: 8px;
@@ -121,5 +121,11 @@
   }
   .avatar {
     width: 80px;
+  }
+
+  @include mobile {
+    & {
+      width: 95vw;
+    }
   }
 }

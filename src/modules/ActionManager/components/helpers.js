@@ -49,7 +49,7 @@ function getElement(event, depth=null) {
 }
 
 export function setActionElement(event) {
-    prevElement = actionElement;
+    store.dispatch(actions.setField({field: 'prevElement', element: {...actionElement, html:''}}));
     let el = getElement(event);
     let display_pos = getClickPosition(event);
 
@@ -73,7 +73,7 @@ export function setActionElement(event) {
             data: {display_pos: display_pos}
         }
     }
-    store.dispatch(actions.setActionElement({actionElement: {...actionElement, html:''}}));
+    store.dispatch(actions.setField({field: 'actionElement', element: {...actionElement, html:''}}));
     console.log(actionElement, actionElements);
 }
 

@@ -44,6 +44,7 @@ const ActionManager = () => {
         setPrompt(p => ({...p, isOpened:false}));
     }
     useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
+    console.log(prompt)
     const user = useSelector(state => state.users.current);
     return (
         <>

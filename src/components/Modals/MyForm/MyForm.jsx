@@ -18,7 +18,7 @@ const FormBlock = ({formField}) => {
 const MyForm = ({formData, formFields, submitCallback}) => {
     const ref = useRef();
     return (
-        <div className="form__content">
+        <div className="form__content transform-origin">
             <div className="form__header">
                 <p className={"form__title"}>{formData.title}</p>
                 {formData.windowButton && <WindowButton type={'close'}/>}

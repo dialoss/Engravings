@@ -27,7 +27,7 @@ const InputContainer = ({extraFields={}, manager, children}) => {
             let form = {};
             if (response === 'time') form = 'Подтвердите, что вы человек';
             if (response === 'upload') form = 'Максимальный размер файла 50мб';
-            triggerEvent("user-prompt", {text:form});
+            triggerEvent("user-prompt", {data:{title:form}});
             return;
         }
         if (manager.config.clearHTML) text = clearTextFromHTML(text);

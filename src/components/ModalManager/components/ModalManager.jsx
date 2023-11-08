@@ -1,7 +1,6 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Modal from "ui/Modal/Modal";
 import {useAddEvent} from "hooks/useAddEvent";
-import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
 
 const ModalManager = ({name, children, callback=null, defaultOpened=false, closeConditions=['bg', 'btn', 'esc']}) => {
     const [isOpened, setOpened] = useState(defaultOpened);

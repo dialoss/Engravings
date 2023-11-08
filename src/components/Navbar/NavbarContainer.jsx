@@ -15,7 +15,7 @@ const NavbarContainer = () => {
         ).concat([{
             path: location.relativeURL,
             text: location.pageSlug.toUpperCase(),
-            style: location.parentSlug ? 'current extra' : '',
+            style: location.parentSlug ? 'current extra' : ' extra',
         }])}/>
     );
 };

@@ -3,7 +3,7 @@ import "./file-explorer/file-explorer.css";
 import "./file-explorer/file-explorer";
 import {init} from "./config";
 import "./Custom.scss";
-import {getElementFromCursor, triggerEvent} from "../../helpers/events";
+import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
 import FormInput from "../../components/Modals/MyForm/Input/FormInput";
 import {createRoot} from "react-dom/client";
@@ -181,7 +181,6 @@ const FileExplorer = () => {
             pic.onload = () => {
                 setImage(pic);
             }
-            //console.log(entry)
         }
         window.filemanager.addEventListener('open_file', openFile);
         // return () => window.filemanager.removeEventListener('open_file', openFile);
@@ -247,7 +246,8 @@ const FileExplorer = () => {
 
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={{position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:25}} style={{bg: 'bg-none'}}>
+            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:25}}
+                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
             <div className={"filemanager"} ref={ref}>
                 <div className="filemanager-left">
                     <div className={"filemanager-header__wrapper transform-origin"}>

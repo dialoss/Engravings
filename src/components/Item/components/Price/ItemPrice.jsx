@@ -9,18 +9,25 @@ const ItemPrice = ({data}) => {
     function buttonCallback() {
         let action = data.link;
         if (!action) return;
-        if (action[0] === '$') {
-            triggerEvent("action:function", {name: 'add', args:'order'});
-        } else {
-            window.open(action, "_blank")
+        switch (action) {
+            case "$buy":
+                triggerEvent("action:function", {name: 'add', args: 'buy'});
+                break;
+            case "$order":
+                triggerEvent("action:function", {name: 'add', args:'order'});
+                break;
+            default:
+                window.open(action, "_blank")
         }
     }
     return (
         <div className={"item__price"}>
-            <InfoParagraph type={'price'}>{`Цена: ${data.price}₽`}</InfoParagraph>
+            <div className="price">
+                Цена: <InfoParagraph type={'price'}>{data.price}</InfoParagraph>₽
+            </div>
             <ItemLink data={data}></ItemLink>
             <ActionButton onClick={buttonCallback} authorizeAction={true}>
-                {data.button || 'купить'}
+                {data.button}
             </ActionButton>
         </div>
     );

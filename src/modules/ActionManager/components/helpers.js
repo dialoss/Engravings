@@ -38,7 +38,7 @@ export function setUnselected() {
 
 function getElement(event, depth=null) {
     let element = getElementFromCursor(event, 'item');
-    if (depth !== null) element = element.closest('.item.depth-0');
+    if (depth !== null && element) element = element.closest('.item.depth-0');
 
     if (!element) return null;
     let id = +getElementID(element);

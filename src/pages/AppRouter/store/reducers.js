@@ -28,7 +28,6 @@ export const locationSlice = createSlice({
             state.fullURL = state.baseURL + state.relativeURL;
             state.pageSlug = state.relativeURL.split('/').slice(-2, -1)[0];
             state.parentURL = state.relativeURL.replace(state.pageSlug + '/', '');
-            if (state.parentURL === '/') state.parentURL = state.relativeURL;
             state.parentSlug = state.parentURL.replaceAll('/', '');
             state.pageID = state.pages[state.relativeURL];
             state.pageTitle = state.pageSlug.toUpperCase();

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Item from "components/Item/Item";
 import MyMasonry from "ui/Masonry/MyMasonry";
 import Container from "ui/Container/Container";
@@ -24,10 +24,11 @@ const ItemList = ({items, className}) => {
             points: JSON.parse(style.getPropertyValue('--widthPoints')),
         })
     }, []);
-    let style = getLocation().pageSlug;
+    let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
+    const edit = window.editPage ? 'edit' : '';
     return (
-        <div className={"item-list " + className + ' ' + style} ref={listRef}>
+        <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
             <NavButton className={"item-list__button"} data={{text: 'ВИД', callback: calcForceColumns}}></NavButton>
             <Container style={{marginBottom: "50px"}}>
                 <MyMasonry
@@ -37,8 +38,7 @@ const ItemList = ({items, className}) => {
                     ref={ref}
                 >
                     {
-                        items.map((item) => <Item item={item} key={item.id}></Item>
-                        )
+                        items.map((item) => <Item item={item} key={item.id}></Item>)
                     }
                 </MyMasonry>
             </Container>

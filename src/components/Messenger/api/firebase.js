@@ -174,7 +174,7 @@ export function useGetRooms() {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
-            // console.log('snapshot rooms')
+            console.log('snapshot rooms')
         });
         return () => unsubscribe;
     }, []);
@@ -189,10 +189,9 @@ export function useGetRooms() {
                 if (r.users.includes(adminEmail)) roomWithAdmin = true;
             }
         });
-        //console.log(users)
         if (!roomWithAdmin) {
             let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
-            //console.log(u)
+            console.log(u)
             if (u.length > 1) {
                 createRoom(u);
             }
@@ -222,11 +221,13 @@ export function useGetRooms() {
     }, [user, rooms_raw, Object.values(users).length]);
 }
 
-export function updateRoom(data) {
-    const {room} = store.getState().messenger;
+export function updateRoom(data, room_id=null) {
+    let {room, rooms} = store.getState().messenger;
+    if (!room.id && room_id) room = rooms[room_id];
+    if (!room.id) return;
+
     let newRoom = {[room.id]: {...room, ...data, title:'',picture:''}};
     delete newRoom[room.id].companion;
-    // console.log('rooms update', data)
     return customUpdate('rooms', 'raw', newRoom);
 }
 

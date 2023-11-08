@@ -5,7 +5,7 @@
     background-color: $color-action-button;
     text-align: center;
     padding: 6px 10px;
-    font-size: 22px;
+    font-size: min(4vw, 22px);
     color: white;
     text-decoration: none;
     text-transform: uppercase;

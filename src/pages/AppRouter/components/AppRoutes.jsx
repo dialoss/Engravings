@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import {routes} from "../constants/routes";
 import {Intro} from "pages/MainPage";
@@ -6,6 +6,7 @@ import {getLocation} from "hooks/getLocation";
 import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import ItemsPage from "../../ItemsPage/components/ItemsPage";
+import {useSelector} from "react-redux";
 
 const Components = {
     'ItemsPage': ItemsPage,
@@ -14,14 +15,7 @@ const Components = {
 
 const PageWrapper = ({route}) => {
     const location = getLocation();
-
     document.title = "MyMount | " + location.pageTitle;
-    useAddEvent('keydown', e => {
-        e.ctrlKey && e.altKey && e.key === 'e' && (window.editPage = !window.editPage);
-        const itemList = document.querySelector('.item-list');
-        if (window.editPage) itemList.classList.add('edit');
-        else itemList.classList.remove('edit');
-    })
 
     return (
         <>
@@ -39,7 +33,6 @@ const AppRoutes = () => {
 
     useAddEvent("router:navigate", handleNavigate)
 
-
     return (
         <Routes>
             {
@@ -50,7 +43,6 @@ const AppRoutes = () => {
                            key={route.path}/>
                 )
             }
-            <Route path={'/admin/'} element={<Navigate to={'/main/'}/>}/>
             <Route path={'*'} element={<Navigate to={'/main/'}/>}/>
         </Routes>
     );

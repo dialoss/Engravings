@@ -9,7 +9,7 @@ const resizers = {
     position:"relative"
 }
 
-const TransformItem = ({children, config, className, secure}) => {
+const TransformItem = ({children, config, className, secure, ...props}) => {
     const initialTransform = {
         movable: config.movable !== undefined ? config.movable : true,
         ...config,
@@ -19,6 +19,7 @@ const TransformItem = ({children, config, className, secure}) => {
     return (
         <TransformButton className={"transform-item transform--move " + className || ''}
                          type={'move'}
+                         {...props}
                          secure={secure}
                          data-top={config.top}
                          style={initialTransform}>

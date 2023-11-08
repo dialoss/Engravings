@@ -11,12 +11,10 @@ const Accordion = React.forwardRef(function ({toggle, header, isOpened, height, 
     return (
         <div className={"accordion"}>
             <div className={"accordion-header"} onClick={toggle}>
-                {header ? header :
-                    <div className={"accordion-header__wrapper"}>
-                        {text}
-                        <ToggleButton isOpened={isOpened}><IconChevronDown/></ToggleButton>
-                    </div>
-                }
+                <div className={"accordion-header__wrapper"}>
+                    {header ? header : text}
+                    <ToggleButton isOpened={isOpened}><IconChevronDown/></ToggleButton>
+            </div>
             </div>
             <div className={"accordion-body " + state} style={style}>
                 <div className={"accordion-body__container"} ref={ref}>

@@ -14,12 +14,11 @@ const SidebarItem = ({listItem}) => {
     }, [parentLink]);
 
     return (
-        <div className="sidebar__item">
-            <AccordionContainer defaultOpened={isOpened} header={
+        <div className={"sidebar__item"} data-sublist={haveSublist}>
+            <AccordionContainer defaultOpened={isOpened} callback={setOpened} header={
                 <SidebarLink link={listItem.link}
                              haveSublist={haveSublist}
-                             depth={listItem.depth}
-                             callback={() => setOpened(!isOpened)}>
+                             depth={listItem.depth}>
                 {listItem.text}</SidebarLink>
             }>
             {haveSublist &&

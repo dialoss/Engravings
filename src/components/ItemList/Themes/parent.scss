@@ -39,5 +39,14 @@ $color-item-hover: rgb(141, 176, 236);
             z-index: $zindex-item-link;
         }
     }
+}
+.item-price {
+    box-shadow: none;
+    .transform-container {
+        min-height: auto !important;
+    }
+}
 
+.transform-item[data-type="price"] {
+    display: none;
 }

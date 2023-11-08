@@ -7,7 +7,7 @@ import {triggerEvent} from "helpers/events";
 
 const linkColor = styles.linkColor;
 
-const SidebarLink = ({link, children, depth, haveSublist, callback}) => {
+const SidebarLink = ({link, children, depth, haveSublist}) => {
     const location = getLocation();
     const isCurrent = location.relativeURL === link;
     let style = {
@@ -21,7 +21,7 @@ const SidebarLink = ({link, children, depth, haveSublist, callback}) => {
                   to={link}
                   style={style}>{children}
             </Link>
-            {haveSublist && <button className="sidebar__link-btn" onClick={callback}></button>}
+            {/*{haveSublist && <button className="sidebar__link-btn" onClick={callback}></button>}*/}
         </div>
     );
 };

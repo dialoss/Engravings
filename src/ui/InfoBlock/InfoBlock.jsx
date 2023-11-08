@@ -8,6 +8,7 @@ const InfoBlock = ({data, className, extra}) => {
     for (const item of (data.items || [])) {
         if (!!item.price) data = {...data, price: item.price};
     }
+    console.log(data)
     return (
         <div className={"info__block " + (className || '')}>
             {!!data.title && <InfoParagraph type={'title'}
@@ -17,7 +18,7 @@ const InfoBlock = ({data, className, extra}) => {
                 {!!data.date_created && data.show_date && <InfoParagraph type={'date'}>{formattedDate}</InfoParagraph>}
                 {!!data.description && <InfoParagraph type={'description'}>{data.description}</InfoParagraph>}
             </span>
-            {!!data.filename && <InfoParagraph style={{display:"none"}} type={'filename'}>{data.filename}</InfoParagraph>}
+            {!!data.filename && <InfoParagraph type={'filename'} style={{display:'none'}}>{data.filename}</InfoParagraph>}
             {extra}
         </div>
     );

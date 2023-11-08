@@ -46,6 +46,9 @@
     width: 100%;
   }
   .items-wrapper {
+    &:has(div) {
+      height: 100%;
+    }
     align-content: flex-start;
     justify-content: center;
     flex-wrap: wrap;

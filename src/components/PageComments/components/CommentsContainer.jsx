@@ -95,7 +95,6 @@ const CommentsContainer = ({page}) => {
     }, [sorting, search]);
 
     const manager = new MessageManager('comments', actions, config);
-    //console.log(comments)
     return (
         <CommentsContext.Provider value={manager}>
             {document && <BaseMessagesContainer id={page} callback={setComments} document={document}>

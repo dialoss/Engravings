@@ -135,10 +135,7 @@ const Auth = ({children}) => {
         <div className={"auth"}>
             <div className={"user-profile " + ((getLocation().relativeURL === '/customer/') ? 'active' : '')}>
                 {!user.authenticated &&
-                    <AccordionContainer header={
-                        <AuthButton type={'choice'} callback={auth}>Вход</AuthButton>
-                    }>
-                    </AccordionContainer>
+                    <AuthButton type={'choice'} callback={auth}>Вход</AuthButton>
                 }
                 <LoginForm props={prompt}></LoginForm>
                 {user.authenticated && <>

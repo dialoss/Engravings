@@ -1,4 +1,14 @@
-$media-resize-width: 850px;
+ $media-resize-width: 850px;
+
+ .carousel-window {
+     .info__paragraph-filename {
+         display: block !important;
+     }
+     .info__paragraph * {
+         color: #fff !important;
+         font-size: 20px !important;
+     }
+ }
 
 .carousel {
     &__content {
@@ -108,16 +118,24 @@ $media-resize-width: 850px;
             -webkit-tap-highlight-color: transparent;
         }
     }
-}
-
-.carousel.changed {
-    .carousel__content {
-        opacity: 0.5;
-    }
-}
-
-.carousel.default {
-    .carousel__content {
-        opacity: 1;
+    &.inline {
+        .carousel {
+            &__nav-bar, &__nav-btn {
+                position: absolute;
+            }
+            &__nav-bar {
+                min-height: auto;
+                height: 100%;
+            }
+        }
+        .info__block {
+            position: absolute !important;
+        }
+        .window-button {
+            display: none;
+        }
+        & {
+            position: relative;
+        }
     }
 }

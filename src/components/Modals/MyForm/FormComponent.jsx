@@ -7,12 +7,19 @@ import {triggerEvent} from "../../../helpers/events";
 import {FormContext} from "../../../modules/ActionForm/FormContainer";
 import FormCheckbox from "./Checkbox/FormCheckbox";
 
+const ColorPicker = ({data}) => {
+    return (
+        <input type="color" name="" id="" value={data.value} onChange={data.callback}/>
+    )
+}
+
 const Components = {
     'upload': FormUpload,
     'input': FormInput,
     'textarea': FormTextarea,
     'select': FormSelect,
     'checkbox': FormCheckbox,
+    'color': ColorPicker,
 }
 
 const FormComponent = ({field}) => {

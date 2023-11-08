@@ -2,6 +2,11 @@
   --masonry: 3;
   --widthPoints: [400, 500, 800];
   @import 'parent';
+  &.child {
+    --masonry: 1;
+    --widthPoints: [400, 500, 800];
+    @import "child";
+  }
   &.shop {
     --masonry: 1;
     --widthPoints: [300, 400];
@@ -10,11 +15,6 @@
   &.blueprints {
     --masonry: 2;
     --widthPoints: [300, 400];
-  }
-  &.child {
-    --masonry: 1;
-    --widthPoints: [400, 500, 800];
-    @import "child";
   }
   &.edit {
     @import "edit";

@@ -4,19 +4,19 @@ import {getCorrectedPosition} from "../helpers/viewport";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import {getElementFromCursor} from "../../helpers/events";
 
-const Modal = ({contentInner, contentOuter, name, isOpened, closeCallback}) => {
+const Modal = ({content, name, isOpened, closeCallback}) => {
     const ref = useRef();
     const windowRef = useRef();
     const opRef = useRef();
     opRef.current = isOpened;
     useEffect(() => {
-        let pos = contentInner.props.position;
+        let pos = content.props.position;
         if (!pos) return;
         let [px, py] = [pos.left, pos.top];
         [px, py] = getCorrectedPosition(ref.current, [px, py]);
         ref.current.style.left = px + "px";
         ref.current.style.top = py + "px";
-    }, [contentInner]);
+    }, [content]);
 
     const modalName = name.split(':')[0];
     function checkCloseDown(event) {
@@ -25,13 +25,18 @@ const Modal = ({contentInner, contentOuter, name, isOpened, closeCallback}) => {
         }
     }
     useAddEvent("mousedown", checkCloseDown);
-    const props = contentInner.props.style;
+    const props = content.props.style;
     const opened = (isOpened ? "opened" : "");
     useEffect(() => {
         const transformItem = windowRef.current.closest('.transform-item');
         if (!transformItem || name.includes('emojis')) return;
         !isOpened && (transformItem.style.pointerEvents = 'none');
         isOpened && (transformItem.style.pointerEvents = 'auto');
+    }, [isOpened]);
+
+    useEffect(() => {
+        const contentOuter = ref.current.querySelector('.content-outer');
+        contentOuter && windowRef.current.querySelector('.modal__outer').appendChild(contentOuter);
     }, [isOpened]);
 
     return (
@@ -41,12 +46,10 @@ const Modal = ({contentInner, contentOuter, name, isOpened, closeCallback}) => {
                 </div>
                 <div className={`modal__window ${modalName} ${opened} ${!!props && ((props.win || '') + ' ' + (props.bg || ''))}`} ref={ref}>
                     <div className="modal__content">
-                        {contentInner}
+                        {content}
                     </div>
                 </div>
-                <div className={`modal__outer modal__window ${opened}`}>
-                    {contentOuter}
-                </div>
+                <div className={`modal__outer modal__window ${modalName} ${opened}`}></div>
             </div>
         </div>
     );

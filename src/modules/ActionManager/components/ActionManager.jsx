@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {setActionElement} from "./helpers";
 import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
-import CarouselContainer from "components/Modals/Carousel/CarouselContainer";
+import CarouselContainer, {CarouselModal} from "components/Modals/Carousel/CarouselContainer";
 import {ActionForm} from "modules/ActionForm";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
 import Actions from "modules/ActionManager/ItemActions/actions";
@@ -14,6 +14,7 @@ import Modal from "../../../ui/Modal/Modal";
 import {ModalManager} from "../../../components/ModalManager";
 import {FormContainer} from "../../ActionForm/FormContainer";
 import ItemActions from "../ItemActions/EntryActions";
+import ThemeManager from "../../../components/ItemList/ThemeManager";
 
 
 const ActionManager = () => {
@@ -43,7 +44,6 @@ const ActionManager = () => {
         setPrompt(p => ({...p, isOpened:false}));
     }
     useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
-    // console.log('prompt', prompt)
     const user = useSelector(state => state.users.current);
     return (
         <>
@@ -52,6 +52,7 @@ const ActionManager = () => {
                     <ItemActions></ItemActions>
                     <FileExplorer></FileExplorer>
                     <ActionForm></ActionForm>
+                    <ThemeManager></ThemeManager>
                 </>
             }
             <ModalManager name={'user-prompt:toggle'}
@@ -65,8 +66,8 @@ const ActionManager = () => {
             </ModalManager>
             <ObjectTransform></ObjectTransform>
             <FirebaseContainer></FirebaseContainer>
-            <CarouselContainer></CarouselContainer>
-            <MessengerContainer></MessengerContainer>
+            <CarouselModal></CarouselModal>
+            {user.id && <MessengerContainer></MessengerContainer>}
         </>
     );
 };

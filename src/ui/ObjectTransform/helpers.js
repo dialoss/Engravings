@@ -1,3 +1,4 @@
+import data from "@emoji-mart/data";
 
 function getFirstItems(container) {
     let items = container.querySelector('.items-wrapper');
@@ -17,7 +18,7 @@ function getMaxBottom(container) {
 
     const ratio = (curWidth / parentWidth) || 1;
     for (const block of getFirstItems(container)) {
-        if (isResizable(container) && block.style.position === 'absolute' && !block.classList.contains('transformed')) {
+        if (block.style.position === 'absolute' && !block.classList.contains('transformed')) {
             block.style.top = +block.getAttribute('data-top').replace('px', '') * ratio + 'px';
         }
         let rect = block.getBoundingClientRect();
@@ -25,13 +26,12 @@ function getMaxBottom(container) {
     }
     const dataHeight = +container.getAttribute('data-height').replace('px','');
     if (dataHeight && m < dataHeight &&
-        !['timeline', 'base'].includes(container.getAttribute('data-type'))) m = dataHeight * ratio;
-
+        !['timeline'].includes(container.getAttribute('data-type'))) m = dataHeight * ratio;
     return m;
 }
 let counter = 0;
 export function initContainerDimensions({container, item, toChild, resize}) {
-    if (!container) return;
+    if (!container || container.getAttribute('data-inited')) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container, resize);
     // console.log(counter++)
@@ -43,7 +43,7 @@ export function initContainerDimensions({container, item, toChild, resize}) {
         return;
     }
     container.style.minHeight = contHeight + "px";
-
+    // container.setAttribute('data-inited', true);
     if (!resize) {
         let parentContainer = container.parentElement.closest('.transform-container');
         parentContainer && initContainerDimensions({container: parentContainer});

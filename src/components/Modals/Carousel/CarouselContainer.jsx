@@ -1,99 +1,116 @@
-import React, {useCallback, useLayoutEffect, useReducer, useRef, useState} from 'react';
+import React, {
+    createContext,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState
+} from 'react';
 import Carousel from "./components/Carousel/Carousel.jsx";
-import useKeypress from "react-use-keypress";
 import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {useSelector} from "react-redux";
 import {ModalManager} from "components/ModalManager";
-import InfoBlock from "../../../ui/InfoBlock/InfoBlock";
-import styles from "./components/Carousel/Carousel.module.scss";
-import CarouselNav from "./components/Navigation/Navigation";
-import WindowButton from "../../../ui/Buttons/WindowButton/WindowButton";
 
 function bounds(n, bound) {
     return (n + bound) % bound;
 }
 
-const CarouselContainer = () => {
-    const items = useSelector(state => state.elements.itemsAll);
-    const [content, setContent] = useState([]);
-    const contentRef = useRef();
-    contentRef.current = content;
-    const openedRef = useRef();
-
-    const [currentItem, setCurrent] = useState(0);
-
-    const forward = useCallback(() => {
-        openedRef.current = false;
-        setCurrent(currentItem => bounds(currentItem + 1, contentRef.current.length));
-    }, []);
-    const back = useCallback(() => {
-        openedRef.current = false;
-        setCurrent(currentItem => bounds(currentItem - 1, contentRef.current.length));
-    }, []);
-
-    const windowName = 'carousel-window:toggle';
-
-    const openCarousel = useCallback(event => {
-        for (let i = 0; i < contentRef.current.length; i++) {
-            if (contentRef.current[i].id === event.detail) {
-                setCurrent(i);
-                triggerEvent(windowName, {isOpened: true});
-                return;
+function prepareContent(items) {
+    let newContent = [];
+    Object.values(items).forEach(item => {
+        if (item.type !== 'image') return;
+        const parent = Object.values(items).find(it => it.id === item.parent) || {};
+        newContent.push({
+            navigation: true,
+            id: item.id,
+            url: item.url,
+            info: {
+                title: item.title || parent.title,
+                description: item.description || parent.description,
+                filename: item.filename,
             }
-        }
-        openedRef.current = true;
-        setContent([{...event.detail, navigation: false}]);
-        setCurrent(0);
-        triggerEvent(windowName, {isOpened: true});
-    }, []);
+        });
+    })
+    return newContent;
+}
 
-    useAddEvent("carousel:open", openCarousel);
-    useAddEvent("carousel:right", forward);
-    useAddEvent("carousel:left", back);
+export const CarouselModal = () => {
+    const windowName = 'carousel-window:toggle';
+    const [item, setItem] = useState(0);
+    const items = useSelector(state => state.elements.itemsAll);
+    const contentRef = useRef();
+    const [content, setContent] = useState([]);
+    contentRef.current = content;
 
     useLayoutEffect(() => {
-        let newContent = [];
-        Object.values(items).forEach(item => {
-            if (item.type !== 'image') return;
-            const parent = Object.values(items).find(it => it.id === item.parent) || {};
-            newContent.push({
-                navigation: true,
-                id: item.id,
-                url: item.url,
-                info: {
-                    title: item.title || parent.title,
-                    description: item.description || parent.description,
-                    filename: item.filename,
-                }
-            });
-        })
-        setContent(newContent);
+        setContent(prepareContent(items));
     }, [items]);
 
-    const [item, setItem] = useState(null);
-    useLayoutEffect(() => {
-        if (!content.length) return;
-        setItem(content[currentItem]);
-    }, [currentItem, content]);
+    function openCarousel(event) {
+        for (let i = 0; i < contentRef.current.length; i++) {
+            if (contentRef.current[i].id === event.detail) {
+                setItem(i);
+            }
+        }
+        triggerEvent(windowName, {isOpened: true});
+    }
+    useAddEvent("carousel:open", openCarousel);
 
-    useKeypress('ArrowRight', () => triggerEvent('carousel:right'));
-    useKeypress('ArrowLeft', () => triggerEvent('carousel:left'));
-
-    const contentOuter = useCallback(() => item && <div className="content-outer">
-        {item.info && <InfoBlock data={item.info} className={styles['info__block']}></InfoBlock>}
-        {item.navigation && <CarouselNav></CarouselNav>}
-        <WindowButton type={'close'} className={styles['window-close']}/>
-    </div>, [item]);
-
+    const carousel = content[item] && <CarouselContainer style={{win: 'centered'}}
+                                        items={content}
+                                        item={item} type={'popup'}/>;
     return (
         <>
-            {!!item &&
-                <ModalManager name={windowName} key={windowName}>
-                    <Carousel style={{win: 'centered'}} item={item} contentOuter={contentOuter()}/>
-                </ModalManager>
-            }
+            {carousel && <ModalManager name={windowName} key={windowName}>
+                {carousel}
+            </ModalManager>}
         </>
+    );
+}
+
+export const CarouselInline = ({items}) => {
+    const content = prepareContent(items);
+    return (
+        <CarouselContainer items={content} item={0} type={'inline'}></CarouselContainer>
+    );
+}
+
+export const CarouselContext = createContext();
+
+const CarouselContainer = ({items, item, type, ...props}) => {
+    const itemsRef = useRef();
+    itemsRef.current = items;
+    const [currentItem, setCurrent] = useState(0);
+    useLayoutEffect(() => {
+        setCurrent(item);
+    }, [item])
+
+    const forward = () => setCurrent(currentItem => bounds(currentItem + 1, itemsRef.current.length));
+    const back = () => setCurrent(currentItem => bounds(currentItem - 1, itemsRef.current.length));
+
+    function nav(event) {
+        event.key === 'ArrowRight' && forward();
+        event.key === 'ArrowLeft' && back();
+    }
+    useAddEvent('keydown', nav);
+
+    const [itemShow, setItem] = useState(null);
+    useLayoutEffect(() => {
+        setItem(items[currentItem]);
+    }, [currentItem]);
+    console.log(itemShow)
+    return (
+        <CarouselContext.Provider value={{right: forward, left: back}}>
+            <div className={'carousel-events'}>
+                {!!itemShow && <Carousel type={type}
+                                         {...props}
+                                         item={itemShow}/>}
+            </div>
+        </CarouselContext.Provider>
+
     );
 };
 

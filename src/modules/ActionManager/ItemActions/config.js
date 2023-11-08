@@ -2,9 +2,10 @@ import store from "store";
 import {getLocation} from "../../../hooks/getLocation";
 import dayjs from "dayjs";
 import {sendEmail} from "../../../api/requests";
-import {MessageManager} from "../../../components/Messenger/api/firebase";
+import {MessageManager, updateRoom} from "../../../components/Messenger/api/firebase";
 import {arrayUnion, doc, updateDoc} from "firebase/firestore";
 import {adminEmail, firestore} from "../../../components/Messenger/api/config";
+import {actions} from "../../../components/Messenger";
 
 export const ContextActions = {
     'add':{
@@ -124,7 +125,8 @@ export function setActionData(item) {
             }
         case 'price':
             return {
-                price: "999"
+                price: "999",
+                button: 'Приобрести',
             }
         case "timeline":
             return {
@@ -184,7 +186,8 @@ export function setActionData(item) {
                         movable: false,
                         type: 'subscription',
                         left: '10%',
-                        height: '400px',
+                        container_width: '100px',
+                        height: '100px',
                         top: '50px',
                         width: '35%',
                         position: 'absolute',
@@ -202,6 +205,7 @@ export function setActionData(item) {
                             {
                                 text: '<h1>Заголовок</h1>',
                                 type: 'textfield',
+                                movable: false,
                                 show_shadow: false,
                                 height: '100px',
                                 width: '100%',
@@ -213,43 +217,27 @@ export function setActionData(item) {
                                 height: '100px',
                                 width: '100%',
                                 show_shadow: false,
+                                movable: false,
                             },
                         ]
                     },
                     {
                         type: 'price',
                         price: 999,
+                        link: '$order',
                         button: "Заказать изготовление",
-                        left: '25%',
-                        width: '45%',
-                        top: '500px',
                         show_shadow: false,
-                        position: 'absolute',
                         group_order: 3,
                     }
                 ]
             }
         case 'order':
-            const admin = Object.values(store.getState().users.users).find(u => u.email === adminEmail);
-            const user = store.getState().users.current;
-            const {rooms} = store.getState().messenger;
-            const adminRoom = Object.values(rooms).find(r => r.users.includes(adminEmail) && r.users.includes(user.email));
-
-            const config = {
-                getDocument: () => adminRoom.messages,
-            }
-            const manager = new MessageManager('messenger', null, config);
-            manager.sendMessage({
-                message: {
-                    text: `Здравствуйте! Я принял ваш заказ и в скором времени свяжусь с Вами,
+            actionMessage(`Здравствуйте! Я принял ваш заказ и в скором времени свяжусь с Вами,
                      чтобы обсудить детали заказа. По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
                      на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
-                      в курсе новостей.`,
-                    upload: {},
-                },
-                user_id: admin.id,
-            });
+                      в курсе новостей.`)
 
+            const user = store.getState().users.current;
             const location = getLocation();
             const name = user.name.replaceAll(' ', '-');
             const date = dayjs(new Date().getTime()).format("HH:mm DD.MM");
@@ -263,7 +251,7 @@ export function setActionData(item) {
                     order: orderName,
                 }
             });
-          
+
             return [{
                 type: 'base',
                 title: orderName,
@@ -297,6 +285,31 @@ export function setActionData(item) {
                     },
                 },
             ]
+        case 'buy':
+            actionMessage(`Здравствуйте! По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
+                     на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
+                      в курсе новостей.`)
+            return [];
     }
-    return {};
+}
+
+async function actionMessage(text) {
+    const admin = Object.values(store.getState().users.users).find(u => u.email === adminEmail);
+    const user = store.getState().users.current;
+    const {rooms} = store.getState().messenger;
+    const adminRoom = Object.values(rooms).find(r => r.users.includes(adminEmail) && r.users.includes(user.email));
+
+    const config = {
+        getDocument: () => adminRoom.messages,
+    }
+    const manager = new MessageManager('messenger', null, config);
+
+    let msg = await manager.sendMessage({
+        message: {
+            text,
+            upload: {},
+        },
+        user_id: admin.id,
+    });
+    updateRoom({lastMessage: msg, newMessage: true, notified:false}, adminRoom.id);
 }

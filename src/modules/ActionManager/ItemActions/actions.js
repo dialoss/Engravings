@@ -10,12 +10,12 @@ let current = 0;
 window.addEventListener('keydown', e => {
     if (e.ctrlKey && hs.length) {
         let key = false;
-        switch (e.key) {
-            case 'z':
+        switch (e.code) {
+            case 'KeyZ':
                 key = true;
                 current = Math.max(0, current - 1);
                 break;
-            case 'y':
+            case 'KeyY':
                 key = true;
                 current = Math.min(hs.length - 1, current + 1);
                 break;
@@ -85,7 +85,7 @@ export default class Actions {
         if (!Array.isArray(data)) {
             data = [data];
         }
-        //console.log(data)
+        console.log(data)
         return data.map(d => ({
             method: 'POST',
             specifyParent: true,

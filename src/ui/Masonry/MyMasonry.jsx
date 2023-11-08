@@ -48,8 +48,7 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, widthPoints=[400,600,
 
     useEffect(() => {
         for (const container of ref.current.querySelectorAll('.transform-container')) {
-            // console.log(container)
-            triggerEvent("container:init", {container, resize:true});
+            triggerEvent("container:init", {container});
         }
     }, [layout]);
 

@@ -12,6 +12,9 @@
 }
 
 .item-base {
+  .items-wrapper {
+    align-content: center;
+  }
   display: flex;
   background-color: white !important;
   & > div {
@@ -25,14 +28,21 @@
 }
 
 .info__block {
+  .info__paragraph {
+    //padding: 10px;
+    max-width: 80%;
+  }
+
   flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
 
-  &-buy {
+  .item__price {
     flex-direction: column;
-    display: flex;
+  }
+  .wrapper-price {
+    width: 100%;
   }
 }

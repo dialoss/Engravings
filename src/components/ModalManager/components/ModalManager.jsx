@@ -1,5 +1,4 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import useKeypress from "react-use-keypress";
 import Modal from "ui/Modal/Modal";
 import {useAddEvent} from "hooks/useAddEvent";
 import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
@@ -39,9 +38,8 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     useEffect(() => {
         callback && callback(isOpened);
     }, [isOpened]);
-
-    const modal = <Modal contentInner={children}
-                         contentOuter={children.props.contentOuter || <></>}
+    console.log(name, closeConditions, isOpened)
+    const modal = <Modal content={children}
                          name={name}
                          isOpened={isOpened}
                          closeCallback={backgroundClick}

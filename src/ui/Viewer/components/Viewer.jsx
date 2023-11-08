@@ -105,7 +105,7 @@ class Viewer extends React.Component {
         if (this.props.urn && this.props.urn !== prevProps.urn) {
             Autodesk.Viewing.Document.load(
                 'urn:' + this.props.urn,
-                (doc) => this.viewer.loadDocumentNode(doc, doc.getRoot().getDefaultGeometry()),
+                (doc) => this.viewer && this.viewer.loadDocumentNode(doc, doc.getRoot().getDefaultGeometry()),
                 (code, message, errors) => console.error(code, message, errors)
             );
         } else if (!this.props.urn && this.viewer.model) {

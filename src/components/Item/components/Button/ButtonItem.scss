@@ -1,0 +1,16 @@
+.item__price {
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
+  .action-button {
+    max-height: 60px;
+  }
+  .price, .info__paragraph * {
+    color: #F81155;
+    font-size: min(6vw, 25px);
+    font-weight: 600;
+    margin: auto 0;
+  }
+}

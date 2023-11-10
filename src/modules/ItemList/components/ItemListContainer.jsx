@@ -11,8 +11,6 @@ import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
 import NavButton from "../../../ui/Navbar/Button/NavButton";
 
-let t = 0;
-
 const ItemListContainer = () => {
     const [items, dispatch] = useReducer(localReducer, []);
     const itemsRef = useRef();
@@ -21,12 +19,12 @@ const ItemListContainer = () => {
     const totalItems = useRef();
 
     async function addItems({newItems, count}, fromCache=false) {
-        t += newItems.length;
         let items = newItems;
-        !fromCache && (totalItems.current = count);
-        !fromCache && (items = createItemsTree(items));
-        // !fromCache && globalDispatch(actions.setElements({items, page: getLocation().relativeURL}));
-        !fromCache && globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
+        if (!fromCache) {
+            totalItems.current = count;
+            items = createItemsTree(items);
+            globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
+        }
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
     const [style, setStyle] = useState('hidden');

@@ -25,12 +25,17 @@ export const ContextActions = {
             'textfield': {
                 callback: 'add',
                 argument: true,
-                text: 'Текст',
+                text: 'Текстовое поле',
             },
             'price': {
                 callback: 'add',
                 argument: true,
                 text: 'Покупка',
+            },
+            'button': {
+                callback: 'add',
+                argument: true,
+                text: 'Кнопка',
             },
             'timeline': {
                 callback: 'add',
@@ -101,16 +106,16 @@ export function setActionData(item) {
         case 'page_from':
             return {
                 type: 'page_from',
-
             }
         case 'empty':
             return {
                 type: 'base',
-                movable: true,
+                movable: false,
             }
         case 'quick':
             return {
                 type: 'base',
+                show_date: true,
                 description: 'Описание',
                 title: 'Заголовок',
             }

@@ -91,9 +91,11 @@ function moveAt(event, shiftX, shiftY) {
             if (checkNears(px, py - deltaY)[0]) px = item.offsetLeft;
             if (checkNears(px - deltaX, py)[1]) py = item.offsetTop;
         }
-        if (px < 0) px = 0;
-        if (py < 0) py = 0;
-        if (px + block.width > win.width) px = win.width - block.width;
+        if (!event.shiftKey) {
+            if (px < 0) px = 0;
+            if (py < 0) py = 0;
+            if (px + block.width > win.width) px = win.width - block.width;
+        }
 
         item.style.top = py + "px";
         setItemProps(px, block.width);
@@ -135,7 +137,7 @@ export function setItemTransform(event, type, _item, _btn) {
         }, 200)
 
         mouseMoved = false;
-        if (container.classList.contains('viewport-container')) return;
+        // if (container.classList.contains('viewport-container')) return;
         let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
         if (isResizable(container)) top = item.offsetTop + 'px';
         item.setAttribute('data-top', item.style.top);

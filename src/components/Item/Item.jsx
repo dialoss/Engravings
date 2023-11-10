@@ -70,6 +70,7 @@ const Item = ({item, depth=0}) => {
     return (
         <TransformItem key={item.id}
                        config={item}
+                       data-group={item.group_order}
                        data-type={item.type}
                        className={(admin ? 'edit' : '')}
                        secure={true}>

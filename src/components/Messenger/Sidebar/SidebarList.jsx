@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 
 const SidebarList = ({list, className, currentItem, text, subtext=false, selectCallback, user}) => {
     const {users} = useSelector(state => state.messenger);
+    // console.log(users)
     return (
         <div className={"messenger-sidebar__list " + className}>
             {

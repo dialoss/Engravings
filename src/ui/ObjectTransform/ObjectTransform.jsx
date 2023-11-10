@@ -18,9 +18,7 @@ const ObjectTransform = () => {
         triggerEvent("action:init", event.detail.event);
 
         const parentCont = item.closest('.transform-container').classList.contains('viewport-container');
-        const cont = item.querySelector('.transform-container');
-        if (parentCont && cont && cont.getAttribute('data-type') === 'base' ||
-            getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 || (event.detail.type === 'move' &&
+        if (getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 || (event.detail.type === 'move' &&
                 !event.detail.movable)) {
             return;
         }

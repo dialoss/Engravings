@@ -43,20 +43,20 @@ const AppRoutes = () => {
     useAddEvent("router:navigate", handleNavigate)
 
     useLayoutEffect(() => {
-        const anchor = window.location.hash.slice(1);
-        if (anchor) {
-            const newLoc = window.location;
-            newLoc.replace('#' + anchor, '');
-            window.location = newLoc;
-            window.anchor = anchor;
-        }
-        if (window.anchor) {
-            const anchorEl = document.getElementById(window.anchor);
-            if (anchorEl) {
-                anchorEl.scrollIntoView();
-            }
-            window.anchor = null;
-        }
+        // const anchor = window.location.hash.slice(1);
+        // if (anchor) {
+        //     const newLoc = window.location;
+        //     newLoc.replace('#' + anchor, '');
+        //     window.location = newLoc;
+        //     window.anchor = anchor;
+        // }
+        // if (window.anchor) {
+        //     const anchorEl = document.getElementById(window.anchor);
+        //     if (anchorEl) {
+        //         anchorEl.scrollIntoView();
+        //     }
+        //     window.anchor = null;
+        // }
     }, []);
 
     return (

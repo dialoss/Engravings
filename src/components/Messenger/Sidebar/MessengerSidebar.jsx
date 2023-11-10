@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./MessengerSidebar.scss";
 import {isMobileDevice, triggerEvent} from "helpers/events";
 import ToggleButton from "ui/Buttons/ToggleButton/ToggleButton";
@@ -15,12 +15,17 @@ import {actions} from "../store/reducers";
 import store from "../../../store";
 import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
+import {adminEmail} from "../api/config";
 
 const MessengerSidebar = () => {
     const userAdmin = useSelector(state => state.users.current);
     const {rooms, room, users, user} = useSelector(state => state.messenger);
 
     function setRoom(id) {
+        if (!user) {
+            triggerEvent('user-auth', true);
+            return;
+        }
         if (room.id === id) id = '';
         updateUser('realtime', {currentRoom: id});
         setCurrentRoom(id);
@@ -77,6 +82,24 @@ const MessengerSidebar = () => {
         setUserList(l => ({...l, users: newUsers}));
     }
 
+    useEffect(() => {
+        let companion = 0;
+        for (const user in users) {
+            if (users[user].email === adminEmail) companion = user;
+        }
+        !Object.values(rooms).length && !!companion && (store.dispatch(actions.setField({field:'rooms', data: {1: {
+                    users: [adminEmail, adminEmail],
+                    picture: users[companion].picture,
+                    title: users[companion].name,
+                    lastMessage: {},
+                    newMessage: false,
+                    notified: true,
+                    id: 1,
+                    companion,
+                }}})));
+    }, [users]);
+
+    // console.log(rooms)
     return (
         <Swipes callback={setOpened} state={isOpened} className={'messenger'}>
             <div className={"messenger__sidebar-inner " + (isOpened ? 'opened' : 'closed')}>

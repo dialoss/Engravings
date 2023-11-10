@@ -13,6 +13,7 @@ import TimelineEntry from "./Timeline/TimelineEntry";
 import ItemLink from "./Link/ItemLink";
 import IntroItem from "./Intro/IntroItem";
 import SubscriptionItem from "./Subscription/SubscriptionItem";
+import ButtonItem from "./Button/ButtonItem";
 
 export const Components = {
     'base': ItemBase,
@@ -29,6 +30,7 @@ export const Components = {
     'price': ItemPrice,
     'intro': IntroItem,
     'subscription': SubscriptionItem,
+    'button':ButtonItem,
 }
 
 const ItemData = ({data, props}) => {

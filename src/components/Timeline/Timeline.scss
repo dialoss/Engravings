@@ -1,5 +1,13 @@
+.wrapper-timeline {
+  padding: 0;
+}
 .timeline {
   padding-top: 20px;
+  @include mobile {
+    .transform-item{
+      min-width: 50% !important;
+    }
+  }
   &-body {
     flex-grow: 1;
   }
@@ -35,11 +43,17 @@
         > div {
           margin-top: -6px;
         }
+        @include mobile {
+          padding-right: 0;
+        }
       }
       &-separator {
         padding: 0 15px;
         display: flex;
         flex-direction: column;
+        @include mobile {
+          padding: 0 5px 0 0;
+        }
       }
     }
     &--disabled {

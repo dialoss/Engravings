@@ -14,12 +14,30 @@ export async function fetchRequest(url) {
     });
 }
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 export async function sendRequest(url, data, method) {
     let response = null;
+    const csrftoken = getCookie('csrftoken');
+    console.log(csrftoken)
     let query = {
         method: method,
         credentials: "include",
         headers: {
+            'X-CSRFToken': csrftoken,
             "Content-Type": 'application/json;charset=utf-8',
         },
         ...(method !== 'GET' ? {body: JSON.stringify(data)} : {})

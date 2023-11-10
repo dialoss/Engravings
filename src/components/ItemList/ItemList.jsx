@@ -8,6 +8,7 @@ import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
 import PageComments from "../PageComments/PageComments";
 import {fetchItems} from "../../modules/ItemList/api/fetchItems";
+import {useAddEvent} from "../../hooks/useAddEvent";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const [config, setConfig] = useState({});
@@ -20,6 +21,7 @@ const ItemList = ({items, className, loadMore=null}) => {
         setColumns(newCols);
         // console.log('NEW', newCols)
     }
+    useAddEvent('itemlist:view', calcForceColumns);
     const listRef = useRef();
     useEffect(()=>{
         const style = window.getComputedStyle(listRef.current);
@@ -35,7 +37,6 @@ const ItemList = ({items, className, loadMore=null}) => {
     return (
         <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
             <Container style={{marginBottom: "50px"}}>
-                <NavButton className={"item-list__button"} data={{text: 'ВИД', callback: calcForceColumns}}></NavButton>
                 <MyMasonry
                     maxColumns={config.columns}
                     forceColumns={forceColumns}

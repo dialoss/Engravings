@@ -3,9 +3,9 @@ import {createSlice} from "@reduxjs/toolkit";
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
-        // baseURL : 'https://divine-snow-51804.pktriot.net',
+        baseURL : 'https://divine-snow-51804.pktriot.net',
         // baseURL : 'https://matthew75.pythonanywhere.com',
-        baseURL : 'http://localhost:8000',
+        // baseURL : 'http://localhost:8000',
         pages : {},
         pageID : '',
         fullURL : '',

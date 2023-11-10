@@ -8,6 +8,7 @@ const NavbarContainer = () => {
     function isActive(path) {
         return location.relativeURL.split('/')[1] === path;
     }
+    console.log(location)
     return (
         <Navbar routes={NavbarRoutes.map(route => ({
             ...route,

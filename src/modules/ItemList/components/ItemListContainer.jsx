@@ -9,46 +9,57 @@ import {getLocation} from "../../../hooks/getLocation";
 import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
+import NavButton from "../../../ui/Navbar/Button/NavButton";
+
+let t = 0;
 
 const ItemListContainer = () => {
     const [items, dispatch] = useReducer(localReducer, []);
     const itemsRef = useRef();
     itemsRef.current = items;
     const globalDispatch = useDispatch();
+    const totalItems = useRef();
 
-    function addItems(newItems, fromCache=false) {
-        let items = structuredClone(newItems);
+    async function addItems({newItems, count}, fromCache=false) {
+        t += newItems.length;
+        let items = newItems;
+        !fromCache && (totalItems.current = count);
         !fromCache && (items = createItemsTree(items));
-        !fromCache && globalDispatch(actions.setElements({items, page: getLocation().relativeURL}));
-        globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
+        // !fromCache && globalDispatch(actions.setElements({items, page: getLocation().relativeURL}));
+        !fromCache && globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
     const [style, setStyle] = useState('hidden');
+
+    const limit = useRef();
+    limit.current = getLocation().parentSlug ? 80 : 60;
+
     useEffect(() => {
         let offset = 0;
         let page = getLocation().relativeURL;
         let cachedItems = store.getState().elements.cache[page];
         if (cachedItems) {
-            addItems(cachedItems, true);
+            addItems({newItems:cachedItems}, true);
             offset = cachedItems.length;
         }
-        fetchItems(offset, addItems);
+        fetchItems(offset, addItems, limit.current);
         setTimeout(() => {
             setStyle('visible')
-        }, 200);
+        }, 300);
     }, []);
 
     async function handleElements(event) {
         let request = event.detail;
         //console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
-        // console.log('RESPONSE', response)
-        if (response.detail) {
+        console.log('RESPONSE', response)
+        const newItems = response.items;
+        if (!newItems) {
             return;
         }
-        dispatch({method: request.storeMethod, payload: createItemsTree(response)});
-        if (response.length && !response[0].empty) {
-            globalDispatch(actions.setItemsAll({items: response}));
+        dispatch({method: request.storeMethod, payload: createItemsTree(newItems)});
+        if (newItems.length && !newItems[0].empty) {
+            globalDispatch(actions.setItemsAll({items: newItems}));
         }
 
         if (request.method === 'DELETE') {
@@ -62,7 +73,12 @@ const ItemListContainer = () => {
     useAddEvent('itemlist:handle-changes', handleElements);
 
     return (
-        <ItemList items={items} className={style}></ItemList>
+        <>
+            <ItemList loadMore={totalItems.current === items.length ? null : () => {
+                limit.current = items.length + 60;
+                fetchItems(items.length, addItems, limit.current);
+            }} items={items} className={style}></ItemList>
+        </>
     );
 };
 

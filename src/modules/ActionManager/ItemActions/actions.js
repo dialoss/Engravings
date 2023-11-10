@@ -8,20 +8,24 @@ let hs = [];
 let current = 0;
 
 window.addEventListener('keydown', e => {
-    if (e.ctrlKey && hs.length) {
-        let key = false;
+    if (e.ctrlKey) {
         switch (e.code) {
             case 'KeyZ':
-                key = true;
                 current = Math.max(0, current - 1);
+                hs.length && triggerEvent('itemlist:handle-changes', hs[current]);
                 break;
             case 'KeyY':
-                key = true;
+                if (!hs.length) return;
                 current = Math.min(hs.length - 1, current + 1);
+                triggerEvent('itemlist:handle-changes', hs[current]);
+                break;
+            case 'KeyC':
+                Actions.copy();
+                break;
+            case 'KeyV':
+                Actions.action(Actions.paste());
                 break;
         }
-        //console.log(e.key, key, current)
-        key && triggerEvent('itemlist:handle-changes', hs[current]);
     }
 })
 
@@ -48,7 +52,7 @@ export default class Actions {
                     url += id + '/';
                 }
             }
-            if (!sendData.page) {
+            if (typeof(sendData.page) !== 'object') {
                 const location = getLocation();
                 sendData.page = {
                     slug: location.pageSlug || location.pageID,
@@ -85,7 +89,7 @@ export default class Actions {
         if (!Array.isArray(data)) {
             data = [data];
         }
-        console.log(data)
+        // console.log(data)
         return data.map(d => ({
             method: 'POST',
             specifyParent: true,

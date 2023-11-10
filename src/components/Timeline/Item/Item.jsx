@@ -18,7 +18,7 @@ const Item = ({data, connector}) => {
                 }
             </Separator>
             <Body>
-                <AccordionContainer title={data.title}>
+                <AccordionContainer title={data.title} defaultOpened={!!data.items.length}>
                     <EntryItem item={data} depth={3}></EntryItem>
                 </AccordionContainer>
             </Body>

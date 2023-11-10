@@ -11,10 +11,16 @@
         position: relative;
         .toggle-button {
             position: absolute;
-            left: 5px;
             top: 0;
+            left: 0;
             right: auto;
+            width: 30px !important;
             height: 100% !important;
+            @include mobile {
+                & {
+                    width: 35px !important;
+                }
+            };
         }
     }
     &__item[data-sublist="false"] {

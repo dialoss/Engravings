@@ -2,7 +2,7 @@ import React from 'react';
 import {Footer} from "modules/Footer";
 import ContentWrapper from "ui/ContentWrapper/ContentWrapper";
 import {AppRouter} from "pages/AppRouter";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, HashRouter} from "react-router-dom";
 import ActionManager from "modules/ActionManager/components/ActionManager";
 import Container from "../../../ui/Container/Container";
 

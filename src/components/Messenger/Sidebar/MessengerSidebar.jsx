@@ -17,6 +17,7 @@ import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 
 const MessengerSidebar = () => {
+    const userAdmin = useSelector(state => state.users.current);
     const {rooms, room, users, user} = useSelector(state => state.messenger);
 
     function setRoom(id) {
@@ -82,23 +83,23 @@ const MessengerSidebar = () => {
                 <Slider togglers={togglers} callback={(v) => setOpened(v)} defaultOpened={isOpened}>
                     <div className={"sidebar-container"}>
                         <div className={"sidebar__search"}>
-                            <SearchContainer placeholder={'Поиск пользователей'}
+                            {userAdmin.isAdmin && <SearchContainer placeholder={'Поиск пользователей'}
                                              data={Object.values(users)}
                                              inputCallback={setSearch}
                                              setData={(users) => setUserList(l => ({users, show: l.show}))}
                                              searchBy={'name'}
                                              onFocus={() => {setUserList(l => ({...l, show: true}))}}>
-                            </SearchContainer>
+                            </SearchContainer>}
                             {!Object.keys(userList.users).length && !!search && <p>Пользователи не найдены</p>}
                         </div>
-                        <AccordionContainer defaultOpened={userList.show} callback={() => setUserList(l => ({...l, show: false}))}>
+                        {userAdmin.isAdmin && <AccordionContainer defaultOpened={userList.show} callback={() => setUserList(l => ({...l, show: false}))}>
                             <SidebarList className={'sidebar__users'}
                                          list={userList.users}
                                          currentItem={() => false}
                                          text={'name'}
                                          selectCallback={getOrCreateRoom} user={user}>
                             </SidebarList>
-                        </AccordionContainer>
+                        </AccordionContainer>}
                         <div className={'sidebar__users-delimiter'}></div>
                         <SidebarList className={'sidebar__rooms'}
                                      list={rooms}

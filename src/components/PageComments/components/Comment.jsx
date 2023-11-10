@@ -7,6 +7,7 @@ import {Components} from "../../Item/components/ItemData";
 import InputContainer from "../../Messenger/Input/InputContainer";
 import {CommentsContext, CommentsInput} from "./CommentsContainer";
 import "./Comment.scss";
+import TextLoader from "../../../ui/TextLoader/TextLoader";
 
 const Comment = ({data}) => {
     const users = useSelector(state => state.users.users);
@@ -28,6 +29,8 @@ const Comment = ({data}) => {
                 </div>
             </div>
             <InfoParagraph type={'comment'}>{data.value.text}</InfoParagraph>
+            {upload.uploading && <p>{upload.filename}</p>}
+            <TextLoader className={'attachment-loading'} isLoading={upload.uploading}>Загрузка</TextLoader>
             {!!upload && !!upload.url && !!upload.type && React.createElement(Components[upload.type], {data:upload})}
             <div className={"comment-reply__button"} onClick={() => {
                 if (ref.current) {

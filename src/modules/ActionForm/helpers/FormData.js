@@ -17,7 +17,6 @@ function getFieldData(field, element) {
 
 export function getFormData({method, element}) {
     let fields = Object.values(formData[element.data.type]);
-    //console.log(fields)
     let form = {
         method,
         button: 'ok',
@@ -30,13 +29,13 @@ export function getFormData({method, element}) {
         if (field.label.length > 1) {
             for (const l of field.label) {
                 let name = Object.keys(l)[0];
-                form.data[name] = {value:'', ...field, name, label:Object.values(l)[0]};
+                let value = method !== 'POST' ? (element.data[field.name] && element.data[field.name][name]) : '';
+                form.data[name] = {value:value, ...field, attrs:[field.required && 'required'], name, label:Object.values(l)[0]};
             }
         } else {
             let value = method !== 'POST' ? getFieldData(field.name, element) : '';
-            form.data[field.name] = {value, ...field};
+            form.data[field.name] = {value, ...field, attrs:[field.required && 'required']};
         }
     });
-    //console.log(form)
     return form;
 }

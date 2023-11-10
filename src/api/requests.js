@@ -51,7 +51,6 @@ export async function getGlobalTime() {
 export function sendEmail(email) {
     sendLocalRequest('/api/notification/email/', {
         recipient: 'matthewwimsten@gmail.com',
-        // recipient: 'fomenko75@mail.ru',
         ...email,
     }, 'POST');
 }

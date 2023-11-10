@@ -46,7 +46,7 @@ const SidebarList = ({list, className, currentItem, text, subtext=false, selectC
 
                                 <span className={"subtext subtext-date"}>
                                     <span className={'wrapper'}>
-                                        {dayjs(msg.timeSent).format("HH:mm")}
+                                        {msg.user && dayjs(msg.timeSent).format("HH:mm")}
                                     </span>
                                 </span>
                             </span>}

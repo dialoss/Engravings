@@ -24,7 +24,7 @@ function prepareContent(items) {
         if (item.type !== 'image') return;
         const parent = Object.values(items).find(it => it.id === item.parent) || {};
         newContent.push({
-            navigation: true,
+            navigation: item.navigation === undefined ? true : item.navigation,
             id: item.id,
             url: item.url,
             info: {
@@ -39,33 +39,36 @@ function prepareContent(items) {
 
 export const CarouselModal = () => {
     const windowName = 'carousel-window:toggle';
-    const [item, setItem] = useState(0);
-    const items = useSelector(state => state.elements.itemsAll);
     const contentRef = useRef();
-    const [content, setContent] = useState([]);
+    const [content, setContent] = useState({items:[{}],item:0});
     contentRef.current = content;
 
-    useLayoutEffect(() => {
-        setContent(prepareContent(items));
-    }, [items]);
+    // useLayoutEffect(() => {
+    //     setContent(c => ({...c, items: prepareContent(items)}));
+    // }, [items]);
 
     function openCarousel(event) {
-        for (let i = 0; i < contentRef.current.length; i++) {
-            if (contentRef.current[i].id === event.detail) {
-                setItem(i);
+        setContent({items:prepareContent([{...event.detail}]), item:0});
+        triggerEvent(windowName, {isOpened: true});
+        return;
+        for (let i = 0; i < contentRef.current.items.length; i++) {
+            if (contentRef.current.items[i].id === event.detail) {
+                setContent(c => ({...c, item:i}));
+                return;
             }
         }
-        triggerEvent(windowName, {isOpened: true});
     }
     useAddEvent("carousel:open", openCarousel);
-
-    const carousel = content[item] && <CarouselContainer style={{win: 'centered'}}
-                                        items={content}
-                                        item={item} type={'popup'}/>;
+    // useEffect(() => {
+    //     triggerEvent(windowName, {isOpened: true});
+    // }, [content.item]);
+    // console.log(content, items)
     return (
         <>
-            {carousel && <ModalManager name={windowName} key={windowName}>
-                {carousel}
+            {content.items[content.item] && <ModalManager name={windowName} key={windowName}>
+                <CarouselContainer style={{win: 'centered'}}
+                                   items={content.items}
+                                   item={content.item} type={'popup'}/>
             </ModalManager>}
         </>
     );
@@ -83,9 +86,11 @@ export const CarouselContext = createContext();
 const CarouselContainer = ({items, item, type, ...props}) => {
     const itemsRef = useRef();
     itemsRef.current = items;
+    console.log(itemsRef.current)
     const [currentItem, setCurrent] = useState(0);
     useLayoutEffect(() => {
         setCurrent(item);
+        setItem(items[currentItem]);
     }, [item])
 
     const forward = () => setCurrent(currentItem => bounds(currentItem + 1, itemsRef.current.length));
@@ -101,13 +106,13 @@ const CarouselContainer = ({items, item, type, ...props}) => {
     useLayoutEffect(() => {
         setItem(items[currentItem]);
     }, [currentItem]);
-    console.log(itemShow)
+
     return (
         <CarouselContext.Provider value={{right: forward, left: back}}>
             <div className={'carousel-events'}>
-                {!!itemShow && <Carousel type={type}
+                {!!items[item] && <Carousel type={type}
                                          {...props}
-                                         item={itemShow}/>}
+                                         item={items[item]}/>}
             </div>
         </CarouselContext.Provider>
 

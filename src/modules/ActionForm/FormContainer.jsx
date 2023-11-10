@@ -13,14 +13,14 @@ const ElementForm = () => {
         setForm(getFormData(event.detail));
         triggerEvent(windowName, {isOpened: true});
     }
-
+    console.log(form)
     useAddEvent('form:set-data', handleFormData);
     return (
         <>
             {form &&
                 <ModalManager name={windowName} key={windowName} defaultOpened={!!form} closeConditions={['esc', 'btn']}>
                     <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'50%', zIndex:8}}
-                                   style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
+                                   style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}  data-type={'modal'}>
                         <FormContainer formData={form} callback={(fields) => {
                             let data = {};
                             Object.keys(fields).forEach(f => data[f] = fields[f].value);

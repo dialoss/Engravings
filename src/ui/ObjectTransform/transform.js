@@ -110,8 +110,7 @@ export function setItemTransform(event, type, _item, _btn) {
     item = _item;
     btn = _btn;
 
-    initContainerDimensions({container, item});
-    document.body.style.userSelect = 'none';
+    item.style.userSelect = 'none';
 
     let shiftX = event.clientX - (btn.getBoundingClientRect().left + btn.getBoundingClientRect().width / 2);
     let shiftY = event.clientY - (btn.getBoundingClientRect().top + btn.getBoundingClientRect().height / 2);
@@ -126,7 +125,7 @@ export function setItemTransform(event, type, _item, _btn) {
     }
 
     function onMouseUp() {
-        document.body.style.userSelect = 'auto';
+        item.style.userSelect = 'auto';
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
         if (!mouseMoved) return;

@@ -6,9 +6,9 @@ import TransformContainer from "../../ui/ObjectTransform/components/TransformCon
 import {useSelector} from "react-redux";
 import {CarouselInline} from "../Modals/Carousel/CarouselContainer";
 import {isMobileDevice} from "../../helpers/events";
+import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 
 export const SimpleItem = ({item, depth=0}) => {
-    // console.log(item)
     const ref = useRef();
     useEffect(() => {
         const itemRef = ref.current;
@@ -34,6 +34,8 @@ export const SimpleItem = ({item, depth=0}) => {
                 }
             }
         }
+        initContainerDimensions({container, resize:true})
+        setTimeout(()=>initContainerDimensions({container, resize:true}),0)
     }, []);
 
     return (

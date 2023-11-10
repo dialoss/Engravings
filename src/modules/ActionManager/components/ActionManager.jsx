@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {setActionElement} from "./helpers";
 import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
-import CarouselContainer, {CarouselModal} from "components/Modals/Carousel/CarouselContainer";
+import {CarouselModal} from "components/Modals/Carousel/CarouselContainer";
 import {ActionForm} from "modules/ActionForm";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
 import Actions from "modules/ActionManager/ItemActions/actions";
@@ -44,7 +44,7 @@ const ActionManager = () => {
         setPrompt(p => ({...p, isOpened:false}));
     }
     useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
-    console.log(prompt)
+    // console.log(prompt)
     const user = useSelector(state => state.users.current);
     return (
         <>
@@ -68,7 +68,7 @@ const ActionManager = () => {
             <ObjectTransform></ObjectTransform>
             <FirebaseContainer></FirebaseContainer>
             <CarouselModal></CarouselModal>
-            {user.id && <MessengerContainer></MessengerContainer>}
+            <MessengerContainer></MessengerContainer>
         </>
     );
 };

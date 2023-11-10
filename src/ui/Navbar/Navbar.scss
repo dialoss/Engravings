@@ -15,6 +15,9 @@
     .navbar div:not(.nav__button--current) {
         display: none;
     }
+    .navbar {
+        padding-top: 0;
+    }
 
     .nav__button--current {
         width: 60%;
@@ -26,14 +29,15 @@
         a {
             color: blue;
         }
-    }
-
-    .extra {
-        display: block !important;
-        width: 40%;
-        border: none;
-        a {
-            padding-top: 0;
+        &.extra {
+            display: block !important;
+            width: 40%;
+            border: none;
+            a {
+                padding-top: 0;
+            }
         }
     }
+
+
 }

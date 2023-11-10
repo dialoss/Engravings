@@ -34,6 +34,16 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         if (!text.trim() && !upload) return;
         setMessage(emptyMessage);
 
+        const httpRegexG = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g;
+
+        try {
+            let urls = text.match(httpRegexG);
+            for (const url of urls) {
+                text = text.replaceAll(url, `<a href="${url}">${url}</a>`)
+            }
+        }catch (e){}
+
+
         let uploadData = upload ? {
             url: '',
             type: getFileType(upload.name),
@@ -50,7 +60,6 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         });
         if (upload) {
             const document = manager.config.getDocument();
-            // console.log(document)
             manager.uploadMedia(upload).then(uploadUrl => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({

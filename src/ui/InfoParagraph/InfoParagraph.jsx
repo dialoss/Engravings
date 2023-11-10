@@ -3,6 +3,7 @@ import "./InfoParagraph.scss";
 import {triggerEvent} from "helpers/events";
 import InlineEditor from "../../components/InlineEditor/InlineEditor";
 import {clearTextFromHTML} from "../TextEditor/helpers";
+import store from "../../store";
 
 
 const InfoParagraph = ({type, children, ...props}) => {
@@ -12,7 +13,7 @@ const InfoParagraph = ({type, children, ...props}) => {
         setEditor({isOpened:false, value: children});
     }, [children]);
     function openEditor(event) {
-        if (event.detail !== 2) return;
+        if (event.detail !== 2 || !window.editPage) return;
         triggerEvent("action:init", event);
         setEditor(e => ({...e, isOpened: true}));
     }
@@ -40,17 +41,16 @@ const InfoParagraph = ({type, children, ...props}) => {
             triggerEvent("container:init", {container: cont});
         }
     }, [editor.isOpened]);
-    console.log(editor)
-    // const callback = isTouchDevice() ? {onTouchEnd: editorCallback} : {onMouseDown: editorCallback};
+
     return (
         <span ref={ref} {...props} key={type}
-            onClick={openEditor}
-            className={`info__paragraph info__paragraph-${type}`}>
+              onClick={openEditor}
+              className={`info__paragraph info__paragraph-${type}`}>
             {editor.isOpened ? <InlineEditor data={{
-                config: (type !== "price" ? 'editor' : 'simple'),
-                value: `<p>${editor.value}</p>`,
-                mount: ref,
-            }} closeCallback={closeEditor}></InlineEditor> :
+                    config: (type !== "price" ? 'editor' : 'simple'),
+                    value: `<p>${editor.value}</p>`,
+                    mount: ref,
+                }} closeCallback={closeEditor}></InlineEditor> :
                 <div dangerouslySetInnerHTML={{__html: editor.value}}></div>}
         </span>
     );

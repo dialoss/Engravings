@@ -10,7 +10,7 @@ import {Auth} from "modules/Authorization";
 import {Link} from "react-router-dom";
 import Swipes from "../../../../ui/Swipes/Swipes";
 
-const Sidebar = ({data, picker, customer}) => {
+const Sidebar = ({data, authorized, customer}) => {
     const [isOpened, setOpened] = useState(false);
     const opRef = useRef();
     opRef.current = isOpened;
@@ -58,10 +58,16 @@ const Sidebar = ({data, picker, customer}) => {
                         <Auth>
                             {customer && <Link to={'/customer/'}></Link>}
                         </Auth>
-                        {picker && <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
-                                        className={"sidebar__link"}
-                                        style={{marginTop: 5}}>
-                            Хранилище</div>}
+                        {authorized && <>
+                            <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
+                                 className={"sidebar__link"}
+                                 style={{marginTop: 5}}>
+                                Хранилище</div>
+                            <div onClick={() => triggerEvent("theme:toggle")}
+                                 className={"sidebar__link"}
+                                 style={{marginTop: 5}}>
+                                Редактор</div>
+                        </>}
                         </div>
                     </div>
                     <div className="sidebar__wrapper">

@@ -22,7 +22,7 @@ export function prepareStages(data) {
             }
             else stage.style = 'primary';
             stage.items = it.items.filter(i => i.type !== 'timeline_entry');
-            console.log(stage.items)
+            // console.log(stage.items)
             if (!it.items.length && stage.style === 'primary') stage.style = 'disabled';
             stages.push(stage);
             traverse(it.items);

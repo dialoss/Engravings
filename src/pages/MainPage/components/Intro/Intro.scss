@@ -1,9 +1,12 @@
+
 .intro {
+    @include mobile{
+        margin-top: -30px;
+    }
     &__img {
         &-wrapper {
             width: 120px;
             height: 120px;
-            margin: 20px;
             border-radius: 50%;
             overflow: hidden;
             box-shadow: 0 0 7px grey;
@@ -19,6 +22,7 @@
     &__block {
         max-width: 80%;
         padding: 20px;
+        padding-top: 10px;
 
         @media only screen and (max-width: 500px) {
             & {

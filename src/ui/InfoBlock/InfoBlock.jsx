@@ -8,7 +8,7 @@ const InfoBlock = ({data, className, extra}) => {
     for (const item of (data.items || [])) {
         if (!!item.price) data = {...data, price: item.price};
     }
-    console.log(data)
+    // console.log(data)
     return (
         <div className={"info__block " + (className || '')}>
             {!!data.title && <InfoParagraph type={'title'}

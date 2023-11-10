@@ -153,7 +153,6 @@ function createNotification(info) {
 
 
 function notifyUser(info) {
-    // console.log(info)
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
         createNotification(info);
@@ -174,7 +173,7 @@ export function useGetRooms() {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
-            console.log('snapshot rooms')
+            // console.log('snapshot rooms')
         });
         return () => unsubscribe;
     }, []);
@@ -191,7 +190,7 @@ export function useGetRooms() {
         });
         if (!roomWithAdmin) {
             let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
-            console.log(u)
+            // console.log(u)
             if (u.length > 1) {
                 createRoom(u);
             }
@@ -205,7 +204,11 @@ export function useGetRooms() {
         for (const r in objRooms) {
             const curRoom = objRooms[r];
             // console.log(curRoom)
-            if (curRoom.newMessage && curRoom.lastMessage.user !== user.id && !haveNewMessage) {
+            if (curRoom.newMessage &&
+                curRoom.lastMessage.user !== user.id &&
+                !haveNewMessage &&
+                curRoom.id !== room.id
+            ) {
                 triggerEvent("messenger:notification", true);
                 haveNewMessage = true;
             }

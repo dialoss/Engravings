@@ -11,10 +11,9 @@ const Message = ({data}) => {
     return (
         <div className={"message"}>
             {!!upload && !!upload.url && !!upload.type && React.createElement(Components[upload.type], {data:upload})}
-            <p className={"message-text"}>{text}</p>
+            <p className={"message-text"} dangerouslySetInnerHTML={{__html: text}}></p>
             {upload.uploading && <p className={"message-text"}>{upload.filename}</p>}
             <TextLoader className={'attachment-loading'} isLoading={upload.uploading}>Загрузка</TextLoader>
-            {/*{data.isRead ? 'прочитано' : 'не прочитано'}*/}
             {!!formattedDate && <p className={"message-date"}>{formattedDate}</p>}
         </div>
     );

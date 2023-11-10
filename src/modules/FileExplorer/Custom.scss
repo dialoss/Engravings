@@ -109,6 +109,10 @@ $border: solid #7c7c7c;
         }
       }
     }
+    .window-close img {
+      width: 30px;
+      height: 30px;
+    }
 
     &__button {
       width: 15px;
@@ -116,12 +120,6 @@ $border: solid #7c7c7c;
       border-radius: 50%;
       &:hover {
         cursor: pointer;
-      }
-      &.close {
-        background-color: red;
-      }
-      &.pin {
-        background-color: #32bb00;
       }
     }
   }

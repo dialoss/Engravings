@@ -1,4 +1,11 @@
 
+.transform-item {
+    .form__content {
+        box-shadow: 0 0 5px 0 grey;
+
+    }
+}
+
 .form {
     &__content {
         position: relative;

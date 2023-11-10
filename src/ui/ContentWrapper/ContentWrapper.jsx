@@ -8,19 +8,23 @@ const ContentWrapper = ({children}) => {
     return (
         <>
             <TransformContainer className={'viewport-container'} data-height={'fixed'}>
-                <div className="content-wrapper" onDrop={async e => {
+                <div className="content-wrapper" onDrop={e => {
                     e.preventDefault();
-                    let files = [];
-                    for (const file of [...e.dataTransfer.files]) {
-                        let data = await window.filemanager.settings.oninitupload(null, {folder: null, file});
-                        files = [...files, fileToItem({...data, type: data.filetype, filename: data.name})];
+                    async function getFiles() {
+                        let files = [];
+                        for (const file of [...e.dataTransfer.files]) {
+                            let data = await window.filemanager.settings.oninitupload(null, {folder: null, file});
+                            const f = await fileToItem({...data, type: data.filetype, filename: data.name});
+                            files = [...files, f];
+                        }
+                        for (const file of (JSON.parse(e.dataTransfer.getData('files') || "[]"))) {
+                            files.push(await fileToItem(file));
+                        }
+                        if (!files) return;
+                        triggerEvent("action:init", e);
+                        triggerEvent("action:callback", files);
                     }
-                    for (const file of (JSON.parse(e.dataTransfer.getData('files') || "[]"))) {
-                        files.push(file);
-                    }
-                    if (!files) return;
-                    triggerEvent("action:init", e);
-                    triggerEvent("action:callback", files);
+                    getFiles();
                 }} onDragOver={(e) => e.preventDefault()}>
                     {children}
                 </div>

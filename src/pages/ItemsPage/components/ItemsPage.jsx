@@ -2,11 +2,10 @@ import React from 'react';
 import PageComments from "components/PageComments/PageComments";
 import ItemListContainer from "../../../modules/ItemList/components/ItemListContainer";
 
-const ItemsPage = ({addComments}) => {
+const ItemsPage = () => {
     return (
         <>
             <ItemListContainer/>
-            {addComments && <PageComments/>}
         </>
     );
 };

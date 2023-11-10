@@ -21,7 +21,9 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
     const modalName = name.split(':')[0];
     function checkCloseDown(event) {
         if (opRef.current) {
-                !getElementFromCursor(event, modalName) && !getElementFromCursor(event, 'modal__toggle-button') && closeCallback();
+            const mod = getElementFromCursor(event, modalName);
+            const toggle = getElementFromCursor(event, 'modal__toggle-button');
+            !mod && !toggle && closeCallback();
         }
     }
     useAddEvent("mousedown", checkCloseDown);

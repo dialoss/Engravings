@@ -4,10 +4,9 @@ export const elementsSlice = createSlice({
     name: "elements",
     initialState: {
         itemsAll: {},
-        items: [],
+        items: {},
         cache: {},
         actionElement: {},
-        prevElement: {},
     },
     reducers: {
         setItemsAll: (state, {payload: {items}}) => {
@@ -20,7 +19,12 @@ export const elementsSlice = createSlice({
             return state;
         },
         setElements: (state, {payload: {items, page}}) => {
-            state.items = items;
+            for (const item of items) {
+                item.type === 'image' && (state.items[item.id] = item)
+                for (const itemChild of item.items) {
+                    itemChild.type === 'image' && (state.items[itemChild.id] = itemChild)
+                }
+            }
             state.cache[page] = [...(state.cache[page]||[]), ...items];
             return state;
         },

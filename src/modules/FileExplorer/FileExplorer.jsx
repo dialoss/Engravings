@@ -12,17 +12,45 @@ import {useAddEvent} from "../../hooks/useAddEvent";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {ImageEditor} from "./ImageEditor/ImageEditor";
 import {clearTextFromHTML} from "../../ui/TextEditor/helpers";
+import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 
-export function fileToItem(data) {
+function getVideoDimensions(url){
+    return new Promise(resolve => {
+        const video = document.createElement('video');
+        video.addEventListener( "loadedmetadata", function () {
+            const height = this.videoHeight;
+            const width = this.videoWidth;
+            resolve({height, width});
+        }, false);
+        video.src = url;
+    });
+}
+function getImageDimensions(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve({height: img.naturalHeight, width: img.naturalWidth});
+        img.onerror = (err) => reject(err);
+        img.src = url;
+    });
+}
+
+export async function fileToItem(data) {
+    const url = "https://drive.google.com/uc?id=" + data.id;
+    let height = '';
+    let width = '';
+    if (['image'].includes(data.type)) await getImageDimensions(url).then(d => ({height, width} = d))
+    if (['video'].includes(data.type)) await getVideoDimensions(url).then(d => ({height, width} = d))
+    if (['model'].includes(data.type)) ({height, width} = {height: 300, width: 300});
     return {
         data: {
+            width: data.type === 'model' ? '50%' : 'auto',
             show_shadow: data.type !== 'file',
-            container_width: data.type === 'model' ? '300px' : '',
-            height: data.type === 'model' ? '300px': '',
+            container_width: width + 'px',
+            height: height + 'px',
             urn: data.urn,
             type: data.type,
             filename: data.name,
-            url: "https://drive.google.com/uc?id=" + data.id,
+            url,
         },
         specifyParent: true,
         method: 'POST',
@@ -35,12 +63,12 @@ export function initLayout() {
         item.ondragstart = e => {
             let wrapper = item.closest('.fe_fileexplorer_item_wrap');
             let model = item.getAttribute('data-model');
-            e.dataTransfer.setData('files', JSON.stringify([fileToItem({
+            e.dataTransfer.setData('files', JSON.stringify([{
                 id: wrapper.getAttribute('data-feid'),
                 urn: model,
                 type: item.getAttribute('data-itemtype'),
                 name: item.getAttribute('data-itemname'),
-            })]));
+            }]));
         };
     }
 }
@@ -247,13 +275,12 @@ const FileExplorer = () => {
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
             <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:25}}
-                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
+                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}  data-type={'modal'}>
             <div className={"filemanager"} ref={ref}>
                 <div className="filemanager-left">
                     <div className={"filemanager-header__wrapper transform-origin"}>
                         <div className="filemanager-header buttons">
-                            <div className="window-close filemanager-header__button close">
-                            </div>
+                            <WindowButton type={'close'}></WindowButton>
                         </div>
                         <div className="filemanager-header toolbar">
                             <div className="filemanager-search">

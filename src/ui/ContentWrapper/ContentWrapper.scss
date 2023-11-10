@@ -1,6 +1,9 @@
 .viewport-container {
     flex-grow: 1;
 }
+.container-main {
+    min-height: 100dvh;
+}
 .content-wrapper {
     overflow: hidden !important;
     height: 100%;

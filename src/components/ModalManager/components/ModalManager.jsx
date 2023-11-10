@@ -37,7 +37,6 @@ const ModalManager = ({name, children, callback=null, defaultOpened=false, close
     useEffect(() => {
         callback && callback(isOpened);
     }, [isOpened]);
-    console.log(name, closeConditions, isOpened)
     const modal = <Modal content={children}
                          name={name}
                          isOpened={isOpened}

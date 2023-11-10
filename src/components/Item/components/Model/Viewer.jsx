@@ -8,6 +8,7 @@ const Viewer = ({data}) => {
         const resizer = new ResizeObserver(() => {
             if (!ref.current || !window.autodeskViewer) return;
             let block = ref.current.getBoundingClientRect();
+            console.log(ref.current)
             window.autodeskViewer.impl.resize(block.width, block.height, true);
         });
         resizer.observe(ref.current);

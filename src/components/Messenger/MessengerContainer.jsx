@@ -39,8 +39,8 @@ const MessengerContainer = () => {
                           callback={(isOpened) => setOpen(isOpened)}
                           defaultOpened={openMessenger}
                           closeConditions={['btn', 'esc']}>
-                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'50%', zIndex:8}}
-                               style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}>
+                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'auto', zIndex:8}}
+                               style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}} data-type={'modal'}>
                     <Messenger></Messenger>
                 </TransformItem>
             </ModalManager>

@@ -5,15 +5,9 @@ import store from "../../../../store";
 const TransformButton = ({children, type, secure, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
+        if (secure && !window.editPage) return;
         event.stopPropagation();
-        if (secure && !store.getState().users.current.isAdmin) return;
-        const parentCont = ref.current.closest('.transform-container');
-        const item = ref.current.closest('.transform-item');
-        const cont = item.querySelector('.transform-container');
-        if (parentCont.classList.contains('viewport-container') && cont && cont.getAttribute('data-type') === 'base') return;
-        if (getElementFromCursor(event, 'ql-container')) return;
-        if (event.button !== 0 || (type === 'move' && !props.style.movable)) return;
-        triggerEvent("transform:init", {event, type, btn:ref.current});
+        triggerEvent("transform:init", {event, type, btn:ref.current, movable: (props.style ||{}).movable});
     }
 
     useEffect(() => {

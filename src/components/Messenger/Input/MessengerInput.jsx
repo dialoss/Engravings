@@ -79,8 +79,18 @@ export const InputEmoji = ({callback}) => {
 }
 
 const MessengerInput = ({inputCallback, message, sendCallback}) => {
+    function upload (e) {
+        let files = [];
+        for (const file of [...(e.dataTransfer || e.clipboardData).files]) {
+            files.push(file);
+        }
+        if (!files.length) return;
+        e.stopPropagation();
+        e.preventDefault();
+        inputCallback(m => ({...m, upload:files}));
+    }
     return (
-        <div className={"custom-input messenger-input"}>
+        <div className={"custom-input messenger-input"} onDrop={upload} onPaste={upload}>
             <div className={"input-field"}>
                 <div className="editor-wrapper">
                     <TextEditor message={message}

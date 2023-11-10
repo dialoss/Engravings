@@ -1,5 +1,3 @@
-import data from "@emoji-mart/data";
-
 function getFirstItems(container) {
     let items = container.querySelector('.items-wrapper');
     if (items) return items.querySelectorAll(':scope > .transform-item');
@@ -30,8 +28,8 @@ function getMaxBottom(container) {
     return m;
 }
 let counter = 0;
-export function initContainerDimensions({container, item, toChild, resize}) {
-    if (!container || container.getAttribute('data-inited')) return;
+export function initContainerDimensions({container, item, resize}) {
+    if (!container) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container, resize);
     // console.log(counter++)
@@ -43,7 +41,6 @@ export function initContainerDimensions({container, item, toChild, resize}) {
         return;
     }
     container.style.minHeight = contHeight + "px";
-    // container.setAttribute('data-inited', true);
     if (!resize) {
         let parentContainer = container.parentElement.closest('.transform-container');
         parentContainer && initContainerDimensions({container: parentContainer});

@@ -42,13 +42,16 @@ export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=fal
                         messages: [],
                     }}));
             }
-            getDoc(document).then(q => {
-                if (q.data()) {
-                    config();
-                } else {
-                    setDoc(document, {messages: []}).then(() => config());
-                }
-            });
+            const it = setInterval(() => {
+                getDoc(document).then(q => {
+                    clearInterval(it);
+                    if (q.data()) {
+                        config();
+                    } else {
+                        setDoc(document, {messages: []}).then(() => config());
+                    }
+                });
+            }, 1000);
         } else {
             if (leaveSnapshot) store[id].unsubscribe();
         }

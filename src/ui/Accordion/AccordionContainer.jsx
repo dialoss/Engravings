@@ -1,11 +1,12 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Accordion from "./Accordion";
-import {triggerEvent} from "../../helpers/events";
+import {getElementFromCursor, triggerEvent} from "../../helpers/events";
 
-const AccordionContainer = ({children, title, header=null, callback=null, defaultOpened=false}) => {
+const AccordionContainer = ({children, title, onlyButton=false, header=null, callback=null, defaultOpened=false}) => {
     const [isOpened, setOpened] = useState(defaultOpened);
 
-    const handleChange = () => {
+    const handleChange = (event) => {
+        if (onlyButton && !getElementFromCursor(event, 'toggle-button')) return;
         callback && callback(!isOpened);
         setOpened(opened => !opened);
     };

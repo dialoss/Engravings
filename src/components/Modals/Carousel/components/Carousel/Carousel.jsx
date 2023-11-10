@@ -13,7 +13,7 @@ const Carousel = ({item, type}) => {
             </div>
             <div className="content-outer">
                 {item.info && <InfoBlock data={item.info} className={styles['info__block']}></InfoBlock>}
-                {item.navigation && <CarouselNav></CarouselNav>}
+                {/*{item.navigation && <CarouselNav></CarouselNav>}*/}
                 <WindowButton type={'close'} className={styles['window-close']}/>
             </div>
         </div>

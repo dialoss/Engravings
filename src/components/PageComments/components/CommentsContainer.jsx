@@ -55,13 +55,16 @@ const CommentsContainer = ({page}) => {
                 setDocument(doc(CDB, String(page)));
                 return;
             }
-            getDoc(doc(CDB, String(page))).then(d => {
-                if (!d.data()) {
-                    setDoc(doc(CDB, String(page)), {messages:[]}).then(d => fetchDocument(true));
-                } else {
-                    fetchDocument(true);
-                }
-            });
+            const it = setInterval(() => {
+                getDoc(doc(CDB, String(page))).then(d => {
+                    clearInterval(it);
+                    if (!d.data()) {
+                        setDoc(doc(CDB, String(page)), {messages:[]}).then(d => fetchDocument(true));
+                    } else {
+                        fetchDocument(true);
+                    }
+                });
+            }, 1000);
         }
         fetchDocument(false);
     }, [page]);
@@ -93,7 +96,7 @@ const CommentsContainer = ({page}) => {
     useEffect(() => {
         setCommentsTree(createCommentsTree(comments, sorting, search));
     }, [sorting, search]);
-
+    // console.log(commentsTree)
     const manager = new MessageManager('comments', actions, config);
     return (
         <CommentsContext.Provider value={manager}>
@@ -112,6 +115,7 @@ const CommentsContainer = ({page}) => {
                     </div>
                 </div>
                 <div className={"comments"}>
+                    <p id={'counter'}>Всего комментариев: {search.length}</p>
                     <Comments comments={commentsTree}></Comments>
                 </div>
             </div>

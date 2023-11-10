@@ -29,8 +29,8 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
         let field = root.root;
         simple && (field.dataset.placeholder = 'Сообщение');
         field.addEventListener('keydown', (e) => e.stopPropagation());
-        field.focus();
-        field.addEventListener('blur', (e) => {
+        // field.focus();
+        simple && field.addEventListener('blur', (e) => {
             let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
             if (target) {
                 e.preventDefault();

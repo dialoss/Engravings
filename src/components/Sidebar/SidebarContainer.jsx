@@ -3,8 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {sendLocalRequest} from "api/requests";
 import Sidebar from "./components/Sidebar/Sidebar";
 import {actions} from "pages/AppRouter/store/reducers";
-import {useDispatch} from "react-redux";
-import {useUserAuth} from "hooks/useUserAuth";
+import {useDispatch, useSelector} from "react-redux";
 
 const SidebarContainer = () => {
     const [pages, setPages] = useState([]);
@@ -18,10 +17,10 @@ const SidebarContainer = () => {
         })();
     }, []);
 
-    const userAuth = useUserAuth();
-    console.log(pages)
+    const userAdmin = useSelector(state => state.users.current).isAdmin;
+    // console.log(pages)
     return (
-        <Sidebar picker={userAuth} customer={true}
+        <Sidebar authorized={userAdmin} customer={true}
                  data={{sublist:pages, depth:-1}}/>
     );
 };

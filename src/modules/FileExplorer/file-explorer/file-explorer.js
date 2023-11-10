@@ -1,8 +1,6 @@
 // Folder and File Explorer.  A pure, zero-dependencies Javascript widget.
 // (C) 2020 CubicleSoft.  All Rights Reserved.
 
-import {createRoot} from "react-dom/client";
-
 (function() {
 	// Prevent multiple instances.
 	if (window.hasOwnProperty('FileExplorer'))  return;

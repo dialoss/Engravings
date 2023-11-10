@@ -39,6 +39,7 @@ const MyForm = ({formData, formFields, submitCallback}) => {
                             if (!field.checkValidity()) {
                                 correct = false;
                                 field.reportValidity();
+                                break
                             }
                         }
                         correct && submitCallback();

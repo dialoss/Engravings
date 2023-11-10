@@ -1,6 +1,5 @@
 import {triggerEvent} from "../../../helpers/events";
 import Actions from "./actions";
-import formData from 'modules/ActionForm/helpers/FormData.json';
 
 export function getSettings(name, data) {
     switch (name) {

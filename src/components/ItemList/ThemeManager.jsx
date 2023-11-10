@@ -10,14 +10,16 @@ const ThemeManager = () => {
     }
     useAddEvent('keydown', e => {
         e.ctrlKey && e.altKey && e.code === 'KeyE' && (window.editPage = !window.editPage);
-        // console.log(window.editPage)
-        // console.log(e)
         setEdit();
     })
     useEffect(() => {
         window.editPage = true;
         setEdit();
     }, []);
+    useAddEvent('theme:toggle', () => {
+        window.editPage = !window.editPage;
+        setEdit();
+    });
     return (
         <></>
     );

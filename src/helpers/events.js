@@ -53,6 +53,11 @@ export function getElementFromCursor(event, className, classNames=[]) {
     try {
         const intersect = document.elementsFromPoint(event.clientX, event.clientY);
         for (const element of intersect) {
+            if (element.getAttribute('data-type') === 'modal') {
+                return element;
+            }
+        }
+        for (const element of intersect) {
             for (const cl of classNames) {
                 if (element.classList.contains(cl)) {
                     return element;

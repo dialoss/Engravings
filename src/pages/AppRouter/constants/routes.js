@@ -9,4 +9,5 @@ export const routes = [
     {path:'/customer/',    comments: false, component: 'ItemsPage', },
     {path:'/models/:id',    comments: true, component: 'ItemsPage', },
     {path:'/orders/:id',    comments: true, component: 'ItemsPage', },
+    // {path:'/:id/?',    comments: true, component: 'ItemsPage', },
 ];

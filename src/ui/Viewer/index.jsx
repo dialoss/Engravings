@@ -77,7 +77,11 @@ export async function uploadAutodeskFile(file) {
 export const AutodeskModel = ({data}) => {
     return (
         <>
-            {token && data.urn && <App urn={data.urn} token={token} ui={data.show_ui} rotate={data.rotation}/>}
+            {token && data.urn && <App urn={data.urn}
+                                       token={token}
+                                       ui={data.show_ui}
+                                       rotate={data.rotation}
+            />}
         </>
     );
 }

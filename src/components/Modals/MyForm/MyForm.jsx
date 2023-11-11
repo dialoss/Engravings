@@ -8,7 +8,7 @@ import ActionButton from "ui/Buttons/ActionButton/ActionButton";
 
 const FormBlock = ({formField}) => {
     return (
-        <div className="form__block">
+        <div className="form__block" onMouseDown={e => e.stopPropagation()}>
             <p>{formField.label}</p>
             <FormComponent field={formField}></FormComponent>
         </div>

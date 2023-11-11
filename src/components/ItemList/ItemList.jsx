@@ -9,6 +9,7 @@ import {getLocation} from "../../hooks/getLocation";
 import PageComments from "../PageComments/PageComments";
 import {fetchItems} from "../../modules/ItemList/api/fetchItems";
 import {useAddEvent} from "../../hooks/useAddEvent";
+import {triggerEvent} from "../../helpers/events";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const [config, setConfig] = useState({});
@@ -19,9 +20,10 @@ const ItemList = ({items, className, loadMore=null}) => {
         const mCols = 4;
         const newCols = Math.max(1, ((mCols + (curColumns + 1)) % mCols));
         setColumns(newCols);
-        // console.log('NEW', newCols)
     }
+
     useAddEvent('itemlist:view', calcForceColumns);
+
     const listRef = useRef();
     useEffect(()=>{
         const style = window.getComputedStyle(listRef.current);
@@ -29,13 +31,13 @@ const ItemList = ({items, className, loadMore=null}) => {
             columns: +style.getPropertyValue('--masonry'),
         })
     }, []);
-    // console.log('COLL', forceColumns)
 
     let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
     const edit = window.editPage ? 'edit' : '';
     return (
         <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
+            <NavButton data={{text: "ВИД", callback: () => triggerEvent('itemlist:view')}} className={'view'}></NavButton>
             <Container style={{marginBottom: "50px"}}>
                 <MyMasonry
                     maxColumns={config.columns}

@@ -8,25 +8,43 @@ let hs = [];
 let current = 0;
 
 window.addEventListener('keydown', e => {
+    if (!window.elementsAction) return;
     if (e.ctrlKey) {
         switch (e.code) {
             case 'KeyZ':
-                current = Math.max(0, current - 1);
+                if (current < 0) {
+                    current = 0;
+                }
                 hs.length && triggerEvent('itemlist:handle-changes', hs[current]);
+                current -= 1;
                 break;
             case 'KeyY':
                 if (!hs.length) return;
-                current = Math.min(hs.length - 1, current + 1);
+                if (current >= hs.length) {
+                    current = hs.length - 1;
+                }
                 triggerEvent('itemlist:handle-changes', hs[current]);
+                current += 1;
                 break;
             case 'KeyC':
                 Actions.copy();
                 break;
+            case 'KeyX':
+                Actions.cut();
+                break;
             case 'KeyV':
                 Actions.action(Actions.paste());
                 break;
+            case 'KeyQ':
+                hs = [];
+                break;
         }
     }
+    if (e.key === 'Delete') {
+        Actions.action(Actions.delete());
+    }
+    console.log('history',Actions.history)
+    console.log('actionel', actionElements)
 })
 
 export default class Actions {
@@ -36,8 +54,7 @@ export default class Actions {
 
     static action(requests) {
         console.log(requests)
-        for (let i = requests.length - 1; i >= 0; i--) {
-            let request = requests[i];
+        for (const request of requests) {
             let sendData = request.data || {};
 
             if (request.specifyElement) sendData.id = actionElement.id;
@@ -52,13 +69,18 @@ export default class Actions {
                     url += id + '/';
                 }
             }
-            if (typeof(sendData.page) !== 'object') {
-                const location = getLocation();
-                sendData.page = {
-                    slug: location.pageSlug || location.pageID,
-                    path: location.relativeURL.slice(1, -1),
+            function preparePage(p) {
+                if (typeof(p) !== 'object') {
+                    const location = getLocation();
+                    return {
+                        slug: location.pageSlug || location.pageID,
+                        path: location.relativeURL.slice(1, -1),
+                    }
                 }
+                return p;
             }
+            sendData.page = preparePage(sendData.page);
+            if (!sendData.group_order && !actionElement.data.group_order) sendData.group_order = window.currentTab;
             let storeMethod = request.method;
             if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
                 (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
@@ -74,9 +96,11 @@ export default class Actions {
             let prevData = {};
             for (const f in sendData) {
                 prevData[f] = actionElement.data[f] || sendData[f];
+                prevData.page = preparePage(prevData.page);
             }
-            hs.push({...sendRequest, data: prevData});
+            !request.skipHistory && hs.push({...sendRequest, data: prevData});
             current = hs.length - 1;
+            console.log('HISTORY', hs)
         }
     }
 
@@ -116,14 +140,19 @@ export default class Actions {
     }
 
     static baseAction(type, name) {
-        actionElements.forEach(el => el.html.classList.add(name));
-        Actions.history.push({
-            className: name,
-            type: type,
-            elements: actionElements,
+        console.log(Actions.history)
+        Actions.history.forEach(hs => hs.element.html.classList.remove(hs.className));
+        Actions.history = [];
+        let elements = actionElements;
+        if (!elements.length) elements = [actionElement];
+        elements.forEach(el => {
+            el.html.classList.add(name);
+            Actions.history.push({
+                className: name,
+                type: type,
+                element: el,
+            })
         });
-        if (!actionElements.length) Actions.history.push({type, elements: [actionElement]})
-        return [];
     }
 
     static copy() {
@@ -135,30 +164,38 @@ export default class Actions {
     }
 
     static paste() {
-        let historyData = Actions.history.slice(-1)[0];
+        let historyData = Actions.history;
+        if (!historyData) return [];
         let action = actionElement;
 
         let actionData = structuredClone(action.data);
 
         let request = [];
-        historyData.elements.forEach(el => {
-            request.push({data: {
-                    ...el.data,
-                    display_pos: actionData.display_pos,
-                    parent: action.id,
-                    id: '',
-                    parent_0: '',
-                },
-                method: 'POST', });
+        historyData.forEach(hs => {
+            let item = {
+                ...hs.element.data,
+                display_pos: actionData.display_pos,
+                parent: action.id,
+                id: '',
+                parent_0: '',
+            };
+            if (hs.element.type !== 'base' && !action.id) {
+                request.push({
+                    data: {
+                        display_pos: actionData.display_pos,
+                        type: 'base',
+                        items: [item],
+                    }
+                })
+            } else {
+                request.push({
+                    data: item,
+                });
+            }
+            request[request.length - 1].method = 'POST';
+            if (hs.type === 'cut') request.push(...Actions.delete([hs.element]));
         });
-
-        if (historyData.type === 'cut') {
-            request = [...Actions.delete(historyData.elements), ...request];
-        }
-        function clearSelection(elements, name) {
-            elements.forEach(el => el.html.classList.remove(name));
-        }
-        clearSelection(historyData.elements, historyData.className);
+        historyData.forEach(hs => hs.element.html.classList.remove(hs.className));
         return request;
     }
 

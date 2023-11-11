@@ -52,8 +52,6 @@ $color-item-hover: rgb(141, 176, 236);
 }
 
 .transform-item[data-group="tabs"] {
-    position: absolute !important;
-    //top: -100px !important;
     width: 100% !important;
     .item {
         background-color: #fff;

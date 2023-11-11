@@ -1,9 +1,6 @@
 import React from 'react';
 import InfoParagraph from "../../../../ui/InfoParagraph/InfoParagraph";
-import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
-import {triggerEvent} from "../../../../helpers/events";
 import "./ItemPrice.scss";
-import ItemLink from "../Link/ItemLink";
 import ButtonItem from "../Button/ButtonItem";
 
 const ItemPrice = ({data}) => {

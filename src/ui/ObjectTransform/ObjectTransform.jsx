@@ -6,17 +6,20 @@ import {initContainerDimensions} from "./helpers";
 
 const ObjectTransform = () => {
     const prevTransform = useRef();
+    function clearSelection() {
+        if (prevTransform.current) {
+            prevTransform.current.classList.remove('focused');
+        }
+    }
     function initTransform(event) {
         const btn = event.detail.btn;
         const item = btn.closest(".transform-item");
         const alreadyFocused = item.classList.contains('focused');
-        if (prevTransform.current) {
-            prevTransform.current.classList.remove('focused');
-        }
+        clearSelection();
         item.classList.add('focused');
         prevTransform.current = item;
         triggerEvent("action:init", event.detail.event);
-
+        window.elementsAction = true;
         const parentCont = item.closest('.transform-container').classList.contains('viewport-container');
         if (getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 || (event.detail.type === 'move' &&
                 !event.detail.movable)) {
@@ -28,6 +31,14 @@ const ObjectTransform = () => {
     function initContainer(event) {
         initContainerDimensions(event.detail);
     }
+
+    useAddEvent("mousedown", e => {
+        const el = getElementFromCursor(e, '.transform-item');
+        if (!el || el.getAttribute('data-type') === 'modal') {
+            clearSelection();
+            window.elementsAction = false;
+        }
+    })
 
     useAddEvent("container:init", initContainer);
     useAddEvent("transform:init", initTransform);

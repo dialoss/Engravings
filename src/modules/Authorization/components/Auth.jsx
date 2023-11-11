@@ -56,13 +56,13 @@ function serializeFields(fields) {
     return newFields;
 }
 
-const MyLoginForm = ({callback}) => {
+const MyLoginForm = ({callback, visible}) => {
     const data = [loginForm, registerForm];
     const [stage, setStage] = useState(0);
     const buttons = data.map((d, i) =>
                 <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>);
     return (
-      <>
+      <div style={visible ? {visibility:'visible',opacity:1} : {visibility:"hidden",opacity:0}}>
           {
               data.map((d, i) =>
                   <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
@@ -74,7 +74,7 @@ const MyLoginForm = ({callback}) => {
                   </div>
               )
           }
-      </>
+      </div>
     );
 }
 
@@ -88,7 +88,7 @@ const LoginForm = ({props}) => {
     });
 
     const [authType, setType] = useState('');
-
+    console.log(callback)
     return (
         <ModalManager name={'login-form:toggle'}
                       defaultOpened={isOpened}
@@ -108,7 +108,7 @@ const LoginForm = ({props}) => {
                         setType('custom');
                     }}>Через email</AuthButton>
                 </div>
-                {authType === 'custom' && <MyLoginForm callback={callback}></MyLoginForm>}
+                <MyLoginForm visible={authType === 'custom'} callback={callback}></MyLoginForm>
             </div>
         </ModalManager>
     );
@@ -126,8 +126,10 @@ const Auth = ({children}) => {
             callback: (data) => {
                 if (!!data) {
                     LocalAuth.login(data, (success) => {
-                        setPrompt({isOpened: !success});
-                        success && triggerEvent("sidebar:toggle", {isOpened: true});
+                        if (success) {
+                            setPrompt({isOpened: false});
+                            triggerEvent("sidebar:toggle", {isOpened: true});
+                        }
                     });
                 }
                 else {

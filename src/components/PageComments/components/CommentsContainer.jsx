@@ -55,15 +55,20 @@ const CommentsContainer = ({page}) => {
                 setDocument(doc(CDB, String(page)));
                 return;
             }
-            const it = setInterval(() => {
+            function fetch() {
                 getDoc(doc(CDB, String(page))).then(d => {
                     clearInterval(it);
                     if (!d.data()) {
-                        setDoc(doc(CDB, String(page)), {messages:[]}).then(d => fetchDocument(true));
+                        setDoc(doc(CDB, String(page)), {messages: []}).then(d => fetchDocument(true));
                     } else {
                         fetchDocument(true);
                     }
                 });
+            }
+            const it = setInterval(() => {
+                try {
+                    fetch();
+                } catch (e) {}
             }, 1000);
         }
         fetchDocument(false);

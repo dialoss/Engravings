@@ -128,10 +128,14 @@ export function setActionData(item) {
             return {
                 text: "Текстовое поле"
             }
+        case 'button':
+            return {
+                text: 'кнопка'
+            }
         case 'price':
             return {
                 price: "999",
-                button: 'Приобрести',
+                text: 'Приобрести',
             }
         case "timeline":
             return {
@@ -230,7 +234,7 @@ export function setActionData(item) {
                         type: 'price',
                         price: 999,
                         link: '$order',
-                        button: "Заказать изготовление",
+                        text: "Заказать изготовление",
                         show_shadow: false,
                         group_order: 3,
                     }
@@ -245,7 +249,8 @@ export function setActionData(item) {
             const user = store.getState().users.current;
             const location = getLocation();
             const name = user.name.replaceAll(' ', '-');
-            const date = dayjs(new Date().getTime()).format("HH:mm DD.MM");
+            const time = new Date().getTime();
+            const date = dayjs(time).format("HH:mm DD.MM");
             const orderName = location.pageSlug.toUpperCase();
 
             sendEmail({
@@ -258,6 +263,7 @@ export function setActionData(item) {
             });
 
             return [{
+                unique: JSON.stringify({customer: user.name, order: orderName}),
                 type: 'base',
                 title: orderName,
                 description: `Заказ ` + user.name,
@@ -271,14 +277,15 @@ export function setActionData(item) {
                         show_shadow: false,
                         type: 'subscription',
                         title: 'Дата начала изготовления ' + date,
-                        group_order: 1,
                     },
                 ]
             },
                 {
+                    unique: JSON.stringify({customer: user.name, order: orderName}),
                     type: 'base',
                     title: orderName,
                     description: `Заказ ` + user.name,
+                    group_order: 'tab_1',
                     parent: '',
                     page: {
                         slug: 'orders',

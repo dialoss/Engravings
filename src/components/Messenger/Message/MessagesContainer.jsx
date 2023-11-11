@@ -42,7 +42,7 @@ export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=fal
                         messages: [],
                     }}));
             }
-            const it = setInterval(() => {
+            function fetch() {
                 getDoc(document).then(q => {
                     clearInterval(it);
                     if (q.data()) {
@@ -51,6 +51,11 @@ export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=fal
                         setDoc(document, {messages: []}).then(() => config());
                     }
                 });
+            }
+            const it = setInterval(() => {
+                try {
+                    fetch();
+                } catch (e) {}
             }, 1000);
         } else {
             if (leaveSnapshot) store[id].unsubscribe();

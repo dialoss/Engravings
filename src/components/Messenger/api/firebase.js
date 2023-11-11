@@ -214,7 +214,7 @@ export function useGetRooms() {
             }
             if (!(curRoom.newMessage && curRoom.lastMessage.user !== user.id) || curRoom.notified) continue;
             updateRoom({...curRoom, notified: true});
-            notifyUser({title: 'Новое сообщение',
+            notifyUser({title: 'MyMount | Новое сообщение',
                 body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text});
         }
         !haveNewMessage && triggerEvent("messenger:notification", false);

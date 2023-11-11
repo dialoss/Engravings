@@ -32,7 +32,7 @@ function getCookie(name) {
 export async function sendRequest(url, data, method) {
     let response = null;
     const csrftoken = getCookie('csrftoken');
-    console.log(csrftoken)
+    // console.log(csrftoken)
     let query = {
         method: method,
         credentials: "include",

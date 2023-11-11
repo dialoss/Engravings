@@ -4,7 +4,6 @@ import {CustomProfile} from "../config";
 import {TurnTableExtension} from "../extensions/Rotation/main";
 import * as Transform from "../extensions/Transform/main";
 
-
 const { Autodesk } = window;
 
 const runtime = {
@@ -57,11 +56,15 @@ class Viewer extends React.Component {
                 this.viewer.setProfile(profile);
                 this.viewer.impl.disableHighlight(true);
 
+
                 this.viewer.addEventListener(Autodesk.Viewing.FULLSCREEN_MODE_EVENT, () => {
                     setTimeout(() => {
                         this.viewer.impl.resize(window.innerWidth, window.innerHeight, true);
                     }, 200)
                 });
+
+                this.viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
+                }, { once: true });
 
                 window.autodeskViewer = this.viewer;
 

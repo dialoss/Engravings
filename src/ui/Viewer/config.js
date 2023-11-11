@@ -72,7 +72,7 @@ export const CustomProfile = {
         "progressiveRendering": true,
         "openPropertiesOnSelect": false,
         "pointRendering": true,
-        "backgroundColorPreset": null,
+        "backgroundColorPreset": '[255, 255, 255]',
         "reverseMouseZoomDir": true,
         "leftHandedMouseSetup": false,
         "fusionOrbit": true,

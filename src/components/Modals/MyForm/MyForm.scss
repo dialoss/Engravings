@@ -2,12 +2,13 @@
 .transform-item {
     .form__content {
         box-shadow: 0 0 5px 0 grey;
-
     }
 }
 
 .form {
     &__content {
+        max-height: 90vh;
+        overflow: auto;
         position: relative;
 
         display: flex;

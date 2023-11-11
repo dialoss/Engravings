@@ -28,11 +28,13 @@ const ItemListContainer = () => {
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
     const [style, setStyle] = useState('hidden');
+    const [filter, setFilter] = useState(() => (item) => true);
 
     const limit = useRef();
     limit.current = getLocation().parentSlug ? 80 : 60;
 
     useEffect(() => {
+        changeTab({detail:{tab:0}});
         let offset = 0;
         let page = getLocation().relativeURL;
         let cachedItems = store.getState().elements.cache[page];
@@ -48,9 +50,22 @@ const ItemListContainer = () => {
 
     async function handleElements(event) {
         let request = event.detail;
-        //console.log('REQUEST', request)
+        console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
         console.log('RESPONSE', response)
+        if (request.method === 'DELETE') {
+            let item = request.initialRequest.element.closest('.transform-item');
+            item.setAttribute('data-top', 0);
+            item.style.height = '0px';
+            triggerEvent("container:init", {container: item.closest('.transform-container'), item});
+            try{
+                dispatch({method: request.storeMethod, payload: response.items});
+            } catch (e) {
+                console.log('ОШИБКА' , e)
+            }
+            return
+        }
+
         const newItems = response.items;
         if (!newItems) {
             return;
@@ -59,23 +74,23 @@ const ItemListContainer = () => {
         if (newItems.length && !newItems[0].empty) {
             globalDispatch(actions.setItemsAll({items: newItems}));
         }
+    }
+    useAddEvent('itemlist:handle-changes', handleElements);
 
-        if (request.method === 'DELETE') {
-            let item = request.initialRequest.element.closest('.transform-item');
-            item.setAttribute('data-top', 0);
-            item.style.height = '0px';
-            triggerEvent("container:init", {container: item.closest('.transform-container'), item});
-        }
+    function changeTab(event) {
+        const t = event.detail.tab;
+        setFilter(() => (item) => (item.group_order === 'tab_' + t) || item.group_order === 'tabs');
+        window.currentTab = 'tab_' + t;
     }
 
-    useAddEvent('itemlist:handle-changes', handleElements);
+    useAddEvent('itemlist:tab', changeTab);
 
     return (
         <>
             <ItemList loadMore={totalItems.current === items.length ? null : () => {
                 limit.current = items.length + 60;
                 fetchItems(items.length, addItems, limit.current);
-            }} items={items} className={style}></ItemList>
+            }} items={items.filter(filter)} className={style}></ItemList>
         </>
     );
 };

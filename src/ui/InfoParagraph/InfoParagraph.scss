@@ -7,6 +7,10 @@
     font-size: 18px;
     display: inline-block;
 
+    ul, li {
+        padding-left: 1.5em;
+    }
+
     &:empty {
         display: none;
         padding-bottom: 0;
@@ -28,6 +32,7 @@
     }
 
     &-date {
+        white-space: nowrap;
         font-size: 18px;
         margin: 0 20px;
     }

@@ -11,7 +11,7 @@ const ItemFile = ({data}) => {
                 <a className="file__download-link" href={data.url} ref={ref}
                    download
                    target="_blank"
-                   onClick={(event) => {if (preventOnTransformClick(ref)) event.preventDefault()}}>
+                   onClick={(event) => {if (preventOnTransformClick(ref) || window.editPage) event.preventDefault()}}>
                 </a>
                 <span className={`file__download-image fiv-cla fiv-icon-${
                     !!hasFilename ? data.filename.split('.').slice(-1)[0].toLowerCase() : 'blank'}

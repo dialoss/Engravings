@@ -10,8 +10,7 @@ class App extends React.Component {
         this.state = {
             camera: null,
             selectedIds: [],
-            ui: props.ui,
-            rotate: props.rotate,
+            ...props,
         };
     }
 
@@ -24,7 +23,7 @@ class App extends React.Component {
                     <Viewer
                         runtime={{ accessToken: token }}
                         urn={urn}
-                        rotate={this.state.rotate}
+                        {...this.state}
                         ref={ref => this.wrapper = ref}
                     />
                 </div>

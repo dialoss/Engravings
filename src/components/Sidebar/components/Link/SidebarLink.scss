@@ -47,6 +47,10 @@
 
     transition: background-color 0.1s linear;
 
+    &:not(.sidebar__link--current):hover {
+        background-color: #b5bbc0 !important;
+    }
+
     &-wrapper {
         position: relative;
         width: 100%;

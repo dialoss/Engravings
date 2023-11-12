@@ -11,6 +11,8 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
     const [layout, setLayout] = useState([]);
     const [count, setCount] = useState(maxColumns);
     const widthPoints = [400, 600, 800];
+    const forceRef = useRef();
+    forceRef.current = forceColumns;
     function setColumns() {
         const [vw, vh] = getViewportSize();
         let newColumns = 0;
@@ -46,9 +48,8 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
         setItems(ext);
         setLayout(newLayout);
     }, [count, children]);
-
     useAddEvent('resize', () => {
-        setColumns();
+        forceRef.current === 0 && setColumns();
         for (const container of ref.current.querySelectorAll('.transform-container')) {
             initContainerDimensions({container})
         }
@@ -69,15 +70,15 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
                     <div className={"masonry__column"}
                          style={{width: 100 / count + "%"}}
                          key={i}>
-                        {/*<TransitionGroup key={i} component={null}>*/}
+                        <TransitionGroup key={i} component={null}>
                             {
                                 column.map((item) =>
-                                <>
+                                        <CSSTransition key={item.key} timeout={200} classNames={"masonry__item"}>
                                     {item}
-                                </>
+                                </CSSTransition>
                                 )
                             }
-                        {/*</TransitionGroup>*/}
+                        </TransitionGroup>
                     </div>
                 )
             }

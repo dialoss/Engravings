@@ -1,8 +1,9 @@
 import React from 'react';
 import "./ContentWrapper.scss";
 import TransformContainer from "../ObjectTransform/components/TransformContainer/TransformContainer";
-import {fileToItem} from "../../modules/FileExplorer/FileExplorer";
+import {fileToItem, uploadFile} from "../../modules/FileExplorer";
 import {triggerEvent} from "../../helpers/events";
+import {getLocation} from "../../hooks/getLocation";
 
 const ContentWrapper = ({children}) => {
     return (
@@ -13,8 +14,11 @@ const ContentWrapper = ({children}) => {
                     async function getFiles() {
                         let files = [];
                         for (const file of [...e.dataTransfer.files]) {
-                            let data = await window.filemanager.settings.oninitupload(null, {folder: null, file});
-                            const f = await fileToItem({...data, type: data.filetype, filename: data.name});
+                            let fullsize = await uploadFile({folder: null, file,
+                                path:['fullsize', ...getLocation().relativeURL.slice(1, -1).split('/')], compress:false});
+                            let data = await uploadFile({folder: null, file,
+                                path:getLocation().relativeURL.slice(1, -1).split('/'), compress:true});
+                            const f = await fileToItem({...data, url_fullsize: fullsize.url, type: data.filetype, filename: data.name});
                             files = [...files, f];
                         }
                         for (const file of (JSON.parse(e.dataTransfer.getData('files') || "[]"))) {

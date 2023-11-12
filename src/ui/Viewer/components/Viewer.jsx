@@ -55,7 +55,7 @@ class Viewer extends React.Component {
                 this.viewer.start();
                 this.viewer.setProfile(profile);
                 this.viewer.impl.disableHighlight(true);
-
+                // console.log(this.viewer)z
 
                 this.viewer.addEventListener(Autodesk.Viewing.FULLSCREEN_MODE_EVENT, () => {
                     setTimeout(() => {

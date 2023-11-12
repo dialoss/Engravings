@@ -1,3 +1,4 @@
+import store from "../../store";
 
 export function createItemsTree(items) {
     if (!items.length || items[0].empty) return items;
@@ -21,4 +22,16 @@ export function createItemsTree(items) {
 
     return (Object.values(tree)).sort((a, b) => a.display_pos - b.display_pos);
     // console.log('AFTER TREE', sorted);
+}
+
+export function childItemsTree(current) {
+    const itemsAll = store.getState().elements.itemsAll;
+    function traverseTree(current) {
+        let items = [];
+        for (const item in itemsAll) {
+            if (itemsAll[item].parent === current.id) items.push(childItemsTree(itemsAll[item]));
+        }
+        return {...current, items};
+    }
+    return traverseTree(current);
 }

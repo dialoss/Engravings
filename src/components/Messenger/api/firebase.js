@@ -16,6 +16,8 @@ import store from "store";
 import {getGlobalTime} from "../../../api/requests";
 import {actions} from "../store/reducers";
 import {triggerEvent} from "../../../helpers/events";
+import {fileToItem, uploadFile} from "../../../modules/FileExplorer";
+import {getLocation} from "../../../hooks/getLocation";
 
 const uniqueID = () => Math.floor(performance.now() + performance.timeOrigin * 100);
 
@@ -47,9 +49,11 @@ export class MessageManager {
     }
 
     uploadMedia(upload) {
-        const time = new Date().getTime();
-        const uploadRef = storageRef(storage, 'uploads/messages/' + time + '_' + upload.name);
-        return uploadBytes(uploadRef, upload).then((snapshot) => snapshot.metadata.fullPath);
+        return new Promise(async (resolve) => {
+            uploadFile({folder: null, file: upload, path:['fullsize', this.appName, getLocation().pageSlug], compress:false});
+            let data = await uploadFile({folder: null, file: upload, path:[this.appName, getLocation().pageSlug], compress:true});
+            resolve('https://drive.google.com/uc?id=' + data.id);
+        });
     }
 }
 
@@ -147,8 +151,13 @@ export function useGetUsers() {
     }, []);
 }
 
-function createNotification(info) {
-    new Notification(info.title, {body: info.body});
+export function createNotification(info) {
+    navigator.serviceWorker.ready.then(function (registration) {
+        registration.showNotification(info.title, {
+            body: info.body,
+        });
+    });
+    // new Notification(info.title, {body: info.body});
 }
 
 
@@ -156,8 +165,8 @@ function notifyUser(info) {
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
         createNotification(info);
-    } else if (Notification.permission !== "denied") {
-        triggerEvent('user-prompt', {data:{title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.'}})
+    } else {
+        triggerEvent('user-prompt', {title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.', button:'ok'})
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
                 createNotification(info);
@@ -212,7 +221,10 @@ export function useGetRooms() {
                 triggerEvent("messenger:notification", true);
                 haveNewMessage = true;
             }
+            console.log(111)
             if (!(curRoom.newMessage && curRoom.lastMessage.user !== user.id) || curRoom.notified) continue;
+            console.log(222)
+
             updateRoom({...curRoom, notified: true});
             notifyUser({title: 'MyMount | Новое сообщение',
                 body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text});

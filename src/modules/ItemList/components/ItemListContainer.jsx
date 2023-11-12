@@ -41,6 +41,8 @@ const ItemListContainer = () => {
         if (cachedItems) {
             addItems({newItems:cachedItems}, true);
             offset = cachedItems.length;
+        } else {
+            window.scrollTo(0, 0);
         }
         fetchItems(offset, addItems, limit.current);
         setTimeout(() => {
@@ -59,7 +61,7 @@ const ItemListContainer = () => {
             item.style.height = '0px';
             triggerEvent("container:init", {container: item.closest('.transform-container'), item});
             try{
-                dispatch({method: request.storeMethod, payload: response.items});
+                dispatch({method: request.storeMethod, payload: createItemsTree(response.items)});
             } catch (e) {
                 console.log('ОШИБКА' , e)
             }

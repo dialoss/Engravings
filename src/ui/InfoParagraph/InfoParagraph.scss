@@ -4,7 +4,9 @@
     word-wrap: break-word; 
     word-break: break-word;
     text-align: center;
-    font-size: 18px;
+    * {
+        font-size: min(4vw, 18px);
+    }
     display: inline-block;
 
     ul, li {
@@ -48,5 +50,9 @@
             background-color: $color-link-background;
         }
     }
-
+    &-textfield {
+        span {
+            font-size: min(4vw, 20px) !important;
+        }
+    }
 }

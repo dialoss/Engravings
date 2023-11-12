@@ -28,6 +28,7 @@
         overflow: hidden;
     }
     &.messenger-input {
+        z-index: 2;
         display: flex;
         border-top: $style-border;
         position: relative;

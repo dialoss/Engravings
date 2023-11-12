@@ -32,7 +32,6 @@ function getCookie(name) {
 export async function sendRequest(url, data, method) {
     let response = null;
     const csrftoken = getCookie('csrftoken');
-    // console.log(csrftoken)
     let query = {
         method: method,
         credentials: "include",
@@ -51,11 +50,11 @@ export async function sendRequest(url, data, method) {
     return response;
 }
 
-export function sendLocalRequest(url, data={}, method='GET') {
+export function sendLocalRequest(url, data={}, method='GET', includePath=true) {
     const location = store.getState().location;
     url = new URL(location.baseURL + url);
-    url.search += '&' + new URLSearchParams({slug: location.pageSlug || location.pageID,
-            path: location.relativeURL.slice(1, -1)}).toString();
+    includePath && (url.search += '&' + new URLSearchParams({slug: location.pageSlug || location.pageID,
+            path: location.relativeURL.slice(1, -1)}).toString());
     return sendRequest(url.toString(), data, method);
 }
 
@@ -67,8 +66,5 @@ export async function getGlobalTime() {
 }
 
 export function sendEmail(email) {
-    sendLocalRequest('/api/notification/email/', {
-        recipient: 'matthewwimsten@gmail.com',
-        ...email,
-    }, 'POST');
+    sendLocalRequest('/api/notification/email/', email, 'POST');
 }

@@ -5,9 +5,9 @@ import dayjs from "dayjs";
 
 const InfoBlock = ({data, className, extra}) => {
     const formattedDate = dayjs(data.date_created).format("HH:mm DD.MM.YYYY");
-    for (const item of (data.items || [])) {
-        if (!!item.price) data = {...data, price: item.price};
-    }
+    // for (const item of (data.items || [])) {
+    //     if (!!item.price) data = {...data, price: item.price};
+    // }
     // console.log(data)
     return (
         <div className={"info__block " + (className || '')}>

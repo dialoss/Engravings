@@ -2,6 +2,7 @@
 :export {
     linkColor: $color-link-background;
 }
+$color-sidebar-background: rgb(54, 59, 75, 0.8);
 
 .sidebar {
     position: fixed;
@@ -118,9 +119,15 @@
             }
         }
     }
+
+    &__action {
+        background-color: #b1c5d4;
+        width: 100%;
+        margin-top: 5px;
+        color: rgb(19, 21, 28);
+    }
 }
 
-$color-sidebar-background: rgb(54, 59, 75, 0.8);
 
 @media only screen and (max-width: 700px) {
     .sidebar {
@@ -129,6 +136,7 @@ $color-sidebar-background: rgb(54, 59, 75, 0.8);
         padding-top: 0;
         background-color: $color-sidebar-background;
         max-height: 200vh;
+        height: 200vh;
 
         .slider {
             &.opened {

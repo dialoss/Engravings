@@ -3,8 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
-        baseURL : 'https://divine-snow-51804.pktriot.net',
-        // baseURL : 'https://matthew75.pythonanywhere.com',
+        // baseURL : 'https://divine-snow-51804.pktriot.net',
+        baseURL : 'https://matthew75.pythonanywhere.com',
         // baseURL : 'http://localhost:8000',
         pages : {},
         pageID : '',
@@ -17,9 +17,14 @@ export const locationSlice = createSlice({
         views: {
             curViews: 0,
             totalViews: 0,
-        }
+        },
+        pageComments: false,
     },
     reducers: {
+        setComments: (state, {payload: includeComments}) => {
+            state.pageComments = includeComments;
+            return state;
+        },
         setLocation: (state) => {
             const url = decodeURI(window.location.href);
             state.relativeURL = url.split('/').slice(3).join('/');

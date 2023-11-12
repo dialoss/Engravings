@@ -14,9 +14,9 @@ import CommentsTools from "./CommentsTools";
 import {createCommentsTree, sortFunction} from "./helpers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import {sendEmail} from "../../../api/requests";
-import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 import {getLocation} from "../../../hooks/getLocation";
 import {useSelector} from "react-redux";
+import {SearchContainer} from "../../../ui/Tools/Tools";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
@@ -40,22 +40,27 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
 
 export const CommentsContext = createContext(null);
 
-const CommentsContainer = ({page}) => {
+const CommentsContainer = ({page, document, setDocument}) => {
     const [search, setSearch] = useState([]);
     const [comments, setComments] = useState([]);
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('default'));
-    const [document, setDocument] = useState(null);
     const user = useSelector(state => state.users.current);
 
     useLayoutEffect(() => {
+        if (!page) return;
+
         function fetchDocument(created) {
             if (created) {
                 if (user.isAdmin) updateDoc(doc(firestore, 'apps', 'comments'), {newComments: arrayRemove(page)});
                 setDocument(doc(CDB, String(page)));
                 return;
             }
+            const it = setInterval(() => {
+                fetch();
+            }, 1000);
             function fetch() {
+                try {
                 getDoc(doc(CDB, String(page))).then(d => {
                     clearInterval(it);
                     if (!d.data()) {
@@ -64,12 +69,9 @@ const CommentsContainer = ({page}) => {
                         fetchDocument(true);
                     }
                 });
+                } catch (e) {console.log(e)}
             }
-            const it = setInterval(() => {
-                try {
-                    fetch();
-                } catch (e) {}
-            }, 1000);
+            fetch();
         }
         fetchDocument(false);
     }, [page]);
@@ -78,6 +80,7 @@ const CommentsContainer = ({page}) => {
         onsuccess: (message) => {
             const location = getLocation();
             sendEmail({
+                recipient:'matthewwimsten@gmail.com',
                 type: 'comment',
                 subject: 'MyMount | Новый комментарий',
                 data: {
@@ -101,12 +104,11 @@ const CommentsContainer = ({page}) => {
     useEffect(() => {
         setCommentsTree(createCommentsTree(comments, sorting, search));
     }, [sorting, search]);
-    // console.log(commentsTree)
     const manager = new MessageManager('comments', actions, config);
     return (
         <CommentsContext.Provider value={manager}>
-            {document && <BaseMessagesContainer id={page} callback={setComments} document={document}>
-            </BaseMessagesContainer>}
+            <BaseMessagesContainer id={page} callback={setComments} document={document}>
+            </BaseMessagesContainer>
             <div className={"comments-section"}>
                 <div className="comments-section__header">
                     <InputContainer extraFields={{parent: ''}} children={CommentsInput} manager={manager}></InputContainer>

@@ -7,6 +7,8 @@ import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import ItemsPage from "../../ItemsPage/components/ItemsPage";
 import {useSelector} from "react-redux";
+import {actions} from "../store/reducers";
+import store from "../../../store";
 
 const Components = {
     'ItemsPage': ItemsPage,
@@ -16,11 +18,7 @@ const Components = {
 const PageWrapper = ({route}) => {
     const location = getLocation();
     document.title = "MyMount | " + location.pageTitle;
-    window.pageComments = route.comments;
-    if (window.location.hash) {
-        // console.log(window.location)
-        // window.history.replaceState("", document.title, window.location.origin + location.relativeURL);
-    }
+    store.dispatch(actions.setComments(route.comments));
     useEffect(()=>{
         if (location.pageSlug === 'main') document.querySelector('.container-main').style.minHeight = 'auto'
         else document.querySelector('.container-main').style.minHeight = '100dvh'

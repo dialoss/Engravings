@@ -2,6 +2,7 @@ import store from "store";
 import {getElementFromCursor} from "../../../helpers/events";
 import {actions} from "../../ItemList/store/reducers";
 import {getViewportWidth} from "../../../ui/helpers/viewport";
+import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 
 const emptyElement = {
     id: -1,
@@ -61,7 +62,10 @@ export function setActionElement(event) {
         else el.parent_0 = getElementID(parentElement);
         el.parent = getElementID(el.html.closest('.item.depth-' + (el.html.getAttribute('data-depth') - 1))) || el.parent_0;
         el.display_pos = display_pos;
-        el.data = store.getState().elements.itemsAll[el.id];
+        const itemsAll = store.getState().elements.itemsAll;
+        let data = structuredClone(itemsAll[el.id]);
+        if (data.parent) data = childItemsTree(data);
+        el.data = data;
         actionElement = el;
         event.ctrlKey && setElements();
     } else {

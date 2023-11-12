@@ -12,29 +12,17 @@ import "./components/MessagesField.scss";
 function getMessagesSnapshot(id, document, callback) {
     return onSnapshot(document, query => {
         let newMessages = [];
-        query.data().messages.forEach(msg => {
-            let url = msg.value.upload.url;
-            if (!!url) {
-                let name = url.split('/').slice(-1)[0];
-                if (!url.includes('drive.google')) msg.value.upload.url =
-                    `https://firebasestorage.googleapis.com/v0/b/mymount-d1cad.appspot.com/o/uploads%2Fmessages%2F${name}?alt=media`
-            }
-            newMessages.push(msg);
-        });
-        // console.log('snapshot messages' , newMessages);
-        newMessages = newMessages.sort((a,b) => {
-            if (a.timeSent < b.timeSent) return -1;
-            if (a.timeSent > b.timeSent) return 1;
-            return 0;
-        })
+        query.data().messages.forEach(msg => newMessages.push(msg));
+        newMessages = newMessages.sort((a,b) => a.timeSent - b.timeSent);
         callback(s => ({...s, [id]: {...s[id], messages: newMessages}}));
     });
 }
 
 export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=false}) => {
     const [store, setStore] = useState({});
+    console.log(store)
     useLayoutEffect(() => {
-        if (!id) return;
+        if (!id || !document) return;
         if (!store[id]) {
             const config = () => {
                 setStore(s => ({...s, [id]: {
@@ -42,7 +30,11 @@ export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=fal
                         messages: [],
                     }}));
             }
+            const it = setInterval(() => {
+                fetch();
+            }, 1000);
             function fetch() {
+                try {
                 getDoc(document).then(q => {
                     clearInterval(it);
                     if (q.data()) {
@@ -51,19 +43,16 @@ export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=fal
                         setDoc(document, {messages: []}).then(() => config());
                     }
                 });
-            }
-            const it = setInterval(() => {
-                try {
-                    fetch();
                 } catch (e) {}
-            }, 1000);
+            }
+            fetch();
         } else {
-            if (leaveSnapshot) store[id].unsubscribe();
+            // if (leaveSnapshot) store[id].unsubscribe();
         }
         return () => {
             // Object.values(store).forEach(r => r.unsubscribe());
         }
-    }, [id]);
+    }, [id, document]);
     useLayoutEffect(() => {
         store[id] && callback(store[id].messages);
     }, [store, id]);

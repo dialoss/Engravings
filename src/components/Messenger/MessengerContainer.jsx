@@ -31,15 +31,12 @@ const MessengerContainer = () => {
     }, [Object.values(users).length, user]);
 
     const windowName = "messenger-window:toggle";
-    const [openMessenger, setOpen] = useState(false);
     return (
         <>
-            <OpenButton callback={() => setOpen(!openMessenger)}></OpenButton>
+        {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName, {toggle: true})}></OpenButton>}
             <ModalManager name={windowName}
-                          callback={(isOpened) => setOpen(isOpened)}
-                          defaultOpened={openMessenger}
                           closeConditions={['btn', 'esc']}>
-                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'auto', zIndex:8}}
+                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}
                                style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}} data-type={'modal'}>
                     <Messenger></Messenger>
                 </TransformItem>

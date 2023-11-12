@@ -1,7 +1,46 @@
-import {initLayout} from "./FileExplorer";
-import {driveRequest, getMediaType} from "./api/google";
+import {driveRequest, getMediaType, uploadFile} from "./api/google";
 import {getLocation} from "../../hooks/getLocation";
 import {triggerEvent} from "../../helpers/events";
+import {createRoot} from "react-dom/client";
+import Tooltip from "./Tooltip";
+import React from "react";
+import {upload} from "@testing-library/user-event/dist/upload";
+
+export const ExplorerViews = ['default', 'list'];
+export const TextBar = [
+    {
+        name: 'name',
+        text: 'Имя',
+        sortBy: 'name',
+    },
+    {
+        name: 'time',
+        text: 'Время изменения',
+        sortBy: 'modifiedTime',
+    },
+    {
+        name: 'size',
+        text: 'Размер',
+        sortBy: 'size',
+    },
+];
+
+function initLayout() {
+    let items = document.querySelectorAll('.fe_fileexplorer_item_wrap_inner');
+    for (const item of items) {
+        item.ondragstart = e => {
+            let wrapper = item.closest('.fe_fileexplorer_item_wrap');
+            let model = item.getAttribute('data-model');
+            e.dataTransfer.setData('files', JSON.stringify([{
+                id: wrapper.getAttribute('data-feid'),
+                urn: model,
+                type: item.getAttribute('data-itemtype'),
+                name: item.getAttribute('data-itemname'),
+            }]));
+        };
+    }
+}
+
 
 export function init() {
     let elem = document.getElementById('filemanager');
@@ -13,11 +52,6 @@ export function init() {
         initpath: [
             [ '', 'Mymount (/)', { canmodify: true } ]
         ],
-        // onopenfile: function(folder, entry) {
-        //     if (entry.type === 'folder') return;
-        //     let url = "https://drive.google.com/uc?id=" + entry.id;
-        //     window.open(url, "_blank");
-        // },
         onrefresh: function(folder, required) {
             driveRequest({
                 request: {
@@ -120,46 +154,14 @@ export function init() {
         },
         oninitupload: async function(startupload, fileinfo) {
             if (fileinfo.type === 'dir') return;
-            let parent = '';
-            if (fileinfo.folder) parent = fileinfo.folder.GetPathIDs().slice(-1)[0];
-            else {
-                let path = getLocation().relativeURL.slice(1, -1).split('/');
-                let folderName = getMediaType(fileinfo.file.name) + 's';
-                await driveRequest({
-                    request: {
-                        method: 'POST',
-                        parent: '',
-                        action: 'create folder with path',
-                        data: {
-                            path,
-                            name: folderName,
-                        }
-                    },
-                    callback: (folder) => parent = folder[0].id
-                });
-            }
-            let uploadedFile = null;
-            await driveRequest({
-                request: {
-                    method: 'POST',
-                    parent,
-                    action: 'upload',
-                    data: {
-                        file: fileinfo.file,
-                    }
-                },
-                callback: (entry) => {
-                    window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
-                    fileinfo.folder && setTimeout(() => {
-                        options.onrefresh(fileinfo.folder);
-                    }, 500);
-                    uploadedFile = entry[0];
-                },
-                error: () => {
-                    console.log('Server/network error.');
-                },
+            let info = fileinfo;
+            if (fileinfo.folder) info.folder = fileinfo.folder.GetPathIDs().slice(-1)[0];
+            return await uploadFile(info, () => {
+                window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
+                fileinfo.folder && setTimeout(() => {
+                    options.onrefresh(fileinfo.folder);
+                }, 500);
             });
-            return uploadedFile;
         },
         ondownloadurl: function(result, folder, ids, entry) {
             result.name = entry.name;
@@ -168,4 +170,26 @@ export function init() {
     };
 
     return new window.FileExplorer(elem, options);
+}
+
+export function initTooltip(ref, folder) {
+    const wrapper = ref.current.querySelector('.fe_fileexplorer_items_scroll_wrap_inner');
+    for (const item of folder) {
+        let root = ref.current.querySelector(`.fe_fileexplorer_item_wrap[data-feid="${item.id}"]`);
+        if (!root) continue;
+        root = root.children[0];
+        const tt = document.createElement('div');
+        tt.classList.add('filemanager-tooltip');
+        root.appendChild(tt);
+        createRoot(tt).render(<Tooltip data={item}></Tooltip>);
+        root.addEventListener('mouseover', (e) => {
+            if (root.contains(e.relatedTarget)) return;
+            let block = root.getBoundingClientRect();
+            let px = e.clientX - block.left + 20;
+            let wr = wrapper.getBoundingClientRect();
+            if (px + 10 >= wr.left + wr.width) px = e.clientX - tt.getBoundingClientRect().width - 20;
+            tt.style.left = px + 'px';
+            tt.style.top = e.clientY - block.top - 20 + 'px';
+        });
+    }
 }

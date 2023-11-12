@@ -88,7 +88,7 @@ const LoginForm = ({props}) => {
     });
 
     const [authType, setType] = useState('');
-    console.log(callback)
+    // console.log(callback)
     return (
         <ModalManager name={'login-form:toggle'}
                       defaultOpened={isOpened}

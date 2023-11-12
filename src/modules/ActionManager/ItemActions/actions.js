@@ -3,29 +3,44 @@ import {actionElement, actionElements, setUnselected} from "modules/ActionManage
 import {setActionData} from "./config";
 import {getSettings} from "./helpers";
 import {getLocation} from "../../../hooks/getLocation";
+import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 
 let hs = [];
 let current = 0;
 
 window.addEventListener('keydown', e => {
-    if (!window.elementsAction) return;
+    if (!window.elementsAction && !actionElements.length) return;
+    function reverseMethod(request) {
+        if (request.method === 'DELETE') return 'POST';
+        return 'DELETE';
+    }
     if (e.ctrlKey) {
         switch (e.code) {
             case 'KeyZ':
+            {
                 if (current < 0) {
                     current = 0;
                 }
-                hs.length && triggerEvent('itemlist:handle-changes', hs[current]);
+                let request = hs[current];
+                request.method = reverseMethod(request);
+                hs.length && triggerEvent('itemlist:handle-changes', request);
                 current -= 1;
                 break;
+            }
+
             case 'KeyY':
+            {
                 if (!hs.length) return;
                 if (current >= hs.length) {
                     current = hs.length - 1;
                 }
+                let request = hs[current];
+                request.method = reverseMethod(request);
                 triggerEvent('itemlist:handle-changes', hs[current]);
                 current += 1;
                 break;
+            }
+
             case 'KeyC':
                 Actions.copy();
                 break;
@@ -85,6 +100,8 @@ export default class Actions {
             if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
                 (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
 
+            if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData);
+
             let sendRequest = {
                 initialRequest: request,
                 data: sendData,
@@ -116,6 +133,7 @@ export default class Actions {
         // console.log(data)
         return data.map(d => ({
             method: 'POST',
+            createTree: false,
             specifyParent: true,
             data: {
                 type: item,
@@ -153,6 +171,7 @@ export default class Actions {
                 element: el,
             })
         });
+        return [];
     }
 
     static copy() {
@@ -176,8 +195,6 @@ export default class Actions {
                 ...hs.element.data,
                 display_pos: actionData.display_pos,
                 parent: action.id,
-                id: '',
-                parent_0: '',
             };
             if (hs.element.type !== 'base' && !action.id) {
                 request.push({
@@ -201,9 +218,7 @@ export default class Actions {
 
     static delete(elements=[]) {
         if (!elements.length) elements = actionElements;
-        const f = el => ({data: {
-            id: el.id
-        }, method: 'DELETE', element: el.html});
+        const f = el => ({data: structuredClone(el.data), method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
         return data;

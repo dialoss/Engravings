@@ -35,6 +35,7 @@ const ItemList = ({items, className, loadMore=null}) => {
     let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
     const edit = window.editPage ? 'edit' : '';
+    console.log('FORCE',forceColumns)
     return (
         <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
             <NavButton data={{text: "ВИД", callback: () => triggerEvent('itemlist:view')}} className={'view'}></NavButton>
@@ -49,7 +50,6 @@ const ItemList = ({items, className, loadMore=null}) => {
                     }
                 </MyMasonry>
                 {!!items.length && loadMore && <NavButton className={"load-more"} data={{text: 'ЗАГРУЗИТЬ ЕЩЁ', callback:loadMore}}></NavButton>}
-                {window.pageComments && <PageComments/>}
             </Container>
         </div>
     );

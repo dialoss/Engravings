@@ -12,12 +12,13 @@ import {getLocation} from "../../../hooks/getLocation";
 export const MessengerInputContainer = () => {
     let config = {
         onsuccess: (message) => {
-            const {room, user} = store.getState().messenger;
+            const {room, user, users} = store.getState().messenger;
             updateRoom({lastMessage: message, newMessage: true, notified:false}).then(() =>
                 store.dispatch(actions.setRoom(room.id))
             );
             const location = getLocation();
             sendEmail({
+                recipient: users[room.companion].email,
                 type: 'message',
                 subject: 'MyMount | Новое сообщение',
                 data: {

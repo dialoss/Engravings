@@ -63,7 +63,10 @@ function moveAt(event, shiftX, shiftY) {
     let deltaX = event.clientX - btnX;
     let deltaY = event.clientY - btnY;
     if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return false;
-    
+
+    item.style.right = 'auto';
+    item.style.bottom = 'auto';
+
     if (transform.type === "resize") {
         if (transform.dir === 'resize-left') deltaX *= -1;
         let offsetL = item.offsetLeft;

@@ -1,3 +1,8 @@
+.transform-container[data-type='table'] {
+  overflow-x: auto;
+  @include custom-scrollbar;
+}
+
 .item__table {
   border-spacing: 0;
   width: 100%;
@@ -17,7 +22,7 @@
     border: 2px solid black;
     padding: 8px 14px;
     border-bottom: 0;
-    font-size: 17px;
+    font-size: min(4vw, 18px);
 
     &:not(:last-child) {
       border-right: 0;
@@ -28,7 +33,6 @@
         border: 2px solid black;
         padding: 5px 10px;
         border-bottom: 0;
-        font-size: 18px;
       }
     }
   }

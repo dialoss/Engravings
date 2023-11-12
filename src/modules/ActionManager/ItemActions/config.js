@@ -2,10 +2,11 @@ import store from "store";
 import {getLocation} from "../../../hooks/getLocation";
 import dayjs from "dayjs";
 import {sendEmail} from "../../../api/requests";
-import {MessageManager, updateRoom} from "../../../components/Messenger/api/firebase";
+import {MessageManager, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
 import {arrayUnion, doc, updateDoc} from "firebase/firestore";
 import {adminEmail, firestore} from "../../../components/Messenger/api/config";
 import {actions} from "../../../components/Messenger";
+import {isMobileDevice, triggerEvent} from "../../../helpers/events";
 
 export const ContextActions = {
     'add':{
@@ -30,7 +31,12 @@ export const ContextActions = {
             'price': {
                 callback: 'add',
                 argument: true,
-                text: 'Покупка',
+                text: 'Цена',
+            },
+            'shop': {
+                callback: 'add',
+                argument: true,
+                text: 'Продажа',
             },
             'button': {
                 callback: 'add',
@@ -132,10 +138,54 @@ export function setActionData(item) {
             return {
                 text: 'кнопка'
             }
+        case 'shop':
+            return {
+                type: 'base',
+                items: [
+                    {
+                        type: 'subscription',
+                        width: "50%",
+                        container_width: '100px',
+                        height: '100px',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'subscription',
+                        width: "50%",
+                        container_width: '100px',
+                        height: '100px',
+                        show_shadow: false,
+                        movable: false,
+                        items: [
+                            {
+                                type: 'subscription',
+                                width: '100%',
+                                title: 'Заголовок',
+                                description: 'Описание',
+                                show_shadow: false,
+                                movable: false,
+                            },
+                            {
+                                type: 'price',
+                                width: '100%',
+                                price: "999",
+                                text: 'Приобрести',
+                                group_order: 1,
+                                link: '$buy',
+                                show_shadow: false,
+                                movable: false,
+                            }
+                        ]
+                    },
+                ],
+            }
         case 'price':
             return {
                 price: "999",
                 text: 'Приобрести',
+                link: '$buy',
+                group_order: 1,
             }
         case "timeline":
             return {
@@ -187,61 +237,92 @@ export function setActionData(item) {
             }
         case 'intro':
             return {
-                type: 'base',
-                container_width: '900px',
-                items: [
+                "type": "base",
+                container_width: '1100px',
+                "items": [
                     {
-                        show_shadow: false,
-                        movable: false,
-                        type: 'subscription',
-                        left: '0',
-                        container_width: '100px',
-                        height: '100px',
-                        top: '50px',
-                        width: '50%',
-                        position: 'absolute',
-                        group_order: 1,
+                        "type": "base",
+                        "width": "100%",
+                        "items": [
+                            {
+                                "type": "base",
+                                "width": "100%",
+                                "height": "850px",
+                                "items": [
+                                    {
+                                        "type": "subscription",
+                                        "width": "50%",
+                                        container_width: '100px',
+                                        "height": "100px",
+                                        "top": "60px",
+                                        "left": "0px",
+                                        "position": "absolute",
+                                        "movable": false,
+                                        "show_shadow": false,
+                                    },
+                                    {
+                                        "type": "subscription",
+                                        "width": "50%",
+                                        "top": "50px",
+                                        "left": "50%",
+                                        "position": "absolute",
+                                        "show_shadow": false,
+                                        "items": [
+                                            {
+                                                text: '<h1>Заголовок</h1>',
+                                                "show_shadow": false,
+                                                "type": "textfield",
+                                                "width": "100%",
+                                                "height": "100px",
+                                                "movable": false,
+                                            },
+                                            {
+                                                text: 'Описание',
+                                                "show_shadow": false,
+                                                "type": "textfield",
+                                                "width": "100%",
+                                                "height": "660px",
+                                                "movable": false,
+
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
-                        type: 'base',
-                        left: '50%',
-                        top: '50px',
-                        width: '50%',
-                        position: 'absolute',
-                        group_order: 2,
-                        zindex: 3,
-                        items: [
+                        "type": "base",
+                        "width": "100%",
+                        "height": "400px",
+                        "items": [
                             {
-                                text: '<h1>Заголовок</h1>',
-                                type: 'textfield',
-                                movable: false,
-                                show_shadow: false,
-                                height: '100px',
-                                width: '100%',
-                                zindex: 3,
-                            },
-                            {
-                                type: 'textfield',
-                                text: 'Описание',
-                                height: '100px',
-                                width: '100%',
-                                show_shadow: false,
-                                movable: false,
+                                "type": "table",
+                                "width": "100%",
+                                "height": "300px",
+                                "url": "https://drive.google.com/uc?id=1TT6KWUcn4_4shc-DK--2JDR4W4_nUuPT",
                             },
                         ]
                     },
                     {
-                        type: 'price',
-                        price: 999,
-                        link: '$order',
-                        text: "Заказать изготовление",
-                        show_shadow: false,
-                        group_order: 3,
+                        "type": "base",
+                        "width": "100%",
+                        "height": "80px",
+                        "items": [
+                            {
+                                width: '100%',
+                                "type": "price",
+                                group_order: 1,
+                                "text": "Заказать изготовление",
+                                "link": "$order",
+                                "price": "<p>от 160000</p>",
+                            }
+                        ]
                     }
                 ]
             }
         case 'order':
-            actionMessage(`Здравствуйте! Я принял ваш заказ и в скором времени свяжусь с Вами,
+            actionMessage(`Здравствуйте! Я принял Ваш заказ и в скором времени свяжусь с Вами,
                      чтобы обсудить детали заказа. По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
                      на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
                       в курсе новостей.`)
@@ -298,9 +379,8 @@ export function setActionData(item) {
                 },
             ]
         case 'buy':
-            actionMessage(`Здравствуйте! По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
-                     на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
-                      в курсе новостей.`)
+            actionMessage(`Здравствуйте! По любым вопросам Вы можете связаться со мной в этом чате или по почте fomenko75@mail.ru. 
+            Включите уведомления с моего сайта, чтобы всегда быть в курсе новостей.`)
             return [];
     }
 }
@@ -310,7 +390,7 @@ async function actionMessage(text) {
     const user = store.getState().users.current;
     const {rooms} = store.getState().messenger;
     const adminRoom = Object.values(rooms).find(r => r.users.includes(adminEmail) && r.users.includes(user.email));
-
+    if (!!Object.values(adminRoom.lastMessage).length) return;
     const config = {
         getDocument: () => adminRoom.messages,
     }
@@ -324,4 +404,11 @@ async function actionMessage(text) {
         user_id: admin.id,
     });
     updateRoom({lastMessage: msg, newMessage: true, notified:false}, adminRoom.id);
+    const messenger = document.querySelector('.messenger-window .transform-item');
+    if (!isMobileDevice()) {
+        messenger.style.right = '50px';
+        messenger.style.bottom = '200px';
+    }
+    store.dispatch(actions.setRoom(adminRoom.id))
+    triggerEvent("messenger-window:toggle", {isOpened: true});
 }

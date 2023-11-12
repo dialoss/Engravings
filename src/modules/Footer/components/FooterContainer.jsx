@@ -14,7 +14,7 @@ const FooterContainer = () => {
         })();
     }, [location.relativeURL]);
     return (
-        <Footer totalViews={views.totalViews} currentViews={views.currentViews}></Footer>
+        <Footer totalViews={views.totalViews || 0} currentViews={views.currentViews || 0}></Footer>
     );
 };
 

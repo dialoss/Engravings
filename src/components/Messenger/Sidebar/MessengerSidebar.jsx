@@ -13,9 +13,9 @@ import {useSelector} from "react-redux";
 import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
 import {actions} from "../store/reducers";
 import store from "../../../store";
-import {SearchContainer} from "../../../modules/FileExplorer/FileExplorer";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 import {adminEmail} from "../api/config";
+import {SearchContainer} from "../../../ui/Tools/Tools";
 
 const MessengerSidebar = () => {
     const userAdmin = useSelector(state => state.users.current);

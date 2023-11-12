@@ -1,6 +1,7 @@
 import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
+import {fileToItem} from "../helpers";
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";
@@ -201,3 +202,85 @@ export function getMediaType(filename) {
     return 'file';
 }
 
+export async function uploadFile(fileinfo, callback) {
+    let parent = '';
+    if (fileinfo.folder) parent = fileinfo.folder;
+    else {
+        let folderName = getMediaType(fileinfo.file.name) + 's';
+        await driveRequest({
+            request: {
+                method: 'POST',
+                parent: '',
+                action: 'create folder with path',
+                data: {
+                    path: fileinfo.path,
+                    name: folderName,
+                }},
+            callback: (folder) => parent = folder[0].id
+        });
+    }
+    let file = fileinfo.file;
+    let uploadedFile = null;
+    if (['image'].includes(getMediaType(file.name)) && fileinfo.compress) {
+        await compress(fileinfo.file).then(f => {
+            f.name = file.name;
+            file = f;
+        });
+    }
+    await driveRequest({
+        request: {
+            method: 'POST',
+            parent,
+            action: 'upload',
+            data: {
+                file,
+            }},
+        callback: (entry) => {
+            callback && callback();
+            uploadedFile = entry[0];
+        },
+        error: () => {
+            console.log('Server/network error.');},
+    });
+    return uploadedFile;
+}
+
+
+function compress(file) {
+    return new Promise((resolve) => {
+        let oldWidth, oldHeight, newHeight, newWidth, canvas, ctx, newDataUrl;
+        let imageType = "image/jpeg";
+        const ratio = 0.6;
+
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                let image = new Image();
+                image.src = reader.result;
+                image.onload = () => {
+                    oldWidth = image.width;
+                    oldHeight = image.height;
+                    newWidth = oldWidth * ratio;
+                    newHeight = oldHeight * ratio;
+                    canvas = document.createElement("canvas");
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    ctx = canvas.getContext("2d");
+                    ctx.drawImage(image, 0, 0, newWidth, newHeight);
+                    newDataUrl = canvas.toDataURL(imageType, ratio);
+                    let blobBin = atob(newDataUrl.split(',')[1]);
+                    let array = [];
+                    for (let i = 0; i < blobBin.length; i++) {
+                        array.push(blobBin.charCodeAt(i));
+                    }
+                    resolve(new Blob([new Uint8Array(array)], {type: imageType}));
+                }
+            },
+            false,
+        );
+
+        reader.readAsDataURL(file);
+    });
+}

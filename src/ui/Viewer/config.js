@@ -72,21 +72,15 @@ export const CustomProfile = {
         "progressiveRendering": true,
         "openPropertiesOnSelect": false,
         "pointRendering": true,
-        "backgroundColorPreset": '[255, 255, 255]',
+        "backgroundColorPreset": false,
         "reverseMouseZoomDir": true,
         "leftHandedMouseSetup": false,
         "fusionOrbit": true,
         "fusionOrbitConstrained": true,
         "wheelSetsPivot": false,
         "restoreMeasurements": true,
-        "displayUnits": {
-            "values": {},
-            "current": ""
-        },
-        "displayUnitsPrecision": {
-            "values": {},
-            "current": ""
-        },
+        "displayUnits": 'mm',
+        "displayUnitsPrecision": 2,
         "keyMapCmd": true
     },
     "extensions": {

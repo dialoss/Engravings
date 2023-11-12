@@ -18,11 +18,8 @@
   }
 }
 
-.user-typing {
-  color: #fff;
-}
-
 .chat-empty {
+  color: #fdfdfd;
   background-color: rgba(59, 59, 59, 0.51);
   border-radius: 16px;
   text-align: center;
@@ -32,7 +29,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: $color-footer-background;
   font-size: min(6vw, 25px);
 }
 

@@ -25,11 +25,15 @@ export const SimpleItem = ({item, depth=0}) => {
         const items = container.querySelector('.items-wrapper');
         if (items) {
             for (const it of items.querySelectorAll(':scope > .transform-item')) {
+                if (isMobileDevice() && it.getAttribute('data-type') === 'subscription') {
+                    it.style.width = '100%';
+                    it.style.position = 'initial';
+                }
                 if (it.style.position !== 'absolute' && it.style.width === 'auto') {
                     if (['video', 'image', 'model'].includes(it.querySelector('.transform-container').getAttribute('data-type'))) {
                         it.style.width = 100 / itemsRow + '%';
                     } else {
-                        it.style.width = '100%';
+                        it.style.width = '0%';
                     }
                 }
             }

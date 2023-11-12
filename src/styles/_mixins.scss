@@ -1,6 +1,5 @@
 $color-scrollbar-thumb: rgb(145 167 205);
 $color-scrollbar-track: rgb(219, 228, 235);
-$color-footer-background: rgb(255, 255, 255);
 
 @mixin custom-scrollbar {
   &::-webkit-scrollbar {
@@ -27,6 +26,6 @@ $color-footer-background: rgb(255, 255, 255);
   }
 
   &::-webkit-scrollbar-corner {
-    background: $color-footer-background;
+    background: #fff;
   }
 }

@@ -9,8 +9,9 @@ import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../../../he
 import {Auth} from "modules/Authorization";
 import {Link} from "react-router-dom";
 import Swipes from "../../../../ui/Swipes/Swipes";
+import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 
-const Sidebar = ({data, authorized, customer}) => {
+const Sidebar = ({data, admin, customer}) => {
     const [isOpened, setOpened] = useState(false);
     const opRef = useRef();
     opRef.current = isOpened;
@@ -58,16 +59,14 @@ const Sidebar = ({data, authorized, customer}) => {
                         <Auth>
                             {customer && <Link to={'/customer/'}></Link>}
                         </Auth>
-                        {authorized && <>
-                            <div onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
-                                 className={"sidebar__link"}
-                                 style={{marginTop: 5}}>
-                                Хранилище</div>
-                            <div onClick={() => triggerEvent("theme:toggle")}
-                                 className={"sidebar__link"}
-                                 style={{marginTop: 5}}>
-                                Редактор</div>
+                        {admin && <>
+                            <ActionButton onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
+                                 className={"sidebar__action sidebar__link"}>Хранилище</ActionButton>
+                            <ActionButton onClick={() => triggerEvent("theme:toggle")}
+                                 className={"sidebar__action sidebar__link"}>Редактор</ActionButton>
                         </>}
+                            <ActionButton onClick={() => triggerEvent("messenger-window:toggle", {toggle:true})}
+                                 className={"sidebar__action sidebar__link"}>сообщения</ActionButton>
                         </div>
                     </div>
                     <div className="sidebar__wrapper">

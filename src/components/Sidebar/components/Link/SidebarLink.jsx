@@ -17,7 +17,6 @@ const SidebarLink = ({link, children, depth, haveSublist}) => {
     return (
         <div className={"sidebar__link-wrapper"}>
             <Link className={"sidebar__link " + (isCurrent ? 'sidebar__link--current' : '')}
-                  onClick={() => triggerEvent("sidebar:toggle")}
                   to={link}
                   style={style}>{children}
             </Link>

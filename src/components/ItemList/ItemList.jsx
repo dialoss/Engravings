@@ -10,6 +10,7 @@ import PageComments from "../PageComments/PageComments";
 import {fetchItems} from "../../modules/ItemList/api/fetchItems";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import {triggerEvent} from "../../helpers/events";
+import ActionButton from "../../ui/Buttons/ActionButton/ActionButton";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const [config, setConfig] = useState({});
@@ -38,7 +39,6 @@ const ItemList = ({items, className, loadMore=null}) => {
     console.log('FORCE',forceColumns)
     return (
         <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
-            <NavButton data={{text: "ВИД", callback: () => triggerEvent('itemlist:view')}} className={'view'}></NavButton>
             <Container style={{marginBottom: "50px"}}>
                 <MyMasonry
                     maxColumns={config.columns}

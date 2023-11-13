@@ -8,9 +8,8 @@
   width: 600px;
   height: 600px;
   @include mobile {
-    width: 95vw;
+    width: 100vw;
     height: 90dvh;
-    -webkit-height: 90dvh;
   }
   border-radius: 10px;
   overflow: hidden;

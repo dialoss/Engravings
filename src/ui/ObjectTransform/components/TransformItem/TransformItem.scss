@@ -8,9 +8,16 @@
       display: block;
     }
 
-    &.focused {
+    &:not(&[data-type="modal"]).focused {
       z-index: 5 !important;
       outline: 4px solid #e72b31;
+    }
+  }
+  &[data-type="modal"] {
+    .transform-resize {
+      z-index: 10;
+      width: 60px;
+      height: 60px;
     }
   }
 }

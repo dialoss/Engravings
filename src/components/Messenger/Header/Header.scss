@@ -27,15 +27,6 @@
     padding-right: 30px;
   }
 
-  @include mobile {
-    .avatar__wrapper {
-      display: none;
-    }
-    .header-block {
-      padding-left: 10px;
-    }
-  }
-
   .title {
     margin-top: 5px;
     font-weight: 600;

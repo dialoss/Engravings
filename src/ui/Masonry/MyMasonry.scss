@@ -3,6 +3,18 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+
+    .action-button {
+        margin-left: 10px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        svg {
+            width: 30px;
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(244deg) brightness(106%) contrast(100%);
+        }
+    }
 }
 
 .masonry__column {

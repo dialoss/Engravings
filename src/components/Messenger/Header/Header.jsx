@@ -9,7 +9,7 @@ import TextLoader from "../../../ui/TextLoader/TextLoader";
 const MessengerHeader = () => {
     const {room, users} = useSelector(state => state.messenger);
     const companion = users[room.companion] || {};
-
+    console.log(room)
     return (
         <div className={"messenger-header transform-origin"}>
             {!!room.picture && <Avatar src={room.picture} style={{width:50, height:50}}></Avatar>}

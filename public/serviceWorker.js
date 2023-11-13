@@ -10,16 +10,15 @@ self.addEventListener("install", (event) => {
 self.addEventListener('notificationclick', function (e) {
     e.notification.close();
     e.waitUntil(
-        clients.matchAll({ type: "window" }).then((clientsArr) => {
-            const hadWindowToFocus = clientsArr.some((windowClient) =>
-                windowClient.url === e.notification.data.url
-                    ? (windowClient.focus(), true)
-                    : false,
-            );
-            if (!hadWindowToFocus)
-                clients
-                    .openWindow(e.notification.data.url)
-                    .then((windowClient) => (windowClient ? windowClient.focus() : null));
-        }),
+        clients
+            .matchAll({
+                type: "window",
+            })
+            .then((clientList) => {
+                for (const client of clientList) {
+                    if (client.url === "/" && "focus" in client) return client.focus();
+                }
+                if (clients.openWindow) return clients.openWindow(e.notification.data.url);
+            }),
     );
 });

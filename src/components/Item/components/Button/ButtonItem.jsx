@@ -24,9 +24,6 @@ const ButtonItem = ({data}) => {
             case "$order":
                 triggerEvent("action:function", {name: 'add', args:'order'});
                 break;
-            case "$view":
-                triggerEvent("itemlist:view");
-                break;
             default:
                 window.open(action, "_blank")
         }

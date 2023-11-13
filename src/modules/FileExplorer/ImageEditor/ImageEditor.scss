@@ -5,5 +5,11 @@
   top: 0;
   transform: translate(100%, 0);
   height: 100%;
-  //position: fixed;
+  @include mobile {
+    transform: none;
+    width: 100vw;
+    &:empty {
+      display: none;
+    }
+  }
 }

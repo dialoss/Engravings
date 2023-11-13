@@ -66,6 +66,7 @@ const FileExplorer = () => {
             if (entry.filetype !== 'image') return;
             let pic = new Image();
             pic.src = entry.url;
+            pic.crossOrigin = 'Anonymous';
             pic.onload = () => {
                 setImage(pic);
             }
@@ -112,7 +113,9 @@ const FileExplorer = () => {
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
             <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:25}}
-                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}  data-type={'modal'}>
+                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
+                           className={'edit'}
+                           data-type={'modal'}>
             <div className={"filemanager"} ref={ref}>
                 <div className="filemanager-left">
                     <div className={"filemanager-header__wrapper transform-origin"}>

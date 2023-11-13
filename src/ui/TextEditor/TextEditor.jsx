@@ -38,7 +38,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             }
         });
         simple && field.addEventListener('keydown', (e) => triggerEvent('messenger:keydown', e));
-
+        field.addEventListener('mousedown', e => e.stopPropagation());
         const toolbar = field.closest('.quill').querySelector('.ql-toolbar');
         createRoot(toolbar.querySelector('.ql-emoji')).render(
             <InputEmoji callback={(v) => {
@@ -48,6 +48,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             }}></InputEmoji>);
         createRoot(toolbar.querySelector('.ql-attachment')).render(
             <InputAttachment callback={(v) => callback(m => ({...m, upload:v.upload}))}></InputAttachment>);
+
     }, []);
 
     function inputCallback(value) {

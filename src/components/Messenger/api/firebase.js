@@ -155,9 +155,12 @@ export function createNotification(info) {
     navigator.serviceWorker.ready.then(function (registration) {
         registration.showNotification(info.title, {
             body: info.body,
+            badge: "https://drive.google.com/uc?id=1RUXipSltKDNIJ9LtmccZXYy2yc-afZjc",
+            icon: "https://drive.google.com/uc?id=1RUXipSltKDNIJ9LtmccZXYy2yc-afZjc",
+            vibrate: [300, 100, 500, 100, 200],
+            data: info.data,
         });
     });
-    // new Notification(info.title, {body: info.body});
 }
 
 
@@ -190,11 +193,11 @@ export function useGetRooms() {
     useLayoutEffect(() => {
         if (!user) return;
         let newRooms = [];
-        let roomWithAdmin = false;
+        let roomWithAdmin = null;
         Object.values(rooms_raw).map(r => {
             if (r.users.includes(user.email)) {
                 newRooms.push(r);
-                if (r.users.includes(adminEmail)) roomWithAdmin = true;
+                if (r.users.includes(adminEmail)) roomWithAdmin = r;
             }
         });
         if (!roomWithAdmin) {
@@ -208,6 +211,7 @@ export function useGetRooms() {
         newRooms.forEach(r => {
             objRooms[r.id] =  changeRoomData(r, user, users);
         });
+        store.dispatch(actions.setField({field:'room',data: objRooms[roomWithAdmin.id]}));
         store.dispatch(actions.setField({field:'rooms', data:objRooms}));
         let haveNewMessage = false;
         for (const r in objRooms) {
@@ -221,18 +225,14 @@ export function useGetRooms() {
                 triggerEvent("messenger:notification", true);
                 haveNewMessage = true;
             }
-            console.log(111)
             if (!(curRoom.newMessage && curRoom.lastMessage.user !== user.id) || curRoom.notified) continue;
-            console.log(222)
-
-            updateRoom({...curRoom, notified: true});
+            updateRoom({...curRoom, notified: true}, curRoom.id);
             notifyUser({title: 'MyMount | Новое сообщение',
-                body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text});
+                body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text, data: {url :getLocation().fullURL}});
         }
         !haveNewMessage && triggerEvent("messenger:notification", false);
         room.id && objRooms[room.id] && objRooms[room.id].newMessage &&
         objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
-        //console.log('obj rooms', objRooms)
     }, [user, rooms_raw, Object.values(users).length]);
 }
 
@@ -243,6 +243,7 @@ export function updateRoom(data, room_id=null) {
 
     let newRoom = {[room.id]: {...room, ...data, title:'',picture:''}};
     delete newRoom[room.id].companion;
+    console.log('UPDATE ROOM', newRoom)
     return customUpdate('rooms', 'raw', newRoom);
 }
 

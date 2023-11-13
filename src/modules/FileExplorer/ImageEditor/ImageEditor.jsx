@@ -5,10 +5,11 @@ const { TABS, TOOLS } = window.FilerobotImageEditor;
 export function ImageEditor({image}) {
     useEffect(()=>{
         if (!image) return;
+        console.log(image)
         const config = {
             source: image,
             onSave: (img, designState) => {
-                //console.log(img)
+                console.log(img)
                 // console.log(img.imageCanvas.toDataURL())
                 // window.filemanager.settings.oninitupload(null, {folder: null, img});
             },

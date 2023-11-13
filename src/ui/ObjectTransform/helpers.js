@@ -24,15 +24,17 @@ function getMaxBottom(container) {
     }
     const dataHeight = +container.getAttribute('data-height').replace('px','');
     if (dataHeight && m < dataHeight &&
-        !['timeline'].includes(container.getAttribute('data-type'))) m = dataHeight * ratio;
+        !['timeline'].includes(container.getAttribute('data-type'))) {
+        m = dataHeight * ratio;
+        const info = container.querySelector(':scope > .item__image .info__block');
+        if (info) m += info.getBoundingClientRect().height;
+    }
     return m;
 }
-let counter = 0;
 export function initContainerDimensions({container, item, resize}) {
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container, resize);
-    // console.log(counter++)
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();

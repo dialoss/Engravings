@@ -5,6 +5,8 @@ import {getViewportSize} from "ui/helpers/viewport";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import {triggerEvent} from "../../helpers/events";
 import {initContainerDimensions} from "../ObjectTransform/helpers";
+import ActionButton from "../Buttons/ActionButton/ActionButton";
+import {ReactComponent as Columns} from "./columns.svg";
 
 const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, children}, ref) {
     const [externalItems, setItems] = useState([]);
@@ -65,6 +67,11 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
             {
                 externalItems.map(it => <>{it}</>)
             }
+            <div style={{width: '100%'}}>
+                <ActionButton onClick={() => triggerEvent('itemlist:view')} className={'view'}>
+                    <Columns></Columns>вид
+                </ActionButton>
+            </div>
             {
                 layout.map((column, i) =>
                     <div className={"masonry__column"}

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 import SidebarList from "../List/SidebarList";
 import "./Sidebar.scss";
@@ -36,6 +36,7 @@ const Sidebar = ({data, admin, customer}) => {
     ];
 
     function toggleSidebar(event) {
+        console.log(event)
         if (event.detail.isOpened !== undefined) {
             setOpened(event.detail.isOpened);
             return;
@@ -48,6 +49,12 @@ const Sidebar = ({data, admin, customer}) => {
     useAddEvent("sidebar:toggle", toggleSidebar);
     useAddEvent("mousedown", toggleSidebar);
     useAddEvent("touchstart", toggleSidebar);
+
+    useEffect(() => {
+        for (const link of document.querySelectorAll(".sidebar__link")) {
+            link.addEventListener('mousedown', () => toggleSidebar({detail:{isOpened: false}}));
+        }
+    }, []);
 
     return (
         <Swipes callback={setOpened} state={isOpened} className={'sidebar'}>

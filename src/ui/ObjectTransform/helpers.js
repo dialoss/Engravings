@@ -27,7 +27,7 @@ function getMaxBottom(container) {
         !['timeline'].includes(container.getAttribute('data-type'))) {
         m = dataHeight * ratio;
         const info = container.querySelector(':scope > .item__image .info__block');
-        if (info) m += info.getBoundingClientRect().height;
+        if (info && container.getBoundingClientRect().height === 0) m += info.getBoundingClientRect().height;
     }
     return m;
 }

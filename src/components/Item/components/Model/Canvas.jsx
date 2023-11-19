@@ -7,7 +7,7 @@ import {registerPress} from "helpers/events";
 import JSZip from "jszip"
 import {Mesh, MeshStandardMaterial} from "three";
 
-const MyCanvas = ({url}) => {
+const MyCanvas = ({data}) => {
     function enableSelect() {
         document.body.style.userSelect = 'auto';
     }
@@ -16,16 +16,16 @@ const MyCanvas = ({url}) => {
         registerPress();
     }
     return (
-        <div style={{height:"400px", width:"100%"}}>
+        <div style={{width:"100%", height: '100%'}}>
             <Canvas onMouseDown={disableSelect} onMouseUp={enableSelect} resize={{ scroll: false }}
                     camera={{fov: 45}}>
                 <color attach={"background"} args={["rgb(255,255,255)"]}></color>
                 <Suspense fallback={null}>
                     <Stage preset={"soft"} environment={"sunset"} center={[-5,0,-10]}>
-                        <Model url={url} />
+                        <Model url={data.url} />
                     </Stage>
                 </Suspense>
-                <OrbitControls autoRotate zoomSpeed={5} onWheel={(e)=>false}/>
+                <OrbitControls autoRotate={data.rotation} zoomSpeed={5} onWheel={(e)=>false}/>
             </Canvas>
         </div>
     );

@@ -136,9 +136,8 @@
   .avatar__wrapper {
     display: flex;
     align-items: center;
-
-
   }
+
   &.opened {
     .sidebar__search{
       opacity: 1;
@@ -154,6 +153,14 @@
       .avatar {
         width: 30px;
         height: 30px;
+      }
+    }
+    & + .wrapper {
+      @include mobile {
+        .avatar {
+          //visibility: hidden;
+          //opacity: 0;
+        }
       }
     }
   }

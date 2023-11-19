@@ -10,6 +10,9 @@ import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 
 export const SimpleItem = ({item, depth=0}) => {
     const ref = useRef();
+    useLayoutEffect(() => {
+        item.items && item.items.sort((a, b) => a.group_order - b.group_order);
+    }, []);
     useEffect(() => {
         const itemRef = ref.current;
         const itemTransform = itemRef.closest(".transform-item");
@@ -17,24 +20,27 @@ export const SimpleItem = ({item, depth=0}) => {
 
         let mediaItems = 0;
         let itemsRow = 1;
-        item.items.forEach(item => {
-            if (['video', 'image', 'model'].includes(item.type) && item.position !== 'absolute') mediaItems += 1;
-        })
+        for (const it of item.items) {
+            if (['video', 'image', 'model'].includes(it.type) && it.position !== 'absolute') mediaItems += 1;
+        }
         if (mediaItems >= 3 && !isMobileDevice()) itemsRow = 3;
         else if (mediaItems >= 2) itemsRow = 2;
-        const items = container.querySelector('.items-wrapper');
-        if (items) {
-            for (const it of items.querySelectorAll(':scope > .transform-item')) {
-                if (isMobileDevice() && it.getAttribute('data-type') === 'subscription') {
-                    it.style.width = '100%';
-                    it.style.position = 'initial';
-                }
-                if (it.style.position !== 'absolute' && it.style.width === 'auto') {
-                    if (['video', 'image', 'model'].includes(it.querySelector('.transform-container').getAttribute('data-type'))) {
-                        it.style.width = 100 / itemsRow + '%';
-                    } else {
-                        it.style.width = '0%';
-                    }
+        const wrapper = container.querySelector('.items-wrapper');
+        for (const it of item.items) {
+            let transform = wrapper.querySelector(`.item[data-id="${it.id}"]`);
+            if (!transform) continue;
+            transform = transform.closest('.transform-item');
+            if (isMobileDevice() && it.type === 'subscription') {
+                transform.style.width = '100%';
+                transform.style.position = 'initial';
+            }
+            if (it.position !== 'absolute' && it.width === 'auto') {
+                if (['video', 'image', 'model'].includes(it.type)) {
+                    const h = +(it.height.slice(0, -2));
+                    const w = +(it.container_width.slice(0, -2));
+                    if (h / w * Math.min(window.innerWidth, 1100) + 100 > window.innerHeight && !isMobileDevice() && itemsRow === 1)
+                        transform.style.width = '50%';
+                    else transform.style.width = 100 / itemsRow + '%';
                 }
             }
         }
@@ -67,7 +73,7 @@ export const SimpleItem = ({item, depth=0}) => {
 const Item = ({item, depth=0}) => {
     const admin = useSelector(state => state.users.current.isAdmin);
     return (
-        <TransformItem key={item.id}
+        <TransformItem key={item.id + item.items.length}
                        config={item}
                        data-group={item.group_order}
                        data-type={item.type}

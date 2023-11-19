@@ -17,6 +17,7 @@ import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 import {adminEmail} from "../api/config";
 import {SearchContainer} from "../../../ui/Tools/Tools";
 
+
 const MessengerSidebar = () => {
     const userAdmin = useSelector(state => state.users.current);
     const {rooms, room, users, user} = useSelector(state => state.messenger);
@@ -27,11 +28,7 @@ const MessengerSidebar = () => {
             return;
         }
         if (room.id === id) id = '';
-        updateUser('realtime', {currentRoom: id});
         setCurrentRoom(id);
-        if (id && rooms[id].newMessage && rooms[id].lastMessage.user !== user.id) {
-            updateRoom({newMessage: false})
-        }
     }
 
     const [isOpened, setOpened] = useState(() => (!isMobileDevice() || getViewportSize() < 500));
@@ -82,27 +79,26 @@ const MessengerSidebar = () => {
         setUserList(l => ({...l, users: newUsers}));
     }
 
-    useEffect(() => {
+    function templateRoom() {
         let companion = 0;
         for (const user in users) {
             if (users[user].email === adminEmail) companion = user;
         }
-        !Object.values(rooms).length && !!companion && (store.dispatch(actions.setField({field:'rooms', data: {1: {
+        if (companion) return {1: {
                     users: [adminEmail, adminEmail],
                     picture: users[companion].picture,
                     title: users[companion].name,
                     lastMessage: {},
                     newMessage: false,
                     notified: true,
-                    id: 1,
+                    id: '',
                     companion,
-                }}})));
-    }, [users]);
-
-    // console.log(rooms)
+                }};
+        return {};
+    }
     return (
         <Swipes callback={setOpened} state={isOpened} className={'messenger'}>
-            <div className={"messenger__sidebar-inner " + (isOpened ? 'opened' : 'closed')}>
+            <div className={"scrollable messenger__sidebar-inner " + (isOpened ? 'opened' : 'closed')}>
                 <Slider togglers={togglers} callback={(v) => setOpened(v)} defaultOpened={isOpened}>
                     <div className={"sidebar-container"}>
                         <div className={"sidebar__search"}>
@@ -125,7 +121,7 @@ const MessengerSidebar = () => {
                         </AccordionContainer>}
                         <div className={'sidebar__users-delimiter'}></div>
                         <SidebarList className={'sidebar__rooms'}
-                                     list={rooms}
+                                     list={Object.values(rooms).length ? rooms : templateRoom()}
                                      currentItem={(id) => id === room.id}
                                      text={'title'}
                                      subtext={true}

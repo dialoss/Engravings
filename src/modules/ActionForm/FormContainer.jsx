@@ -6,6 +6,29 @@ import MyForm from "components/Modals/MyForm/MyForm";
 import {isMobileDevice, triggerEvent} from "helpers/events";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 
+export const UserPrompt = () => {
+    const [prompt, setPrompt] = useState({isOpened: false, data:{}, button:'', submitCallback: ()=>{}});
+
+    function closePrompt(fields) {
+        if (fields && prompt.submitCallback) {
+            prompt.submitCallback(fields);
+        }
+        setPrompt(p => ({...p, isOpened:false}));
+    }
+    useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
+    return (
+        <ModalManager name={'user-prompt:toggle'}
+                      defaultOpened={prompt.isOpened}
+                      callback={(v) => !v && closePrompt()}
+                      closeConditions={['btn', 'esc']}>
+            <div className={"user-prompt"} style={{bg:'bg-none', win:'centered', boxShadow:'0 0 2px 2px grey', borderRadius:8}}>
+                <FormContainer formData={prompt} callback={closePrompt}>
+                </FormContainer>
+            </div>
+        </ModalManager>
+    );
+}
+
 const ElementForm = () => {
     const windowName = "form-window:toggle";
     const [form, setForm] = useState(null);

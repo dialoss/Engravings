@@ -4,7 +4,8 @@ import Comments from "./components/CommentsContainer";
 import Container from "../../ui/Container/Container";
 import {useSelector} from "react-redux";
 let counter = 0;
-const PageComments = ({visible}) => {
+const PageComments = () => {
+    const visible = useSelector(state => state.location.pageComments);
     const location = useSelector(state => state.location);
     const docRef = useRef();
     const [document, setDocument] = useState(null);

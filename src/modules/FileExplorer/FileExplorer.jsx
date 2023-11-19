@@ -1,7 +1,7 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./file-explorer/file-explorer.css";
 import "./file-explorer/file-explorer";
-import {ExplorerViews, init, initTooltip, TextBar} from "./config";
+import {ExplorerViews, init, initItems, initTooltip, TextBar} from "./config";
 import "./Custom.scss";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
@@ -11,36 +11,99 @@ import TransformItem from "../../ui/ObjectTransform/components/TransformItem/Tra
 import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
+import {fetchRequest, sendRequest} from "../../api/requests";
+import {fileToItem} from "./helpers";
+import {driveRequest} from "./api/google";
+import {getLocation} from "../../hooks/getLocation";
+import {useSelect} from "@react-three/drei";
+import {useSelector} from "react-redux";
+
+const Toolbar = ({data, setData}) => {
+    return (
+        <div className="filemanager-sort fe_fileexplorer_item_text">
+            {
+                TextBar.map(t => <SortContainer data={data}
+                                                config={t}
+                                                setData={setData} key={t.sortBy}>
+                </SortContainer>)
+            }
+        </div>
+    );
+}
+
+const Sidebar = ({image}) => {
+    if (!image.meta) return;
+    return (
+        <div className="filemanager__sidebar">
+            <img src={image.meta.url} alt=""/>
+        </div>
+    );
+}
 
 const FileExplorer = () => {
-    useEffect(() => {
+    const location = useSelector(state => state.location).pageSlug;
+    useLayoutEffect(()=>{
         window.filemanager = init();
-    }, []);
-
-    const zoomController = (e) => {
-        if(e.ctrlKey) {
-            if (!getElementFromCursor(e, 'fe_fileexplorer_wrap')) return;
-            e.preventDefault();
-            if (e.deltaY < 0) {
-                scale.current = Math.min(15, (scale.current + 1));
-            } else {
-                scale.current = Math.max(1, (scale.current - 1));
+    },[]);
+    useLayoutEffect(() => {
+        driveRequest({
+            request: {
+                method: 'POST',
+                parent: '',
+                action: 'create folder with path',
+                data: {
+                    path: ['site', 'storage', location],
+                }},
+            callback: (folder) => {
+                window.filemanager.SetPath([...window.filemanager.settings.initpath,
+                    [ folder[0].id, folder[0].name, { canmodify: true } ]]);
             }
-            ref.current.style.setProperty('--icon-size', scale.current + 'em');
-        }
-    };
-    useAddEvent('mousewheel', zoomController);
+        })
+    }, [location]);
+    useEffect(() => {
+        const zoomController = (e) => {
+            if(e.ctrlKey) {
+                if (!getElementFromCursor(e, 'fe_fileexplorer_wrap')) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.deltaY < 0) {
+                    scale.current = Math.min(15, (scale.current + 1));
+                } else {
+                    scale.current = Math.max(1, (scale.current - 1));
+                }
+                ref.current.style.setProperty('--icon-size', scale.current + 'em');
+            }
+        };
+        window.addEventListener('mousewheel', zoomController, {passive: false});
+        return () => window.removeEventListener('mousewheel', zoomController);
+    }, []);
 
     const ref = useRef();
     const scale = useRef();
     const [view, setView] = useState(0);
     const [folder, setFolder] = useState([]);
     const [search, setSearch] = useState([]);
-    const [curImage, setImage] = useState(null);
+    const [curImage, setImage] = useState({});
 
     function changeView() {
         setView(v => (v + 1) % ExplorerViews.length);
     }
+
+    async function addItems() {
+        const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
+        const selected = window.filemanager.GetSelectedItemIDs()
+            .map(id => itemsAll.find(it => it.id === id));
+        for (const item of selected) {
+            const file = await fileToItem({...item, type: item.filetype});
+            triggerEvent("action:callback", [file]);
+        }
+    }
+
+    const toolbar = useRef();
+
+    useEffect(() => {
+        toolbar.current && !window.filemanager.fromSearch && toolbar.current.render(<Toolbar data={search} setData={setSearch}></Toolbar>);
+    }, [search]);
 
     useEffect(() => {
         scale.current = 4;
@@ -50,28 +113,21 @@ const FileExplorer = () => {
         textBar.classList.add('filemanager-textbar');
         let field = ref.current.querySelector('.fe_fileexplorer_toolbar');
         field.parentNode.insertBefore(textBar, field.nextSibling);
-
-        const filemanagerRoot = createRoot(textBar);
-        filemanagerRoot.render(<div className="filemanager-sort fe_fileexplorer_item_text">
-            {
-                TextBar.map(t => <SortContainer data={search}
-                                                config={t}
-                                                setData={setSearch} key={t.sortBy}>
-                </SortContainer>)
-            }
-        </div>);
-
+        toolbar.current = createRoot(textBar);
 
         const openFile = (folder, entry) => {
             if (entry.filetype !== 'image') return;
-            let pic = new Image();
-            pic.src = entry.url;
-            pic.crossOrigin = 'Anonymous';
-            pic.onload = () => {
-                setImage(pic);
-            }
+            setImage({meta: entry});
+            fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
+                let blob = new Blob([file], { type: entry.mimeType});
+                let imageUrl = window.URL.createObjectURL( blob );
+                let img = new Image();
+                img.src = imageUrl;
+                setImage({image:img, folder: window.filemanager.GetCurrentFolder(), meta: entry});
+            });
         }
         window.filemanager.addEventListener('open_file', openFile);
+
     }, []);
 
     useLayoutEffect(() => {
@@ -82,12 +138,10 @@ const FileExplorer = () => {
     function refreshFolder() {
         window.filemanager.RefreshFolders(true);
     }
-
     useLayoutEffect(() => {
-        try {
-            // console.log(search)
-            window.filemanager.GetCurrentFolder().SetEntries(search);
-        } catch (e) {}
+        if (!window.filemanager.GetCurrentFolder) return;
+        window.filemanager.GetCurrentFolder().SetEntries(search);
+        initItems();
     }, [search]);
 
     useAddEvent('filemanager:changeFolder', () => {
@@ -110,9 +164,14 @@ const FileExplorer = () => {
         triggerEvent("filemanager-window:toggle", {isOpened: true});
     })
 
+    useAddEvent('keydown', e => {
+       if (e.ctrlKey && e.shiftKey && e.code === 'KeyF')
+           triggerEvent("filemanager-window:toggle", {toggle: true});
+    });
+
     return (
         <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:25}}
+            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:8}}
                            style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
                            className={'edit'}
                            data-type={'modal'}>
@@ -130,15 +189,19 @@ const FileExplorer = () => {
                                                  placeholder={'Поиск по файлам'}>
                                 </SearchContainer>
                             </div>
-                            <div className="button refresh" onClick={refreshFolder}>
+                            <div className="button filemanager-view__button" onClick={refreshFolder}>
                                 Обновить
                             </div>
                             <div className="button filemanager-view__button" onClick={changeView}>Вид</div>
+                            <div className="button filemanager-view__button" onClick={addItems}>Добавить</div>
                         </div>
                     </div>
                     <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
                 </div>
-                <ImageEditor image={curImage}></ImageEditor>
+                <div className="filemanager-right">
+                    {/*<ImageEditor image={curImage}></ImageEditor>*/}
+                    <Sidebar image={curImage}></Sidebar>
+                </div>
             </div>
             </TransformItem>
         </ModalManager>

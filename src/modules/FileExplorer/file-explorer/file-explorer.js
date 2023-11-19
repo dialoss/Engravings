@@ -575,7 +575,7 @@
 	var Folder = function(path) {
 		if (!(this instanceof Folder))  return new Folder(path);
 
-		var triggers = {}, entries = [], entryidmap = {}, busyref = 0, busyqueue = [], autosort = true;
+		var triggers = {}, entries = [], entryidmap = {}, busyref = 0, busyqueue = [], autosort = false;
 		var $this = this;
 
 		if (!path[path.length - 1][2])  path[path.length - 1][2] = {};
@@ -2779,12 +2779,7 @@
 					if ('tooltip' in entries[x])  node.firstChild.title = entries[x].tooltip;
 					else  node.firstChild.title = '';
 
-
-					node.firstChild.setAttribute('data-model', entries[x].urn);
-					node.firstChild.setAttribute('data-itemtype', entries[x].filetype);
-					node.firstChild.setAttribute('data-itemname', entries[x].name);
-
-					itemtext.innerHTML = `<p class="text">${entries[x].name}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
+					itemtext.innerHTML = `<p class="text">${entries[x].name}</p><p class="type">${entries[x].filetype}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
 
 					node.dataset.fehash = entries[x].hash;
 				}

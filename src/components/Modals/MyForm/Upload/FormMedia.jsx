@@ -1,6 +1,6 @@
 import React from 'react';
 import "./FormMedia.scss";
-import {Components} from "../../../Item/components/ItemData";
+import ItemData, {Components} from "../../../Item/components/ItemData";
 
 const FormMedia = ({files}) => {
     return (
@@ -9,7 +9,7 @@ const FormMedia = ({files}) => {
             {
                 Object.values(files).map((file,index) =>
                     <div className={"media-item"} key={index}>
-                        {file.type !== 'model' && React.createElement(Components[file.type], {data: file})}
+                        {file.type !== 'model' && <ItemData data={file}></ItemData>}
                         <p className={"media-text"}>{file.filename}</p>
                     </div>
                 )

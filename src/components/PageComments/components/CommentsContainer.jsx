@@ -17,6 +17,8 @@ import {sendEmail} from "../../../api/requests";
 import {getLocation} from "../../../hooks/getLocation";
 import {useSelector} from "react-redux";
 import {SearchContainer} from "../../../ui/Tools/Tools";
+import {sendCloudMessage} from "../../Messenger/api/notifications";
+import NavButton from "../../../ui/Navbar/Button/NavButton";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
@@ -79,8 +81,20 @@ const CommentsContainer = ({page, document, setDocument}) => {
     const config = {
         onsuccess: (message) => {
             const location = getLocation();
+            const users = store.getState().users.users;
+            const thread = message.parent;
+            if (thread) {
+                const parentUser = users[comments.find(comm => comm.id === thread).user];
+                parentUser && sendCloudMessage({
+                    title: 'MyMount | Новый комментарий',
+                    body: user.name + ': ' + (message.value.text || message.value.upload.filename),
+                    data: {url: getLocation().fullURL + '?action=comments'},
+                    companion: parentUser.email,
+                });
+            }
+
             sendEmail({
-                recipient:'matthewwimsten@gmail.com',
+                recipient: 'matthewwimsten@gmail.com',
                 type: 'comment',
                 subject: 'MyMount | Новый комментарий',
                 data: {
@@ -101,9 +115,13 @@ const CommentsContainer = ({page, document, setDocument}) => {
     useEffect(() => {
         setSearch(comments);
     }, [comments]);
+
+    const [limit, setLimit] = useState(40);
     useEffect(() => {
-        setCommentsTree(createCommentsTree(comments, sorting, search));
-    }, [sorting, search]);
+        setCommentsTree(createCommentsTree(comments, sorting, search, limit));
+    }, [sorting, search, limit]);
+    console.log(limit)
+
     const manager = new MessageManager('comments', actions, config);
     return (
         <CommentsContext.Provider value={manager}>
@@ -124,6 +142,7 @@ const CommentsContainer = ({page, document, setDocument}) => {
                 <div className={"comments"}>
                     <p id={'counter'}>Всего комментариев: {search.length}</p>
                     <Comments comments={commentsTree}></Comments>
+                    <NavButton className={"load-more"} data={{text: 'Показать больше', callback:()=>setLimit(l => l + 40)}}></NavButton>
                 </div>
             </div>
         </CommentsContext.Provider>

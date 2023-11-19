@@ -24,9 +24,16 @@ class LocalAuth {
     static setUser(data) {
         if (data.auth) {
             userStore({...data.user, authenticated: true});
+            triggerEvent("alert:trigger", {
+                type: 'success',
+                body: '',
+            });
             return true;
         } else {
-            data.error && alert(data.error);
+            data.error && triggerEvent("alert:trigger", {
+                type: 'error',
+                body: data.error,
+            });
             return false;
         }
     }

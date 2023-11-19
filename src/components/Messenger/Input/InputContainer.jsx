@@ -9,7 +9,7 @@ import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 
 const emptyMessage = {text:'', upload:[]};
 
-const InputContainer = ({extraFields={}, manager, children}) => {
+const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
     const [message, setMessage] = useState(emptyMessage);
     const mRef = useRef();
     mRef.current = message;
@@ -34,16 +34,6 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         if (!text.trim() && !upload) return;
         setMessage(emptyMessage);
 
-        const httpRegexG = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g;
-
-        try {
-            let urls = text.match(httpRegexG);
-            for (const url of urls) {
-                text = text.replaceAll(url, `<a href="${url}">${url}</a>`)
-            }
-        }catch (e){}
-
-
         let uploadData = upload ? {
             url: '',
             type: getFileType(upload.name),
@@ -60,7 +50,8 @@ const InputContainer = ({extraFields={}, manager, children}) => {
         });
         if (upload) {
             const document = manager.config.getDocument();
-            manager.uploadMedia(upload).then(uploadUrl => {
+            console.log(upload)
+            manager.uploadMedia(upload).then(data => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({
                         ...msg,
@@ -68,14 +59,17 @@ const InputContainer = ({extraFields={}, manager, children}) => {
                             text,
                             upload: {
                                 ...uploadData,
-                                url: uploadUrl,
+                                url: data.url,
                                 uploading: false,
+                                container_width: data.container_width,
+                                height: data.height,
                             }
                         }
                     })});
             });
         }
         manager.config.onsuccess(msg);
+        closeCallback && closeCallback();
     }
 
     const lastInput = useRef();

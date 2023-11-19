@@ -53,11 +53,6 @@ export function getElementFromCursor(event, className, classNames=[]) {
     try {
         const intersect = document.elementsFromPoint(event.clientX, event.clientY);
         for (const element of intersect) {
-            if (element.getAttribute('data-type') === 'modal') {
-                return element;
-            }
-        }
-        for (const element of intersect) {
             for (const cl of classNames) {
                 if (element.classList.contains(cl)) {
                     return element;
@@ -68,6 +63,19 @@ export function getElementFromCursor(event, className, classNames=[]) {
     return null;
 }
 
+export function getElementByType(event, type) {
+    if (!event) return null;
+    if (!!event.touches) event = event.touches[0];
+    try {
+        const intersect = document.elementsFromPoint(event.clientX, event.clientY);
+        for (const element of intersect) {
+            if (element.getAttribute('data-type') === type) {
+                return element;
+            }
+        }
+    } catch (e) {}
+    return null;
+}
 
 export const useLongPress = (
     onLongPress,
@@ -126,3 +134,16 @@ const preventDefault = event => {
         event.preventDefault();
     }
 };
+
+export function matchURL(text) {
+    const reg = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+
+    let urls = text.match(reg);
+    if (urls){
+        for (const url of urls) {
+            text = text.replaceAll(url, `<a href="${url}">${url}</a>`)
+        }
+    }
+
+    return text;
+}

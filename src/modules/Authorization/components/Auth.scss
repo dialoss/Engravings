@@ -102,7 +102,7 @@
     justify-content: center;
   }
   &.default {
-    z-index: 10;
+    z-index: $zindex-modal;
   }
   .action-button {
     font-size: 16px !important;

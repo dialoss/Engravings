@@ -5,11 +5,11 @@ import {AutodeskModel} from "ui/Viewer";
 const Viewer = ({data}) => {
     const ref = useRef();
     useEffect(() => {
+        if (!data.urn) return;
         const resizer = new ResizeObserver(() => {
-            if (!ref.current || !window.autodeskViewer) return;
+            if (!ref.current || !window.autodeskViewers) return;
             let block = ref.current.getBoundingClientRect();
-            console.log(ref.current)
-            window.autodeskViewer.impl.resize(block.width, block.height, true);
+            window.autodeskViewers[data.id].impl.resize(block.width, block.height, true);
         });
         resizer.observe(ref.current);
         return () => {
@@ -22,7 +22,7 @@ const Viewer = ({data}) => {
         <>
             <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
                 {!!data.urn ? <AutodeskModel data={data}></AutodeskModel> :
-                    <MyCanvas url={data.url}></MyCanvas>}
+                    <MyCanvas data={data}></MyCanvas>}
             </div>
         </>
     );

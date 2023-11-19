@@ -9,19 +9,12 @@ export const elementsSlice = createSlice({
         actionElement: {},
     },
     reducers: {
-        setItemsAll: (state, {payload: {items}}) => {
+        setItemsAll: (state, {payload: {items, page}}) => {
             for (const item of items) {
                 state.itemsAll[item.id] = item;
-                for (const itemChild of item.items) {
-                    state.itemsAll[itemChild.id] = itemChild;
-                }
-            }
-            return state;
-        },
-        setElements: (state, {payload: {items, page}}) => {
-            for (const item of items) {
                 item.type === 'image' && (state.items[item.id] = item)
                 for (const itemChild of item.items) {
+                    state.itemsAll[itemChild.id] = itemChild;
                     itemChild.type === 'image' && (state.items[itemChild.id] = itemChild)
                 }
             }

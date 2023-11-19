@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useReducer, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import ItemList from "components/ItemList/ItemList";
 import {actions, localReducer} from "../store/reducers";
@@ -17,13 +17,14 @@ const ItemListContainer = () => {
     itemsRef.current = items;
     const globalDispatch = useDispatch();
     const totalItems = useRef();
+    let page = useSelector(state => state.location.relativeURL);
 
     async function addItems({newItems, count}, fromCache=false) {
         let items = newItems;
+        totalItems.current = count;
+        items = createItemsTree(items);
         if (!fromCache) {
-            totalItems.current = count;
-            items = createItemsTree(items);
-            globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : []}));
+            globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
         }
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
@@ -33,12 +34,12 @@ const ItemListContainer = () => {
     const limit = useRef();
     limit.current = getLocation().parentSlug ? 80 : 60;
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         changeTab({detail:{tab:0}});
         let offset = 0;
-        let page = getLocation().relativeURL;
         let cachedItems = store.getState().elements.cache[page];
         if (cachedItems) {
+            console.log(cachedItems, page)
             addItems({newItems:cachedItems}, true);
             offset = cachedItems.length;
         } else {
@@ -74,7 +75,7 @@ const ItemListContainer = () => {
         }
         dispatch({method: request.storeMethod, payload: createItemsTree(newItems)});
         if (newItems.length && !newItems[0].empty) {
-            globalDispatch(actions.setItemsAll({items: newItems}));
+            globalDispatch(actions.setItemsAll({items: newItems, page}));
         }
     }
     useAddEvent('itemlist:handle-changes', handleElements);

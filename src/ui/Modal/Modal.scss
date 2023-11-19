@@ -30,18 +30,10 @@
             z-index: calc($zindex-background - 1);
         }
 
-        &.user-prompt {
-            z-index: 30;
-        }
-        &.carousel-window {
-            z-index: 20;
-        }
-
-
         &.bottom {
             width: 100%;
             top: auto;
-            bottom: 10px;
+            bottom: 0;
             left: 50%;
             transform: translate(-50%, 0);
         }

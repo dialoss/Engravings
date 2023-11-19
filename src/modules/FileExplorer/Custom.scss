@@ -2,15 +2,27 @@
   font-size: var(--icon-size);
 }
 
-
 $border: solid #7c7c7c;
 
 .custom-icon-img {
-  max-width: calc(var(--icon-size) / 2);
+  height: 100%;
+  max-height: calc(var(--icon-size) / 2);
   img {
     display: block;
-    width: 100%;
+    max-height: 100%;
     height: 100%;
+  }
+}
+
+.view-default {
+  .custom-icon-img {
+    height: 100%;
+    max-width: calc(var(--icon-size) / 2);
+    img {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
   }
 }
 
@@ -20,6 +32,8 @@ $border: solid #7c7c7c;
 
 .fe_fileexplorer_items_scroll_wrap {
   height: 500px;
+  overflow-y: scroll !important;
+  overscroll-behavior: none;
   @include custom-scrollbar;
 }
 
@@ -31,7 +45,6 @@ $border: solid #7c7c7c;
 
 .filemanager {
   position: relative;
-  display: flex;
   &-left {
     width: 100%;
   }
@@ -40,7 +53,7 @@ $border: solid #7c7c7c;
       display: none;
     }
     .fe_fileexplorer_item_text {
-      .time, .size {
+      .time, .size, .type {
         display: none;
       }
     }
@@ -55,15 +68,28 @@ $border: solid #7c7c7c;
     .fe_fileexplorer_item_text {
       flex-direction: row;
       justify-content: space-between;
-      .size {
-        text-align: right;
-        width: 60px;
+      .wrapper {
+        border-left: 1px $border;
+        border-right: 1px $border;
+        &:hover {
+          cursor: pointer;
+        }
+        height: 100%;
+        display: flex;
+        align-items: center;
+        p {
+          margin: 0 20px;
+        }
       }
-      .time {
-        margin-left: auto;
-        margin-right: 10px;
-        //align-self: flex-end;
-        //display: block;
+      p {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .wrapper-grow {
+        flex-grow: 1;
+      }
+      .wrapper-name {
+        flex-grow: 1;
       }
     }
 
@@ -73,6 +99,19 @@ $border: solid #7c7c7c;
       width: 100%;
       height: var(--icon-size) ;
       display: flex;
+
+      .size {
+        text-align: right;
+        width: 60px;
+      }
+      .time {
+        margin-right: 30px;
+      }
+      .type {
+        min-width: 30px;
+        margin-right: 35px;
+        margin-left: auto;
+      }
     }
   }
 
@@ -104,7 +143,10 @@ $border: solid #7c7c7c;
       .button {
         height: 26px;
         background-color: $color-link-background;
+        padding: 2px;
+        border-radius: 5px;
         &:hover {
+          background-color: #d3d6d8;
           cursor: pointer;
         }
       }
@@ -178,14 +220,11 @@ $border: solid #7c7c7c;
     width: 100%;
     display: flex;
     padding-left: 70px;
-    padding-right: 30px;
+    padding-right: 20px;
     align-items: center;
     border-bottom: 1px $border;
     font-size: 12px;
 
-    .name {
-      margin-left: 40px;
-    }
   }
 }
 
@@ -210,12 +249,18 @@ $border: solid #7c7c7c;
   }
 }
 
+.fe_fileexplorer_statusbar_text_segment_wrap_last {
+  margin-left: auto;
+  font-size: 16px;
+}
+
 .filemanager-tooltip {
   z-index: 2;
   pointer-events: none;
   background-color: #fff;
   box-shadow: 0 0 2px 0 grey;
   padding: 2px;
+  display: flex;
   flex-direction: column;
   position: absolute;
   visibility: hidden;
@@ -226,7 +271,7 @@ $border: solid #7c7c7c;
     display: flex;
     column-gap: 5px;
     p {
-      max-width: calc(min(200px, 50vw));
+      //max-width: calc(min(200px, 50vw));
       overflow: hidden;
       white-space: nowrap;
       font-size: 12px;
@@ -239,8 +284,21 @@ $border: solid #7c7c7c;
   z-index: 25 !important;
 }
 
-.image-editor {
-  border: 2px $border;
-  border-left: none;
+.filemanager__sidebar {
+  max-width: 300px;
+  background-color: #fff;
+  height: 100%;
+  img {
+    max-width: 100%;
+  }
 }
 
+.filemanager-right {
+  border: 2px $border;
+  border-left: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: translate(100%, 0);
+  height: 100%;
+}

@@ -13,13 +13,13 @@ import {realtime, firestore, storage, MDB, adminEmail} from "./config";
 import {getFileType} from "helpers/files";
 import {useSelector} from "react-redux";
 import store from "store";
-import {getGlobalTime} from "../../../api/requests";
+import {getGlobalTime, sendLocalRequest} from "../../../api/requests";
 import {actions} from "../store/reducers";
 import {triggerEvent} from "../../../helpers/events";
 import {fileToItem, uploadFile} from "../../../modules/FileExplorer";
 import {getLocation} from "../../../hooks/getLocation";
 
-const uniqueID = () => Math.floor(performance.now() + performance.timeOrigin * 100);
+const uniqueID = async () => Date.parse((await getGlobalTime()).utc_datetime);
 
 export class MessageManager {
     db = null;
@@ -38,7 +38,7 @@ export class MessageManager {
 
     async sendMessage(data) {
         let sendData = {
-            id: uniqueID(),
+            id: await uniqueID(),
             timeSent: (await getGlobalTime()).utc_datetime,
             user: data.user_id,
             value: data.message,
@@ -50,9 +50,11 @@ export class MessageManager {
 
     uploadMedia(upload) {
         return new Promise(async (resolve) => {
-            uploadFile({folder: null, file: upload, path:['fullsize', this.appName, getLocation().pageSlug], compress:false});
-            let data = await uploadFile({folder: null, file: upload, path:[this.appName, getLocation().pageSlug], compress:true});
-            resolve('https://drive.google.com/uc?id=' + data.id);
+            let path = [this.appName];
+            if (path[0] === 'comments') path.push(getLocation().pageSlug);
+            const file = await uploadFile({file: upload, path});
+            let data = await fileToItem({...file, type: file.filetype});
+            resolve(data.data);
         });
     }
 }
@@ -83,44 +85,34 @@ export function changeRoomData(room, user, users) {
     }
 }
 
-export function createUser(user) {
-    return setDoc(doc(MDB, 'users'), {
-        id: new Date().getTime(),
-        picture: '',
-        rooms: [],
-        ...user,
-    });
-}
-
-
-export function createRoom(usersInRoom) {
+export async function createRoom(usersInRoom) {
+    const messagesID = JSON.stringify(usersInRoom.map(u => u.email).sort());
     const room = {
         users: usersInRoom.map(u => u.email),
         picture: '',
         title: '',
+        messages: messagesID,
         lastMessage: {},
         newMessage: false,
         notified: false,
-        id: uniqueID(),
+        id: await uniqueID(),
     };
     const messagesDoc = {
         messages: [],
     }
-    //console.log(room)
-    addDoc(MDB, messagesDoc).then(m => {
-        room.messages = m.id;
-        updateDoc(doc(MDB, 'rooms'), {rooms: arrayUnion(room)});
+    setDoc(doc(MDB, messagesID), messagesDoc).then(m => {
+        updateDoc(doc(MDB, 'rooms'), {rooms: arrayUnion(room)}).then(d => {
 
-        if (usersInRoom[0].id === usersInRoom[1].id) usersInRoom = [usersInRoom[0]];
-        let updatedUsers = {};
+            if (usersInRoom[0].id === usersInRoom[1].id) usersInRoom = [usersInRoom[0]];
+            let updatedUsers = {};
 
-        usersInRoom.forEach(user => {
-            updatedUsers[user.id] = {...user, rooms: [...user.rooms, room.id]};
+            usersInRoom.forEach(user => {
+                updatedUsers[user.id] = {...user, rooms: [...user.rooms, room.id]};
+            });
+
+            customUpdate('users', '', updatedUsers).then(()=> setCurrentRoom(room.id));
         });
-
-        customUpdate('users', '', updatedUsers).then(()=> setCurrentRoom(room.id));
     });
-    // console.log('created room', room);
 }
 
 export function customUpdate(name, raw, newData) {
@@ -151,41 +143,15 @@ export function useGetUsers() {
     }, []);
 }
 
-export function createNotification(info) {
-    navigator.serviceWorker.ready.then(function (registration) {
-        registration.showNotification(info.title, {
-            body: info.body,
-            badge: "https://drive.google.com/uc?id=1RUXipSltKDNIJ9LtmccZXYy2yc-afZjc",
-            icon: "https://drive.google.com/uc?id=1RUXipSltKDNIJ9LtmccZXYy2yc-afZjc",
-            vibrate: [300, 100, 500, 100, 200],
-            data: info.data,
-        });
-    });
-}
-
-
-function notifyUser(info) {
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "granted") {
-        createNotification(info);
-    } else {
-        triggerEvent('user-prompt', {title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.', button:'ok'})
-        Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-                createNotification(info);
-            }
-        });
-    }
-}
-
 export function useGetRooms() {
-    const {rooms_raw, user, users, room} = useSelector(state => state.messenger);
+    const {rooms_raw, user, users, room, rooms} = useSelector(state => state.messenger);
     useLayoutEffect(() => {
         const unsubscribe = onSnapshot(doc(MDB, 'rooms'), q => {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
-            // console.log('snapshot rooms')
+            console.log(newRooms)
+            console.log('SNAPSHOT ROOMS')
         });
         return () => unsubscribe;
     }, []);
@@ -202,7 +168,6 @@ export function useGetRooms() {
         });
         if (!roomWithAdmin) {
             let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
-            // console.log(u)
             if (u.length > 1) {
                 createRoom(u);
             }
@@ -211,43 +176,63 @@ export function useGetRooms() {
         newRooms.forEach(r => {
             objRooms[r.id] =  changeRoomData(r, user, users);
         });
-        store.dispatch(actions.setField({field:'room',data: objRooms[roomWithAdmin.id]}));
+        console.log('!!!!!', objRooms)
         store.dispatch(actions.setField({field:'rooms', data:objRooms}));
+        roomWithAdmin && !room.id && setCurrentRoom(roomWithAdmin.id);
+    }, [user, rooms_raw, Object.values(users).length]);
+
+    const [meta, setMeta] = useState({});
+
+    useLayoutEffect(() => {
+        const roomsMeta = ref(realtime, 'rooms');
+        onValue(roomsMeta, (snapshot) => {
+            setMeta(snapshot.val());
+        });
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!Object.values(rooms).length) return;
+        let newRooms = structuredClone(rooms);
+        for (const d in meta) {
+            newRooms[d] = {...newRooms[d], ...meta[d]};
+        }
         let haveNewMessage = false;
-        for (const r in objRooms) {
-            const curRoom = objRooms[r];
-            // console.log(curRoom)
+        for (const r in newRooms) {
+            const curRoom = newRooms[r];
             if (curRoom.newMessage &&
                 curRoom.lastMessage.user !== user.id &&
-                !haveNewMessage &&
                 curRoom.id !== room.id
             ) {
                 triggerEvent("messenger:notification", true);
                 haveNewMessage = true;
             }
             if (!(curRoom.newMessage && curRoom.lastMessage.user !== user.id) || curRoom.notified) continue;
-            updateRoom({...curRoom, notified: true}, curRoom.id);
-            notifyUser({title: 'MyMount | Новое сообщение',
-                body: users[curRoom.lastMessage.user].name + ': ' + curRoom.lastMessage.value.text, data: {url :getLocation().fullURL}});
+            updateRoom({notified: true}, curRoom.id);
         }
         !haveNewMessage && triggerEvent("messenger:notification", false);
-        room.id && objRooms[room.id] && objRooms[room.id].newMessage &&
-        objRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
-    }, [user, rooms_raw, Object.values(users).length]);
+        room.id && newRooms[room.id] && newRooms[room.id].newMessage &&
+        newRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
+
+        store.dispatch(actions.setField({field:'rooms', data:newRooms}));
+
+    }, [meta, Object.values(rooms).length]);
 }
 
 export function updateRoom(data, room_id=null) {
-    let {room, rooms} = store.getState().messenger;
-    if (!room.id && room_id) room = rooms[room_id];
+    let {room} = store.getState().messenger;
     if (!room.id) return;
 
-    let newRoom = {[room.id]: {...room, ...data, title:'',picture:''}};
-    delete newRoom[room.id].companion;
-    console.log('UPDATE ROOM', newRoom)
-    return customUpdate('rooms', 'raw', newRoom);
+    console.log('UPDATE ROOM', data)
+    update(ref(realtime, 'rooms/' + (room.id || room_id)), data);
 }
 
 export function setCurrentRoom(id) {
+    console.log('ROOM SET', id)
     if (!id) store.dispatch(actions.setRoom(-1));
     else store.dispatch(actions.setRoom(id));
+    const {rooms, user} = store.getState().messenger;
+    updateUser('realtime', {currentRoom: id});
+    if (id && rooms[id].newMessage && rooms[id].lastMessage.user !== user.id) {
+        updateRoom({newMessage: false})
+    }
 }

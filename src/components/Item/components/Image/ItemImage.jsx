@@ -3,6 +3,7 @@ import './ItemImage.scss';
 import {triggerEvent} from "helpers/events";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
+import {getCompressedImage} from "./helpers";
 
 const ItemImage = ({data, ...props}) => {
     const ref = useRef();
@@ -13,7 +14,7 @@ const ItemImage = ({data, ...props}) => {
 
     return (
         <div className="item__image" ref={ref} {...props}>
-            <img src={data.url} alt=""
+            <img src={getCompressedImage(data, 700)} alt=""
                  onClick={carouselCallback}
                  onDragStart={e => e.preventDefault()}/>
             <InfoBlock data={data}></InfoBlock>

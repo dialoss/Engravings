@@ -41,6 +41,13 @@ const AppRoutes = () => {
     useAddEvent("router:navigate", handleNavigate)
 
     useLayoutEffect(() => {
+        const query = new URLSearchParams(window.location.search);
+        const action = query.getAll('action');
+        switch (action) {
+            case 'messenger':
+                 window.action = 'messenger';
+        }
+        window.history.pushState({}, null, window.location.href.split('?')[0]);
         // const anchor = window.location.hash.slice(1);
         // if (anchor) {
         //     const newLoc = window.location;
@@ -67,7 +74,7 @@ const AppRoutes = () => {
                            key={route.path}/>
                 )
             }
-            <Route path={'*'} element={<Navigate to={'/main/'}/>}/>
+            {/*<Route path={'*'} element={<Navigate to={'/main/'}/>}/>*/}
         </Routes>
     );
 };

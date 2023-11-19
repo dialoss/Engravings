@@ -103,3 +103,6 @@ body {
 .container-grow {
   flex-grow: 1;
 }
+.scrollable {
+  overscroll-behavior: none;
+}

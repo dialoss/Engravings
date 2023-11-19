@@ -2,7 +2,7 @@ import store from "store";
 import {getLocation} from "../../../hooks/getLocation";
 import dayjs from "dayjs";
 import {sendEmail} from "../../../api/requests";
-import {MessageManager, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
+import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
 import {arrayUnion, doc, updateDoc} from "firebase/firestore";
 import {adminEmail, firestore} from "../../../components/Messenger/api/config";
 import {actions} from "../../../components/Messenger";
@@ -16,32 +16,27 @@ export const ContextActions = {
             'quick': {
                 callback: 'add',
                 argument: true,
-                text: 'Quick New',
+                text: 'Новая',
             },
             'empty': {
                 callback: 'add',
                 argument: true,
                 text: 'Пустая',
             },
-            'textfield': {
+            'tabs': {
                 callback: 'add',
                 argument: true,
-                text: 'Текстовое поле',
+                text: 'Вкладки',
             },
-            'price': {
+            'intro': {
                 callback: 'add',
                 argument: true,
-                text: 'Цена',
+                text: 'Шапка',
             },
             'shop': {
                 callback: 'add',
                 argument: true,
                 text: 'Продажа',
-            },
-            'button': {
-                callback: 'add',
-                argument: true,
-                text: 'Кнопка',
             },
             'timeline': {
                 callback: 'add',
@@ -55,11 +50,23 @@ export const ContextActions = {
                     },
                 }
             },
-            'intro': {
+            'textfield': {
                 callback: 'add',
                 argument: true,
-                text: 'Шапка',
+                text: 'Текстовое поле',
             },
+            'price': {
+                callback: 'add',
+                argument: true,
+                text: 'Цена',
+            },
+
+            'button': {
+                callback: 'add',
+                argument: true,
+                text: 'Кнопка',
+            },
+
             'table': {
                 callback: 'add',
                 argument: true,
@@ -137,6 +144,32 @@ export function setActionData(item) {
         case 'button':
             return {
                 text: 'кнопка'
+            }
+        case 'tabs':
+            return {
+                "type": "base",
+                "movable": false,
+                "group_order": "tabs",
+                "show_date": false,
+                "date_created": "2023-11-11T09:08:00.400088Z",
+                "items": [
+                    {
+                        "type": "button",
+                        "width": "35%",
+                        "height": "52.75px",
+                        "group_order": "tab",
+                        "text": "текст",
+                        "link": "$tab_0",
+                    },
+                    {
+                        "type": "button",
+                        "width": "35%",
+                        "height": "52.75px",
+                        "group_order": "tab",
+                        "text": "текст",
+                        "link": "$tab_1",
+                    }
+                ]
             }
         case 'shop':
             return {
@@ -259,6 +292,7 @@ export function setActionData(item) {
                                         "position": "absolute",
                                         "movable": false,
                                         "show_shadow": false,
+                                        group_order: 1,
                                     },
                                     {
                                         "type": "subscription",
@@ -267,6 +301,7 @@ export function setActionData(item) {
                                         "left": "50%",
                                         "position": "absolute",
                                         "show_shadow": false,
+                                        group_order: 2,
                                         "items": [
                                             {
                                                 text: '<h1>Заголовок</h1>',
@@ -330,8 +365,6 @@ export function setActionData(item) {
             const user = store.getState().users.current;
             const location = getLocation();
             const name = user.name.replaceAll(' ', '-');
-            const time = new Date().getTime();
-            const date = dayjs(time).format("HH:mm DD.MM");
             const orderName = location.pageSlug.toUpperCase();
 
             sendEmail({
@@ -357,7 +390,7 @@ export function setActionData(item) {
                     {
                         show_shadow: false,
                         type: 'subscription',
-                        title: 'Дата начала изготовления ' + date,
+                        title: 'Дата начала изготовления ',
                     },
                 ]
             },
@@ -409,6 +442,6 @@ async function actionMessage(text) {
         messenger.style.right = '50px';
         messenger.style.bottom = '200px';
     }
-    store.dispatch(actions.setRoom(adminRoom.id))
+    setCurrentRoom(adminRoom.id);
     triggerEvent("messenger-window:toggle", {isOpened: true});
 }

@@ -12,9 +12,10 @@ import FileExplorer from "../../FileExplorer/FileExplorer";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
 import Modal from "../../../ui/Modal/Modal";
 import {ModalManager} from "../../../components/ModalManager";
-import {FormContainer} from "../../ActionForm/FormContainer";
+import {FormContainer, UserPrompt} from "../../ActionForm/FormContainer";
 import ItemActions from "../ItemActions/EntryActions";
 import ThemeManager from "../../../components/ItemList/ThemeManager";
+import AlertContainer from "../../../ui/Alert/AlertContainer";
 
 
 const ActionManager = () => {
@@ -34,17 +35,6 @@ const ActionManager = () => {
     useAddEvent('action:callback', actionCallback);
     useAddEvent('action:function', actionFunction);
 
-
-    const [prompt, setPrompt] = useState({isOpened: false, data:{}, button:'', submitCallback: ()=>{}});
-
-    function closePrompt(fields) {
-        if (fields && prompt.submitCallback) {
-            prompt.submitCallback(fields);
-        }
-        setPrompt(p => ({...p, isOpened:false}));
-    }
-    useAddEvent('user-prompt', (event) => setPrompt({...event.detail, isOpened: true}))
-    // console.log(prompt)
     const user = useSelector(state => state.users.current);
     return (
         <>
@@ -56,19 +46,12 @@ const ActionManager = () => {
                     <ThemeManager></ThemeManager>
                 </>
             }
-            <ModalManager name={'user-prompt:toggle'}
-                          defaultOpened={prompt.isOpened}
-                          callback={(v) => !v && closePrompt()}
-                          closeConditions={['btn']}>
-                <div className={"user-prompt"} style={{bg:'bg-none', win:'centered', boxShadow:'0 0 2px 2px grey', borderRadius:8}}>
-                    <FormContainer formData={prompt} callback={closePrompt}>
-                    </FormContainer>
-                </div>
-            </ModalManager>
+            <AlertContainer></AlertContainer>
             <ObjectTransform></ObjectTransform>
             <FirebaseContainer></FirebaseContainer>
             <CarouselModal></CarouselModal>
             <MessengerContainer></MessengerContainer>
+            <UserPrompt></UserPrompt>
         </>
     );
 };

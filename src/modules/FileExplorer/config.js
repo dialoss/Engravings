@@ -1,4 +1,4 @@
-import {driveRequest, getMediaType, uploadFile} from "./api/google";
+import {driveRequest, getMediaType, GoogleAPI, uploadFile} from "./api/google";
 import {getLocation} from "../../hooks/getLocation";
 import {triggerEvent} from "../../helpers/events";
 import {createRoot} from "react-dom/client";
@@ -9,36 +9,64 @@ import {upload} from "@testing-library/user-event/dist/upload";
 export const ExplorerViews = ['default', 'list'];
 export const TextBar = [
     {
+        name: 'preview',
+        text: '',
+        sortBy: '',
+        order: -1,
+    },
+    {
         name: 'name',
         text: 'Имя',
         sortBy: 'name',
+        order: -1,
+    },
+    {
+        name: 'type',
+        text: 'Тип',
+        sortBy: 'filetype',
+        order: -1,
     },
     {
         name: 'time',
         text: 'Время изменения',
         sortBy: 'modifiedTime',
+        order: -1,
     },
     {
         name: 'size',
         text: 'Размер',
         sortBy: 'size',
+        order: -1,
     },
 ];
 
-function initLayout() {
-    let items = document.querySelectorAll('.fe_fileexplorer_item_wrap_inner');
-    for (const item of items) {
-        item.ondragstart = e => {
-            let wrapper = item.closest('.fe_fileexplorer_item_wrap');
-            let model = item.getAttribute('data-model');
-            e.dataTransfer.setData('files', JSON.stringify([{
-                id: wrapper.getAttribute('data-feid'),
-                urn: model,
-                type: item.getAttribute('data-itemtype'),
-                name: item.getAttribute('data-itemname'),
-            }]));
-        };
+export function initItems() {
+    const dragArea = document.querySelector('.fe_fileexplorer_items_wrap');
+    if (!dragArea) return;
+    for (const item of dragArea.querySelectorAll('.custom-icon')) {
+        if (item.querySelector('img')) {
+            item.className = 'custom-icon custom-icon-img'
+        }
     }
+}
+
+function initLayout() {
+    const dragArea = document.querySelector('.fe_fileexplorer_items_wrap');
+    dragArea.ondragstart = e => {
+        const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
+        const selected = window.filemanager.GetSelectedItemIDs().map(id => itemsAll.find(it => it.id === id));
+        e.dataTransfer.setData('files', JSON.stringify(selected));
+    }
+    initItems();
+}
+
+function updateStorageSpace() {
+    let apiSession = new GoogleAPI({method:"GET"}, {});
+    apiSession.sendRequest('https://www.googleapis.com/drive/v2/about').then(d => {
+        const f = (size) => window.filemanager.GetDisplayFilesize(size);
+        const space = `Места занято: ${f(+d.quotaBytesUsed)} из ${f(+d.quotaBytesTotal)}`;
+        window.filemanager.SetNamedStatusBarText('space', space);
+    });
 }
 
 
@@ -50,7 +78,9 @@ export function init() {
             item_checkboxes: true
         },
         initpath: [
-            [ '', 'Mymount (/)', { canmodify: true } ]
+            [ '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb', 'Mymount', { canmodify: true } ],
+            [ '1G2OZ6qaAEHhVWv9VmpeURv1mOnGobHtl', 'site', { canmodify: true } ],
+            [ '1eqHekdRFxl8A_WCQkf7g9Cg9xSZP9ZJh', 'storage', { canmodify: true } ],
         ],
         onrefresh: function(folder, required) {
             driveRequest({
@@ -63,8 +93,7 @@ export function init() {
                     folder.SetEntries(data);
                     initLayout();
                     triggerEvent('filemanager:changeFolder');
-                },
-                error: () => {
+                    updateStorageSpace();
                 },
             });
         },
@@ -114,6 +143,7 @@ export function init() {
                 },
                 callback: (data) => {
                     copied(true, data);
+                    updateStorageSpace();
                 },
                 error: () => {
                     copied(false, 'Server/network error.');
@@ -129,6 +159,7 @@ export function init() {
                 },
                 callback: (data) => {
                     deleted(true);
+                    updateStorageSpace();
                 },
                 error: () => {
                     deleted('Server/network error.');
@@ -154,12 +185,15 @@ export function init() {
         },
         oninitupload: async function(startupload, fileinfo) {
             if (fileinfo.type === 'dir') return;
-            let info = fileinfo;
-            if (fileinfo.folder) info.folder = fileinfo.folder.GetPathIDs().slice(-1)[0];
+            const folder = fileinfo.folder.valueOf();
+            let info = {...fileinfo};
+            if (folder) info.folder = folder.GetPathIDs().slice(-1)[0];
+            window.filemanager.SetNamedStatusBarText('message', 'Файл выгружается...');
             return await uploadFile(info, () => {
                 window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
-                fileinfo.folder && setTimeout(() => {
-                    options.onrefresh(fileinfo.folder);
+                updateStorageSpace();
+                folder && setTimeout(() => {
+                    options.onrefresh(folder);
                 }, 500);
             });
         },
@@ -168,7 +202,6 @@ export function init() {
             result.url = 'https://drive.google.com/uc?id=' + ids.slice(-1)[0];
         },
     };
-
     return new window.FileExplorer(elem, options);
 }
 
@@ -178,10 +211,15 @@ export function initTooltip(ref, folder) {
         let root = ref.current.querySelector(`.fe_fileexplorer_item_wrap[data-feid="${item.id}"]`);
         if (!root) continue;
         root = root.children[0];
+        if (root.lastChild.classList.contains('filemanager-tooltip')) {
+            root.removeChild(root.lastChild);
+        }
+
         const tt = document.createElement('div');
         tt.classList.add('filemanager-tooltip');
         root.appendChild(tt);
         createRoot(tt).render(<Tooltip data={item}></Tooltip>);
+
         root.addEventListener('mouseover', (e) => {
             if (root.contains(e.relatedTarget)) return;
             let block = root.getBoundingClientRect();

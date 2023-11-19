@@ -80,8 +80,8 @@ export const AutodeskModel = ({data}) => {
             {token && data.urn && <App urn={data.urn}
                                        token={token}
                                        ui={data.show_ui}
-                                       rotate={data.rotation}
-            />}
+                                       id={data.id}
+                                       rotate={data.rotation}/>}
         </>
     );
 }

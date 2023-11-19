@@ -9,7 +9,8 @@
         position: relative;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 0;
+        padding: 14px 8px 14px 4px;
+
     }
     .editor-wrapper {
         transition: max-width 0.1s linear;
@@ -21,9 +22,9 @@
         left: 0;
         font-style: normal;
         font-size: 14px;
-        top: 50%;
+        //top: 50%;
         opacity: 0.9;
-        transform: translate(0, -50%);
+        //transform: translate(0, -50%);
         word-wrap: initial;
         overflow: hidden;
     }
@@ -33,7 +34,7 @@
         border-top: $style-border;
         position: relative;
         .ql-editor {
-            min-height: 50px;
+            //height: 50px;
         }
         .ql-formats {
             margin-right: 0;
@@ -67,7 +68,7 @@
     }
     .ql-simple .ql-container {
         width: 100%;
-        min-height: 50px;
+        height: 50px;
     }
     .slot {
         display: flex;
@@ -94,7 +95,10 @@
         overflow: hidden;
         position: absolute;
         bottom: calc(100% + 10px);
-        background-color: $color-main;
+        background-color: $color-action-button;
+        p {
+            color: #fff;
+        }
         border-radius: 8px;
         box-shadow: 0 0 2px 0 grey;
         padding: 4px;
@@ -122,7 +126,7 @@
         p {
             position: absolute;
             width: 100%;
-            padding: 14px 8px 14px 4px;
+            //padding: 14px 8px 14px 4px;
         }
     }
 }

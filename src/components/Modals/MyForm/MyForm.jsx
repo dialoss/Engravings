@@ -1,4 +1,4 @@
-import React, {createContext, useRef, useState} from 'react';
+import React, {createContext, useEffect, useRef, useState} from 'react';
 
 import './MyForm.scss';
 
@@ -7,8 +7,12 @@ import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 import ActionButton from "ui/Buttons/ActionButton/ActionButton";
 
 const FormBlock = ({formField}) => {
+    const ref = useRef()
+    useEffect(()=>{
+        ref.current.onmousedown = e => {e.stopPropagation();console.log(e)}
+    },[])
     return (
-        <div className="form__block" onMouseDown={e => e.stopPropagation()}>
+        <div className="form__block" ref={ref}>
             <p>{formField.label}</p>
             <FormComponent field={formField}></FormComponent>
         </div>

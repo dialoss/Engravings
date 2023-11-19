@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect} from 'react';
 import ItemImage from "./Image/ItemImage";
 import ItemTable from "./Table/ItemTable";
 import ItemFile from "./File/ItemFile";
@@ -34,6 +34,13 @@ export const Components = {
 }
 
 const ItemData = ({data, props}) => {
+    useLayoutEffect(() => {
+        if (data.url.includes('google')) return;
+        if (data.url && data.type !== 'image') {
+            data.url = 'https://drive.google.com/uc?id=' + data.url;
+            if (data.type === 'video') {}
+        }
+    }, [data.url]);
     return (
         <>
             {React.createElement(Components[data.type], {

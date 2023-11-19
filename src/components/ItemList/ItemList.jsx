@@ -49,7 +49,7 @@ const ItemList = ({items, className, loadMore=null}) => {
                         items.map((item) => <Item item={item} key={item.id}></Item>)
                     }
                 </MyMasonry>
-                {!!items.length && loadMore && <NavButton className={"load-more"} data={{text: 'ЗАГРУЗИТЬ ЕЩЁ', callback:loadMore}}></NavButton>}
+                {!!items.length && loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}
             </Container>
         </div>
     );

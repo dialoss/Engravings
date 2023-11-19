@@ -35,7 +35,7 @@ export async function fileToItem(data) {
             urn: data.urn,
             type: data.type,
             filename: data.name,
-            url,
+            url: data.id,
         },
         specifyParent: true,
         method: 'POST',

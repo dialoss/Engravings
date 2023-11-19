@@ -49,7 +49,11 @@ let mouseMoved = false;
 export function setItemProps(offset, width) {
     let win = container.getBoundingClientRect();
     if (width) item.style.width = Math.max(0, Math.min(width / win.width * 100, 100)) + "%";
-    if (offset) item.style.left = Math.max(0, Math.min(offset / win.width * 100, 100)) + "%";
+    if (offset) {
+        item.style.left = Math.max(0, Math.min(offset / win.width * 100, 100)) + "%";
+        item.style.right = 'auto';
+        item.style.bottom = 'auto';
+    }
 }
 
 function moveAt(event, shiftX, shiftY) {
@@ -63,9 +67,6 @@ function moveAt(event, shiftX, shiftY) {
     let deltaX = event.clientX - btnX;
     let deltaY = event.clientY - btnY;
     if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return false;
-
-    item.style.right = 'auto';
-    item.style.bottom = 'auto';
 
     if (transform.type === "resize") {
         if (transform.dir === 'resize-left') deltaX *= -1;

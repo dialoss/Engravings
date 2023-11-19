@@ -27,29 +27,38 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             }
         })
         let field = root.root;
-        simple && (field.dataset.placeholder = 'Сообщение');
+        field.dataset.placeholder = 'Сообщение';
         field.addEventListener('keydown', (e) => e.stopPropagation());
         // field.focus();
-        simple && field.addEventListener('blur', (e) => {
-            let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
-            if (target) {
-                e.preventDefault();
-                field.focus();
-            }
-        });
-        simple && field.addEventListener('keydown', (e) => triggerEvent('messenger:keydown', e));
-        field.addEventListener('mousedown', e => e.stopPropagation());
+        if (simple) {
+            field.addEventListener('blur', (e) => {
+                let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
+                if (target) {
+                    e.preventDefault();
+                    field.focus();
+                }
+            });
+            field.addEventListener('keydown', (e) => triggerEvent('messenger:keydown', e));
+        }
         const toolbar = field.closest('.quill').querySelector('.ql-toolbar');
         createRoot(toolbar.querySelector('.ql-emoji')).render(
             <InputEmoji callback={(v) => {
-                // console.log(v)
-                // const pos = root.getSelection().index;
-                callback(m => ({...m, text: m.text + v}));
+                const quill = (ref && ref.current || msgRef && msgRef.current).getEditor();
+                let range = quill.getSelection();
+                let position = range ? range.index : 0;
+                quill.insertText(position, v);
             }}></InputEmoji>);
         createRoot(toolbar.querySelector('.ql-attachment')).render(
             <InputAttachment callback={(v) => callback(m => ({...m, upload:v.upload}))}></InputAttachment>);
-
     }, []);
+
+    useEffect(() => {
+        let root = (msgRef.current || ref.current).getEditor();
+        let field = root.root;
+        field.addEventListener('mousedown', e => {
+            e.stopPropagation()
+        });
+    }, [])
 
     function inputCallback(value) {
         callback(m => ({...m, text:value}));
@@ -63,18 +72,12 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
     const modules = QuillModules[config];
 
     return (
-        <>
             <ReactQuill className={"ql-" + config}
                         ref={ref || msgRef}
                         theme="snow"
-                        // value={!value ? '<br>' : `<p>${value}</p>`}
-                        // onChange={(val) => {
-                        //     inputCallback(val.replaceAll(/<\/?p[^>]*>/g, '').replace('<br>', ''));
                         value={message.text}
                         onChange={inputCallback}
                         modules={modules}/>
-        </>
-
     );
 });
 

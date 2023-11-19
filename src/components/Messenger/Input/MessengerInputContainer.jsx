@@ -8,14 +8,19 @@ import store from "store";
 import {getGlobalTime, sendEmail} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 import {getLocation} from "../../../hooks/getLocation";
+import {sendCloudMessage} from "../api/notifications";
 
 export const MessengerInputContainer = () => {
     let config = {
         onsuccess: (message) => {
             const {room, user, users} = store.getState().messenger;
-            updateRoom({lastMessage: message, newMessage: true, notified:false}).then(() =>
-                store.dispatch(actions.setRoom(room.id))
-            );
+            sendCloudMessage({
+                title: 'MyMount | Новое сообщение',
+                body: user.name + ': ' + (message.value.text || message.value.upload.filename),
+                data: {url: getLocation().fullURL + '?action=messenger'},
+                companion: users[room.companion].email,
+            });
+            updateRoom({lastMessage: message, newMessage: true, notified:false});
             const location = getLocation();
             sendEmail({
                 recipient: users[room.companion].email,

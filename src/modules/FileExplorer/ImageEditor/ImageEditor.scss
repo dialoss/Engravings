@@ -1,9 +1,5 @@
 .image-editor {
   z-index: 30;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform: translate(100%, 0);
   height: 100%;
   @include mobile {
     transform: none;

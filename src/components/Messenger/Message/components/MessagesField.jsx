@@ -9,7 +9,7 @@ const MessagesField = ({messages}) => {
         ref.current.scrollIntoView({behavior: 'instant', block:'nearest'});
     }, [messages, room]);
     return (
-        <div className="messages-inner">
+        <div className="messages-inner scrollable">
             <div className={"messages-field"}>
                 <div className="messages-field__wrapper">
                     <div className={'anchor-top'}></div>

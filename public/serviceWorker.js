@@ -1,14 +1,10 @@
-const CACHE_NAME = 'v1';
-const urls = ['index.html', 'offline.html'];
 
-const addResourcesToCache = async (resources) => {
-};
-
-self.addEventListener("install", (event) => {
-});
 
 self.addEventListener('notificationclick', function (e) {
+    console.log('WORKER')
+    console.log(e)
     e.notification.close();
+    clients.openWindow(e.notification.data.url);
     e.waitUntil(
         clients
             .matchAll({
@@ -18,7 +14,7 @@ self.addEventListener('notificationclick', function (e) {
                 for (const client of clientList) {
                     if (client.url === "/" && "focus" in client) return client.focus();
                 }
-                if (clients.openWindow) return clients.openWindow(e.notification.data.url);
+                if (clients.openWindow) return clients.openWindow(e.data.url);
             }),
     );
 });

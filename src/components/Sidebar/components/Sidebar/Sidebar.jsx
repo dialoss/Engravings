@@ -76,7 +76,7 @@ const Sidebar = ({data, admin, customer}) => {
                                  className={"sidebar__action sidebar__link"}>сообщения</ActionButton>
                         </div>
                     </div>
-                    <div className="sidebar__wrapper">
+                    <div className="sidebar__wrapper scrollable">
                         <div className="sidebar__inner">
                             <div className="sidebar__list-wrapper">
                                 <SidebarList list={data}></SidebarList>

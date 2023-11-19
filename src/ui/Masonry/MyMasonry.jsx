@@ -67,11 +67,11 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
             {
                 externalItems.map(it => <>{it}</>)
             }
-            <div style={{width: '100%'}}>
-                <ActionButton onClick={() => triggerEvent('itemlist:view')} className={'view'}>
+            {!!children.length && <div style={{width: '100%'}}>
+                <ActionButton onClick={() => triggerEvent('itemlist:view')} className={'masonry-view'}>
                     <Columns></Columns>вид
                 </ActionButton>
-            </div>
+            </div>}
             {
                 layout.map((column, i) =>
                     <div className={"masonry__column"}

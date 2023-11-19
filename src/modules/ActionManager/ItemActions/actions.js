@@ -12,7 +12,8 @@ window.addEventListener('keydown', e => {
     if (!window.elementsAction && !actionElements.length) return;
     function reverseMethod(request) {
         if (request.method === 'DELETE') return 'POST';
-        return 'DELETE';
+        if (request.method === 'POST') return 'DELETE';
+        return request.method;
     }
     if (e.ctrlKey) {
         switch (e.code) {
@@ -67,58 +68,70 @@ export default class Actions {
     static elements = [];
     static history = [];
 
-    static action(requests) {
-        console.log(requests)
-        for (const request of requests) {
-            let sendData = request.data || {};
+    static action(data) {
+        Promise.resolve(data).then(resolve => {
+            for (const request of resolve) {
 
-            if (request.specifyElement) sendData.id = actionElement.id;
-            if (request.specifyParent && !('parent' in sendData)) sendData.parent = actionElement.id;
+                let sendData = request.data || {};
 
-            let url = '/api/items/';
-            if (request.method !== 'POST') {
-                if (!actionElement.id) request.method = 'POST';
-                else {
-                    let id = sendData.id;
-                    if (!id) id = actionElement.id;
-                    url += id + '/';
-                }
-            }
-            function preparePage(p) {
-                if (typeof(p) !== 'object') {
-                    const location = getLocation();
-                    return {
-                        slug: location.pageSlug || location.pageID,
-                        path: location.relativeURL.slice(1, -1),
+                if (request.specifyElement) sendData.id = actionElement.id;
+                if (request.specifyParent && !('parent' in sendData)) sendData.parent = actionElement.id;
+
+                if (request.method === "POST" && !sendData.parent && sendData.type !== 'base') {
+                    sendData = {
+                        display_pos: actionElement.display_pos,
+                        type: 'base',
+                        items: [structuredClone(sendData)],
                     }
                 }
-                return p;
-            }
-            sendData.page = preparePage(sendData.page);
-            if (!sendData.group_order && !actionElement.data.group_order) sendData.group_order = window.currentTab;
-            let storeMethod = request.method;
-            if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
-                (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
 
-            if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData);
+                let url = '/api/items/';
+                if (request.method !== 'POST') {
+                    if (!actionElement.id) request.method = 'POST';
+                    else {
+                        let id = sendData.id;
+                        if (!id) id = actionElement.id;
+                        url += id + '/';
+                    }
+                }
 
-            let sendRequest = {
-                initialRequest: request,
-                data: sendData,
-                url,
-                method: request.method,
-                storeMethod,
-            };
-            triggerEvent('itemlist:handle-changes', sendRequest);
-            let prevData = {};
-            for (const f in sendData) {
-                prevData[f] = actionElement.data[f] || sendData[f];
-                prevData.page = preparePage(prevData.page);
+                function preparePage(p) {
+                    if (typeof (p) !== 'object') {
+                        const location = getLocation();
+                        return {
+                            slug: location.pageSlug || location.pageID,
+                            path: location.relativeURL.slice(1, -1),
+                        }
+                    }
+                    return p;
+                }
+
+                sendData.page = preparePage(sendData.page);
+                if (!sendData.group_order && !actionElement.data.group_order) sendData.group_order = window.currentTab;
+                let storeMethod = request.method;
+                if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
+                    (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
+
+                if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData);
+
+                let sendRequest = {
+                    initialRequest: request,
+                    data: sendData,
+                    url,
+                    method: request.method,
+                    storeMethod,
+                };
+                triggerEvent('itemlist:handle-changes', sendRequest);
+                let prevData = {};
+                for (const f in sendData) {
+                    prevData[f] = actionElement.data[f] || sendData[f];
+                    prevData.page = preparePage(prevData.page);
+                }
+                !request.skipHistory && hs.push({...sendRequest, data: prevData});
+                current = hs.length - 1;
+                console.log('HISTORY', hs)
             }
-            !request.skipHistory && hs.push({...sendRequest, data: prevData});
-            current = hs.length - 1;
-            console.log('HISTORY', hs)
-        }
+        })
     }
 
     static add(item='') {
@@ -196,19 +209,9 @@ export default class Actions {
                 display_pos: actionData.display_pos,
                 parent: action.id,
             };
-            if (hs.element.type !== 'base' && !action.id) {
-                request.push({
-                    data: {
-                        display_pos: actionData.display_pos,
-                        type: 'base',
-                        items: [item],
-                    }
-                })
-            } else {
-                request.push({
-                    data: item,
-                });
-            }
+            request.push({
+                data: item,
+            });
             request[request.length - 1].method = 'POST';
             if (hs.type === 'cut') request.push(...Actions.delete([hs.element]));
         });
@@ -221,7 +224,11 @@ export default class Actions {
         const f = el => ({data: structuredClone(el.data), method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
-        return data;
+        return new Promise((resolve) => {
+            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', windowButton:true, submitCallback: () => {
+                resolve(data);
+            }});
+        });
     }
 
     static storage() {

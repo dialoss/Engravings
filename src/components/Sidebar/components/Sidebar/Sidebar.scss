@@ -10,15 +10,15 @@ $color-sidebar-background: rgb(54, 59, 75, 0.8);
     left: 0;
     padding-top: 50px;
     font-size: 15px;
-    z-index: $zindex-utility;
-    max-height: 80dvh;
+    z-index: 9;
+    max-height: 80vh;
     display: flex;
 
     &__block {
         overflow-x: hidden;
         display: flex;
         flex-direction: column;
-        max-height: 80dvh;
+        max-height: 80vh;
     }
 
     .slider, .slider__body {

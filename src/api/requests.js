@@ -1,5 +1,6 @@
 import store from "store";
 import Credentials from "../modules/Authorization/api/googleapi";
+import {triggerEvent} from "../helpers/events";
 
 export async function fetchRequest(url) {
     if (!url.includes('firebase')) {
@@ -45,6 +46,10 @@ export async function sendRequest(url, data, method) {
         await fetch(url, query).then(res => res.json()).then(data => response = data);
     } catch (e) {
         console.log(e);
+        triggerEvent('alert:trigger', {
+            body: 'failed to fetch',
+            type: 'error',
+        })
         return {"detail": "failed to fetch"};
     }
     return response;

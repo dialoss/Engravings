@@ -51,8 +51,11 @@
         }
     }
     &-textfield {
-        span {
-            font-size: min(4vw, 20px) !important;
+        .ql-container {
+            span {
+                font-size: min(4vw, 20px) !important;
+            }
         }
+
     }
 }

@@ -13,6 +13,8 @@ import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {useSelector} from "react-redux";
 import {ModalManager} from "components/ModalManager";
+import store from "../../../store";
+import {getCompressedImage} from "../../Item/components/Image/helpers";
 
 function bounds(n, bound) {
     return (n + bound) % bound;
@@ -22,11 +24,12 @@ function prepareContent(items) {
     let newContent = [];
     Object.values(items).forEach(item => {
         if (item.type !== 'image') return;
-        const parent = Object.values(items).find(it => it.id === item.parent) || {};
+        const itemsAll = store.getState().elements.items;
+        const parent = [...Object.values(items), ...Object.values(itemsAll)].find(it => it.id === item.parent) || {};
         newContent.push({
             navigation: item.navigation === undefined ? true : item.navigation,
             id: item.id,
-            url: item.url,
+            url: getCompressedImage(item, 1500),
             info: {
                 title: item.title || parent.title,
                 description: item.description || parent.description,
@@ -38,14 +41,11 @@ function prepareContent(items) {
 }
 
 export const CarouselModal = () => {
+    const clearContent = {items:[{}],item:0};
     const windowName = 'carousel-window:toggle';
     const contentRef = useRef();
-    const [content, setContent] = useState({items:[{}],item:0});
+    const [content, setContent] = useState(clearContent);
     contentRef.current = content;
-
-    // useLayoutEffect(() => {
-    //     setContent(c => ({...c, items: prepareContent(items)}));
-    // }, [items]);
 
     function openCarousel(event) {
         setContent({items:prepareContent([{...event.detail}]), item:0});
@@ -59,10 +59,6 @@ export const CarouselModal = () => {
         }
     }
     useAddEvent("carousel:open", openCarousel);
-    // useEffect(() => {
-    //     triggerEvent(windowName, {isOpened: true});
-    // }, [content.item]);
-    // console.log(content, items)
     return (
         <>
             {content.items[content.item] && <ModalManager name={windowName} key={windowName}>

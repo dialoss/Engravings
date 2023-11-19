@@ -15,6 +15,9 @@
   &.blueprints {
     --masonry: 2;
     --widthPoints: [300, 400];
+    .wrapper-inner {
+      padding: 6px;
+    }
   }
   &.edit {
     @import "edit";

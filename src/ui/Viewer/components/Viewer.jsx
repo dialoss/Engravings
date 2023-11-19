@@ -66,7 +66,8 @@ class Viewer extends React.Component {
                 this.viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
                 }, { once: true });
 
-                window.autodeskViewer = this.viewer;
+                if (!window.autodeskViewers) window.autodeskViewers = {};
+                window.autodeskViewers[this.props.id] = this.viewer;
 
                 this.updateViewerState({});
             }).then(r => {

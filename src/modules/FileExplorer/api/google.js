@@ -1,12 +1,12 @@
 import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
-import {fileToItem} from "../helpers";
+import {triggerEvent} from "../../../helpers/events";
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";
-let token = '';
-const ROOT_FOLDER = '1KlLCb36NwgGql3grcNAf4pXkH9SKBKEj';
+const ROOT_FOLDER = '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb';
+let token ='';
 
 export class GoogleAPI {
     request = null;
@@ -27,7 +27,9 @@ export class GoogleAPI {
                 ...headers,
             },
             ...body,
-        }).then(r => r.json()).then(data => data).catch(e => console.log(e));
+        }).then(r => {
+            if (r.status === 200) return r.json();
+        }).then(data => data);
     }
 
     listFiles() {
@@ -63,10 +65,13 @@ export class GoogleAPI {
         let props = {};
         if (['sldprt', 'sldasm'].includes(file.name.split('.').slice(-1)[0].toLowerCase())) {
             let urn = await uploadAutodeskFile(file);
+            console.log(urn)
             props = {
-                modelurn: urn,
+                modelurn1: urn.slice(0, urn.length / 2),
+                modelurn2: urn.slice(urn.length / 2),
             }
         }
+        console.log(this.request)
         let location = '';
         return [fetch(UPLOAD_URL + "?uploadType=resumable", {
             method: "POST",
@@ -121,7 +126,6 @@ async function apiMapper(request) {
                 case "new folder":
                     return [await apiSession.createFolder(false)];
                 case "upload":
-                    window.filemanager.SetNamedStatusBarText('message', 'Файл выгружается...', 1000000);
                     return await apiSession.uploadFile(request.data.file);
                 case "copy":
                     return apiSession.copyElements();
@@ -132,7 +136,7 @@ async function apiMapper(request) {
                 case 'create folder with path':
                     let folderID = ROOT_FOLDER;
                     let folderData = null;
-                    for (const f of [...request.data.path, request.data.name]) {
+                    for (const f of [...request.data.path]) {
                         folderData = (await apiSession.createFolder(true, folderID, f));
                         folderID = folderData.id;
                     }
@@ -142,7 +146,11 @@ async function apiMapper(request) {
         case "PATCH":
             return apiSession.updateElement();
         case "DELETE":
-            return apiSession.deleteElements();
+            return new Promise((resolve) => {
+                triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', windowButton:true, submitCallback: () => {
+                    resolve(apiSession.deleteElements());
+                }});
+            });
     }
 }
 
@@ -155,7 +163,11 @@ export function serializeFile(file) {
         type = 'file';
     }
     let fileType = getMediaType(file.mimeType);
-    let props = (file.properties || [{}])[0].value || '';
+    let props = (file.properties || [{}]);
+    let urn = '';
+    for (const prop of props.reverse())
+        urn += prop.value || '';
+
     return {
         'id': id,
         'name': file.title || file.name || '',
@@ -164,7 +176,7 @@ export function serializeFile(file) {
         'hash': id + (new Date().getTime()),
         'thumb': thumb,
         'url': "https://drive.google.com/uc?id=" + id,
-        'urn': props,
+        'urn': urn,
         'filetype': fileType,
         'modifiedTime': dayjs(file.modifiedDate).format("HH:mm DD.MM.YYYY"),
     };
@@ -172,31 +184,35 @@ export function serializeFile(file) {
 
 export async function driveRequest({request, callback, error}) {
     token = await Credentials.getToken();
-    let rawResponse = [];
     try {
-        rawResponse = await apiMapper(request);
-    } catch (e) {error(e)}
-    return Promise.all(rawResponse)
-        .then(response => {
-            if (!response[0]) return;
-            let items = response[0].items || [response[0]];
-            if (!items) {
-                callback([]);
-                return;
-            }
-            callback(Object.values(items).map(file => serializeFile(file)));
-        });
+        return Promise.all(await apiMapper(request))
+            .then(response => {
+                if (!response[0]) return;
+                let items = response[0].items || [response[0]];
+                if (!items) {
+                    callback([]);
+                    return;
+                }
+                callback(Object.values(items).map(file => serializeFile(file)));
+            }).catch(e => {
+                error && error(e);
+                console.log(e)
+            });
+    } catch (e) {
+        error && error(e);
+        console.log(e)
+    }
 }
 
 export function getMediaType(filename) {
     const types = {
         'image': ['png', 'jpeg', 'jpg', 'webp'],
         'model': ['sldprt', 'sld', 'sldw', 'sldasm', 'sdas', 'glb', 'gltf'],
-        'video': ['mp4', 'mkv', 'matroska'],
+        'video': ['mp4', 'mkv', 'matroska', 'avi'],
     };
     for (const type in types) {
         for (const ext of types[type]) {
-            if (filename.includes(ext)) return type;
+            if (filename.toLowerCase().includes(ext)) return type;
         }
     }
     return 'file';
@@ -204,9 +220,8 @@ export function getMediaType(filename) {
 
 export async function uploadFile(fileinfo, callback) {
     let parent = '';
-    if (fileinfo.folder) parent = fileinfo.folder;
+    if (fileinfo.folder !== undefined) parent = fileinfo.folder || ROOT_FOLDER;
     else {
-        let folderName = getMediaType(fileinfo.file.name) + 's';
         await driveRequest({
             request: {
                 method: 'POST',
@@ -214,19 +229,12 @@ export async function uploadFile(fileinfo, callback) {
                 action: 'create folder with path',
                 data: {
                     path: fileinfo.path,
-                    name: folderName,
                 }},
             callback: (folder) => parent = folder[0].id
         });
     }
     let file = fileinfo.file;
     let uploadedFile = null;
-    if (['image'].includes(getMediaType(file.name)) && fileinfo.compress) {
-        await compress(fileinfo.file).then(f => {
-            f.name = file.name;
-            file = f;
-        });
-    }
     await driveRequest({
         request: {
             method: 'POST',
@@ -239,8 +247,6 @@ export async function uploadFile(fileinfo, callback) {
             callback && callback();
             uploadedFile = entry[0];
         },
-        error: () => {
-            console.log('Server/network error.');},
     });
     return uploadedFile;
 }

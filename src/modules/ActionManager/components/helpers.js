@@ -1,5 +1,5 @@
 import store from "store";
-import {getElementFromCursor} from "../../../helpers/events";
+import {getElementByType, getElementFromCursor} from "../../../helpers/events";
 import {actions} from "../../ItemList/store/reducers";
 import {getViewportWidth} from "../../../ui/helpers/viewport";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
@@ -49,7 +49,7 @@ function getElement(event, depth=null) {
 }
 
 export function setActionElement(event) {
-    const modal = getElementFromCursor(event, '');
+    const modal = getElementByType(event, 'modal');
     if (modal) return;
     let el = getElement(event);
     let display_pos = getClickPosition(event);

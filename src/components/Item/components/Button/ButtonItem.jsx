@@ -19,9 +19,11 @@ const ButtonItem = ({data}) => {
         }
         switch (action) {
             case "$buy":
+                window.ym(95613565,'reachGoal','buy');
                 triggerEvent("action:function", {name: 'add', args: 'buy'});
                 break;
             case "$order":
+                window.ym(95613565,'reachGoal','order');
                 triggerEvent("action:function", {name: 'add', args:'order'});
                 break;
             default:

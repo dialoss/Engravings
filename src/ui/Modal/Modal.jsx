@@ -20,9 +20,11 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
 
     const modalName = name.split(':')[0];
     function checkCloseDown(event) {
+        // console.log(name)
         if (opRef.current) {
             const mod = getElementFromCursor(event, modalName);
             const toggle = getElementFromCursor(event, 'modal__toggle-button');
+            // console.log(name, mod, toggle)
             !mod && !toggle && closeCallback();
         }
     }

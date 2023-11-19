@@ -12,6 +12,7 @@ export async function fetchItems(offset, callback, limit) {
         };
         const urlParams = new URLSearchParams(page).toString();
         const response = await sendLocalRequest(`/api/items/?${urlParams}`, {method:"GET"})
+        console.log('FETCHED ITEMS' , response.results)
         callback({newItems: response.results, count: response.count});
         cur += step;
         if (cur >= response.count) break;

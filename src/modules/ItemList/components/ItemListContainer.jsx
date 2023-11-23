@@ -68,7 +68,7 @@ const ItemListContainer = () => {
             globalDispatch(actions.setItemsAll({items: newItems, page}));
         }
     }
-    useAddEvent('itemlist:handle-changes', handleElements);
+    useAddEvent('itemlist:request', handleElements);
 
     function changeTab(event) {
         const t = event.detail;

@@ -30,7 +30,6 @@ export const SimpleItem = ({item, depth=0}) => {
             if (!transform) continue;
             transform = transform.closest('.transform-item');
             if (isMobileDevice()) {
-                transform.style.width = '100%';
                 if (!['model', 'image','video'].includes(item.type)) {
                     it.position = 'initial';
                     it.width = 'auto';
@@ -43,8 +42,10 @@ export const SimpleItem = ({item, depth=0}) => {
                     if (h / w * itemTransform.getBoundingClientRect().width + 100 > window.innerHeight && !isMobileDevice() && itemsRow === 1)
                         transform.style.width = '50%';
                     else transform.style.width = 100 / itemsRow + '%';
-                    it.width = transform.style.width;
+                } else {
+                    transform.style.width = '100%';
                 }
+                it.width = transform.style.width;
             }
         }
         initContainerDimensions({container, resize:true})
@@ -59,7 +60,7 @@ export const SimpleItem = ({item, depth=0}) => {
                 <TransformContainer data-width={item.container_width}
                                     data-type={item.type}
                                     data-height={item.height === 'auto' ? 'fixed' : item.height}>
-                    {!['timeline'].includes(item.type)
+                    {!['timeline', 'timeline_entry'].includes(item.type)
                         && <div className={'items-wrapper'}>
                             {item.items && item.items.map(item =>
                                 <Item depth={depth + 1} item={item} key={item.id}></Item>)}

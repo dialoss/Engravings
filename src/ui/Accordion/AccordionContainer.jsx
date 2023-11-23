@@ -11,13 +11,11 @@ const AccordionContainer = ({children, title, onlyButton=false, header=null, cal
         setOpened(opened => !opened);
     };
 
-    const lastResized = useRef();
     useEffect(() => {
         if (!ref) return;
         const item = ref.current.closest('.item.depth-0');
         const container = item && item.querySelector('.transform-container');
         const resizeObserver = new ResizeObserver(() => {
-
             container && triggerEvent('container:init', {container});
         });
         resizeObserver.observe(ref.current);

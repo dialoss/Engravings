@@ -5,7 +5,15 @@
   padding: 0 0 6px 0 !important;
 }
 
+.timeline__entry {
+  min-height: 40px;
+}
+
 .timeline {
+  .accordion-header {
+    margin-left: 20px;
+  }
+
   padding-top: 20px;
   @include mobile {
     .transform-item{
@@ -17,6 +25,9 @@
     flex-grow: 1;
   }
   &-item {
+    &>.transform-item {
+      width: 100% !important;
+    }
     display: flex;
     justify-content: flex-start;
     .timeline {
@@ -50,10 +61,10 @@
         }
       }
       &-body {
-        padding-right: 15px;
+        display: flex;
         min-height: 40px;
         > div {
-          margin-top: -6px;
+          //margin-top: -6px;
         }
         @include mobile {
           padding-right: 0;
@@ -69,16 +80,26 @@
         }
       }
     }
-    &--disabled {
+    &.disabled {
       .timeline-dot, .timeline-connector {
         div {
           background-color: #989898 !important;
         }
       }
-
     }
   }
-  &-item--secondary {
+  &-item.primary {
+    & > .timeline-body {
+      //margin-left: -20px;
+      //padding-right: 15px;
+    }
+    .accordion-header__wrapper {
+      p {
+        font-weight: 500;
+      }
+    }
+  }
+  &-item.secondary {
     .timeline {
       &-dot {
         div {

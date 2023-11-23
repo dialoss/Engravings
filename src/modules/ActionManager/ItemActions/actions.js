@@ -24,7 +24,7 @@ window.addEventListener('keydown', e => {
                 }
                 let request = hs[current];
                 request.method = reverseMethod(request);
-                hs.length && triggerEvent('itemlist:handle-changes', request);
+                hs.length && triggerEvent('itemlist:request', request);
                 current -= 1;
                 break;
             }
@@ -37,7 +37,7 @@ window.addEventListener('keydown', e => {
                 }
                 let request = hs[current];
                 request.method = reverseMethod(request);
-                triggerEvent('itemlist:handle-changes', hs[current]);
+                triggerEvent('itemlist:request', hs[current]);
                 current += 1;
                 break;
             }
@@ -87,7 +87,7 @@ export default class Actions {
                 if (request.specifyElement && actionElement.type !== 'page') sendData.id = actionElement.id;
                 if (request.specifyParent && !('parent' in sendData) && actionElement.type !== 'page') sendData.parent = actionElement.id;
 
-                if (request.method === "POST" && !sendData.parent && sendData.type !== 'base') {
+                if (request.method === "POST" && !sendData.parent && !['base', 'page'].includes(sendData.type)) {
                     sendData = {
                         display_pos: actionElement.display_pos,
                         type: 'base',
@@ -120,7 +120,7 @@ export default class Actions {
                     method: request.method,
                     storeMethod,
                 };
-                triggerEvent('itemlist:handle-changes', sendRequest);
+                triggerEvent('itemlist:request', sendRequest);
                 let prevData = {};
                 for (const f in sendData) {
                     prevData[f] = actionElement.data[f] || sendData[f];

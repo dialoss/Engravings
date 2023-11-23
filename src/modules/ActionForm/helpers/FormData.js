@@ -23,6 +23,11 @@ function getFieldData(field, element) {
     return element.data[field];
 }
 
+function serializeValue(value, type) {
+    if (type === 'checkbox') return !!value;
+    return value;
+}
+
 export function getFormData({method, element}) {
     let fields = Object.values(formData[element.data.type]);
     let form = {
@@ -38,11 +43,11 @@ export function getFormData({method, element}) {
             for (const l of field.label) {
                 let name = Object.keys(l)[0];
                 let value = method !== 'POST' ? (element.data[field.name] && element.data[field.name][name]) : '';
-                form.data[name] = {value, ...field, name, label:Object.values(l)[0]};
+                form.data[name] = {value: serializeValue(value, field.type), ...field, name, label:Object.values(l)[0]};
             }
         } else {
             let value = method !== 'POST' ? getFieldData(field.name, element) : '';
-            form.data[field.name] = {value, ...field};
+            form.data[field.name] = {value: serializeValue(value, field.type), ...field};
         }
     });
     console.log(form)

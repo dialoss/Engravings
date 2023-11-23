@@ -33,14 +33,10 @@ export const Components = {
     'button':ButtonItem,
 }
 
-const ItemData = ({data, props}) => {
-    useLayoutEffect(() => {
-        if (data.url.includes('google')) return;
-        if (data.url && data.type !== 'image') {
-            data.url = 'https://drive.google.com/uc?id=' + data.url;
-            if (data.type === 'video') {}
-        }
-    }, [data.url]);
+const ItemData = ({data}) => {
+    if (data.url && data.type !== 'image' && !data.url.match(/google|youtube/)) {
+        data.url = 'https://drive.google.com/uc?id=' + data.url;
+    }
     return (
         <>
             {React.createElement(Components[data.type], {

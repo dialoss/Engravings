@@ -43,9 +43,10 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
             newLayout.push([]);
         }
         let ext = []
+        let cnt = 0;
         for (let i = 0; i < children.length; i++) {
-            if (children[i].props.item.group_order === 'tabs') ext.push(children[i]);
-            else newLayout[i % count].push(children[i]);
+            if (children[i].props.item.style === 'tabs') ext.push(children[i]);
+            else newLayout[cnt++ % count].push(children[i]);
         }
         setItems(ext);
         setLayout(newLayout);

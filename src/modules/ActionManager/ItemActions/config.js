@@ -72,11 +72,12 @@ export const ContextActions = {
                 argument: true,
                 text: 'Таблица',
             },
+            'page': {
+                callback: 'add',
+                argument: true,
+                text: 'Страница'
+            }
         }
-    },
-    'storage': {
-        text: 'Хранилище',
-        argument: false,
     },
     'edit':{
         text: 'Редактировать',
@@ -93,6 +94,10 @@ export const ContextActions = {
                 text: 'Сбросить размер',
             },
         }
+    },
+    'storage': {
+        text: 'Хранилище',
+        argument: false,
     },
     'copy':{
         argument: false,
@@ -143,29 +148,30 @@ export function setActionData(item) {
             }
         case 'button':
             return {
+                style: 'nav',
                 text: 'кнопка'
             }
         case 'tabs':
             return {
                 "type": "base",
                 "movable": false,
-                "group_order": "tabs",
+                style: 'tabs',
                 "show_date": false,
                 "date_created": "2023-11-11T09:08:00.400088Z",
                 "items": [
                     {
+                        style: 'nav',
                         "type": "button",
                         "width": "35%",
                         "height": "52.75px",
-                        "group_order": "tab",
                         "text": "текст",
                         "link": "$tab_0",
                     },
                     {
+                        style: 'nav',
                         "type": "button",
                         "width": "35%",
                         "height": "52.75px",
-                        "group_order": "tab",
                         "text": "текст",
                         "link": "$tab_1",
                     }
@@ -178,7 +184,7 @@ export function setActionData(item) {
                     {
                         type: 'subscription',
                         width: "50%",
-                        container_width: '100px',
+                        container_width: 100,
                         height: '100px',
                         show_shadow: false,
                         movable: false,
@@ -186,7 +192,7 @@ export function setActionData(item) {
                     {
                         type: 'subscription',
                         width: "50%",
-                        container_width: '100px',
+                        container_width: 100,
                         height: '100px',
                         show_shadow: false,
                         movable: false,
@@ -204,7 +210,6 @@ export function setActionData(item) {
                                 width: '100%',
                                 price: "999",
                                 text: 'Приобрести',
-                                group_order: 1,
                                 link: '$buy',
                                 show_shadow: false,
                                 movable: false,
@@ -218,7 +223,6 @@ export function setActionData(item) {
                 price: "999",
                 text: 'Приобрести',
                 link: '$buy',
-                group_order: 1,
             }
         case "timeline":
             return {
@@ -271,7 +275,7 @@ export function setActionData(item) {
         case 'intro':
             return {
                 "type": "base",
-                container_width: '1100px',
+                container_width: 1100,
                 "items": [
                     {
                         "type": "base",
@@ -285,14 +289,14 @@ export function setActionData(item) {
                                     {
                                         "type": "subscription",
                                         "width": "50%",
-                                        container_width: '100px',
+                                        container_width: 100,
                                         "height": "100px",
                                         "top": "60px",
                                         "left": "0px",
                                         "position": "absolute",
                                         "movable": false,
                                         "show_shadow": false,
-                                        group_order: 1,
+                                        order: 1,
                                     },
                                     {
                                         "type": "subscription",
@@ -301,7 +305,7 @@ export function setActionData(item) {
                                         "left": "50%",
                                         "position": "absolute",
                                         "show_shadow": false,
-                                        group_order: 2,
+                                        order: 2,
                                         "items": [
                                             {
                                                 text: '<h1>Заголовок</h1>',
@@ -347,7 +351,6 @@ export function setActionData(item) {
                             {
                                 width: '100%',
                                 "type": "price",
-                                group_order: 1,
                                 "text": "Заказать изготовление",
                                 "link": "$order",
                                 "price": "<p>от 160000</p>",
@@ -368,6 +371,7 @@ export function setActionData(item) {
             const orderName = location.pageSlug.toUpperCase();
 
             sendEmail({
+                recipient: 'matthewwimsten@gmail.com',
                 type: 'order',
                 subject: 'MyMount | Новый заказ',
                 data: {
@@ -383,7 +387,6 @@ export function setActionData(item) {
                 description: `Заказ ` + user.name,
                 parent: '',
                 page: {
-                    slug: name,
                     path: 'orders/' + name,
                 },
                 items: [
@@ -399,14 +402,12 @@ export function setActionData(item) {
                     type: 'base',
                     title: orderName,
                     description: `Заказ ` + user.name,
-                    group_order: 'tab_1',
+                    tab: 'tab_1',
                     parent: '',
                     page: {
-                        slug: 'orders',
                         path: 'orders',
                     },
                     page_from: {
-                        slug: name,
                         path: 'orders/' + name,
                     },
                 },

@@ -12,10 +12,8 @@ import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
 import {fetchRequest, sendRequest} from "../../api/requests";
-import {fileToItem} from "./helpers";
+import {fileToItem, fileToMedia} from "./helpers";
 import {driveRequest} from "./api/google";
-import {getLocation} from "../../hooks/getLocation";
-import {useSelect} from "@react-three/drei";
 import {useSelector} from "react-redux";
 
 const Toolbar = ({data, setData}) => {
@@ -46,18 +44,20 @@ const FileExplorer = () => {
         window.filemanager = init();
     },[]);
     useLayoutEffect(() => {
-        driveRequest({
-            request: {
-                method: 'POST',
-                parent: '',
-                action: 'create folder with path',
-                data: {
-                    path: ['site', 'storage', location],
-                }},
-            callback: (folder) => {
-                window.filemanager.SetPath([...window.filemanager.settings.initpath,
-                    [ folder[0].id, folder[0].name, { canmodify: true } ]]);
-            }
+        triggerEvent('filemanager-window:check-opened', isOpened => {
+            !isOpened && driveRequest({
+                request: {
+                    method: 'POST',
+                    parent: '',
+                    action: 'create folder with path',
+                    data: {
+                        path: ['site', 'storage', location],
+                    }},
+                callback: (folder) => {
+                    window.filemanager.SetPath([...window.filemanager.settings.initpath,
+                        [ folder[0].id, folder[0].name, { canmodify: true } ]]);
+                }
+            })
         })
     }, [location]);
     useEffect(() => {
@@ -94,7 +94,7 @@ const FileExplorer = () => {
         const selected = window.filemanager.GetSelectedItemIDs()
             .map(id => itemsAll.find(it => it.id === id));
         for (const item of selected) {
-            const file = await fileToItem({...item, type: item.filetype});
+            const file = fileToItem({...item, type: item.filetype});
             triggerEvent("action:callback", [file]);
         }
     }
@@ -104,6 +104,17 @@ const FileExplorer = () => {
     useEffect(() => {
         toolbar.current && !window.filemanager.fromSearch && toolbar.current.render(<Toolbar data={search} setData={setSearch}></Toolbar>);
     }, [search]);
+
+    const openEditor = (folder, entry) => {
+        if (entry.filetype !== 'image') return;
+        setImage({meta: entry});
+        fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
+            const url = fileToMedia(file);
+            let img = new Image();
+            img.src = url;
+            setImage({image:img, folder: window.filemanager.GetCurrentFolder(), meta: entry});
+        });
+    }
 
     useEffect(() => {
         scale.current = 4;
@@ -115,18 +126,7 @@ const FileExplorer = () => {
         field.parentNode.insertBefore(textBar, field.nextSibling);
         toolbar.current = createRoot(textBar);
 
-        const openFile = (folder, entry) => {
-            if (entry.filetype !== 'image') return;
-            setImage({meta: entry});
-            fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
-                let blob = new Blob([file], { type: entry.mimeType});
-                let imageUrl = window.URL.createObjectURL( blob );
-                let img = new Image();
-                img.src = imageUrl;
-                setImage({image:img, folder: window.filemanager.GetCurrentFolder(), meta: entry});
-            });
-        }
-        window.filemanager.addEventListener('open_file', openFile);
+        window.filemanager.addEventListener('open_file', openEditor);
 
     }, []);
 
@@ -154,12 +154,14 @@ const FileExplorer = () => {
         setSearch(f.GetEntries());
     });
 
-
     useAddEvent("filemanager:open", (event) => {
         const openFile = (folder, entry) => {
-            event.detail.callback(entry);
+            event.detail.callback({...entry, url: entry.id, type: entry.filetype, filename: entry.name});
             triggerEvent("filemanager-window:toggle", {isOpened: false});
+            window.filemanager.removeEventListener('open_file', openFile);
+            window.filemanager.addEventListener('open_file', openEditor);
         }
+        window.filemanager.removeEventListener('open_file', openEditor);
         window.filemanager.addEventListener('open_file', openFile);
         triggerEvent("filemanager-window:toggle", {isOpened: true});
     })
@@ -170,39 +172,38 @@ const FileExplorer = () => {
     });
 
     return (
-        <ModalManager name={"filemanager-window:toggle"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', width:'70%', zIndex:8}}
+        <ModalManager name={"filemanager-window"} closeConditions={['btn', 'esc']}>
+            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', height:'600px', width:'800px'}}
                            style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
                            className={'edit'}
                            data-type={'modal'}>
-            <div className={"filemanager"} ref={ref}>
-                <div className="filemanager-left">
-                    <div className={"filemanager-header__wrapper transform-origin"}>
-                        <div className="filemanager-header buttons">
-                            <WindowButton type={'close'}></WindowButton>
-                        </div>
-                        <div className="filemanager-header toolbar">
-                            <div className="filemanager-search">
-                                <SearchContainer data={folder}
-                                                 searchBy={'name'}
-                                                 setData={setSearch}
-                                                 placeholder={'Поиск по файлам'}>
-                                </SearchContainer>
+                <div className={"filemanager view-" + ExplorerViews[view]} ref={ref}>
+                    <div className="filemanager-left">
+                        <div className={"filemanager-header__wrapper"}>
+                            <div className="filemanager-header buttons transform-origin">
+                                <WindowButton type={'close'}></WindowButton>
                             </div>
-                            <div className="button filemanager-view__button" onClick={refreshFolder}>
-                                Обновить
+                            <div className="filemanager-header toolbar">
+                                <div className="filemanager-search">
+                                    <SearchContainer data={folder}
+                                                     searchBy={'name'}
+                                                     setData={setSearch}
+                                                     placeholder={'Поиск по файлам'}>
+                                    </SearchContainer>
+                                </div>
+                                <div className="button filemanager-view__button" onClick={refreshFolder}>
+                                    Обновить
+                                </div>
+                                <div className="button filemanager-view__button" onClick={changeView}>Вид</div>
+                                <div className="button filemanager-view__button" onClick={addItems}>Добавить</div>
                             </div>
-                            <div className="button filemanager-view__button" onClick={changeView}>Вид</div>
-                            <div className="button filemanager-view__button" onClick={addItems}>Добавить</div>
                         </div>
                     </div>
-                    <div id={"filemanager"} className={'view-' + ExplorerViews[view]}></div>
+                    <div className="filemanager-right">
+                        <ImageEditor image={curImage}></ImageEditor>
+                        {/*<Sidebar image={curImage}></Sidebar>*/}
+                    </div>
                 </div>
-                <div className="filemanager-right">
-                    {/*<ImageEditor image={curImage}></ImageEditor>*/}
-                    <Sidebar image={curImage}></Sidebar>
-                </div>
-            </div>
             </TransformItem>
         </ModalManager>
     );

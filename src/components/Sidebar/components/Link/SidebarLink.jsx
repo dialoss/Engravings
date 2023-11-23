@@ -3,7 +3,6 @@ import {darkenColor} from "../rgbmanip";
 import styles from "./SidebarLink.scss";
 import {getLocation} from "hooks/getLocation";
 import {Link} from "react-router-dom";
-import {triggerEvent} from "helpers/events";
 
 const linkColor = styles.linkColor;
 
@@ -11,7 +10,7 @@ const SidebarLink = ({link, children, depth, haveSublist}) => {
     const location = getLocation();
     const isCurrent = location.relativeURL === link;
     let style = {
-        ...(!isCurrent ? {backgroundColor: darkenColor(linkColor, depth * 20 / 100)} : {}),
+        ...(!isCurrent ? {backgroundColor: darkenColor(linkColor, depth * 10 / 100)} : {}),
         ...(haveSublist ? {paddingLeft: "20px"} : {})
     };
     return (
@@ -22,7 +21,6 @@ const SidebarLink = ({link, children, depth, haveSublist}) => {
                       if (e.button === 2) {
                           e.preventDefault();
                           e.stopPropagation();
-
                       }
             }}>{children}
             </Link>

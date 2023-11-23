@@ -43,10 +43,10 @@
 
     @include mobile {
       & {
-        right: 10px;
+        right: 0px;
       }
       & img {
-        width: 20px;
+        width: 40px;
       }
     }
   }

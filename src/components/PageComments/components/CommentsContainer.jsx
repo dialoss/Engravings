@@ -19,6 +19,7 @@ import {useSelector} from "react-redux";
 import {SearchContainer} from "../../../ui/Tools/Tools";
 import {sendCloudMessage} from "../../Messenger/api/notifications";
 import NavButton from "../../../ui/Navbar/Button/NavButton";
+import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
@@ -48,7 +49,6 @@ const CommentsContainer = ({page, document, setDocument}) => {
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('default'));
     const user = useSelector(state => state.users.current);
-
     useLayoutEffect(() => {
         if (!page) return;
 
@@ -76,6 +76,7 @@ const CommentsContainer = ({page, document, setDocument}) => {
             fetch();
         }
         fetchDocument(false);
+
     }, [page]);
 
     const config = {
@@ -127,24 +128,28 @@ const CommentsContainer = ({page, document, setDocument}) => {
         <CommentsContext.Provider value={manager}>
             <BaseMessagesContainer id={page} callback={setComments} document={document}>
             </BaseMessagesContainer>
-            <div className={"comments-section"}>
-                <div className="comments-section__header">
-                    <InputContainer extraFields={{parent: ''}} children={CommentsInput} manager={manager}></InputContainer>
-                    <div className={"comments-tools__wrapper"}>
-                        <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
-                        <SearchContainer placeholder={'Поиск по комментариям'}
-                                         data={comments}
-                                         inputCallback={v => !v && setSearch(comments)}
-                                         searchBy={'value.text'}
-                                         setData={setSearch}></SearchContainer>
+            <DelayedVisibility timeout={2000} trigger={page}>
+                <div className={"comments-section"}>
+                    <div className="comments-section__header">
+                        <InputContainer extraFields={{parent: ''}} children={CommentsInput} manager={manager}></InputContainer>
+                        <div className={"comments-tools__wrapper"}>
+                            <CommentsTools callback={(e) => setSorting(() => sortFunction(e.target.value))}></CommentsTools>
+                            <SearchContainer placeholder={'Поиск по комментариям'}
+                                             data={comments}
+                                             inputCallback={v => !v && setSearch(comments)}
+                                             searchBy={'value.text'}
+                                             setData={setSearch}></SearchContainer>
+                        </div>
+                    </div>
+                    <div className={"comments"}>
+                        <p id={'counter'}>Всего комментариев: {search.length}</p>
+                        <Comments comments={commentsTree}></Comments>
+                        {limit < comments.length &&
+                            <NavButton className={"load-more"} data={{text: 'Показать больше', callback:()=>setLimit(l => l + 40)}}></NavButton>}
                     </div>
                 </div>
-                <div className={"comments"}>
-                    <p id={'counter'}>Всего комментариев: {search.length}</p>
-                    <Comments comments={commentsTree}></Comments>
-                    <NavButton className={"load-more"} data={{text: 'Показать больше', callback:()=>setLimit(l => l + 40)}}></NavButton>
-                </div>
-            </div>
+            </DelayedVisibility>
+
         </CommentsContext.Provider>
     );
 };

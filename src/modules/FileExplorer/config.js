@@ -4,7 +4,6 @@ import {triggerEvent} from "../../helpers/events";
 import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
 import React from "react";
-import {upload} from "@testing-library/user-event/dist/upload";
 
 export const ExplorerViews = ['default', 'list'];
 export const TextBar = [
@@ -71,11 +70,12 @@ function updateStorageSpace() {
 
 
 export function init() {
-    let elem = document.getElementById('filemanager');
+    let elem = document.querySelector('.filemanager');
 
     let options = {
         tools: {
-            item_checkboxes: true
+            item_checkboxes: true,
+            download: true,
         },
         initpath: [
             [ '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb', 'Mymount', { canmodify: true } ],
@@ -86,6 +86,7 @@ export function init() {
             driveRequest({
                 request: {
                     method: 'GET',
+                    action: 'list',
                     elements: [folder.GetPathIDs().slice(-1)[0]],
                     data: {},
                 },
@@ -157,7 +158,7 @@ export function init() {
                     elements: ids,
                     data: {},
                 },
-                callback: (data) => {
+                callback: () => {
                     deleted(true);
                     updateStorageSpace();
                 },
@@ -183,13 +184,14 @@ export function init() {
                 },
             });
         },
-        oninitupload: async function(startupload, fileinfo) {
+        oninitupload: function(startupload, fileinfo) {
+            console.log(fileinfo)
             if (fileinfo.type === 'dir') return;
             const folder = fileinfo.folder.valueOf();
             let info = {...fileinfo};
             if (folder) info.folder = folder.GetPathIDs().slice(-1)[0];
-            window.filemanager.SetNamedStatusBarText('message', 'Файл выгружается...');
-            return await uploadFile(info, () => {
+            window.filemanager.SetNamedStatusBarText('message', fileinfo.file.name + ' Прогресс: 0%');
+            uploadFile(info, () => {
                 window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
                 updateStorageSpace();
                 folder && setTimeout(() => {
@@ -197,9 +199,16 @@ export function init() {
                 }, 500);
             });
         },
-        ondownloadurl: function(result, folder, ids, entry) {
-            result.name = entry.name;
-            result.url = 'https://drive.google.com/uc?id=' + ids.slice(-1)[0];
+        oninitdownload: function(startdownload, folder, ids, entries) {
+            for (const id of ids) {
+                const url = 'https://drive.google.com/uc?id=' + id + '&export=download';
+                const link = document.createElement('a');
+                link.href = url;
+                link.click();
+                setTimeout(() => {
+                    link.remove();
+                }, 0);
+            }
         },
     };
     return new window.FileExplorer(elem, options);

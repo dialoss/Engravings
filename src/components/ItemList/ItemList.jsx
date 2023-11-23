@@ -6,11 +6,7 @@ import NavButton from "../../ui/Navbar/Button/NavButton";
 import "./ItemList.scss";
 import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
-import PageComments from "../PageComments/PageComments";
-import {fetchItems} from "../../modules/ItemList/api/fetchItems";
 import {useAddEvent} from "../../hooks/useAddEvent";
-import {triggerEvent} from "../../helpers/events";
-import ActionButton from "../../ui/Buttons/ActionButton/ActionButton";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const [config, setConfig] = useState({});
@@ -36,7 +32,6 @@ const ItemList = ({items, className, loadMore=null}) => {
     let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
     const edit = window.editPage ? 'edit' : '';
-    console.log('FORCE',forceColumns)
     return (
         <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
             <Container style={{marginBottom: "50px"}}>

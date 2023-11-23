@@ -2,3 +2,10 @@
   display: block;
   width: 100%;
 }
+.v-vlite {
+  --vlite-colorPrimary: #419ed8 !important;
+}
+
+.v-vlite * {
+  color: #fff;
+}

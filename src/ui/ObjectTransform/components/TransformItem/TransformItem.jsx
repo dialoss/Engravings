@@ -13,7 +13,7 @@ const TransformItem = ({children, config, className, secure, ...props}) => {
     const initialTransform = {
         movable: config.movable !== undefined ? config.movable : true,
         ...config,
-        height: 'auto',
+        height: props['data-type'] === 'modal' ? config.height : 'auto',
         ...(config.zindex ? {zIndex: config.zindex}: {}),
     };
     return (

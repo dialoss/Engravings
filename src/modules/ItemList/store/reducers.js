@@ -4,21 +4,20 @@ export const elementsSlice = createSlice({
     name: "elements",
     initialState: {
         itemsAll: {},
-        items: {},
         cache: {},
+        pageItems: {},
         actionElement: {},
     },
     reducers: {
         setItemsAll: (state, {payload: {items, page}}) => {
             for (const item of items) {
                 state.itemsAll[item.id] = item;
-                item.type === 'image' && (state.items[item.id] = item)
                 for (const itemChild of item.items) {
                     state.itemsAll[itemChild.id] = itemChild;
-                    itemChild.type === 'image' && (state.items[itemChild.id] = itemChild)
                 }
             }
             state.cache[page] = [...(state.cache[page]||[]), ...items];
+            state.pageItems = state.cache[page];
             return state;
         },
         setField: (state, {payload: {field, element}}) => {

@@ -58,6 +58,9 @@ export function getElementFromCursor(event, className, classNames=[]) {
                     return element;
                 }
             }
+            if (element.classList.contains('transform-resize') && classNames.includes('item')) {
+                return element.closest('.transform-item').querySelector(classNames[0]);
+            }
         }
     } catch (e) {}
     return null;

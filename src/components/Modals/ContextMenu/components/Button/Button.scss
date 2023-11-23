@@ -23,13 +23,26 @@ $color-main: rgb(219, 228, 235);
 
 @include f(1);
 
+
 .context__hover {
     transition: all 232ms linear;
     visibility: hidden;
     opacity: 0;
     position: absolute;
     top: -4px;
-    left: calc(100%);
+}
+
+.context-menu {
+    &.left {
+        .context__hover {
+            right: calc(100%);
+        }
+    }
+    &.right {
+        .context__hover {
+            left: calc(100%);
+        }
+    }
 }
 
 .context__button {

@@ -86,7 +86,7 @@ function moveAt(event, shiftX, shiftY) {
         try {
             const cont = item.querySelector('.transform-container');
             cont.style.minHeight = height + 'px';
-        } catch (e) {}
+        } catch (e) {item.style.height = height + 'px'}
         setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
@@ -155,14 +155,14 @@ export function setItemTransform(event, type, _item, _btn) {
                 width: item.style.width || "0",
                 top,
                 left: item.style.left || "0",
-                container_width: item.querySelector('.transform-container').getBoundingClientRect().width + 'px' || "0",
+                container_width: item.querySelector('.transform-container').getBoundingClientRect().width || 0,
             },
             method: 'PATCH',
         },
             {
                 data: {
                     id: parent,
-                    container_width: container.getBoundingClientRect().width + 'px' || "0",
+                    container_width: container.getBoundingClientRect().width || 0,
                 },
                 method: 'PATCH',
                 skipHistory: true,

@@ -15,7 +15,6 @@ export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setD
                 item.visible = false;
                 return false;
             }
-            return {...item};
         })
         setData(newData);
     }

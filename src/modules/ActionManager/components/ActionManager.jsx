@@ -2,20 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {setActionElement} from "./helpers";
 import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
-import {CarouselModal} from "components/Modals/Carousel/CarouselContainer";
-import {ActionForm} from "modules/ActionForm";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
 import Actions from "modules/ActionManager/ItemActions/actions";
 import {useSelector} from "react-redux";
-import {triggerEvent} from "../../../helpers/events";
 import FileExplorer from "../../FileExplorer/FileExplorer";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
-import Modal from "../../../ui/Modal/Modal";
-import {ModalManager} from "../../../components/ModalManager";
-import {FormContainer, UserPrompt} from "../../ActionForm/FormContainer";
 import ItemActions from "../ItemActions/EntryActions";
 import ThemeManager from "../../../components/ItemList/ThemeManager";
+import AuthContainer from "../../Authorization/AuthContainer";
 import AlertContainer from "../../../ui/Alert/AlertContainer";
+import ModalForm from "../../ActionForm/FormContainer";
+import {CarouselModal} from "../../../components/Modals/Carousel/CarouselContainer";
 
 
 const ActionManager = () => {
@@ -41,17 +38,18 @@ const ActionManager = () => {
             {user.isAdmin &&
                 <>
                     <ItemActions></ItemActions>
+                    <ModalForm name={'element-form'}></ModalForm>
                     <FileExplorer></FileExplorer>
-                    <ActionForm></ActionForm>
+                    <AlertContainer></AlertContainer>
                     <ThemeManager></ThemeManager>
                 </>
             }
-            <AlertContainer></AlertContainer>
             <ObjectTransform></ObjectTransform>
             <FirebaseContainer></FirebaseContainer>
-            <CarouselModal></CarouselModal>
             <MessengerContainer></MessengerContainer>
-            <UserPrompt></UserPrompt>
+            <AuthContainer></AuthContainer>
+            <CarouselModal></CarouselModal>
+            <ModalForm name={'user-prompt'}></ModalForm>
         </>
     );
 };

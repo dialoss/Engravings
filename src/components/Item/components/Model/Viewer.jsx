@@ -5,7 +5,7 @@ import {AutodeskModel} from "ui/Viewer";
 const Viewer = ({data}) => {
     const ref = useRef();
     useEffect(() => {
-        if (!data.urn) return;
+        if (data.style === 'simple') return;
         const resizer = new ResizeObserver(() => {
             if (!ref.current || !window.autodeskViewers) return;
             let block = ref.current.getBoundingClientRect();
@@ -21,7 +21,7 @@ const Viewer = ({data}) => {
     return (
         <>
             <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
-                {!!data.urn ? <AutodeskModel data={data}></AutodeskModel> :
+                {data.style !== 'simple' ? <AutodeskModel data={data}></AutodeskModel> :
                     <MyCanvas data={data}></MyCanvas>}
             </div>
         </>

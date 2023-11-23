@@ -10,8 +10,17 @@ export function ImageEditor({image}) {
     useLayoutEffect(()=>{
         if (!image.image) return;
         const config = {
+            theme: {
+                palette: {
+                    'bg-primary-active': '#ECF3FF',
+                },
+                typography: {
+                    fontFamily: 'Roboto, Arial',
+                },
+            },
             source: image.image,
             defaultSavedImageName: image.meta.name,
+            defaultSavedImageQuality: 100,
             onSave: (img, designState) => {
                 let blobBin = atob(img.imageBase64.split(',')[1]);
                 let array = [];
@@ -20,11 +29,10 @@ export function ImageEditor({image}) {
                 }
                 const file = new Blob([new Uint8Array(array)], {type: img.mimeType});
                 file.name = img.fullName;
-                console.log(img)
-                window.filemanager.settings.oninitupload(null, {file, folder:image.folder, compress:true});
+                uploadFile({file, folder:image.folder.GetPathIDs().slice(-1)[0]});
                 },
             annotationsCommon: {
-                fill: '#ffffff'
+                fill: '#000000'
             },
             Text: { text: 'Привет' },
             Rotate: { angle: 90, componentType: 'slider' },
@@ -40,23 +48,11 @@ export function ImageEditor({image}) {
 
         filerobotImageEditor.render({
             onClose: (closingReason) => {
-                console.log('Closing reason', closingReason);
                 filerobotImageEditor.terminate();
             }
         });
     },[image]);
-    const ref = useRef();
-    useEffect(() => {
-        // const block = ref.current.getBoundingClientRect();
-        // const dw = block.x + block.width - getViewportWidth();
-        // console.log(dw)
-        // if (dw > 0) {
-        //     const item = ref.current.closest('.transform-item');
-        //     item.style.width = item.getBoundingClientRect().width - dw + 'px';
-        // }
-    }, [image]);
-
     return (
-        <div className={'image-editor'} ref={ref}></div>
+        <div className={'image-editor'}></div>
     );
 }

@@ -23,6 +23,7 @@ const MessengerContainer = () => {
     const user = useSelector(state => state.users.current);
     const dispatch = useDispatch();
     useGetUsers();
+    const windowName = "messenger-window";
 
     useLayoutEffect(() => {
         let messengerUser = users[user.id];
@@ -37,15 +38,15 @@ const MessengerContainer = () => {
             }
         })
         onMessage(messaging, (payload) => {
-            console.log(payload)
+            if (store.getState().messenger.room.id === +payload.data.room &&
+                document.querySelector(windowName + '.opened')) return;
             notifyUser({...payload.notification, data: payload.data});
         })
     }, [Object.values(users).length, user]);
 
-    const windowName = "messenger-window:toggle";
     return (
         <>
-        {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName, {toggle: true})}></OpenButton>}
+        {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName + ':toggle', {toggle: true})}></OpenButton>}
             <ModalManager name={windowName}
                           closeConditions={['btn', 'esc']} defaultOpened={window.action === 'messenger'}>
                 <TransformItem config={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}

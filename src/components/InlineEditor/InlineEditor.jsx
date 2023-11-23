@@ -8,11 +8,14 @@ const InlineEditor = ({data, closeCallback}) => {
     const valRef = useRef();
     valRef.current = value;
     const ref = useRef();
-    const clickEvent = useRef();
 
-    useAddEvent("mousedown", (e) => {
-        clickEvent.current = e;
-    })
+    useAddEvent('click', e => {
+        console.log(e)
+        if (!getElementFromCursor(e, 'ql-editor')) {
+            close();
+        }
+    });
+
     function close() {
         let text = valRef.current.text;
         if (text === '<p><br></p>') text = '';
@@ -28,12 +31,6 @@ const InlineEditor = ({data, closeCallback}) => {
                 closeCallback(null);
             }
         });
-        ref.current.editor.root.addEventListener('blur', e => {
-            console.log(e)
-            if (!getElementFromCursor(clickEvent.current, 'ql-editor')) {
-                close();
-            }
-        })
         ref.current.focus();
         if (data.config === 'editor') {
             let block = ref.current.editor.container.closest('.quill');

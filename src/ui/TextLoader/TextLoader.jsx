@@ -1,9 +1,8 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 const TextLoader = ({children, isLoading, dots=3, ...props}) => {
     const [count, setCount] = useState(1);
     const intervalRef = useRef();
-
     useLayoutEffect(() => {
         if (!isLoading) {
             clearInterval(intervalRef.current);
@@ -18,7 +17,7 @@ const TextLoader = ({children, isLoading, dots=3, ...props}) => {
     return (
         <>
             {isLoading && <div className={"text-loader"}>
-                <p {...props}>{`${children}${'.'.repeat(count)}`}</p>
+                <span {...props} data-count={'.'.repeat(count)}>{children}</span>
             </div>}
         </>
 

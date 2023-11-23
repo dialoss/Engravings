@@ -13,8 +13,8 @@ const ButtonItem = ({data}) => {
         let action = data.link;
         if (!action) return;
         if (action.includes('tab')) {
-            const t = +(action.split('_')[1])
-            triggerEvent("itemlist:tab", {tab: t});
+            const t = +(action.split('_')[1]);
+            triggerEvent("itemlist:tab", t);
             return;
         }
         switch (action) {
@@ -30,14 +30,13 @@ const ButtonItem = ({data}) => {
                 window.open(action, "_blank")
         }
     }
-    const isTab = data.group_order.includes('tab');
-    const activeTab = data.link.includes('tab') && window.currentTab === data.link.slice(1);
+    const activeTab = data.link.includes('tab') && window.currentTab === +data.link.split('_')[1];
     return (
         <div className={"item__button"} ref={ref}>
-            {!isTab && <ActionButton onClick={buttonCallback} authorizeAction={true}>
+            {data.style === 'action' && <ActionButton onClick={buttonCallback} authorizeAction={true}>
                 {data.text}
             </ActionButton>}
-            {isTab && <NavButton data={{callback: buttonCallback, text:data.text}} style={activeTab ? 'current' : ''}>
+            {data.style === 'nav' && <NavButton data={{callback: buttonCallback, text:data.text}} style={activeTab ? 'current' : ''}>
             </NavButton>}
         </div>
     );

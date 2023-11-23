@@ -10,32 +10,31 @@ import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
 import NavButton from "../../../ui/Navbar/Button/NavButton";
+import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 
 const ItemListContainer = () => {
     const [items, dispatch] = useReducer(localReducer, []);
     const itemsRef = useRef();
     itemsRef.current = items;
     const globalDispatch = useDispatch();
-    const totalItems = useRef();
+    const [totalItems, setTotalItems] = useState(0);
     let page = useSelector(state => state.location.relativeURL);
 
     async function addItems({newItems, count}, fromCache=false) {
         let items = newItems;
-        totalItems.current = count;
+        setTotalItems(count);
         items = createItemsTree(items);
         if (!fromCache) {
             globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
         }
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
-    const [style, setStyle] = useState('hidden');
-    const [filter, setFilter] = useState(() => (item) => true);
 
     const limit = useRef();
     limit.current = getLocation().parentSlug ? 80 : 60;
 
     useLayoutEffect(() => {
-        changeTab({detail:{tab:0}});
+        changeTab({detail:0});
         let offset = 0;
         let cachedItems = store.getState().elements.cache[page];
         if (cachedItems) {
@@ -46,29 +45,20 @@ const ItemListContainer = () => {
             window.scrollTo(0, 0);
         }
         fetchItems(offset, addItems, limit.current);
-        setTimeout(() => {
-            setStyle('visible')
-        }, 300);
     }, []);
+
+    useLayoutEffect(() => {
+        setTotalItems(items.length);
+    }, [items.length]);
 
     async function handleElements(event) {
         let request = event.detail;
         console.log('REQUEST', request)
         const response = await sendLocalRequest(request.url, request.data, request.method);
         console.log('RESPONSE', response)
-        if (request.method === 'DELETE') {
-            let item = request.initialRequest.element.closest('.transform-item');
-            item.setAttribute('data-top', 0);
-            item.style.height = '0px';
-            triggerEvent("container:init", {container: item.closest('.transform-container'), item});
-            try{
-                dispatch({method: request.storeMethod, payload: createItemsTree(response.items)});
-            } catch (e) {
-                console.log('ОШИБКА' , e)
-            }
-            return
+        if (request.data.type === 'page') {
+            triggerEvent('sidebar:update');
         }
-
         const newItems = response.items;
         if (!newItems) {
             return;
@@ -81,20 +71,19 @@ const ItemListContainer = () => {
     useAddEvent('itemlist:handle-changes', handleElements);
 
     function changeTab(event) {
-        const t = event.detail.tab;
-        setFilter(() => (item) => (item.group_order === 'tab_' + t) || item.group_order === 'tabs');
-        window.currentTab = 'tab_' + t;
+        const t = event.detail;
+        setFilter(() => (item) => (item.tab === t) || item.style === 'tabs');
+        window.currentTab = t;
     }
-
+    const [filter, setFilter] = useState(() => (item) => true);
     useAddEvent('itemlist:tab', changeTab);
-
     return (
-        <>
-            <ItemList loadMore={totalItems.current === items.length ? null : () => {
+        <DelayedVisibility timeout={300}>
+            <ItemList loadMore={totalItems === items.length ? null : () => {
                 limit.current = items.length + 60;
                 fetchItems(items.length, addItems, limit.current);
-            }} items={items.filter(filter)} className={style}></ItemList>
-        </>
+            }} items={items.filter(filter)}></ItemList>
+        </DelayedVisibility>
     );
 };
 

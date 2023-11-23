@@ -4,12 +4,12 @@ import {setActionData} from "./config";
 import {getSettings} from "./helpers";
 import {getLocation} from "../../../hooks/getLocation";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
+import {getFormData} from "../../ActionForm/helpers/FormData";
 
 let hs = [];
 let current = 0;
 
 window.addEventListener('keydown', e => {
-    if (!window.elementsAction && !actionElements.length) return;
     function reverseMethod(request) {
         if (request.method === 'DELETE') return 'POST';
         if (request.method === 'POST') return 'DELETE';
@@ -63,6 +63,16 @@ window.addEventListener('keydown', e => {
     console.log('actionel', actionElements)
 })
 
+function preparePage(p) {
+    if (typeof (p) !== 'object') {
+        const location = getLocation();
+        return {
+            path: location.relativeURL.slice(1, -1),
+        }
+    }
+    return p;
+}
+
 export default class Actions {
     static element = null;
     static elements = [];
@@ -70,12 +80,12 @@ export default class Actions {
 
     static action(data) {
         Promise.resolve(data).then(resolve => {
+            console.log(resolve)
             for (const request of resolve) {
-
                 let sendData = request.data || {};
 
-                if (request.specifyElement) sendData.id = actionElement.id;
-                if (request.specifyParent && !('parent' in sendData)) sendData.parent = actionElement.id;
+                if (request.specifyElement && actionElement.type !== 'page') sendData.id = actionElement.id;
+                if (request.specifyParent && !('parent' in sendData) && actionElement.type !== 'page') sendData.parent = actionElement.id;
 
                 if (request.method === "POST" && !sendData.parent && sendData.type !== 'base') {
                     sendData = {
@@ -84,8 +94,8 @@ export default class Actions {
                         items: [structuredClone(sendData)],
                     }
                 }
-
                 let url = '/api/items/';
+                if (sendData.type === 'page') url = '/api/pages/';
                 if (request.method !== 'POST') {
                     if (!actionElement.id) request.method = 'POST';
                     else {
@@ -95,19 +105,8 @@ export default class Actions {
                     }
                 }
 
-                function preparePage(p) {
-                    if (typeof (p) !== 'object') {
-                        const location = getLocation();
-                        return {
-                            slug: location.pageSlug || location.pageID,
-                            path: location.relativeURL.slice(1, -1),
-                        }
-                    }
-                    return p;
-                }
-
                 sendData.page = preparePage(sendData.page);
-                if (!sendData.group_order && !actionElement.data.group_order) sendData.group_order = window.currentTab;
+                if (!sendData.tab && !actionElement.data.tab) sendData.tab = window.currentTab;
                 let storeMethod = request.method;
                 if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
                     (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
@@ -135,15 +134,14 @@ export default class Actions {
     }
 
     static add(item='') {
-        if (!item) {
-            triggerEvent('form:set-data', {method:'POST', element: actionElement});
+        let data = setActionData(item);
+        if (!data) {
+            triggerEvent('element-form', getFormData({method:'POST', element: {data:{type: item}}}));
             return [];
         }
-        let data = setActionData(item);
         if (!Array.isArray(data)) {
             data = [data];
         }
-        // console.log(data)
         return data.map(d => ({
             method: 'POST',
             createTree: false,
@@ -158,7 +156,7 @@ export default class Actions {
     static edit(item='') {
         if (!actionElement.id) return [];
         if (!item) {
-            triggerEvent('form:set-data', {method:'PATCH', element: actionElement});
+            triggerEvent('element-form', getFormData({method:'PATCH', element: actionElement}));
             return [];
         }
         return [{
@@ -224,8 +222,9 @@ export default class Actions {
         const f = el => ({data: structuredClone(el.data), method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
+        if (elements.length) return data;
         return new Promise((resolve) => {
-            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', windowButton:true, submitCallback: () => {
+            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: () => {
                 resolve(data);
             }});
         });

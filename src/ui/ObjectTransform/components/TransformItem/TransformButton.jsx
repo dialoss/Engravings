@@ -6,7 +6,7 @@ const TransformButton = ({children, type, secure, ...props}) => {
     function transformCallback(event) {
         if (secure && !window.editPage) return;
         event.stopPropagation();
-        triggerEvent("context-window:toggle:check-opened", (isOpened) => {
+        triggerEvent("context-window:check-opened", (isOpened) => {
             if (!getElementFromCursor(event, 'context-menu') && isOpened) {
                 triggerEvent('context-window:toggle', {isOpened: false});
             }
@@ -15,7 +15,8 @@ const TransformButton = ({children, type, secure, ...props}) => {
     }
 
     useEffect(() => {
-        if (type === 'move') ref.current.querySelector(".transform-origin").addEventListener('mousedown', transformCallback);
+        const origin = ref.current.querySelector(".transform-origin");
+        if (type === 'move') origin && origin.addEventListener('mousedown', transformCallback);
         else ref.current.addEventListener('mousedown', transformCallback);
     }, []);
 

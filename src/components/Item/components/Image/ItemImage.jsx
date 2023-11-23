@@ -13,13 +13,15 @@ const ItemImage = ({data, ...props}) => {
     }, []);
 
     return (
-        <div className="item__image" ref={ref} {...props}>
-            <img src={getCompressedImage(data, 700)} alt=""
-                 onClick={carouselCallback}
-                 onDragStart={e => e.preventDefault()}/>
+        <>
+            <div className="item__image" ref={ref} {...props} style={{aspectRatio: data.media_width / data.media_height}}>
+                <img src={getCompressedImage(data, 700)} alt=""
+                    onClick={carouselCallback}
+                     onDragStart={e => e.preventDefault()}/>
+            </div>
             <InfoBlock data={data}></InfoBlock>
-        </div>
-    );
+        </>
+);
 };
 
 export default ItemImage;

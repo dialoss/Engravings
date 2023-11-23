@@ -1,36 +1,25 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import './Modal.scss';
-import {getCorrectedPosition} from "../helpers/viewport";
-import {useAddEvent} from "../../hooks/useAddEvent";
 import {getElementFromCursor} from "../../helpers/events";
+import {useAddEvent} from "../../hooks/useAddEvent";
 
 const Modal = ({content, name, isOpened, closeCallback}) => {
     const ref = useRef();
     const windowRef = useRef();
-    const opRef = useRef();
-    opRef.current = isOpened;
-    useEffect(() => {
-        let pos = content.props.position;
-        if (!pos) return;
-        let [px, py] = [pos.left, pos.top];
-        [px, py] = getCorrectedPosition(ref.current, [px, py]);
-        ref.current.style.left = px + "px";
-        ref.current.style.top = py + "px";
-    }, [content]);
-
-    const modalName = name.split(':')[0];
-    function checkCloseDown(event) {
-        // console.log(name)
-        if (opRef.current) {
-            const mod = getElementFromCursor(event, modalName);
-            const toggle = getElementFromCursor(event, 'modal__toggle-button');
-            // console.log(name, mod, toggle)
-            !mod && !toggle && closeCallback();
-        }
-    }
-    useAddEvent("mousedown", checkCloseDown);
     const props = content.props.style;
     const opened = (isOpened ? "opened" : "");
+
+    function backgroundClose(event) {
+        const toggle = getElementFromCursor(event, 'modal__toggle-button');
+        !toggle && closeCallback();
+        if (props.bg !== 'bg-none') event.stopPropagation();
+    }
+    useAddEvent("mousedown", (e) => {
+        const toggle = getElementFromCursor(e, 'modal__toggle-button');
+        const mod = getElementFromCursor(e, name);
+        !mod && !toggle && props.bg === 'bg-none' && closeCallback();
+    });
+
     useEffect(() => {
         const transformItem = windowRef.current.closest('.transform-item');
         if (!transformItem || name.includes('emojis')) return;
@@ -46,14 +35,17 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
     return (
         <div className={"modal"} ref={windowRef}>
             <div className={"modal__wrapper"}>
-                <div className={`modal__background ${opened} ${!!props && (props.bg || '')}`}>
-                </div>
-                <div className={`modal__window ${modalName} ${opened} ${!!props && ((props.win || '') + ' ' + (props.bg || ''))}`} ref={ref}>
-                    <div className="modal__content">
-                        {content}
+                <div className={`modal__background ${opened} ${!!props && (props.bg || '')}`}
+                     onClick={backgroundClose}>
+                    <div className={`modal__window ${name} ${opened} ${!!props && ((props.win || '') + ' ' + (props.bg || ''))}`}
+                         onClick={e => e.stopPropagation()}
+                         ref={ref}>
+                        <div className="modal__content">
+                            {content}
+                        </div>
                     </div>
+                <div className={`modal__outer modal__window ${name} ${opened}`}></div>
                 </div>
-                <div className={`modal__outer modal__window ${modalName} ${opened}`}></div>
             </div>
         </div>
     );

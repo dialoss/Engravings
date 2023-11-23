@@ -3,18 +3,21 @@
   .transform-resizers {
     display: none;
   }
-
-  &.edit {
+  &.focused {
     .transform-resizers {
       display: block;
     }
-
+  }
+  &.edit {
     &:not(&[data-type="modal"]).focused {
       z-index: 5 !important;
       outline: 4px solid #e72b31;
     }
   }
   &[data-type="modal"] {
+    .transform-resizers {
+      display: block;
+    }
     .transform-resize {
       width: 60px;
       height: 60px;

@@ -1,4 +1,5 @@
 import {sendLocalRequest} from "api/requests";
+import {triggerEvent} from "../../../helpers/events";
 
 export async function fetchItems(offset, callback, limit) {
     let step = 20;
@@ -12,7 +13,8 @@ export async function fetchItems(offset, callback, limit) {
         };
         const urlParams = new URLSearchParams(page).toString();
         const response = await sendLocalRequest(`/api/items/?${urlParams}`, {method:"GET"})
-        console.log('FETCHED ITEMS' , response.results)
+        console.log('FETCHED ITEMS' , response)
+        if (!response.results) return;
         callback({newItems: response.results, count: response.count});
         cur += step;
         if (cur >= response.count) break;

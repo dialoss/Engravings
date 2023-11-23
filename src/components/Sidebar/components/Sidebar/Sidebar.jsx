@@ -6,12 +6,30 @@ import "../Link/SidebarLink.scss";
 import Slider from "ui/Slider/Slider";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../../../helpers/events";
-import {Auth} from "modules/Authorization";
+import Auth from "modules/Authorization/components/Auth";
 import {Link} from "react-router-dom";
 import Swipes from "../../../../ui/Swipes/Swipes";
 import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
+import {getLocation} from "../../../../hooks/getLocation";
+import Avatar from "../../../../ui/Avatar/Avatar";
+import {useSelector} from "react-redux";
 
-const Sidebar = ({data, admin, customer}) => {
+
+const Customer = () => {
+    const user = useSelector(state => state.users.current);
+    return (
+        <div className={"user-profile " + ((getLocation().relativeURL === '/customer/') ? 'active' : '')}>
+            {user.authenticated && <div className="wrapper">
+                <Link to={'/customer/'}></Link>
+                <Avatar src={user.picture} user={user}></Avatar>
+                <h3>{user.name}</h3>
+            </div>}
+            <Auth></Auth>
+        </div>
+    );
+}
+
+const Sidebar = ({data, admin}) => {
     const [isOpened, setOpened] = useState(false);
     const opRef = useRef();
     opRef.current = isOpened;
@@ -63,9 +81,7 @@ const Sidebar = ({data, admin, customer}) => {
                     <div className={"sidebar__block"}>
                     <div className={'sidebar__wrapper sidebar__outer'}>
                         <div className="sidebar__inner">
-                        <Auth>
-                            {customer && <Link to={'/customer/'}></Link>}
-                        </Auth>
+                        <Customer></Customer>
                         {admin && <>
                             <ActionButton onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
                                  className={"sidebar__action sidebar__link"}>Хранилище</ActionButton>

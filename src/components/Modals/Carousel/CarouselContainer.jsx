@@ -13,102 +13,93 @@ import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {useSelector} from "react-redux";
 import {ModalManager} from "components/ModalManager";
-import store from "../../../store";
 import {getCompressedImage} from "../../Item/components/Image/helpers";
 
-function bounds(n, bound) {
-    return (n + bound) % bound;
+function bounds(position, side, items) {
+    const n = items.current.length;
+    position.current = position.current + side;
+    position.current = (position.current + n) % n;
+    console.log(position.current)
+    return items.current[position.current];
 }
 
-function prepareContent(items) {
-    let newContent = [];
-    Object.values(items).forEach(item => {
-        if (item.type !== 'image') return;
-        const itemsAll = store.getState().elements.items;
-        const parent = [...Object.values(items), ...Object.values(itemsAll)].find(it => it.id === item.parent) || {};
-        newContent.push({
-            navigation: item.navigation === undefined ? true : item.navigation,
-            id: item.id,
-            url: getCompressedImage(item, 1500),
-            info: {
-                title: item.title || parent.title,
-                description: item.description || parent.description,
-                filename: item.filename,
-            }
-        });
-    })
-    return newContent;
+function prepareContent(item) {
+    return {
+        ...item,
+        navigation: item.navigation === undefined ? true : item.navigation,
+        url: getCompressedImage(item, 1500),
+    };
 }
 
 export const CarouselModal = () => {
-    const clearContent = {items:[{}],item:0};
-    const windowName = 'carousel-window:toggle';
-    const contentRef = useRef();
-    const [content, setContent] = useState(clearContent);
-    contentRef.current = content;
+    const windowName = 'carousel-window';
+    const [item, setItem] = useState(null);
+    const position = useRef();
 
-    function openCarousel(event) {
-        setContent({items:prepareContent([{...event.detail}]), item:0});
-        triggerEvent(windowName, {isOpened: true});
-        return;
-        for (let i = 0; i < contentRef.current.items.length; i++) {
-            if (contentRef.current.items[i].id === event.detail) {
-                setContent(c => ({...c, item:i}));
-                return;
+    const itemsRaw = useSelector(state => state.elements.pageItems);
+    const [items, setItems] = useState([]);
+    useLayoutEffect(() => {
+        let newItems = [];
+        for (const it of Object.values(itemsRaw)) {
+            for (const child of it.items) {
+                child.type === 'image' && newItems.push(prepareContent(child));
             }
         }
+        setItems(newItems);
+    }, [itemsRaw]);
+    const itemsRef = useRef();
+    itemsRef.current = items;
+    function openCarousel(event) {
+        console.log(event.detail)
+        if (event.detail.navigation === false) {
+            setItem(prepareContent(event.detail));
+        } else {
+            let index = 0;
+            for (const it of itemsRef.current) {
+                if (it.id === event.detail.id) {
+                    position.current = index;
+                    setItem(itemsRef.current[index]);
+                }
+                index += 1;
+            }
+        }
+        triggerEvent(windowName + ':toggle', {isOpened: true});
     }
     useAddEvent("carousel:open", openCarousel);
     return (
-        <>
-            {content.items[content.item] && <ModalManager name={windowName} key={windowName}>
-                <CarouselContainer style={{win: 'centered'}}
-                                   items={content.items}
-                                   item={content.item} type={'popup'}/>
-            </ModalManager>}
-        </>
+        <ModalManager name={windowName} key={windowName}>
+            <div style={{win: 'centered'}}>
+                {item && <CarouselContainer next={() => setItem(bounds(position, 1, itemsRef))}
+                                            previous={() => setItem(bounds(position, -1, itemsRef))}
+                                            item={item} type={'popup'}/>}
+            </div>
+        </ModalManager>
     );
 }
 
 export const CarouselInline = ({items}) => {
     const content = prepareContent(items);
     return (
-        <CarouselContainer items={content} item={0} type={'inline'}></CarouselContainer>
+        <CarouselContainer item={content[0]} type={'inline'}></CarouselContainer>
     );
 }
 
 export const CarouselContext = createContext();
 
-const CarouselContainer = ({items, item, type, ...props}) => {
-    const itemsRef = useRef();
-    itemsRef.current = items;
-    console.log(itemsRef.current)
-    const [currentItem, setCurrent] = useState(0);
-    useLayoutEffect(() => {
-        setCurrent(item);
-        setItem(items[currentItem]);
-    }, [item])
-
-    const forward = () => setCurrent(currentItem => bounds(currentItem + 1, itemsRef.current.length));
-    const back = () => setCurrent(currentItem => bounds(currentItem - 1, itemsRef.current.length));
-
+const CarouselContainer = ({item, type, next, previous, ...props}) => {
     function nav(event) {
-        event.key === 'ArrowRight' && forward();
-        event.key === 'ArrowLeft' && back();
+        if (!item.navigation) return;
+        event.key === 'ArrowRight' && next();
+        event.key === 'ArrowLeft' && previous();
     }
     useAddEvent('keydown', nav);
 
-    const [itemShow, setItem] = useState(null);
-    useLayoutEffect(() => {
-        setItem(items[currentItem]);
-    }, [currentItem]);
-
     return (
-        <CarouselContext.Provider value={{right: forward, left: back}}>
+        <CarouselContext.Provider value={{right: next, left: previous}}>
             <div className={'carousel-events'}>
-                {!!items[item] && <Carousel type={type}
+                {item && <Carousel type={type}
                                          {...props}
-                                         item={items[item]}/>}
+                                         item={item}/>}
             </div>
         </CarouselContext.Provider>
 

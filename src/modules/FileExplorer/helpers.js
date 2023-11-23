@@ -1,5 +1,6 @@
+import {getMediaType} from "./api/google";
 
-function getVideoDimensions(url){
+function getVideoDimensions(file){
     return new Promise(resolve => {
         const video = document.createElement('video');
         video.addEventListener( "loadedmetadata", function () {
@@ -7,31 +8,45 @@ function getVideoDimensions(url){
             const width = this.videoWidth;
             resolve({height, width});
         }, false);
-        video.src = url;
+        video.src = fileToMedia(file);
     });
 }
-function getImageDimensions(url) {
+
+function getImageDimensions(file) {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve({height: img.naturalHeight, width: img.naturalWidth});
         img.onerror = (err) => reject(err);
-        img.src = url;
+        img.src = fileToMedia(file);
     });
 }
 
-export async function fileToItem(data) {
-    const url = "https://drive.google.com/uc?id=" + data.id;
-    let height = '';
-    let width = '';
-    if (['image'].includes(data.type)) await getImageDimensions(url).then(d => ({height, width} = d))
-    if (['video'].includes(data.type)) await getVideoDimensions(url).then(d => ({height, width} = d))
-    if (['model'].includes(data.type)) ({height, width} = {height: 300, width: 300});
+export async function getMediaDimensions(file) {
+    let d = {width: 100, height: 100};
+    switch (getMediaType(file.name)) {
+        case 'image':
+            await getImageDimensions(file).then(dim => d = dim);
+            break;
+        case 'video':
+            await getVideoDimensions(file).then(dim => d = dim);
+    }
+    return d;
+}
+
+export function fileToMedia(file) {
+    let blob = new Blob([file], { type: file.type});
+    return window.URL.createObjectURL( blob );
+}
+
+export function fileToItem(data) {
     return {
         data: {
             width: data.type === 'model' ? '50%' : 'auto',
             show_shadow: data.type !== 'file',
-            container_width: width + 'px',
-            height: height + 'px',
+            height: data.height + 'px',
+            container_width: data.width,
+            media_height: data.height,
+            media_width: data.width,
             urn: data.urn,
             type: data.type,
             filename: data.name,

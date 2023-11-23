@@ -9,7 +9,10 @@ const SidebarItem = ({listItem}) => {
     const [isOpened, setOpened] = useState(false);
 
     return (
-        <div className={"sidebar__item"} data-sublist={haveSublist}>
+        <div className={"sidebar__item item"}
+             data-sublist={haveSublist}
+             data-itemtype={'sidebar_link'}
+             data-id={listItem.id}>
             <AccordionContainer defaultOpened={isOpened} callback={setOpened} onlyButton={true} header={
                 <SidebarLink link={listItem.link}
                              haveSublist={haveSublist}

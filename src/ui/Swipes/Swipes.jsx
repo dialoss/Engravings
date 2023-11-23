@@ -27,9 +27,9 @@ const Swipes = ({callback, state, children, className}) => {
                     canSwipe.current = false;
                     return;
                 }
-                const f = (isOpened) => canSwipe.current = !isOpened;
-                triggerEvent('messenger-window:toggle:check-opened', f);
-                if (getElementFromCursor({clientX: x, clientY: y}, 'item-model')) f(true);
+                const f = (isOpened) => canSwipe.current = isOpened;
+                if (document.querySelector('.modal__background.opened:not(.bg-none)')) f(false);
+                if (getElementFromCursor({clientX: x, clientY: y}, 'item-model')) f(false);
             } else {
                     let block = elRef.current.getBoundingClientRect();
                     if (block.left + block.width < x) {

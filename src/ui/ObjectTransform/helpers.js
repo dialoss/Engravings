@@ -10,7 +10,7 @@ export function isResizable(container) {
 
 function getMaxBottom(container) {
     let m = 0;
-    const parentWidth = +(container.getAttribute('data-width') || '').replace('px','');
+    const parentWidth = +(container.getAttribute('data-width') || '');
 
     const curWidth = container.getBoundingClientRect().width;
 
@@ -26,8 +26,6 @@ function getMaxBottom(container) {
     if (dataHeight && m < dataHeight &&
         !['timeline'].includes(container.getAttribute('data-type'))) {
         m = dataHeight * ratio;
-        const info = container.querySelector(':scope > .item__image .info__block');
-        if (info && container.getBoundingClientRect().height === 0) m += info.getBoundingClientRect().height;
     }
     return m;
 }

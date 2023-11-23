@@ -43,7 +43,7 @@ const ItemTable = ({data}) => {
                     <tr key={i}>
                         {
                             row.map((value, j) =>
-                                <td key={i*100 + j}>{value}</td>
+                                <td key={i*100 + j}><p>{value}</p></td>
                             )
                         }
                     </tr>

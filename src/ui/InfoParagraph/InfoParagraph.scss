@@ -8,9 +8,26 @@
         font-size: min(4vw, 18px);
     }
     display: inline-block;
-
+    li {
+        counter-increment: count 1;
+    }
     ul, li {
         padding-left: 1.5em;
+        list-style-type: none;
+    }
+
+    li::before {
+        display: inline-block;
+        margin-left: -1.5em;
+        margin-right: 0.3em;
+        text-align: right !important;
+        //position: absolute;
+    }
+    ol li::before {
+        content: counter(count, decimal) '. ';
+    }
+    ul li::before {
+        content: '\2022';
     }
 
     &:empty {

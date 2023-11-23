@@ -3,9 +3,9 @@ import store from "store";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 import {triggerEvent} from "../../../helpers/events";
-import {getFileType} from "../../../helpers/files";
 import {doc, updateDoc, arrayRemove, arrayUnion} from "firebase/firestore";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
+import {getMediaType} from "../../../modules/FileExplorer/api/google";
 
 const emptyMessage = {text:'', upload:[]};
 
@@ -36,7 +36,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
 
         let uploadData = upload ? {
             url: '',
-            type: getFileType(upload.name),
+            type: getMediaType(upload.name),
             filename: upload.name,
             uploading: true,
         } : {};
@@ -50,7 +50,6 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
         });
         if (upload) {
             const document = manager.config.getDocument();
-            console.log(upload)
             manager.uploadMedia(upload).then(data => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({
@@ -61,8 +60,8 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
                                 ...uploadData,
                                 url: data.url,
                                 uploading: false,
-                                container_width: data.container_width,
-                                height: data.height,
+                                media_width: data.media_width,
+                                media_height: data.media_height,
                             }
                         }
                     })});

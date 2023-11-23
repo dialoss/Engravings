@@ -10,7 +10,6 @@ import {
 import {ref, set, onValue, update} from "firebase/database";
 import {useLayoutEffect, useRef, useState} from "react";
 import {realtime, firestore, storage, MDB, adminEmail} from "./config";
-import {getFileType} from "helpers/files";
 import {useSelector} from "react-redux";
 import store from "store";
 import {getGlobalTime, sendLocalRequest} from "../../../api/requests";
@@ -49,12 +48,14 @@ export class MessageManager {
     }
 
     uploadMedia(upload) {
-        return new Promise(async (resolve) => {
+        return new Promise((resolve) => {
             let path = [this.appName];
             if (path[0] === 'comments') path.push(getLocation().pageSlug);
-            const file = await uploadFile({file: upload, path});
-            let data = await fileToItem({...file, type: file.filetype});
-            resolve(data.data);
+            (async function () {
+                const file = await uploadFile({file: upload, path});
+                let data = fileToItem({...file, type: file.filetype});
+                resolve(data.data);
+            })();
         });
     }
 }

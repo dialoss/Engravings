@@ -15,9 +15,8 @@ const AlertContainer = () => {
         }, 2000);
     }
     useAddEvent('alert:trigger', triggerAlert);
-    const modalName = "alert-window:toggle";
     return (
-        <ModalManager name={modalName} defaultOpened={true} closeConditions={[]}>
+        <ModalManager name={'alert-window'} defaultOpened={true} closeConditions={[]}>
             <div className={'alerts-container'} style={{bg: 'bg-none'}}>
                 <TransitionGroup key={'alerts'} component={null}>
                     {

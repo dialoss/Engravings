@@ -9,11 +9,12 @@ import {CommentsContext, CommentsInput} from "./CommentsContainer";
 import "./Comment.scss";
 import TextLoader from "../../../ui/TextLoader/TextLoader";
 import {matchURL} from "../../../helpers/events";
+import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 
 const Comment = ({data}) => {
     const users = useSelector(state => state.users.users);
     const [reply, setReply] = useState(false);
-    const upload = data.value.upload;
+    let upload = data.value.upload;
     const user = users[data.user] || data.user;
     const manager = useContext(CommentsContext);
     const ref = useRef();
@@ -24,7 +25,13 @@ const Comment = ({data}) => {
         ref.current.classList.remove('visible');
         setTimeout(() => setReply(r => !r), 180)
     }
-    const style = upload.height && upload.container_width ? {aspectRatio: +(upload.container_width.slice(0, -2)) / +(upload.height.slice(0, -2))} : {}
+    if (data.value.text.match(/youtube/)) {
+        upload = {
+            type: 'video',
+            style: 'youtube',
+            url: clearTextFromHTML(data.value.text),
+        }
+    }
     return (
         <div className={"comment"} id={"comment " + data.id}>
             <div className="comment-block">
@@ -37,9 +44,7 @@ const Comment = ({data}) => {
             <InfoParagraph type={'comment'}>{matchURL(data.value.text)}</InfoParagraph>
             {upload.uploading && <p>{upload.filename}</p>}
             <TextLoader className={'attachment-loading'} isLoading={upload.uploading}>Загрузка</TextLoader>
-            <div className={'comment-upload__wrapper'} style={style}>
-                {!!upload && !!upload.url && !!upload.type && <ItemData data={upload}/>}
-            </div>
+            {!!upload && !!upload.url && !!upload.type && <ItemData data={{...upload, navigation: false}}/>}
             <div className={"comment-reply__button"} onClick={() => {
                 if (ref.current) closeInput();
                 else setReply(r => !r)

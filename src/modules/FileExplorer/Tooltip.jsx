@@ -10,6 +10,8 @@ export function TooltipFields(data) {
     const fieldTranslate = {
         size: 'Размер',
         modifiedTime: 'Время изменения',
+        width: 'Ширина',
+        height: 'Высота',
     }
 
     tooltipFields.push({
@@ -22,6 +24,14 @@ export function TooltipFields(data) {
             title: fieldTranslate[field],
             text: data[field],
         })
+    }
+    if (['video', 'image'].includes(data.filetype)) {
+        for (const field of ['width', 'height']) {
+            tooltipFields.push({
+                title: fieldTranslate[field],
+                text: data[field],
+            })
+        }
     }
     return tooltipFields;
 }

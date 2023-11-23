@@ -55,12 +55,11 @@ class Viewer extends React.Component {
                 this.viewer.start();
                 this.viewer.setProfile(profile);
                 this.viewer.impl.disableHighlight(true);
-                // console.log(this.viewer)z
 
-                this.viewer.addEventListener(Autodesk.Viewing.FULLSCREEN_MODE_EVENT, () => {
-                    setTimeout(() => {
-                        this.viewer.impl.resize(window.innerWidth, window.innerHeight, true);
-                    }, 200)
+                this.viewer.addEventListener(window.Autodesk.Viewing.FULLSCREEN_MODE_EVENT, mode => {
+                    let app = this.viewer.container.closest('.app');
+                    if (mode.mode === 0) app.classList.remove('fullscreen');
+                    else app.classList.add('fullscreen');
                 });
 
                 this.viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
@@ -81,6 +80,8 @@ class Viewer extends React.Component {
             Autodesk.Viewing.theExtensionManager.registerExtension(
                 'TransformationExtension',
                 Autodesk.ADN.Viewing.Extension.TransformTool);
+
+
             const loader = setInterval(() => {
                 try {
                     this.viewer.loadExtension("TransformationExtension")

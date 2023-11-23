@@ -62,20 +62,39 @@ export function setActionElement(event) {
         else el.parent_0 = getElementID(parentElement);
         el.parent = getElementID(el.html.closest('.item.depth-' + (el.html.getAttribute('data-depth') - 1))) || el.parent_0;
         el.display_pos = display_pos;
-        const itemsAll = store.getState().elements.itemsAll;
-        let data = structuredClone(itemsAll[el.id]);
-        if (data.parent) data = childItemsTree(data);
-        el.data = data;
+        switch (el.html.getAttribute('data-itemtype')) {
+            case 'content':
+            {
+                const itemsAll = store.getState().elements.itemsAll;
+                let data = structuredClone(itemsAll[el.id]);
+                if (data.parent) data = childItemsTree(data);
+                el.data = data;
+                break;
+            }
+            case 'sidebar_link':
+            {
+                el.data = structuredClone(store.getState().location.pages[el.id]);
+                el.data.type = 'page';
+            }
+        }
         actionElement = el;
         event.ctrlKey && setElements();
     } else {
+        const location = store.getState().location;
+        let id = '';
+        for (const p of Object.keys(location.pages)) {
+            if (location.relativeURL === '/' + location.pages[p].path + '/') {
+                id = p;
+                break;
+            }
+        }
         actionElement = {
-            id: '',
+            id,
             parent: '',
             parent_0: '',
-            type: 'screen',
+            type: 'page',
             display_pos: display_pos,
-            data: {display_pos: display_pos}
+            data: {display_pos: display_pos, ...structuredClone(location.pages[id]), type:'page'}
         }
     }
     store.dispatch(actions.setField({field: 'actionElement', element: {...actionElement, html:''}}));

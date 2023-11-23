@@ -17,7 +17,7 @@ export const MessengerInputContainer = () => {
             sendCloudMessage({
                 title: 'MyMount | Новое сообщение',
                 body: user.name + ': ' + (message.value.text || message.value.upload.filename),
-                data: {url: getLocation().fullURL + '?action=messenger'},
+                data: {url: getLocation().fullURL + '?action=messenger', room: room.id},
                 companion: users[room.companion].email,
             });
             updateRoom({lastMessage: message, newMessage: true, notified:false});
@@ -51,7 +51,7 @@ export const MessengerInputContainer = () => {
             let a = new Date(new Date(curTime.datetime).toISOString()).getTime() / 1000;
             let b = new Date(new Date(lastTime).toISOString()).getTime() / 1000;
             let prompt = false;
-            triggerEvent('user-prompt:toggle:check-opened', (isOpened) => prompt = isOpened);
+            triggerEvent('user-prompt:check-opened', (isOpened) => prompt = isOpened);
             if (prompt) return [false, 'time'];
             return [!lastTime || !(a - b < 0.5), 'time'];
         },

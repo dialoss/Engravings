@@ -41,6 +41,46 @@
     }
   }
 
+  .accordion {
+    width: 100%;
+  }
+  .accordion-header {
+    border: none;
+  }
+
+  .auth-choice {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.login-form {
+  width: 500px;
+  min-height: 40vh;
+  .buttons {
+    padding-top: 10px;
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+  }
+  .action-button {
+    font-size: 16px !important;
+  }
+  .question {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    .action-button {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      background: none;
+      color: #1EC73A;
+      padding: 0;
+    }
+  }
+  .avatar {
+    width: 80px;
+  }
 
   .auth-button {
     margin: 4px auto;
@@ -62,6 +102,7 @@
     }
     .delimiter {
       position: relative;
+      text-align: center;
       width: 100%;
       span {
         position: absolute;
@@ -71,57 +112,6 @@
     }
   }
 
-  .accordion {
-    width: 100%;
-  }
-  .accordion-header {
-    border: none;
-  }
-
-  .auth-choice {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.login-form {
-  width: 500px;
-  min-height: 40vh;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 2px 0 grey;
-  .window-button {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-  }
-  .buttons {
-    padding-top: 10px;
-    display: flex;
-    column-gap: 10px;
-    justify-content: center;
-  }
-  &.default {
-    z-index: $zindex-modal;
-  }
-  .action-button {
-    font-size: 16px !important;
-    //width: 30%;
-  }
-  .question {
-    margin-top: 20px;
-    font-size: 20px;
-    .action-button {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      font-weight: 600;
-      background: none;
-      color: #1EC73A;
-      padding: 0;
-    }
-  }
-  .avatar {
-    width: 80px;
-  }
 
   @include mobile {
     & {

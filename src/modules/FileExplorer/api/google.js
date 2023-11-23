@@ -2,6 +2,8 @@ import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import {triggerEvent} from "../../../helpers/events";
+import {getImageDimensions, getMediaDimensions, getVideoDimensions} from "../helpers";
+import "./upload";
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";
@@ -42,6 +44,11 @@ export class GoogleAPI {
         return [this.sendRequest(BASE_URL + this.request.elements[0] + '/', this.data)];
     }
 
+    getFile() {
+        let id = this.request.elements[0];
+        return [this.sendRequest(BASE_URL + id)];
+    }
+
     async createFolder(unique, parent='', name='') {
         if (unique) {
             this.request.method = 'GET';
@@ -59,43 +66,6 @@ export class GoogleAPI {
             kind:'drive#file',
             mimeType: 'application/vnd.google-apps.folder'
         });
-    }
-
-    async uploadFile(file) {
-        let props = {};
-        if (['sldprt', 'sldasm'].includes(file.name.split('.').slice(-1)[0].toLowerCase())) {
-            let urn = await uploadAutodeskFile(file);
-            console.log(urn)
-            props = {
-                modelurn1: urn.slice(0, urn.length / 2),
-                modelurn2: urn.slice(urn.length / 2),
-            }
-        }
-        console.log(this.request)
-        let location = '';
-        return [fetch(UPLOAD_URL + "?uploadType=resumable", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token,
-                'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: JSON.stringify({
-                parents: [this.request.parent],
-                name: file.name,
-                mimeType: file.type,
-                properties: props,
-            })
-        }).then(r => {
-            location = r.headers.get('Location');
-            return fetch(location, {
-                method: "PUT",
-                headers: {
-                    "Content-Range": `bytes 0-${file.size - 1}\/${file.size}`,
-                    'X-Upload-Content-Type': file.type,
-                },
-                body: file,
-            }).then(r => r.json()).then(data => data).catch(e => console.log(e));
-        })];
     }
 
     copyElements() {
@@ -120,13 +90,16 @@ async function apiMapper(request) {
     let apiSession = new GoogleAPI(request, request.data);
     switch (request.method) {
         case "GET":
-            return apiSession.listFiles();
+            switch (request.action) {
+                case 'list':
+                    return apiSession.listFiles();
+                case 'file':
+                    return apiSession.getFile();
+            }
         case "POST":
             switch (request.action) {
                 case "new folder":
                     return [await apiSession.createFolder(false)];
-                case "upload":
-                    return await apiSession.uploadFile(request.data.file);
                 case "copy":
                     return apiSession.copyElements();
                 case "move":
@@ -147,7 +120,7 @@ async function apiMapper(request) {
             return apiSession.updateElement();
         case "DELETE":
             return new Promise((resolve) => {
-                triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', windowButton:true, submitCallback: () => {
+                triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: () => {
                     resolve(apiSession.deleteElements());
                 }});
             });
@@ -163,10 +136,14 @@ export function serializeFile(file) {
         type = 'file';
     }
     let fileType = getMediaType(file.mimeType);
-    let props = (file.properties || [{}]);
+    let props = (file.properties || []);
     let urn = '';
-    for (const prop of props.reverse())
-        urn += prop.value || '';
+    let [width, height] = ['', ''];
+    for (const prop of props.reverse()) {
+        if (prop.key.includes('urn')) urn += prop.value || '';
+        if (prop.key === 'width') width = prop.value;
+        if (prop.key === 'height') height = prop.value;
+    }
 
     return {
         'id': id,
@@ -177,6 +154,8 @@ export function serializeFile(file) {
         'thumb': thumb,
         'url': "https://drive.google.com/uc?id=" + id,
         'urn': urn,
+        width,
+        height,
         'filetype': fileType,
         'modifiedTime': dayjs(file.modifiedDate).format("HH:mm DD.MM.YYYY"),
     };
@@ -187,7 +166,10 @@ export async function driveRequest({request, callback, error}) {
     try {
         return Promise.all(await apiMapper(request))
             .then(response => {
-                if (!response[0]) return;
+                if (!response[0]) {
+                    callback([]);
+                    return;
+                }
                 let items = response[0].items || [response[0]];
                 if (!items) {
                     callback([]);
@@ -206,9 +188,11 @@ export async function driveRequest({request, callback, error}) {
 
 export function getMediaType(filename) {
     const types = {
-        'image': ['png', 'jpeg', 'jpg', 'webp'],
+        'image': ['png', 'jpeg', 'jpg', 'webp', 'gif', 'image'],
         'model': ['sldprt', 'sld', 'sldw', 'sldasm', 'sdas', 'glb', 'gltf'],
-        'video': ['mp4', 'mkv', 'matroska', 'avi'],
+        'video': ['mp4', 'mkv', 'matroska', 'avi', 'mov', 'video'],
+        'table': ['sheet'],
+        'folder': ['folder'],
     };
     for (const type in types) {
         for (const ext of types[type]) {
@@ -216,6 +200,22 @@ export function getMediaType(filename) {
         }
     }
     return 'file';
+}
+
+export async function getFile(id) {
+    let file = null;
+    await driveRequest({
+        request: {
+            method: 'GET',
+            action: 'file',
+            elements: [id],
+            data: {},
+        },
+        callback: (data) => {
+            file = data[0];
+        },
+    });
+    return file;
 }
 
 export async function uploadFile(fileinfo, callback) {
@@ -234,59 +234,59 @@ export async function uploadFile(fileinfo, callback) {
         });
     }
     let file = fileinfo.file;
-    let uploadedFile = null;
-    await driveRequest({
-        request: {
-            method: 'POST',
-            parent,
-            action: 'upload',
-            data: {
-                file,
-            }},
-        callback: (entry) => {
-            callback && callback();
-            uploadedFile = entry[0];
-        },
-    });
+    let uploadedFile = await testUpload(file, parent);
+    uploadedFile = await getFile(uploadedFile.id);
+    callback && callback();
     return uploadedFile;
 }
 
 
-function compress(file) {
-    return new Promise((resolve) => {
-        let oldWidth, oldHeight, newHeight, newWidth, canvas, ctx, newDataUrl;
-        let imageType = "image/jpeg";
-        const ratio = 0.6;
+export async function testUpload(file, folder) {
+    let props = await getMediaDimensions(file);
 
-        const reader = new FileReader();
+    if (getMediaType(file.name) === 'model') {
+        let urn = await uploadAutodeskFile(file);
+        props = {
+            ...props,
+            modelurn1: urn.slice(0, urn.length / 2),
+            modelurn2: urn.slice(urn.length / 2),
+        }
+    }
 
-        reader.addEventListener(
-            "load",
-            () => {
-                let image = new Image();
-                image.src = reader.result;
-                image.onload = () => {
-                    oldWidth = image.width;
-                    oldHeight = image.height;
-                    newWidth = oldWidth * ratio;
-                    newHeight = oldHeight * ratio;
-                    canvas = document.createElement("canvas");
-                    canvas.width = newWidth;
-                    canvas.height = newHeight;
-                    ctx = canvas.getContext("2d");
-                    ctx.drawImage(image, 0, 0, newWidth, newHeight);
-                    newDataUrl = canvas.toDataURL(imageType, ratio);
-                    let blobBin = atob(newDataUrl.split(',')[1]);
-                    let array = [];
-                    for (let i = 0; i < blobBin.length; i++) {
-                        array.push(blobBin.charCodeAt(i));
-                    }
-                    resolve(new Blob([new Uint8Array(array)], {type: imageType}));
+    token = await Credentials.getToken();
+    let fr = new FileReader();
+    fr.fileName = file.name;
+    fr.fileSize = file.size;
+    fr.fileType = file.type;
+    fr.readAsArrayBuffer(file);
+    return await new Promise((resolve) => {
+        fr.onload = () => {
+            const resource = {
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type,
+                fileBuffer: fr.result,
+                accessToken: token,
+                folderId: folder,
+                properties: props,
+            };
+            const ru = new window.ResumableUploadToGoogleDrive();
+            ru.Do(resource, function (res, err) {
+                if (err) {
+                    triggerEvent('alert:trigger', {type:'error', body: err});
+                    return;
                 }
-            },
-            false,
-        );
-
-        reader.readAsDataURL(file);
+                if (res.status === "Uploading") {
+                    let msg =
+                        Math.round(
+                            (res.progressNumber.current / res.progressNumber.end) * 100
+                        ) + "%";
+                    console.log(msg)
+                    window.filemanager.SetNamedStatusBarText('message', file.name + ' Прогресс: ' + msg);
+                    [...document.querySelectorAll('.text-loader')].slice(-1).innerHTML = msg;
+                }
+                if (res.status === 'Done') resolve(res.result);
+            });
+        }
     });
 }

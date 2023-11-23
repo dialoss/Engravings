@@ -4,27 +4,22 @@ export const locationSlice = createSlice({
     name: "location",
     initialState: {
         // baseURL : 'https://divine-snow-51804.pktriot.net',
-        // baseURL : 'https://matthew75.pythonanywhere.com',
-        baseURL : 'http://localhost:8000',
+        baseURL : 'https://matthew75.pythonanywhere.com',
+        // baseURL : 'http://localhost:8000',
         pages : {},
-        pageID : '',
         fullURL : '',
         relativeURL : '',
         pageSlug : '',
         pageTitle: '',
         parentURL : '',
         parentSlug : '',
+        currentPage: {},
         views: {
             curViews: 0,
             totalViews: 0,
         },
-        pageComments: false,
     },
     reducers: {
-        setComments: (state, {payload: includeComments}) => {
-            state.pageComments = includeComments;
-            return state;
-        },
         setLocation: (state) => {
             const url = decodeURI(window.location.href);
             state.relativeURL = url.split('/').slice(3).join('/');
@@ -34,13 +29,18 @@ export const locationSlice = createSlice({
             state.pageSlug = state.relativeURL.split('/').slice(-2, -1)[0];
             state.parentURL = state.relativeURL.replace(state.pageSlug + '/', '');
             state.parentSlug = state.parentURL.replaceAll('/', '');
-            state.pageID = state.pages[state.relativeURL];
             state.pageTitle = state.pageSlug.toUpperCase();
+            for (const p in state.pages) {
+                if ('/' + state.pages[p].path + '/' === state.relativeURL) {
+                    state.currentPage = state.pages[p];
+                    break;
+                }
+            }
         },
         setPages: (state, {payload: pages}) => {
             let pagesObj = {};
             pages.forEach(page => {
-                pagesObj[page.link] = page.id;
+                pagesObj[page.id] = page;
             });
             state.pages = pagesObj;
         }

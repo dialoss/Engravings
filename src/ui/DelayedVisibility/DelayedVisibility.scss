@@ -1,0 +1,11 @@
+.delayed-visibility {
+    transition: all 0.3s ease-out;
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+    &.hidden {
+        visibility: hidden;
+        opacity: 0;
+    }
+}

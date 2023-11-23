@@ -4,14 +4,13 @@ import ItemData from "./components/ItemData";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import TransformContainer from "../../ui/ObjectTransform/components/TransformContainer/TransformContainer";
 import {useSelector} from "react-redux";
-import {CarouselInline} from "../Modals/Carousel/CarouselContainer";
 import {isMobileDevice} from "../../helpers/events";
 import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 
 export const SimpleItem = ({item, depth=0}) => {
     const ref = useRef();
     useLayoutEffect(() => {
-        item.items && item.items.sort((a, b) => a.group_order - b.group_order);
+        item.items && item.items.sort((a, b) => a.order - b.order);
     }, []);
     useEffect(() => {
         const itemRef = ref.current;
@@ -30,27 +29,30 @@ export const SimpleItem = ({item, depth=0}) => {
             let transform = wrapper.querySelector(`.item[data-id="${it.id}"]`);
             if (!transform) continue;
             transform = transform.closest('.transform-item');
-            if (isMobileDevice() && it.type === 'subscription') {
-                transform.style.width = '100%';
-                transform.style.position = 'initial';
+            if (isMobileDevice()) {
+                if (it.type === 'subscription') transform.style.width = '100%';
+                if (!['model', 'image','video'].includes(item.type)) {
+                    it.position = 'initial';
+                    it.width = 'auto';
+                }
             }
             if (it.position !== 'absolute' && it.width === 'auto') {
                 if (['video', 'image', 'model'].includes(it.type)) {
-                    const h = +(it.height.slice(0, -2));
-                    const w = +(it.container_width.slice(0, -2));
-                    if (h / w * Math.min(window.innerWidth, 1100) + 100 > window.innerHeight && !isMobileDevice() && itemsRow === 1)
+                    const h = it.media_height;
+                    const w = it.media_width;
+                    if (h / w * itemTransform.getBoundingClientRect().width + 100 > window.innerHeight && !isMobileDevice() && itemsRow === 1)
                         transform.style.width = '50%';
                     else transform.style.width = 100 / itemsRow + '%';
+                    it.width = transform.style.width;
                 }
             }
         }
         initContainerDimensions({container, resize:true})
-        setTimeout(()=>initContainerDimensions({container, resize:true}),0)
     }, []);
 
     return (
         <div className={'wrapper-' + item.type + ' wrapper-inner'}>
-            <div className={`item depth-${depth} item-${item.type} transform-origin`}
+            <div className={`item depth-${depth} item-${item.type} transform-origin`} data-itemtype={'content'}
                  data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
                  onDragStart={e => e.preventDefault()}>
                 {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
@@ -75,7 +77,7 @@ const Item = ({item, depth=0}) => {
     return (
         <TransformItem key={item.id + item.items.length}
                        config={item}
-                       data-group={item.group_order}
+                       data-style={item.style}
                        data-type={item.type}
                        className={(admin ? 'edit' : '')}
                        secure={true}>

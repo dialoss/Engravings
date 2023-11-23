@@ -58,8 +58,7 @@ export async function sendRequest(url, data, method) {
 export function sendLocalRequest(url, data={}, method='GET', includePath=true) {
     const location = store.getState().location;
     url = new URL(location.baseURL + url);
-    includePath && (url.search += '&' + new URLSearchParams({slug: location.pageSlug || location.pageID,
-            path: location.relativeURL.slice(1, -1)}).toString());
+    includePath && (url.search += '&' + new URLSearchParams({path: location.relativeURL.slice(1, -1)}).toString());
     return sendRequest(url.toString(), data, method);
 }
 

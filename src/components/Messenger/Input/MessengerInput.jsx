@@ -63,12 +63,12 @@ export const InputEmoji = ({callback}) => {
         let root = document.querySelector('em-emoji-picker');
         root.shadowRoot.adoptedStyleSheets.push(sheet);
     }, [])
-    const modalName = `emojis-window:toggle ` + new Date().getTime();
+    const modalName = `emojis-window` + new Date().getTime();
 
     return (
         <div className={"icon icon-emojis"}>
-            <p className={'modal__toggle-button'} onClick={() => triggerEvent(modalName, {toggle:true})}>😃</p>
-            <ModalManager name={modalName} closeConditions={['bg']}>
+            <p className={'modal__toggle-button'} onClick={() => triggerEvent(modalName + ":toggle", {toggle:true})}>😃</p>
+            <ModalManager name={modalName} closeConditions={['bg', 'esc']}>
                 <Picker style={{bg:'bg-none'}}
                         icons={'solid'}
                         data={data}

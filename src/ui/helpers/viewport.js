@@ -15,9 +15,12 @@ export function getCorrectedPosition(element, pos) {
     let bBottom = posY + block.height;
 
     const [vw, vh] = getViewportSize();
-
-    if (bRight + 10 > vw) posX -= block.width;
+    let side = 'right'
+    if (bRight + block.width > vw) {
+        side = 'left';
+        posX -= block.width;
+    }
     if (bBottom + 10 > vh) posY -= block.height;
 
-    return [posX, posY];
+    return [posX, posY, side];
 }

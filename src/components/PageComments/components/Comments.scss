@@ -152,18 +152,20 @@
     width: fit-content;
     max-width: 100%;
   }
-  .item__image, .item_image {
+  .item__image, .item_video {
     width: auto;
-    box-shadow: 0 0 2px 0 grey;
+    max-height: 50vh;
+    @include mobile {
+      max-height: 100vh;
+    }
+    box-shadow: none;
     &:hover {
       opacity: 1;
     }
   }
   .item__image img {
-    max-height: 50vh;
-    //width: auto;
-    //max-width: 90%;
     border-radius: 6px;
+    width: auto;
   }
 
   .accordion {

@@ -129,6 +129,7 @@ export function setActionData(item) {
             return {
                 type: 'base',
                 movable: false,
+                width: '100%',
             }
         case 'quick':
             return {
@@ -136,6 +137,7 @@ export function setActionData(item) {
                 show_date: true,
                 description: 'Описание',
                 title: 'Заголовок',
+                width: '100%',
             }
         case 'table':
             return {
@@ -227,6 +229,7 @@ export function setActionData(item) {
         case "timeline":
             return {
                 show_shadow: false,
+                width: '100%',
                 items: [
                     {
                         type: 'timeline_entry',
@@ -275,7 +278,7 @@ export function setActionData(item) {
         case 'intro':
             return {
                 "type": "base",
-                container_width: 1100,
+                container_width: 1200,
                 "items": [
                     {
                         "type": "base",

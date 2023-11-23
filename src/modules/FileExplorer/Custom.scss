@@ -43,7 +43,7 @@ $border: solid #7c7c7c;
 }
 
 @include mobile {
-  .filemanager-window {
+  .filemanager-window .transform-item {
     height: 90vh;
   }
 }
@@ -259,6 +259,9 @@ $border: solid #7c7c7c;
 .fe_fileexplorer_statusbar_text_segment_wrap_last {
   margin-left: auto;
   font-size: 16px;
+  @include mobile {
+    font-size: 12px;
+  }
 }
 
 .filemanager-tooltip {

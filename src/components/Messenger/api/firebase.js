@@ -194,10 +194,11 @@ export function useGetRooms() {
     useLayoutEffect(() => {
         if (!Object.values(rooms).length) return;
         let newRooms = structuredClone(rooms);
-        for (const d in meta) {
+        for (const d in newRooms) {
             newRooms[d] = {...newRooms[d], ...meta[d]};
         }
         let haveNewMessage = false;
+        console.log(newRooms)
         for (const r in newRooms) {
             const curRoom = newRooms[r];
             if (curRoom.newMessage &&

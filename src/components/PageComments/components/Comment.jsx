@@ -53,7 +53,6 @@ const Comment = ({data}) => {
                 <div className={"comment-reply"} ref={ref}>
                     <InputContainer extraFields={{parent: data.id}}
                                 children={CommentsInput}
-                                    closeCallback={closeInput}
                                 manager={manager}></InputContainer>
             </div>}
         </div>

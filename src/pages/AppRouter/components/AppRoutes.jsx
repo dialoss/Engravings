@@ -44,9 +44,8 @@ const AppRoutes = () => {
         const action = query.getAll('action');
         switch (action) {
             case 'messenger':
-                 window.action = 'messenger';
+                 window.messenger = true;
         }
-        // window.history.pushState({}, null, window.location.href.split('?')[0]);
     }, []);
 
     return (

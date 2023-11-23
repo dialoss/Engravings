@@ -53,7 +53,7 @@ class LocalAuth {
 }
 
 const LoginForm = ({callback, visible}) => {
-    const data = [loginForm, registerForm];
+    const data = [registerForm, loginForm];
     const [stage, setStage] = useState(0);
     const buttons = data.map((d, i) =>
         <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>);

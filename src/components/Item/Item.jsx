@@ -30,7 +30,7 @@ export const SimpleItem = ({item, depth=0}) => {
             if (!transform) continue;
             transform = transform.closest('.transform-item');
             if (isMobileDevice()) {
-                if (it.type === 'subscription') transform.style.width = '100%';
+                transform.style.width = '100%';
                 if (!['model', 'image','video'].includes(item.type)) {
                     it.position = 'initial';
                     it.width = 'auto';

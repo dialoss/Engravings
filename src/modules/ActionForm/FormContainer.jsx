@@ -45,7 +45,7 @@ export const FormContainer = ({formData, callback, children}) => {
     return (
         <FormContext.Provider value={inputCallback}>
             <div className={"form__content " + (formData.style || '')}>
-                <div className="form__header transform-origin">
+                <div className="form__header">
                     <p className={"form__title"}>{formData.title}</p>
                     {formData.windowButton === false ? <></> : <WindowButton type={'close'}/>}
                 </div>

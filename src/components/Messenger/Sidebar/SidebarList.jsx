@@ -5,8 +5,6 @@ import {useSelector} from "react-redux";
 
 const SidebarList = ({list, className, currentItem, text, subtext=false, selectCallback, user}) => {
     const {users} = useSelector(state => state.messenger);
-    // console.log(users)
-
     return (
         <div className={"messenger-sidebar__list " + className}>
             {
@@ -21,11 +19,7 @@ const SidebarList = ({list, className, currentItem, text, subtext=false, selectC
                                 onClick={() => selectCallback(item.id)}
                                 key={userItem.id}>
                         <div className={"sidebar-item " + (online ? 'online' : 'offline')}>
-                            <Avatar extraInfo={true} src={item.picture} user={userItem}>
-                                <span className={"subtext"} style={{color:'#000'}}>{!online ? 'Был в сети ' +
-                                    (lastTime?dayjs(lastTime).format("HH:mm DD.MM"):'') : 'Онлайн'}
-                                </span>
-                            </Avatar>
+                            <Avatar src={item.picture} user={userItem}></Avatar>
                             <span className="text-wrapper">
                             <span className={"text"}>
                                 <span className={'wrapper'}>{item[text]}

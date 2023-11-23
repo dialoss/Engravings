@@ -88,17 +88,7 @@
       text-align: left;
       .wrapper span  {
         display: inline-block;
-        font-size: 12px ;
-        //animation: text 5s infinite linear;
-      }
-      @keyframes text {
-        0%{
-          transform: translate(0, 0);
-        }
-
-        100%{
-          transform: translate(100%, 0);
-        }
+        font-size: 12px;
       }
     }
   }

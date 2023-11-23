@@ -54,7 +54,6 @@ const Sidebar = ({data, admin}) => {
     ];
 
     function toggleSidebar(event) {
-        console.log(event)
         if (event.detail.isOpened !== undefined) {
             setOpened(event.detail.isOpened);
             return;

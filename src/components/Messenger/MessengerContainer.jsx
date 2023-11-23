@@ -40,6 +40,7 @@ const MessengerContainer = () => {
         onMessage(messaging, (payload) => {
             if (store.getState().messenger.room.id === +payload.data.room &&
                 document.querySelector(windowName + '.opened')) return;
+            console.log(payload)
             notifyUser({...payload.notification, data: payload.data});
         })
     }, [Object.values(users).length, user]);
@@ -48,7 +49,7 @@ const MessengerContainer = () => {
         <>
         {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName + ':toggle', {toggle: true})}></OpenButton>}
             <ModalManager name={windowName}
-                          closeConditions={['btn', 'esc']} defaultOpened={window.action === 'messenger'}>
+                          closeConditions={['btn', 'esc']} defaultOpened={window.messenger}>
                 <TransformItem config={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}
                                style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}} data-type={'modal'}>
                     <Messenger></Messenger>

@@ -35,7 +35,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
                 let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
                 if (target) {
                     e.preventDefault();
-                    field.focus();
+                    // field.focus();
                 }
             });
             field.addEventListener('keydown', (e) => triggerEvent('messenger:keydown', e));

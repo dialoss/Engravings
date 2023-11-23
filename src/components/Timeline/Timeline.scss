@@ -1,6 +1,10 @@
 .wrapper-timeline {
-  padding: 0;
+  padding: 0 !important;
 }
+.wrapper-timeline_entry {
+  padding: 0 0 6px 0 !important;
+}
+
 .timeline {
   padding-top: 20px;
   @include mobile {
@@ -9,6 +13,7 @@
     }
   }
   &-body {
+    width: 100%;
     flex-grow: 1;
   }
   &-item {
@@ -25,6 +30,10 @@
 
           width: 15px;
           height: 15px;
+          @include mobile {
+            width: 10px;
+            height: 10px;
+          }
         }
       }
       &-connector {
@@ -35,6 +44,9 @@
           width: 5px;
           height: 100%;
           border-radius: 4px;
+          @include mobile {
+            width: 3px;
+          }
         }
       }
       &-body {
@@ -48,18 +60,18 @@
         }
       }
       &-separator {
-        padding: 0 15px;
+        width: 40px;
         display: flex;
         flex-direction: column;
         @include mobile {
-          padding: 0 5px 0 0;
+          width: 18px;
+          margin-left: 0;
         }
       }
     }
     &--disabled {
       .timeline-dot, .timeline-connector {
         div {
-          //opacity: 0.5;
           background-color: #989898 !important;
         }
       }
@@ -68,13 +80,14 @@
   }
   &-item--secondary {
     .timeline {
-      &-separator {
-        padding-left: 17.8px;
-      }
       &-dot {
         div {
           width: 10px;
           height: 10px;
+          @include mobile {
+            width: 6px;
+            height: 6px;
+          }
         }
       }
     }

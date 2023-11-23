@@ -32,6 +32,7 @@ const Carousel = ({item, type}) => {
                 {loading && <Spinner></Spinner>}
                 <InfoBlock data={item} className={styles['info__block']}></InfoBlock>
                 {item.navigation && <CarouselNav></CarouselNav>}
+                {/*<WindowButton type={'close'}></WindowButton>*/}
             </div>
         </div>
     );

@@ -1,10 +1,12 @@
 export function createCommentsTree(comments, sorting, search, limit=null) {
-    let newComments = comments.sort(sorting)
+    let newComments = comments.sort(sorting).sort((a, b) => a.parent - b.parent);
     search = search.sort(sorting).sort((a, b) => a.parent - b.parent);
     let tree = {};
     let links = {};
     let searchPos = 0;
-    console.log('search', newComments)
+    console.log('newcom', newComments)
+    console.log('search', search)
+
     newComments.forEach((c, index) => {
         if (!search[searchPos] || index >= limit) return;
         let searched = c.id === search[searchPos].id;

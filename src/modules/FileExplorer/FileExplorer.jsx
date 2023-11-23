@@ -96,6 +96,7 @@ const FileExplorer = () => {
         for (const item of selected) {
             const file = fileToItem({...item, type: item.filetype});
             triggerEvent("action:callback", [file]);
+            triggerEvent("filemanager-window:toggle", {isOpened: false});
         }
     }
 

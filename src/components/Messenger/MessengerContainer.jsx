@@ -1,6 +1,7 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Messenger from "components/Messenger/Messenger";
 import {
+    setCurrentRoom,
     updateUser,
     useGetRooms,
     useGetUsers,
@@ -31,25 +32,25 @@ const MessengerContainer = () => {
         dispatch(actions.setField({field:'user', data: structuredClone(messengerUser)}));
         updateUser('realtime', {lastSeen: serverTimestamp(), online:true});
         onDisconnect(ref(realtime, 'users/' + user.id)).update({lastSeen: serverTimestamp(), online:false, isTyping:false});
-        getToken(messaging, {vapidKey: 'BCW_SE0Ya79VLvyQcUhvaHz3pLqo2JN3f4o6UmaxwT5gTHinwgr3TJwtz6TKRf8aXmrqmA-DfOaiOY_btNVYK6M'}).then((currentToken) => {
-            if (currentToken) {
-                console.log('NOTIF TOKEN', currentToken)
-                updateUser('firestore', {notification_token: currentToken});
-            }
-        })
-        onMessage(messaging, (payload) => {
-            if (store.getState().messenger.room.id === +payload.data.room &&
-                document.querySelector(windowName + '.opened')) return;
-            console.log(payload)
-            notifyUser({...payload.notification, data: payload.data});
-        })
+        if (messaging) {
+            getToken(messaging, {vapidKey: 'BCW_SE0Ya79VLvyQcUhvaHz3pLqo2JN3f4o6UmaxwT5gTHinwgr3TJwtz6TKRf8aXmrqmA-DfOaiOY_btNVYK6M'}).then((currentToken) => {
+                if (currentToken) {
+                    updateUser('firestore', {notification_token: currentToken});
+                }
+            })
+            onMessage(messaging, (payload) => {
+                if (store.getState().messenger.room.id === +payload.data.room &&
+                    document.querySelector(windowName + '.opened')) return;
+                notifyUser({...payload.notification, data: payload.data});
+            })
+        }
     }, [Object.values(users).length, user]);
 
     return (
         <>
         {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName + ':toggle', {toggle: true})}></OpenButton>}
             <ModalManager name={windowName}
-                          closeConditions={['btn', 'esc']} defaultOpened={window.messenger}>
+                          closeConditions={['btn', 'esc']}>
                 <TransformItem config={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}
                                style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}} data-type={'modal'}>
                     <Messenger></Messenger>

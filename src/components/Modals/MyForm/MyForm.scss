@@ -1,10 +1,11 @@
 
 .form {
     &__content {
-        max-height: 90vh;
-        min-width: 40vw;
+        max-height: 80vh;
+        @include desktop {
+            min-width: 400px;
+        }
         position: relative;
-
         display: flex;
         flex-direction: column;
 
@@ -12,7 +13,8 @@
         background-color: white;
         box-shadow: 0 0 5px 0 grey;
         border-radius: 8px;
-        padding: 10px;
+        //padding: 10px;
+        padding-bottom: 60px;
 
         &.inline {
             .window-close {
@@ -21,15 +23,30 @@
             box-shadow: none;
         }
 
-        form {
-            margin-top: 10px;
-            overscroll-behavior: none;
-            overflow: auto;
-
-            @include custom-scrollbar;
-            &::-webkit-scrollbar {
-                width: 15px;
+        @include mobile {
+            &:not(.inline) {
+                max-height: 100dvh;
+                height: 100dvh;
+                width: 100vw;
             }
+            border-radius: 0;
+        }
+
+        &:not(.inline) {
+            > form {
+                margin-top: 20px;
+            }
+        }
+
+        form {
+            padding: 10px;
+            overflow: auto;
+            @include custom-scrollbar;
+        }
+
+        .action-button[type="submit"] {
+            position: absolute;
+            bottom: 10px;
         }
     }
 
@@ -37,9 +54,8 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
         align-items: center;
-        row-gap: 20px;
+        row-gap: 10px;
 
         input {
             width: 100%;
@@ -47,6 +63,7 @@
     }
 
     &__title {
+        padding: 0 50px;
         text-align: center;
         font-weight: 600;
         font-size: 18px;
@@ -56,8 +73,8 @@
     &__header {
         .window-close {
             position: absolute;
-            right: 5px;
-            top: 5px;
+            right: 0;
+            top: 0;
         }
     }
 }

@@ -38,7 +38,6 @@ const ItemListContainer = () => {
         let offset = 0;
         let cachedItems = store.getState().elements.cache[page];
         if (cachedItems) {
-            console.log(cachedItems, page)
             addItems({newItems:cachedItems}, true);
             offset = cachedItems.length;
         } else {
@@ -58,6 +57,12 @@ const ItemListContainer = () => {
         console.log('RESPONSE', response)
         if (request.data.type === 'page') {
             triggerEvent('sidebar:update');
+        }
+        if (response.detail) {
+            triggerEvent('alert:trigger', {
+                body: response.detail,
+                type: 'error',
+            })
         }
         const newItems = response.items;
         if (!newItems) {

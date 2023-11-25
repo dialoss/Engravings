@@ -8,16 +8,15 @@ const NavbarContainer = () => {
     function isActive(path) {
         return location.relativeURL.split('/')[1] === path;
     }
-    console.log(location)
     return (
-        <Navbar routes={NavbarRoutes.map(route => ({
+        <Navbar routes={[...NavbarRoutes.map(route => ({
             ...route,
             style: isActive(route.path.split('/')[1]) ? 'current' : ''})
-        ).concat([{
+        ),{
             path: location.relativeURL,
             text: location.pageSlug.toUpperCase(),
             style: location.parentSlug ? 'current extra' : ' extra',
-        }])}/>
+        }]}/>
     );
 };
 

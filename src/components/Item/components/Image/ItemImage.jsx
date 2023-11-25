@@ -15,11 +15,12 @@ const ItemImage = ({data, ...props}) => {
     return (
         <>
             <div className="item__image" ref={ref} {...props} style={{aspectRatio: data.media_width / data.media_height}}>
-                <img src={getCompressedImage(data, 700)} alt=""
+                <img src={getCompressedImage(data, data.quality || 700)} alt=""
                     onClick={carouselCallback}
+                     referrerPolicy="no-referrer"
                      onDragStart={e => e.preventDefault()}/>
             </div>
-            <InfoBlock data={data}></InfoBlock>
+            {!data.empty_info && <InfoBlock data={data}></InfoBlock>}
         </>
 );
 };

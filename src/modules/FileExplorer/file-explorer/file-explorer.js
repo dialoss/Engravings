@@ -1551,7 +1551,7 @@
 			oninitupload: null,
 			onfinishedupload: null,
 			onuploaderror: null,
-			concurrentuploads: 4,
+			concurrentuploads: 100,
 
 			tools: {},
 
@@ -2779,7 +2779,7 @@
 					if ('tooltip' in entries[x])  node.firstChild.title = entries[x].tooltip;
 					else  node.firstChild.title = '';
 
-					itemtext.innerHTML = `<p class="text">${entries[x].name}</p><p class="type">${entries[x].filetype}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
+					itemtext.innerHTML = `<p class="text">${entries[x].name.slice(0, 20)}</p><p class="type">${entries[x].filetype}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
 
 					node.dataset.fehash = entries[x].hash;
 				}
@@ -6994,11 +6994,11 @@ console.log(selectanchorpos);
 				}
 				else
 				{
-					$this.SetNamedStatusBarText('message', EscapeHTML(FormatStr($this.Translate('Deleting items failed.' + (typeof success === 'string' ? '  {0}' : '')), success)), $this.settings.messagetimeout);
+					// $this.SetNamedStatusBarText('message', EscapeHTML(FormatStr($this.Translate('Deleting items failed.' + (typeof success === 'string' ? '  {0}' : '')), success)), $this.settings.messagetimeout);
 
 					currfolder.SetBusyRef(-1);
 
-					if (currfolder === origfolder)  $this.RefreshFolders(true);
+					// if (currfolder === origfolder)  $this.RefreshFolders(true);
 				}
 			};
 

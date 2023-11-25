@@ -5,15 +5,18 @@ import {getViewportWidth} from "../../../ui/helpers/viewport";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 
 const emptyElement = {
-    id: -1,
+    id: '',
     data: {},
     type: "",
     html: null,
-    display_pos: -1,
+    display_pos: 0,
 }
 
 export let actionElement = emptyElement;
 export let actionElements = [];
+export function clearElements() {
+    actionElements = [];
+}
 
 export function getElementID(element) {
     return element ? +element.getAttribute('data-id') : '';

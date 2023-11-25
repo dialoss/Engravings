@@ -18,6 +18,7 @@ const TextLoader = ({children, isLoading, dots=3, ...props}) => {
         <>
             {isLoading && <div className={"text-loader"}>
                 <span {...props} data-count={'.'.repeat(count)}>{children}</span>
+                <span className={'progress'}></span>
             </div>}
         </>
 

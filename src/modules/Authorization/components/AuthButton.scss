@@ -1,7 +1,6 @@
 
 .auth-button {
-  font-family: Calibri, serif;
-  font-size: 20px;
+  font-size: 16px;
   border: none;
   background-color: #fff;
   box-shadow: 0 0 7px 0 grey;
@@ -9,17 +8,18 @@
   padding: 5px;
   transition: all 0.2s linear;
   margin: 0 auto;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background-color: #eaeaea;
     cursor: pointer;
   }
-
-  &--signin {
-
-  }
-  &--signout {
-
-  }
+}
+.google-icon {
+  width: 24px;
+  display: inline-block;
+  height: 24px;
+  margin-right: 10px;
 }

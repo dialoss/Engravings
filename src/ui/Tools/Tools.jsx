@@ -9,10 +9,10 @@ export const SearchContainer = ({placeholder, inputCallback=() => {}, data, setD
             let val = item;
             for (const p of searchBy.split('.')) val = val[p];
             if (val && (val.toLowerCase().includes(query.toLowerCase()) || val.includes(query))) {
-                item.visible = true;
+                // item.visible = true;
                 return true;
             } else {
-                item.visible = false;
+                // item.visible = false;c
                 return false;
             }
         })

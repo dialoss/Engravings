@@ -5,14 +5,14 @@ import {actions} from "./store/user/reducers";
 import {triggerEvent} from "../../helpers/events";
 import {sendLocalRequest} from "../../api/requests";
 import {useAddEvent} from "../../hooks/useAddEvent";
-import AuthButton from "./components/AuthButton";
+import AuthButton, {GoogleIcon} from "./components/AuthButton";
 import ModalForm, {FormContainer} from "../ActionForm/FormContainer";
 import {loginForm, registerForm} from "./forms/loginForm";
 import ActionButton from "../../ui/Buttons/ActionButton/ActionButton";
 import {serializeFields} from "../ActionForm/helpers/FormData";
+import Spinner from "../../ui/Spinner/Spinner";
 
 const CLEINT_ID = '1024510478167-dufqr18l2g3nmt7gkr5rakc9sjk5nf54.apps.googleusercontent.com';
-
 
 const userStore = (data) => store.dispatch(actions.setUser(data));
 
@@ -75,28 +75,52 @@ const LoginForm = ({callback, visible}) => {
 }
 
 const LoginWindow = ({callback}) => {
+    const [loader, setLoader] = useState(false);
     const googleAuth = useGoogleLogin({
+        onNonOAuthError: () => {
+            setLoader(false);
+        },
+        onError: () => {
+            setLoader(false);
+        },
         onSuccess: tokenResponse => {
-            callback({credentials: {token: tokenResponse.access_token}});
+            callback({credentials: {token: tokenResponse.access_token}, setLoader});
         },
     });
-
     const [authType, setType] = useState('');
     return (
-        <ModalForm name={'login-form'} data={{title: 'Авторизация'}}>
-            <div className="auth-type__buttons">
+        <ModalForm name={'login-form'} data={{submitCallback: () => {
+            callback(null);
+            setLoader(false);
+            }}}>
+            {authType !== 'custom' && <div className="auth-type__buttons">
                 <AuthButton type={'signin'} callback={() => {
                     LocalAuth.type = 'google';
                     setType('google');
                     googleAuth();
-                }}>Войти через Google</AuthButton>
+                    setLoader(true);
+                }}><GoogleIcon></GoogleIcon>Войти через Google</AuthButton>
                 <p className={'delimiter'}>ИЛИ</p>
                 <AuthButton type={'signin'} callback={() => {
                     LocalAuth.type = 'custom';
                     setType('custom');
                 }}>Через email</AuthButton>
-            </div>
-            <LoginForm visible={authType === 'custom'} callback={callback}></LoginForm>
+            </div>}
+            <LoginForm visible={authType === 'custom'}
+                       callback={fields => {
+                           setLoader(true);
+                           callback({...fields, setLoader});
+                       }}></LoginForm>
+            {authType === 'custom' && <>
+                <p className={'delimiter'}>ИЛИ</p>
+                <AuthButton type={'signin'} callback={() => {
+                    LocalAuth.type = 'google';
+                    setType('google');
+                    googleAuth();
+                    setLoader(true);
+                }}><GoogleIcon></GoogleIcon>Войти через Google</AuthButton>
+            </>}
+            {loader && <Spinner></Spinner>}
         </ModalForm>
     );
 }
@@ -116,7 +140,12 @@ const AuthWrapper = () => {
                 if (success) {
                     toggle(false);
                     triggerEvent("sidebar:toggle", {isOpened: true});
+                    const password = data.credentials.password;
+                    // var c = new PasswordCredential(password);
+
+                    password && navigator.credentials.create({password});
                 }
+                data.setLoader(false);
             });
         } else {
             toggle(false);

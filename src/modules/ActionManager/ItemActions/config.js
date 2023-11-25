@@ -1,17 +1,15 @@
 import store from "store";
 import {getLocation} from "../../../hooks/getLocation";
-import dayjs from "dayjs";
 import {sendEmail} from "../../../api/requests";
 import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
-import {arrayUnion, doc, updateDoc} from "firebase/firestore";
-import {adminEmail, firestore} from "../../../components/Messenger/api/config";
-import {actions} from "../../../components/Messenger";
+import {adminEmail} from "../../../components/Messenger/api/config";
 import {isMobileDevice, triggerEvent} from "../../../helpers/events";
 
 export const ContextActions = {
     'add':{
         text: 'Добавить',
-        argument: null,
+        argument: true,
+        stay_opened: true,
         actions: {
             'quick': {
                 callback: 'add',
@@ -150,6 +148,7 @@ export function setActionData(item) {
             }
         case 'button':
             return {
+                width: '40%',
                 style: 'nav',
                 text: 'кнопка'
             }
@@ -211,6 +210,7 @@ export function setActionData(item) {
                                 type: 'price',
                                 width: '100%',
                                 price: "999",
+                                style: 'action',
                                 text: 'Приобрести',
                                 link: '$buy',
                                 show_shadow: false,
@@ -225,6 +225,7 @@ export function setActionData(item) {
                 price: "999",
                 text: 'Приобрести',
                 link: '$buy',
+                style: 'action',
             }
         case "timeline":
             return {
@@ -240,29 +241,36 @@ export function setActionData(item) {
                     },
                     {
                         type: 'timeline_entry',
-                        title: 'Обработка материала',
-                        color: '#a97117',
+                        title: 'Изготовление деталей',
+                        color: '#e2b624',
                         show_shadow: false,
                         movable: false,
                     },
                     {
                         type: 'timeline_entry',
                         title: 'Сборка',
-                        color: '#a6ae09',
+                        color: '#0932ae',
                         show_shadow: false,
                         movable: false,
                     },
                     {
                         type: 'timeline_entry',
                         title: 'Тестирование',
-                        color: '#74d50d',
+                        color: '#710dd5',
                         show_shadow: false,
                         movable: false,
                     },
                     {
                         type: 'timeline_entry',
                         title: 'Упаковка',
-                        color: '#0e6900',
+                        color: '#3ddf20',
+                        show_shadow: false,
+                        movable: false,
+                    },
+                    {
+                        type: 'timeline_entry',
+                        title: 'Отправлено',
+                        color: '#005102',
                         show_shadow: false,
                         movable: false,
                     },
@@ -271,6 +279,7 @@ export function setActionData(item) {
         case 'timeline_entry':
             return {
                 type: 'timeline_entry',
+                color: '#00f',
                 title: 'Заголовок',
                 show_shadow: false,
                 movable: false,
@@ -342,7 +351,7 @@ export function setActionData(item) {
                                 "type": "table",
                                 "width": "100%",
                                 "height": "300px",
-                                "url": "https://drive.google.com/uc?id=1TT6KWUcn4_4shc-DK--2JDR4W4_nUuPT",
+                                "url": "1TT6KWUcn4_4shc-DK--2JDR4W4_nUuPT",
                             },
                         ]
                     },
@@ -353,6 +362,7 @@ export function setActionData(item) {
                         "items": [
                             {
                                 width: '100%',
+                                style: 'action',
                                 "type": "price",
                                 "text": "Заказать изготовление",
                                 "link": "$order",
@@ -384,6 +394,11 @@ export function setActionData(item) {
             });
 
             return [{
+                type:'page',
+                path: 'orders/' + name,
+                title: name,
+            },
+                {
                 unique: JSON.stringify({customer: user.name, order: orderName}),
                 type: 'base',
                 title: orderName,
@@ -405,7 +420,7 @@ export function setActionData(item) {
                     type: 'base',
                     title: orderName,
                     description: `Заказ ` + user.name,
-                    tab: 'tab_1',
+                    tab: 1,
                     parent: '',
                     page: {
                         path: 'orders',

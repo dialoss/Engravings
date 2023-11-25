@@ -9,8 +9,7 @@ const InlineEditor = ({data, closeCallback}) => {
     valRef.current = value;
     const ref = useRef();
 
-    useAddEvent('click', e => {
-        console.log(e)
+    useAddEvent('mousedown', e => {
         if (!getElementFromCursor(e, 'ql-editor')) {
             close();
         }
@@ -19,6 +18,7 @@ const InlineEditor = ({data, closeCallback}) => {
     function close() {
         let text = valRef.current.text;
         if (text === '<p><br></p>') text = '';
+        setValue({text});
         closeCallback(text);
     }
     useEffect(() => {
@@ -35,7 +35,7 @@ const InlineEditor = ({data, closeCallback}) => {
         if (data.config === 'editor') {
             let block = ref.current.editor.container.closest('.quill');
             let item = block.closest('.transform-item');
-            item.style.width = Math.max(300, item.clientWidth) + "px";
+            if (item) item.style.width = Math.max(300, item.clientWidth) + "px";
         }
     }, []);
     useLayoutEffect(() => {
@@ -43,7 +43,6 @@ const InlineEditor = ({data, closeCallback}) => {
         let cont = ref.current.editor.container.closest(".transform-container");
         triggerEvent("container:init", {container: cont});
     }, [value]);
-
     return (
         <TextEditor ref={ref}
                     config={data.config}

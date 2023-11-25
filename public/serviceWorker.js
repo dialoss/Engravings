@@ -1,8 +1,8 @@
 
 
 self.addEventListener('notificationclick', function (e) {
-    console.log('WORKER')
-    console.log(e)
+    // console.log('WORKER')
+    // console.log(e)
     e.notification.close();
     e.waitUntil(
         clients.matchAll({ type: "window" }).then((clientsArr) => {

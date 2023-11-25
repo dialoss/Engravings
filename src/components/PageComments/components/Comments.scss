@@ -103,7 +103,7 @@
   .info__paragraph-comment {
     text-align: left;
     width: 100%;
-    padding: 10px 0;
+    padding: 0;
     margin: 0;
   }
 
@@ -165,34 +165,43 @@
   }
   .item__image img {
     border-radius: 6px;
+    max-width: 100%;
     width: auto;
   }
 
   .accordion {
+    position: relative;
     margin-bottom: 10px;
   }
   .accordion-header {
+    z-index: 1;
+    position: absolute;
+    width: 100%;
     border: none;
   }
 
 
   .icon-emojis {
-    .modal__window {
-
-      @include mobile {
-        & {
-          padding-right: 5px;
-          //max-width: 90%;
-        }
-      }
+    .modal-manager {
+      width: 100%;
+      right: 0;
+      transform: translate(0, calc(-100% - 40px));
     }
-  }
 
+    .modal__window {
+      bottom: -100px;
+    }
+
+  }
   .search {
     position: absolute;
   }
 }
-
+.comment.item {
+  & > div, & > span {
+    margin-top: 6px;
+  }
+}
 .icon-emojis {
   .modal__background {
     position: initial;

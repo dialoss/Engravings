@@ -25,15 +25,15 @@ const Comment = ({data}) => {
         ref.current.classList.remove('visible');
         setTimeout(() => setReply(r => !r), 180)
     }
-    if (data.value.text.match(/youtube/)) {
-        upload = {
-            type: 'video',
-            style: 'youtube',
-            url: clearTextFromHTML(data.value.text),
-        }
-    }
+    // if (data.value.text.match(/youtube/)) {
+    //     upload = {
+    //         type: 'video',
+    //         style: 'youtube',
+    //         url: clearTextFromHTML(data.value.text),
+    //     }
+    // }
     return (
-        <div className={"comment"} id={"comment " + data.id}>
+        <div className={"comment item"} data-id={data.id} data-type={'comment'}>
             <div className="comment-block">
                 <Avatar user={user} src={user.picture}></Avatar>
                 <div className="comment-block__text">
@@ -41,10 +41,13 @@ const Comment = ({data}) => {
                     <p className={"comment-date"}>{dayjs(data.timeSent).format("HH:mm DD.MM.YYYY")}</p>
                 </div>
             </div>
-            <InfoParagraph type={'comment'}>{matchURL(data.value.text)}</InfoParagraph>
-            {upload.uploading && <p>{upload.filename}</p>}
+            {data.value.text && <InfoParagraph id={data.id} type={'comment'}>{matchURL(data.value.text)}</InfoParagraph>}
+            {upload.uploading && <div>
+            <p>{upload.filename}</p>
             <TextLoader className={'attachment-loading'} isLoading={upload.uploading}>Загрузка</TextLoader>
-            {!!upload && !!upload.url && !!upload.type && <ItemData data={{...upload, navigation: false}}/>}
+            </div>
+            }
+            {!!upload && !!upload.url && !!upload.type && <ItemData data={{...upload, empty_info: true, navigation: false}}/>}
             <div className={"comment-reply__button"} onClick={() => {
                 if (ref.current) closeInput();
                 else setReply(r => !r)

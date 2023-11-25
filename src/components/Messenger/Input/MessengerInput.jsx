@@ -7,6 +7,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import {ModalManager} from "../../ModalManager";
 import {triggerEvent} from "../../../helpers/events";
+import {dropUpload} from "../../../modules/FileExplorer/api/google";
 
 export const InputAttachment = ({callback}) => {
     const inputRef = useRef();
@@ -35,9 +36,11 @@ export const AttachmentPreview = ({message}) => {
 
 export const InputSend = ({callback}) => {
     return (
-        <div className="ql-toolbar">
-            <div className="icon icon-send" onClick={callback}>
-                <Send></Send>
+        <div className="ql-toolbar input-send">
+            <div className="ql-formats">
+                <div className="icon icon-send" onClick={callback}>
+                    <Send></Send>
+                </div>
             </div>
         </div>
 
@@ -78,19 +81,21 @@ export const InputEmoji = ({callback}) => {
     );
 }
 
-const MessengerInput = ({inputCallback, message, sendCallback}) => {
-    function upload (e) {
-        let files = [];
-        for (const file of [...(e.dataTransfer || e.clipboardData).files]) {
-            files.push(file);
-        }
-        if (!files.length) return;
-        e.stopPropagation();
-        e.preventDefault();
-        inputCallback(m => ({...m, upload:files}));
-    }
+export const CustomUpload = ({children, name, inputCallback}) => {
+    const upload = (e, callback) => dropUpload(e, files => callback(m => ({...m, upload:files})), false);
     return (
-        <div className={"custom-input messenger-input"} onDrop={upload} onPaste={upload}>
+        <div className={"custom-input " + name}
+             onDragOver={(e) => e.preventDefault()}
+             onDrop={e => upload(e, inputCallback)}
+             onPaste={e => upload(e, inputCallback)}>
+            {children}
+        </div>
+    );
+}
+
+const MessengerInput = ({inputCallback, message, sendCallback}) => {
+    return (
+        <CustomUpload name={'messenger-input'} inputCallback={inputCallback}>
             <div className={"input-field"}>
                 <div className="editor-wrapper">
                     <TextEditor message={message}
@@ -100,7 +105,7 @@ const MessengerInput = ({inputCallback, message, sendCallback}) => {
             </div>
             <AttachmentPreview message={message}></AttachmentPreview>
             <InputSend callback={sendCallback} key={'messenger-send'}></InputSend>
-        </div>
+        </CustomUpload>
     );
 };
 

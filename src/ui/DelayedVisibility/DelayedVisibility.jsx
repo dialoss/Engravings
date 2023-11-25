@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import "./DelayedVisibility.scss";
 
 const DelayedVisibility = ({trigger, timeout, children}) => {
     const [visible, setVisible] = useState(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setVisible(false);
         setTimeout(()=>{setVisible(true)},timeout);
     }, [trigger]);

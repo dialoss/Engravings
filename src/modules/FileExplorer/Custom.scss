@@ -6,7 +6,7 @@ $border: solid #7c7c7c;
 
 .custom-icon-img {
   height: 100%;
-  max-height: calc(var(--icon-size) / 2);
+  //max-height: calc(var(--icon-size) / 2);
   img {
     display: block;
     max-height: 100%;
@@ -44,7 +44,7 @@ $border: solid #7c7c7c;
 
 @include mobile {
   .filemanager-window .transform-item {
-    height: 90vh;
+    height: 100dvh;
   }
 }
 
@@ -150,7 +150,7 @@ $border: solid #7c7c7c;
       border-top: 1px $border;
       border-bottom: none;
 
-      .button {
+      .filemanager__button {
         height: 26px;
         background-color: $color-link-background;
         padding: 2px;
@@ -205,8 +205,7 @@ $border: solid #7c7c7c;
 }
 
 
-.filemanager-view__button {
-  //width: 50px;
+.filemanager__button {
   height: 26px;
   background-color: $color-link-background;
 }
@@ -265,7 +264,7 @@ $border: solid #7c7c7c;
 }
 
 .filemanager-tooltip {
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
   background-color: #fff;
   box-shadow: 0 0 2px 0 grey;
@@ -302,9 +301,14 @@ $border: solid #7c7c7c;
 .filemanager-right {
   border: 2px $border;
   border-left: none;
-  position: absolute;
   right: 0;
   bottom: 0;
-  transform: translate(100%, 0);
+  z-index: 10;
   height: 100%;
+  position: fixed;
+
+  @include desktop {
+    position: absolute;
+    transform: translate(100%, 0);
+  }
 }

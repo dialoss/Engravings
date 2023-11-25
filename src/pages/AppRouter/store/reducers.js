@@ -3,9 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
-        // baseURL : 'https://divine-snow-51804.pktriot.net',
-        // baseURL : 'https://matthew75.pythonanywhere.com',
-        baseURL : 'http://localhost:8000',
+        baseURL : 'https://matthew75.pythonanywhere.com',
+        // baseURL : 'http://localhost:8000',
         pages : {},
         fullURL : '',
         relativeURL : '',
@@ -21,7 +20,8 @@ export const locationSlice = createSlice({
     },
     reducers: {
         setLocation: (state) => {
-            const url = decodeURI(window.location.href);
+            let url = decodeURI(window.location.href);
+            url = url.split('?')[0];
             state.relativeURL = url.split('/').slice(3).join('/');
             if (state.relativeURL[0] !== '/') state.relativeURL = '/' + state.relativeURL;
             if (state.relativeURL.slice(-1) !== '/') state.relativeURL = state.relativeURL + '/';

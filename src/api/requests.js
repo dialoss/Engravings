@@ -45,7 +45,7 @@ export async function sendRequest(url, data, method) {
     try {
         await fetch(url, query).then(res => res.json()).then(data => response = data);
     } catch (e) {
-        console.log(e);
+        // console.log(e);
         triggerEvent('alert:trigger', {
             body: 'failed to fetch',
             type: 'error',

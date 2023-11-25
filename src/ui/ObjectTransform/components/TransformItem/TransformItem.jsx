@@ -12,6 +12,7 @@ const resizers = {
 const TransformItem = ({children, config, className, secure, ...props}) => {
     const initialTransform = {
         movable: config.movable !== undefined ? config.movable : true,
+        resizable: config.resizable !== undefined ? config.resizable : true,
         ...config,
         height: props['data-type'] === 'modal' ? config.height : 'auto',
         ...(config.zindex ? {zIndex: config.zindex}: {}),
@@ -32,6 +33,7 @@ const TransformItem = ({children, config, className, secure, ...props}) => {
                             className: "transform-resize " + btn.style,
                             key: btn.name,
                             type: btn.name,
+                            style: {resizable: config.resizable},
                         });
                     })
                 })}

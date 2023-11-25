@@ -2,19 +2,40 @@
   padding: 0 !important;
 }
 .wrapper-timeline_entry {
-  padding: 0 0 6px 0 !important;
+  padding: 0 !important;
 }
 
 .timeline__entry {
   min-height: 40px;
 }
 
+.timeline-body.primary > .timeline-separator {
+  transform: translate(0, 20px);
+  @include mobile {
+    & {
+      transform: translate(0, 17px);
+    }
+  }
+}
+
+.item-list.edit {
+  .timeline-wrapper,
+  .timeline-group .timeline-item:last-child .transform-item {
+    padding-bottom: 100px;
+  }
+}
+
+//.timeline-connector:
+
 .timeline {
   .accordion-header {
-    margin-left: 20px;
+    margin-left: 40px;
+    @include mobile {
+      & {
+        margin-left: 20px;
+      }
+    }
   }
-
-  padding-top: 20px;
   @include mobile {
     .transform-item{
       min-width: 50% !important;
@@ -48,20 +69,33 @@
         }
       }
       &-connector {
+
         height: 100%;
-        padding: 3px 0;
         div {
           margin: auto;
           width: 5px;
           height: 100%;
-          border-radius: 4px;
           @include mobile {
             width: 3px;
           }
         }
+
+        &.extra {
+          position: absolute;
+          transform: translate(-50%, 0);
+          left: 50%;
+          height: 20px;
+          &.top {
+            bottom: calc(100% + 3px);
+          }
+          &.bottom {
+            top: calc(100% + 3px);
+          }
+          div { border-radius: 4px;}
+        }
       }
       &-body {
-        display: flex;
+        //display: flex;
         min-height: 40px;
         > div {
           //margin-top: -6px;
@@ -71,40 +105,38 @@
         }
       }
       &-separator {
+        position: relative;
         width: 40px;
+        min-width: 40px;
         display: flex;
         flex-direction: column;
         @include mobile {
-          width: 18px;
+          width: 13px;
+          min-width: 13px;
           margin-left: 0;
         }
       }
     }
     &.disabled {
-      .timeline-dot, .timeline-connector {
-        div {
-          background-color: #989898 !important;
-        }
+      .accordion .toggle-button {
+        display: none;
       }
     }
   }
   &-item.primary {
-    & > .timeline-body {
-      //margin-left: -20px;
-      //padding-right: 15px;
-    }
     .accordion-header__wrapper {
       p {
         font-weight: 500;
       }
     }
   }
+
   &-item.secondary {
     .timeline {
       &-dot {
         div {
-          width: 10px;
-          height: 10px;
+          width: 8px;
+          height: 8px;
           @include mobile {
             width: 6px;
             height: 6px;

@@ -168,7 +168,6 @@ export function setItemTransform(event, type, _item, _btn) {
                 skipHistory: true,
             }
         ];
-        console.log(request)
         triggerEvent('action:callback', request);
     }
 

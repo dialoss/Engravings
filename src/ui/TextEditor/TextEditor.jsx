@@ -27,15 +27,24 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             }
         })
         let field = root.root;
+
+        isMobileDevice() && field.addEventListener('focus', e => {
+             triggerEvent("messenger:scroll");
+        });
+
+        field.addEventListener('mousedown', e => {
+            e.stopPropagation()
+        });
+
         field.dataset.placeholder = 'Сообщение';
         field.addEventListener('keydown', (e) => e.stopPropagation());
-        // field.focus();
+        field.focus();
         if (simple) {
             field.addEventListener('blur', (e) => {
                 let target = getElementFromCursor(clickEvent.current, '', ['icon-emojis', 'emojis-window']);
                 if (target) {
                     e.preventDefault();
-                    // field.focus();
+                    field.focus();
                 }
             });
             field.addEventListener('keydown', (e) => triggerEvent('messenger:keydown', e));
@@ -51,14 +60,6 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
         createRoot(toolbar.querySelector('.ql-attachment')).render(
             <InputAttachment callback={(v) => callback(m => ({...m, upload:v.upload}))}></InputAttachment>);
     }, []);
-
-    useEffect(() => {
-        let root = (msgRef.current || ref.current).getEditor();
-        let field = root.root;
-        field.addEventListener('mousedown', e => {
-            e.stopPropagation()
-        });
-    }, [])
 
     function inputCallback(value) {
         callback(m => ({...m, text:value}));

@@ -11,7 +11,7 @@ const Message = ({data}) => {
     let text = matchURL(data.value.text);
     return (
         <div className={"message-inner"} style={(!!upload.url && ['image', 'video'].includes(upload.type)) ? {width:'100%'} : {}}>
-            <div className={"message"}>
+            <div className={"message"} data-id={data.id}>
                 {!!upload && !!upload.url && <ItemData data={{...upload, navigation: false}}></ItemData>}
                 <p className={"message-text"} dangerouslySetInnerHTML={{__html: text}}></p>
                 {upload.uploading && <p className={"message-text"}>{upload.filename}</p>}

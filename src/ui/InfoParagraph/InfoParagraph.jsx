@@ -6,7 +6,7 @@ import {clearTextFromHTML} from "../TextEditor/helpers";
 import store from "../../store";
 
 
-const InfoParagraph = ({type, children, ...props}) => {
+const InfoParagraph = ({type, children, id, ...props}) => {
     const ref = useRef();
     const [editor, setEditor] = useState({});
     useLayoutEffect(() => {
@@ -23,15 +23,15 @@ const InfoParagraph = ({type, children, ...props}) => {
             return;
         }
         let type = ref.current.classList[1].split('-')[1];
-        let request = {method: "PATCH", specifyElement: true, data:{}};
-        let value = text;
-        if (type === 'textfield') {
+        let request = {method: "PATCH", data:{}};
+        if (['textfield', 'comment', 'message'].includes(type)) {
             request.data = {type, text};
         } else {
-            value = clearTextFromHTML(text);
-            if (value) request.data[type] = text;
+            if (!clearTextFromHTML(text)) text = '';
+            request.data[type] = text;
         }
-        setEditor({isOpened: false, value});
+        request.data.id = id;
+        setEditor({isOpened: false, value: text});
         triggerEvent("action:callback", [request]);
     }
 
@@ -51,7 +51,7 @@ const InfoParagraph = ({type, children, ...props}) => {
                     value: `<p>${editor.value}</p>`,
                     mount: ref,
                 }} closeCallback={closeEditor}></InlineEditor> :
-                <div dangerouslySetInnerHTML={{__html: editor.value}}></div>}
+                editor.value && <div dangerouslySetInnerHTML={{__html: editor.value}}></div>}
         </span>
     );
 };

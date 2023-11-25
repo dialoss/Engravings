@@ -41,9 +41,7 @@ $color-sidebar-background: rgb(54, 59, 75, 0.8);
         height: 100%;
         transition: transform 0.2s linear, visibility 0.2s linear;
         @include custom-scrollbar;
-        &::-webkit-scrollbar {
-            width: 15px;
-        }
+
     }
 
     &__inner {

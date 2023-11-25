@@ -37,7 +37,7 @@ export const registerForm = {
             validate: 'email',
             attrs: ['required'],
             label: "Email",
-            value: ''
+            value: '',
         },
         name: {
             name: 'name',

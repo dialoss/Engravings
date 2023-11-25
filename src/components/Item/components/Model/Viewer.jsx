@@ -7,7 +7,7 @@ const Viewer = ({data}) => {
     useEffect(() => {
         if (data.style === 'simple') return;
         const resizer = new ResizeObserver(() => {
-            if (!ref.current || !window.autodeskViewers) return;
+            if (!ref.current || !window.autodeskViewers || !window.autodeskViewers[data.id]) return;
             let block = ref.current.getBoundingClientRect();
             window.autodeskViewers[data.id].impl.resize(block.width, block.height, true);
         });

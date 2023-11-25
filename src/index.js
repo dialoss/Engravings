@@ -16,7 +16,7 @@ root.render(
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/serviceWorker.js`).then(
         registration => {
-            console.log('Service worker registration succeeded:', registration);
+            // console.log('Service worker registration succeeded:', registration);
         },
         error => {
             console.error(`Service worker registration failed: ${error}`);

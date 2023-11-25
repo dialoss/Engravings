@@ -42,13 +42,13 @@ export function serializeActions(actions, actionElement, depth=0) {
                 break;
             case false:
                 callback = () => {
-                    closeCallback();
+                    !action.stay_opened && closeCallback();
                     Actions.action(Actions[functionName]());
                 }
                 break;
             case true:
                 callback = () => {
-                    closeCallback();
+                    !action.stay_opened && closeCallback();
                     Actions.action(Actions[functionName](name));
                 }
                 break;

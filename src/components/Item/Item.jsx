@@ -16,7 +16,7 @@ export const SimpleItem = ({item, depth=0}) => {
         const itemRef = ref.current;
         const itemTransform = itemRef.closest(".transform-item");
         const container = itemTransform.querySelector('.transform-container');
-
+        itemTransform.style.width = item.width;
         let mediaItems = 0;
         let itemsRow = 1;
         for (const it of item.items) {
@@ -26,11 +26,11 @@ export const SimpleItem = ({item, depth=0}) => {
         else if (mediaItems >= 2) itemsRow = 2;
         const wrapper = container.querySelector('.items-wrapper');
         for (const it of item.items) {
-            let transform = wrapper.querySelector(`.item[data-id="${it.id}"]`);
+            let transform = wrapper && wrapper.querySelector(`.item[data-id="${it.id}"]`);
             if (!transform) continue;
             transform = transform.closest('.transform-item');
             if (isMobileDevice()) {
-                if (!['model', 'image','video'].includes(item.type)) {
+                if (!['model', 'image','video', 'textfield'].includes(item.type)) {
                     it.position = 'initial';
                     it.width = 'auto';
                 }
@@ -48,9 +48,8 @@ export const SimpleItem = ({item, depth=0}) => {
                 it.width = transform.style.width;
             }
         }
-        initContainerDimensions({container, resize:true})
-    }, []);
-
+        initContainerDimensions({container, resize:true});
+    }, [item]);
     return (
         <div className={'wrapper-' + item.type + ' wrapper-inner'}>
             <div className={`item depth-${depth} item-${item.type} transform-origin`} data-itemtype={'content'}

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import {getElementFromCursor, triggerEvent} from "helpers/events";
+import {getElementFromCursor, isMobileDevice, triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {setItemTransform} from "./transform";
 import {initContainerDimensions} from "./helpers";
@@ -17,12 +17,15 @@ const ObjectTransform = () => {
         const alreadyFocused = item.classList.contains('focused');
         clearSelection();
         item.classList.add('focused');
+        item.getAttribute('data-type') !== 'modal' && isMobileDevice() && triggerEvent("contextmenu:open", event.detail.event);
+
         prevTransform.current = item;
         triggerEvent("action:init", event.detail.event);
         window.elementsAction = true;
+
         const parentCont = item.closest('.transform-container').classList.contains('viewport-container');
-        if (getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 || (event.detail.type === 'move' &&
-                !event.detail.movable)) {
+        if (getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 ||
+            (event.detail.type === 'move' && !event.detail.movable) ||  (event.detail.type === 'resize' && !event.detail.resizable)) {
             return;
         }
         (alreadyFocused || parentCont) && setItemTransform(event.detail.event, event.detail.type, item, btn);

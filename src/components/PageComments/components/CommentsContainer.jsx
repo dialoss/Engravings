@@ -4,7 +4,7 @@ import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/
 import InputContainer from "../../Messenger/Input/InputContainer";
 import Comments from "./Comments";
 import TextEditor from "../../../ui/TextEditor/TextEditor";
-import {AttachmentPreview} from "../../Messenger/Input/MessengerInput";
+import {AttachmentPreview, CustomUpload} from "../../Messenger/Input/MessengerInput";
 import "./Comments.scss";
 import {actions} from "../store/reducers";
 import {CDB, firestore} from "../../Messenger/api/config";
@@ -23,7 +23,7 @@ import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
-        <div className={"custom-input comments-input"}>
+        <CustomUpload name={'comments-input'} inputCallback={inputCallback}>
             <div className="input-wrapper">
                 <div className={"input-field"}>
                     <div className="editor-wrapper">
@@ -35,9 +35,11 @@ export const CommentsInput = ({message, sendCallback, inputCallback}) => {
             </div>
             <AttachmentPreview message={message}></AttachmentPreview>
             <ActionButton onClick={sendCallback}
+                          modalToggle={false}
+                          focus={true}
                           authorizeAction={true}
                           key={'comments-send'}>Отправить</ActionButton>
-        </div>
+        </CustomUpload>
     );
 };
 
@@ -89,7 +91,7 @@ const CommentsContainer = ({page, document, setDocument}) => {
                 parentUser && sendCloudMessage({
                     title: 'MyMount | Новый комментарий',
                     body: user.name + ': ' + (message.value.text || message.value.upload.filename),
-                    data: {url: getLocation().fullURL + '?action=comments'},
+                    data: {url: getLocation().fullURL + '?action=comments&id=' + message.id},
                     companion: parentUser.email,
                 });
             }
@@ -116,19 +118,18 @@ const CommentsContainer = ({page, document, setDocument}) => {
     useEffect(() => {
         setSearch(comments);
     }, [comments]);
-
-    const [limit, setLimit] = useState(40);
+    const limitStep = 40;
+    const [limit, setLimit] = useState(limitStep);
     useEffect(() => {
         setCommentsTree(createCommentsTree(comments, sorting, search, limit));
     }, [sorting, search, limit]);
-    console.log(limit)
 
     const manager = new MessageManager('comments', actions, config);
     return (
         <CommentsContext.Provider value={manager}>
             <BaseMessagesContainer id={page} callback={setComments} document={document}>
             </BaseMessagesContainer>
-            <DelayedVisibility timeout={2000} trigger={page}>
+            <DelayedVisibility timeout={1000} trigger={page}>
                 <div className={"comments-section"}>
                     <div className="comments-section__header">
                         <InputContainer extraFields={{parent: ''}} children={CommentsInput} manager={manager}></InputContainer>
@@ -145,7 +146,8 @@ const CommentsContainer = ({page, document, setDocument}) => {
                         <p id={'counter'}>Всего комментариев: {search.length}</p>
                         <Comments comments={commentsTree}></Comments>
                         {limit < comments.length &&
-                            <NavButton className={"load-more"} data={{text: 'Показать больше', callback:()=>setLimit(l => l + 40)}}></NavButton>}
+                            <NavButton className={"load-more"}
+                                       data={{text: 'Показать больше', callback:()=>setLimit(l => l + limitStep)}}></NavButton>}
                     </div>
                 </div>
             </DelayedVisibility>

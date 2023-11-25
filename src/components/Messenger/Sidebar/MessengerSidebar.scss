@@ -9,10 +9,7 @@
   background-color: $color-main;
   overflow-y: scroll;
   overflow-x: hidden;
-  @include custom-scrollbar;
-  &::-webkit-scrollbar {
-    width: 12px;
-  }
+  @include custom-scrollbar(12px);
   transition: all 0.2s linear;
   height: 100%;
 
@@ -220,5 +217,8 @@
   }
   .accordion-header__wrapper {
     justify-content: center;
+    .toggle-button {
+      margin-left: initial;
+    }
   }
 }

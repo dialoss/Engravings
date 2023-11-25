@@ -5,14 +5,11 @@ import './MyForm.scss';
 import FormComponent from "./FormComponent";
 import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 import ActionButton from "ui/Buttons/ActionButton/ActionButton";
+import {isMobileDevice} from "../../../helpers/events";
 
 const FormBlock = ({formField}) => {
-    const ref = useRef()
-    useEffect(()=>{
-        ref.current.onmousedown = e => {e.stopPropagation();console.log(e)}
-    },[])
     return (
-        <div className="form__block" ref={ref}>
+        <div className="form__block">
             <p>{formField.label}</p>
             <FormComponent field={formField}></FormComponent>
         </div>
@@ -21,13 +18,21 @@ const FormBlock = ({formField}) => {
 
 const MyForm = ({formData, formFields, submitCallback}) => {
     const ref = useRef();
+    useEffect(() => {
+        !isMobileDevice() && setTimeout(()=>{
+            ref.current.querySelector('.input-submit').focus();
+        },10)
+    }, [formData]);
     return (
-        <form action={''} ref={ref}>
+        <form action={''} ref={ref} className={'scrollable'} autoComplete={'on'}>
             <div className={"form__fields"}>
                 {
                     Object.keys(formFields).map((key) =>
                         formFields[key].name && <FormBlock formField={formFields[key]} key={key}/>).filter(Boolean)
                 }
+                <div style={{width:0,height:0, opacity:0, position:'absolute'}}>
+                    <input type="text" className={'input-submit'}/>
+                </div>
                 <ActionButton onClick={(e) => {
                     e.preventDefault();
                     const form = ref.current;

@@ -7,7 +7,7 @@ import TransformItem from "../../ui/ObjectTransform/components/TransformItem/Tra
 import {serializeFields} from "./helpers/FormData";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 
-const ModalForm = ({children, data=null, name}) => {
+const ModalForm = ({children, data=null, name, backgroundClose=true}) => {
     const [form, setForm] = useState(data);
     function handleFormData(event) {
         setForm(event.detail);
@@ -15,17 +15,19 @@ const ModalForm = ({children, data=null, name}) => {
     }
     useAddEvent(name, handleFormData);
     return (
-        <ModalManager name={name} key={name} closeConditions={['esc', 'btn']}>
+        <ModalManager name={name} key={name}
+                      callback={(o) => !o && form && form.submitCallback && form.submitCallback(false)}
+                      closeConditions={['esc', 'btn', backgroundClose && 'bg']}>
             <TransformItem config={{}} style={{bg:'bg-none', win: 'centered'}} data-type={'modal'}>
-                {form && <FormContainer formData={form} callback={form.submitCallback ? () => {
-                    form.submitCallback();
+                {form && <FormContainer formData={form} callback={form.submitCallback ? (value) => {
+                    form.submitCallback(value);
                     triggerEvent(name + ':toggle', {isOpened: false});
                 } : ((fields) => {
-                    let data = serializeFields(fields);
-                    if (data.url) data.url = data.url.url;
-                    triggerEvent("action:callback", [{...form, data}]);
                     triggerEvent(name + ':toggle', {isOpened: false});
                     setForm(null);
+                    if (!fields) return;
+                    let data = serializeFields(fields, form.method);
+                    triggerEvent("action:callback", [{...form, data}]);
                 })}>{children}
                 </FormContainer>}
             </TransformItem>
@@ -47,7 +49,8 @@ export const FormContainer = ({formData, callback, children}) => {
             <div className={"form__content " + (formData.style || '')}>
                 <div className="form__header">
                     <p className={"form__title"}>{formData.title}</p>
-                    {formData.windowButton === false ? <></> : <WindowButton type={'close'}/>}
+                    {formData.windowButton === false ? <></> :
+                        <WindowButton onClick={() => callback(false)} type={'close'}/>}
                 </div>
             {children ? children : <MyForm formData={formData}
                     formFields={formFields}

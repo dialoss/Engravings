@@ -1,6 +1,7 @@
 import React from 'react';
 import "./Timeline.scss";
 import Item from "./Item/Item";
+import {default as EntryItem} from "components/Item/Item";
 
 const Timeline = ({stages}) => {
     return (
@@ -8,10 +9,12 @@ const Timeline = ({stages}) => {
             <div className="timeline-wrapper">
                 {
                     stages.map((stage, index) => {
+                        // return <EntryItem item={stage} depth={2} key={stage.id}></EntryItem>
                         return <Item data={stage}
-                                     connector={index !== stages.length - 1}
-                                     key={index}
-                                     index={index}></Item>
+                                     all={stages.length - 1}
+                                     count={index}
+                                     key={stage.id}
+                                     connector={index !== stages.length - 1}></Item>
                     })
                 }
             </div>

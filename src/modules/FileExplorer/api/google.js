@@ -2,8 +2,9 @@ import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import {triggerEvent} from "../../../helpers/events";
-import {getImageDimensions, getMediaDimensions, getVideoDimensions} from "../helpers";
+import {fileToItem, getImageDimensions, getMediaDimensions, getVideoDimensions} from "../helpers";
 import "./upload";
+import {getLocation} from "../../../hooks/getLocation";
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";
@@ -120,8 +121,9 @@ async function apiMapper(request) {
             return apiSession.updateElement();
         case "DELETE":
             return new Promise((resolve) => {
-                triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: () => {
-                    resolve(apiSession.deleteElements());
+                triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: (submit) => {
+                    if (!!submit) resolve(apiSession.deleteElements());
+                    else resolve([]);
                 }});
             });
     }
@@ -178,11 +180,9 @@ export async function driveRequest({request, callback, error}) {
                 callback(Object.values(items).map(file => serializeFile(file)));
             }).catch(e => {
                 error && error(e);
-                console.log(e)
             });
     } catch (e) {
         error && error(e);
-        console.log(e)
     }
 }
 
@@ -242,6 +242,7 @@ export async function uploadFile(fileinfo, callback) {
 
 
 export async function testUpload(file, folder) {
+    // console.log(file)
     let props = await getMediaDimensions(file);
 
     if (getMediaType(file.name) === 'model') {
@@ -276,17 +277,42 @@ export async function testUpload(file, folder) {
                     triggerEvent('alert:trigger', {type:'error', body: err});
                     return;
                 }
+                let msg = '';
                 if (res.status === "Uploading") {
-                    let msg =
+                    msg =
                         Math.round(
                             (res.progressNumber.current / res.progressNumber.end) * 100
                         ) + "%";
-                    console.log(msg)
-                    window.filemanager.SetNamedStatusBarText('message', file.name + ' Прогресс: ' + msg);
-                    [...document.querySelectorAll('.text-loader')].slice(-1).innerHTML = msg;
                 }
-                if (res.status === 'Done') resolve(res.result);
+                if (res.status === 'Done') {
+                    resolve(res.result);
+                    msg = 'Файл загружен!';
+                }
+                if(file.msg_id)
+                    document.querySelector(`div[data-id='${file.msg_id}']`).querySelector('.text-loader .progress').innerHTML = msg;
+                window.filemanager && window.filemanager.SetNamedStatusBarText('message', ' Прогресс: ' + msg + ' ' + file.name);
             });
         }
     });
+}
+
+export async function dropUpload(e, callback, uploadToDrive=true) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    let files = [];
+    for (const file of [...(e.dataTransfer || e.clipboardData).files]) {
+        if (uploadToDrive) {
+            let data = await uploadFile({file, path:['site', 'storage', getLocation().pageSlug]});
+            const f = fileToItem({...data, type: data.filetype, filename: data.name});
+            files = [...files, f];
+        } else {
+            files = [...files, file];
+        }
+    }
+    if (e.dataTransfer)
+        for (const file of (JSON.parse(e.dataTransfer.getData('files') || "[]"))) {
+            files.push(fileToItem({...file, type: file.filetype}));
+        }
+    callback(files);
 }

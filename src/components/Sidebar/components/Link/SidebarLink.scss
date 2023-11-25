@@ -61,8 +61,8 @@
     }
 
     &--current {
-        background-color: $color-current-background;
-        color: $color-current-text;
+        background-color: $color-current-background !important;
+        color: $color-current-text !important;
     }
 
     @include mobile {

@@ -33,11 +33,10 @@
         display: flex;
         border-top: $style-border;
         position: relative;
-        .ql-editor {
-            //height: 50px;
-        }
         .ql-formats {
+            display: flex;
             margin-right: 0;
+            height: 100%;
             .icon-emojis {
                 font-size: 16px;
                 height: 100%;
@@ -54,11 +53,11 @@
             }
             button {
                 width: 35px;
-                height: 35px;
+                height: 100%;
             }
         }
         .ql-toolbar {
-            padding-right: 0;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,9 +91,9 @@
             opacity: 0.7;
         }
         &-send {
-            margin-right: 10px;
+            height: 100%;
+            margin: 0 10px;
             width: 25px;
-            height: 25px;
             filter: invert(72%) sepia(44%) saturate(4344%) hue-rotate(175deg) brightness(89%) contrast(90%);
         }
     }
@@ -124,15 +123,11 @@
                 }
             }
         }
-        em-emoji-picker {
-            width: 100%;
-        }
     }
     .ql-container {
         p {
             position: absolute;
             width: 100%;
-            //padding: 14px 8px 14px 4px;
         }
     }
 }

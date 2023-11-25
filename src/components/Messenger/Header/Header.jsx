@@ -14,7 +14,8 @@ const MessengerHeader = () => {
     const online = companion.online;
     return (
         <div className={"messenger-header transform-origin"}>
-            {room.title && <Avatar src={room.picture} user={companion} style={{width:50, height:50}}></Avatar>}
+            {room.title && <>
+                <Avatar src={room.picture} user={companion} style={{width:50, height:50}}></Avatar>
             <div className={'header-block'}>
                 <p className={"title"}>{room.title}</p>
                 {room.id === companion.currentRoom && companion.isTyping ?
@@ -24,6 +25,7 @@ const MessengerHeader = () => {
                     </span>
                 }
             </div>
+                </>}
             <WindowButton type={'close'}></WindowButton>
         </div>
     );

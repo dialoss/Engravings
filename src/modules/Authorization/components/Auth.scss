@@ -62,11 +62,11 @@
   @include mobile {
     top: 0 !important;
     transform: translate(-50%, 0) !important;
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
-    .form__content {
-      max-height: 100vh;
-      height: 100vh;
+    .form__content:not(.inline) {
+      max-height: 100dvh;
+      height: 100dvh;
     }
   }
   .buttons {
@@ -98,10 +98,6 @@
     margin: 4px auto;
   }
 
-  .auth-button--choice, .auth-button--logout {
-    font-size: 18px;
-  }
-
   .auth-type__buttons {
     padding-top: 10px;
     display: flex;
@@ -112,15 +108,19 @@
       width: 70%;
       margin: 0;
     }
-    .delimiter {
-      position: relative;
-      text-align: center;
-      width: 100%;
-      span {
-        position: absolute;
-        height: 1px;
-        background-color: #1EC7AB;
-      }
+  }
+  .delimiter {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    span {
+      position: absolute;
+      height: 1px;
+      background-color: #1EC7AB;
     }
+  }
+  .spinner {
+    position: absolute;
+    border-bottom-color: #1E72C7;
   }
 }

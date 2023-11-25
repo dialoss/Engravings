@@ -4,11 +4,11 @@ export function createCommentsTree(comments, sorting, search, limit=null) {
     let tree = {};
     let links = {};
     let searchPos = 0;
-    console.log('newcom', newComments)
-    console.log('search', search)
+    // console.log('newcom', newComments)
+    // console.log('search', search)
 
-    newComments.forEach((c, index) => {
-        if (!search[searchPos] || index >= limit) return;
+    newComments.forEach(c => {
+        if (!search[searchPos]) return;
         let searched = c.id === search[searchPos].id;
         if (searched) searchPos++;
         const comment = {
@@ -27,10 +27,11 @@ export function createCommentsTree(comments, sorting, search, limit=null) {
             links[c.id] = tree[c.id];
         }
     });
-    console.log(tree)
+    let current = 0;
     function siftTree(tree) {
         for (const comm in tree) {
-            if (!tree[comm].searched) {
+            current += 1
+            if (!tree[comm].searched || current > limit) {
                 delete tree[comm];
             } else {
                 siftTree(tree[comm].comments);

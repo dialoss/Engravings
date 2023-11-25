@@ -7,7 +7,7 @@ const ItemPrice = ({data}) => {
     return (
         <div className={"item__price"}>
             <div className="price">
-                Цена: <InfoParagraph type={'price'}>{data.price}</InfoParagraph>₽
+                Цена: <InfoParagraph type={'price'} id={data.id}>{data.price}</InfoParagraph>₽
             </div>
             <ButtonItem data={data}></ButtonItem>
         </div>

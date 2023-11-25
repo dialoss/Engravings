@@ -1,4 +1,6 @@
 .item__video {
+  border-radius: 8px;
+  overflow: hidden;
   display: block;
   width: 100%;
 }
@@ -7,6 +9,7 @@
 }
 .plyr {
   height: 100%;
+  min-width: 0;
 }
 .v-vlite * {
   color: #fff;

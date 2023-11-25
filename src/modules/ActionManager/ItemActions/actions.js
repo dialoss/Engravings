@@ -1,5 +1,5 @@
 import {triggerEvent} from "helpers/events";
-import {actionElement, actionElements, setUnselected} from "modules/ActionManager/components/helpers";
+import {actionElement, actionElements, clearElements, setUnselected} from "modules/ActionManager/components/helpers";
 import {setActionData} from "./config";
 import {getSettings} from "./helpers";
 import {getLocation} from "../../../hooks/getLocation";
@@ -59,8 +59,8 @@ window.addEventListener('keydown', e => {
     if (e.key === 'Delete') {
         Actions.action(Actions.delete());
     }
-    console.log('history',Actions.history)
-    console.log('actionel', actionElements)
+    // console.log('history',Actions.history)
+    // console.log('actionel', actionElements)
 })
 
 function preparePage(p) {
@@ -80,10 +80,10 @@ export default class Actions {
 
     static action(data) {
         Promise.resolve(data).then(resolve => {
-            console.log(resolve)
+            // console.log(resolve)
             for (const request of resolve) {
                 let sendData = request.data || {};
-
+                if (sendData.type === 'comment') return;
                 if (request.specifyElement && actionElement.type !== 'page') sendData.id = actionElement.id;
                 if (request.specifyParent && !('parent' in sendData) && actionElement.type !== 'page') sendData.parent = actionElement.id;
 
@@ -128,7 +128,7 @@ export default class Actions {
                 }
                 !request.skipHistory && hs.push({...sendRequest, data: prevData});
                 current = hs.length - 1;
-                console.log('HISTORY', hs)
+                // console.log('HISTORY', hs)
             }
         })
     }
@@ -136,7 +136,26 @@ export default class Actions {
     static add(item='') {
         let data = setActionData(item);
         if (!data) {
-            triggerEvent('element-form', getFormData({method:'POST', element: {data:{type: item}}}));
+            let type = item;
+            let initialData = {};
+            let extraFields = [];
+            if (item === 'add') {
+                switch (actionElement.data.type) {
+                    case "timeline_entry":
+                        type = 'base';
+                        initialData = {
+                            show_date: true,
+                            order: 0,
+                        };
+                        extraFields = ['url'];
+                        break;
+                    case "timeline":
+                        type = 'timeline_entry';
+                        break;
+                }
+            }
+            if (type === 'add') return [];
+            triggerEvent('element-form', getFormData({initialData, extraFields, method:'POST', element: {data:{type}}}));
             return [];
         }
         if (!Array.isArray(data)) {
@@ -169,10 +188,10 @@ export default class Actions {
     }
 
     static baseAction(type, name) {
-        console.log(Actions.history)
+        // console.log(Actions.history)
         Actions.history.forEach(hs => hs.element.html.classList.remove(hs.className));
         Actions.history = [];
-        let elements = actionElements;
+        let elements = [...actionElements];
         if (!elements.length) elements = [actionElement];
         elements.forEach(el => {
             el.html.classList.add(name);
@@ -182,6 +201,7 @@ export default class Actions {
                 element: el,
             })
         });
+        clearElements();
         return [];
     }
 
@@ -218,14 +238,16 @@ export default class Actions {
     }
 
     static delete(elements=[]) {
-        if (!elements.length) elements = actionElements;
+        if (!elements.length) elements = [...actionElements];
         const f = el => ({data: structuredClone(el.data), method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
         if (elements.length) return data;
+        clearElements();
         return new Promise((resolve) => {
-            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: () => {
-                resolve(data);
+            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: (submit) => {
+                if (!!submit) resolve(data);
+                else resolve([]);
             }});
         });
     }

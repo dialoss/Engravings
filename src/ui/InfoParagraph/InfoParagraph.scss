@@ -1,9 +1,11 @@
 .info__paragraph {
+    width: 100%;
+
     padding: 8px 4px;
     margin: 0 auto;
     word-wrap: break-word; 
     word-break: break-word;
-    text-align: center;
+    //text-align: center;
     * {
         font-size: min(4vw, 18px);
     }
@@ -51,6 +53,7 @@
     }
 
     &-date {
+        width: auto;
         white-space: nowrap;
         font-size: 18px;
         margin: 0 20px;

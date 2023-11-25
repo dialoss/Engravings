@@ -11,7 +11,9 @@ const TransformButton = ({children, type, secure, ...props}) => {
                 triggerEvent('context-window:toggle', {isOpened: false});
             }
         })
-        triggerEvent("transform:init", {event, type, btn:ref.current, movable: (props.style ||{}).movable});
+        triggerEvent("transform:init", {event, type, btn:ref.current,
+            movable: (props.style ||{}).movable,
+            resizable: (props.style ||{}).resizable});
     }
 
     useEffect(() => {

@@ -17,7 +17,7 @@ export const MessengerInputContainer = () => {
             sendCloudMessage({
                 title: 'MyMount | Новое сообщение',
                 body: user.name + ': ' + (message.value.text || message.value.upload.filename),
-                data: {url: getLocation().fullURL + '?action=messenger', room: room.id},
+                data: {url: getLocation().fullURL + '?action=messenger&id=' + room.id},
                 companion: users[room.companion].email,
             });
             updateRoom({lastMessage: message, newMessage: true, notified:false});

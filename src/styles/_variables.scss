@@ -19,3 +19,8 @@ $color-main: #fdfdfd;
 	@content;
   }
 }
+@mixin desktop {
+  @media screen and (min-width: 500px) {
+    @content;
+  }
+}

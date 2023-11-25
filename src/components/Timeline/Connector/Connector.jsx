@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Connector = ({...props}) => {
+const Connector = ({style, name}) => {
     return (
-        <div className={"timeline-connector"}>
-            <div {...props}></div>
+        <div className={"timeline-connector " + name} style={{margin:style.margin}}>
+            <div style={{backgroundColor: style.backgroundColor, borderRadius: style.border}}></div>
         </div>
     );
 };

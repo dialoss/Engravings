@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import Timeline from "../../../Timeline/Timeline";
 import {itemsFromStages, prepareStages} from "../../../Timeline/stages";
 
 const ItemTimeline = ({data}) => {
+    const [stages, setStages] = useState([]);
+    useLayoutEffect(() => {
+        setStages(prepareStages(data));
+    }, [data]);
     return (
-        <div>
-            <Timeline stages={prepareStages(data)}></Timeline>
-        </div>
+        <Timeline stages={prepareStages(data)}></Timeline>
     );
 };
 

@@ -158,8 +158,9 @@ export function init() {
                     elements: ids,
                     data: {},
                 },
-                callback: () => {
-                    deleted(true);
+                callback: (data) => {
+                    deleted(!!data.length);
+                    options.onrefresh(folder);
                     updateStorageSpace();
                 },
                 error: () => {
@@ -185,7 +186,6 @@ export function init() {
             });
         },
         oninitupload: function(startupload, fileinfo) {
-            console.log(fileinfo)
             if (fileinfo.type === 'dir') return;
             const folder = fileinfo.folder.valueOf();
             let info = {...fileinfo};

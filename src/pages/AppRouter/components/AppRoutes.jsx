@@ -41,10 +41,12 @@ const AppRoutes = () => {
 
     useLayoutEffect(() => {
         const query = new URLSearchParams(window.location.search);
-        const action = query.getAll('action');
+        const action = query.get('action');
+        const id = query.get('id');
         switch (action) {
             case 'messenger':
-                 window.messenger = true;
+                 window.messenger = id;
+
         }
     }, []);
 

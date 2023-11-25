@@ -49,7 +49,7 @@ const ActionManager = () => {
             <MessengerContainer></MessengerContainer>
             <AuthContainer></AuthContainer>
             <CarouselModal></CarouselModal>
-            <ModalForm name={'user-prompt'}></ModalForm>
+            <ModalForm name={'user-prompt'} backgroundClose={false}></ModalForm>
         </>
     );
 };

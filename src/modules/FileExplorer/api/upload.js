@@ -183,7 +183,10 @@
         })
           .then((res) => {
             if (res.status != 200) {
-              res.json().then((e) => reject(e));
+              const t =  res.json();
+              t.then((e) => {
+                reject(e)
+              });
               return;
             }
             resolve(res.headers);

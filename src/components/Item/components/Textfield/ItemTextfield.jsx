@@ -5,7 +5,7 @@ import "./ItemTextfield.scss";
 const ItemTextfield = ({data}) => {
     return (
         <div className={"item__textfield"}>
-            <InfoParagraph type={"textfield"}>{data.text}</InfoParagraph>
+            <InfoParagraph type={"textfield"} id={data.id}>{data.text}</InfoParagraph>
         </div>
     );
 };

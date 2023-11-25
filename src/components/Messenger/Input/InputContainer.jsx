@@ -31,8 +31,9 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
             return;
         }
         if (manager.config.clearHTML) text = clearTextFromHTML(text);
-        if (!text.trim() && !upload) return;
+        if (!clearTextFromHTML(text)) text = '';
         setMessage(emptyMessage);
+        if (!text && !upload) return;
 
         let uploadData = upload ? {
             url: '',
@@ -50,6 +51,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
         });
         if (upload) {
             const document = manager.config.getDocument();
+            upload.msg_id = msg.id;
             manager.uploadMedia(upload).then(data => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({

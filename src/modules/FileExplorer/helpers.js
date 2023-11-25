@@ -1,4 +1,5 @@
 import {getMediaType} from "./api/google";
+import {triggerEvent} from "../../helpers/events";
 
 function getVideoDimensions(file){
     return new Promise(resolve => {
@@ -38,21 +39,40 @@ export function fileToMedia(file) {
     return window.URL.createObjectURL( blob );
 }
 
+export function serializeFile(data) {
+    return {
+        width: data.type === 'model' ? '50%' : 'auto',
+        show_shadow: data.type !== 'file',
+        height: data.height + 'px',
+        container_width: data.width,
+        media_height: data.height,
+        media_width: data.width,
+        urn: data.urn,
+        type: data.type,
+        filename: data.name,
+        url: data.id,
+    };
+}
+
 export function fileToItem(data) {
     return {
-        data: {
-            width: data.type === 'model' ? '50%' : 'auto',
-            show_shadow: data.type !== 'file',
-            height: data.height + 'px',
-            container_width: data.width,
-            media_height: data.height,
-            media_width: data.width,
-            urn: data.urn,
-            type: data.type,
-            filename: data.name,
-            url: data.id,
-        },
+        data: serializeFile(data),
         specifyParent: true,
         method: 'POST',
     }
+}
+
+export function selectItems() {
+    const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
+    const selected = window.filemanager.GetSelectedItemIDs()
+        .map(id => itemsAll.find(it => it.id === id));
+    if (window.filemanager.selectItems) {
+        window.filemanager.selectItems(selected.map(f => serializeFile({...f, type: f.filetype})));
+        window.filemanager.selectItems = null;
+    } else {
+        for (const f of selected.map(f => fileToItem({...f, type: f.filetype}))) {
+            triggerEvent("action:callback", [f]);
+        }
+    }
+    triggerEvent("filemanager-window:toggle", {isOpened: false});
 }

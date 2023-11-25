@@ -1,7 +1,7 @@
 $color-scrollbar-thumb: rgb(145 167 205);
 $color-scrollbar-track: rgb(219, 228, 235);
 
-@mixin custom-scrollbar {
+@mixin scrollbar {
   &::-webkit-scrollbar {
     width: 20px;
     transition: background-color 0.2s linear;
@@ -27,5 +27,14 @@ $color-scrollbar-track: rgb(219, 228, 235);
 
   &::-webkit-scrollbar-corner {
     background: #fff;
+  }
+}
+
+@mixin custom-scrollbar($width:14px) {
+  @include desktop {
+    @include scrollbar;
+    &::-webkit-scrollbar {
+      width: $width;
+    }
   }
 }

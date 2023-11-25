@@ -14,6 +14,7 @@ const FormInput = ({data, ...props}) => {
                 type={data.validate || 'input'}
                onChange={data.callback}
                minLength={data.min_length || 0}
+               autoComplete={data.name}
                className="form-input"/>
     );
 };

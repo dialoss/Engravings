@@ -1,3 +1,3 @@
 export function clearTextFromHTML(html) {
-    return html.replace(/<\/?[^>]+(>|$)/g, "");
+    return html.replace(/<\/?[^>]+(>|$)/g, "").trim();
 }

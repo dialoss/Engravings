@@ -19,7 +19,6 @@ function bounds(position, side, items) {
     const n = items.current.length;
     position.current = position.current + side;
     position.current = (position.current + n) % n;
-    console.log(position.current)
     return items.current[position.current];
 }
 

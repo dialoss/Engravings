@@ -151,8 +151,8 @@ export function useGetRooms() {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
-            console.log(newRooms)
-            console.log('SNAPSHOT ROOMS')
+            // console.log(newRooms)
+            // console.log('SNAPSHOT ROOMS')
         });
         return () => unsubscribe;
     }, []);
@@ -177,7 +177,6 @@ export function useGetRooms() {
         newRooms.forEach(r => {
             objRooms[r.id] =  changeRoomData(r, user, users);
         });
-        console.log('!!!!!', objRooms)
         store.dispatch(actions.setField({field:'rooms', data:objRooms}));
         roomWithAdmin && !room.id && setCurrentRoom(roomWithAdmin.id);
     }, [user, rooms_raw, Object.values(users).length]);
@@ -216,20 +215,22 @@ export function useGetRooms() {
         newRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
 
         store.dispatch(actions.setField({field:'rooms', data:newRooms}));
+        if (window.messenger) {
+            triggerEvent('messenger-window:toggle', {isOpened:true});
+            setCurrentRoom(window.messenger);
+            window.messenger = null;
+        }
 
     }, [meta, Object.values(rooms).length]);
 }
 
 export function updateRoom(data, room_id=null) {
     let {room} = store.getState().messenger;
-    if (!room.id) return;
-
-    console.log('UPDATE ROOM', data)
+    if (!room.id && !room_id) return;
     update(ref(realtime, 'rooms/' + (room.id || room_id)), data);
 }
 
 export function setCurrentRoom(id) {
-    console.log('ROOM SET', id)
     if (!id) store.dispatch(actions.setRoom(-1));
     else store.dispatch(actions.setRoom(id));
     const {rooms, user} = store.getState().messenger;

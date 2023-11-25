@@ -1,6 +1,6 @@
 .delayed-visibility {
-    transition: all 0.3s ease-out;
     &.visible {
+        transition: all 0.3s linear;
         visibility: visible;
         opacity: 1;
     }

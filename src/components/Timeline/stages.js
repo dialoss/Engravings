@@ -15,7 +15,7 @@ export function prepareStages(data) {
         let stages = [];
         item.items.forEach(it => {
             if (it.type !== 'timeline_entry') {
-                stages.push({...it, color: item.color});
+                stages.push({...it, color: item.color, style: 'secondary'});
                 return;
             }
             let stage = {...it};
@@ -24,8 +24,12 @@ export function prepareStages(data) {
                 stage.color = item.color;
             }
             else stage.style = 'primary';
+            stage.colorPrev = !!stages.length && stages[stages.length - 1].color;
 
-            if (!it.items.length && stage.style === 'primary') stage.style += ' disabled';
+            if (!it.items.length && stage.style === 'primary') {
+                stage.color = '#989898';
+                stage.style += ' disabled';
+            }
             stages.push(stage);
             it.items = traverse(it);
         });

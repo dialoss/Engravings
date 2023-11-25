@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import ContextMenu from "./components/ContextMenu/ContextMenu";
-import {triggerEvent} from "helpers/events";
+import {getElementFromCursor, triggerEvent} from "helpers/events";
 import {ModalManager} from "components/ModalManager";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getCorrectedPosition} from "../../../ui/helpers/viewport";
@@ -12,11 +12,12 @@ const ContextMenuContainer = ({actions}) => {
     const [position, setPosition] = useState({left: 0, top: 0});
 
     function contextMenu(event) {
+        if (event.detail > 1 || getElementFromCursor(event, 'quill')) return;
         event.preventDefault();
         triggerEvent('action:init', event);
         if (!event.ctrlKey) {
             const modal = document.querySelector('.modal__window.' + name + ' .transform-item');
-            let [px, py, side] = getCorrectedPosition(modal, [event.clientX, event.clientY]);
+            let [px, py, side] = getCorrectedPosition(modal, [event.clientX + 10, event.clientY + 10]);
             setPosition({left: px + 'px', top: py + 'px', side});
             triggerEvent(modalName, {isOpened: true});
         }
@@ -31,6 +32,7 @@ const ContextMenuContainer = ({actions}) => {
     useAddEvent("mousedown", onMouseDown);
     useAddEvent("contextmenu", contextMenu);
     useAddEvent("scroll", onScroll, {passive: true});
+    useAddEvent("contextmenu:open", e => contextMenu(e.detail));
 
     return (
         <ModalManager name={name} key={name}>

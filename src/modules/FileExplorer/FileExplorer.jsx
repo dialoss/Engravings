@@ -12,7 +12,7 @@ import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
 import {fetchRequest, sendRequest} from "../../api/requests";
-import {fileToItem, fileToMedia} from "./helpers";
+import {fileToItem, fileToMedia, selectItems} from "./helpers";
 import {driveRequest} from "./api/google";
 import {useSelector} from "react-redux";
 
@@ -89,16 +89,10 @@ const FileExplorer = () => {
         setView(v => (v + 1) % ExplorerViews.length);
     }
 
-    async function addItems() {
-        const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
-        const selected = window.filemanager.GetSelectedItemIDs()
-            .map(id => itemsAll.find(it => it.id === id));
-        for (const item of selected) {
-            const file = fileToItem({...item, type: item.filetype});
-            triggerEvent("action:callback", [file]);
-            triggerEvent("filemanager-window:toggle", {isOpened: false});
-        }
-    }
+    useAddEvent("filemanager:select", e => {
+        window.filemanager.selectItems = e.detail.callback;
+        triggerEvent("filemanager-window:toggle", {isOpened:true});
+    });
 
     const toolbar = useRef();
 
@@ -109,6 +103,7 @@ const FileExplorer = () => {
     const openEditor = (folder, entry) => {
         if (entry.filetype !== 'image') return;
         setImage({meta: entry});
+        console.log(entry)
         fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
             const url = fileToMedia(file);
             let img = new Image();
@@ -128,7 +123,6 @@ const FileExplorer = () => {
         toolbar.current = createRoot(textBar);
 
         window.filemanager.addEventListener('open_file', openEditor);
-
     }, []);
 
     useLayoutEffect(() => {
@@ -155,18 +149,6 @@ const FileExplorer = () => {
         setSearch(f.GetEntries());
     });
 
-    useAddEvent("filemanager:open", (event) => {
-        const openFile = (folder, entry) => {
-            event.detail.callback({...entry, url: entry.id, type: entry.filetype, filename: entry.name});
-            triggerEvent("filemanager-window:toggle", {isOpened: false});
-            window.filemanager.removeEventListener('open_file', openFile);
-            window.filemanager.addEventListener('open_file', openEditor);
-        }
-        window.filemanager.removeEventListener('open_file', openEditor);
-        window.filemanager.addEventListener('open_file', openFile);
-        triggerEvent("filemanager-window:toggle", {isOpened: true});
-    })
-
     useAddEvent('keydown', e => {
        if (e.ctrlKey && e.shiftKey && e.code === 'KeyF')
            triggerEvent("filemanager-window:toggle", {toggle: true});
@@ -192,11 +174,11 @@ const FileExplorer = () => {
                                                      placeholder={'Поиск по файлам'}>
                                     </SearchContainer>
                                 </div>
-                                <div className="button filemanager-view__button" onClick={refreshFolder}>
+                                <div className="filemanager__button refresh" onClick={refreshFolder}>
                                     Обновить
                                 </div>
-                                <div className="button filemanager-view__button" onClick={changeView}>Вид</div>
-                                <div className="button filemanager-view__button" onClick={addItems}>Добавить</div>
+                                <div className="filemanager__button" onClick={changeView}>Вид</div>
+                                <div className="filemanager__button" onClick={selectItems}>Добавить</div>
                             </div>
                         </div>
                     </div>

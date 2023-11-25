@@ -20,7 +20,6 @@ function getMessagesSnapshot(id, document, callback) {
 
 export const BaseMessagesContainer = ({id, document, callback, leaveSnapshot=false}) => {
     const [store, setStore] = useState({});
-    console.log(store)
     useLayoutEffect(() => {
         if (!id || !document) return;
         if (!store[id]) {

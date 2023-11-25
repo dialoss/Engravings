@@ -42,9 +42,6 @@
   overflow-y: scroll;
   overflow-x: hidden;
   @include custom-scrollbar;
-  &::-webkit-scrollbar {
-    width: 14px;
-  }
 }
 
 .messages-field__wrapper {

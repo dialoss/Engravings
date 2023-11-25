@@ -6,7 +6,6 @@ export function sendCloudMessage(data) {
 }
 
 function createNotification(info) {
-    console.log(info)
     navigator.serviceWorker.ready.then(function (registration) {
         registration.showNotification(info.title, {
             body: info.body,

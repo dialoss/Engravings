@@ -2,6 +2,9 @@
 
 .wrapper-inner {
     padding: 6px;
+    @include mobile {
+        padding: 3px;
+    }
 }
 
 .wrapper-base {

@@ -229,6 +229,7 @@ export function setActionData(item) {
             }
         case "timeline":
             return {
+                type: 'timeline',
                 show_shadow: false,
                 width: '100%',
                 items: [
@@ -376,12 +377,22 @@ export function setActionData(item) {
             actionMessage(`Здравствуйте! Я принял Ваш заказ и в скором времени свяжусь с Вами,
                      чтобы обсудить детали заказа. По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
                      на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
-                      в курсе новостей.`)
+                      в курсе новостей.`);
 
             const user = store.getState().users.current;
             const location = getLocation();
             const name = user.name.replaceAll(' ', '-');
             const orderName = location.pageSlug.toUpperCase();
+            const unique = JSON.stringify({customer: user.name, order: orderName});
+            const page = {
+                path: 'orders/' + name.toLowerCase(),
+            }
+
+            setTimeout(() => {
+                triggerEvent("user-prompt", {title:'Перейти на страницу заказа?', button: 'да', submitCallback: agree => {
+                        agree && triggerEvent("router:navigate", page);
+                    }})
+            }, 1000);
 
             sendEmail({
                 recipient: 'matthewwimsten@gmail.com',
@@ -394,19 +405,17 @@ export function setActionData(item) {
             });
 
             return [{
-                type:'page',
-                path: 'orders/' + name,
+                type: 'page',
+                ...page,
                 title: name,
             },
                 {
-                unique: JSON.stringify({customer: user.name, order: orderName}),
+                    unique,
                 type: 'base',
                 title: orderName,
                 description: `Заказ ` + user.name,
                 parent: '',
-                page: {
-                    path: 'orders/' + name,
-                },
+                page,
                 items: [
                     {
                         show_shadow: false,
@@ -414,9 +423,14 @@ export function setActionData(item) {
                         title: 'Дата начала изготовления ',
                     },
                 ]
-            },
+                },
                 {
-                    unique: JSON.stringify({customer: user.name, order: orderName}),
+                    ...setActionData('timeline'),
+                    page,
+                    unique,
+                },
+                {
+                    unique,
                     type: 'base',
                     title: orderName,
                     description: `Заказ ` + user.name,
@@ -425,9 +439,7 @@ export function setActionData(item) {
                     page: {
                         path: 'orders',
                     },
-                    page_from: {
-                        path: 'orders/' + name,
-                    },
+                    page_from: page,
                 },
             ]
         case 'buy':
@@ -451,7 +463,7 @@ async function actionMessage(text) {
     let msg = await manager.sendMessage({
         message: {
             text,
-            upload: {},
+            upload: [],
         },
         user_id: admin.id,
     });

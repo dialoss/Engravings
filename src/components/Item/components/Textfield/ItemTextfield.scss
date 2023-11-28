@@ -2,8 +2,10 @@
 .item__textfield {
   box-shadow: none;
   background: none;
-  background-color: white;
+  //background-color: white;
   padding: 5px;
+  height: 100%;
+  min-height: inherit;
   p {
     text-align: left;
   }

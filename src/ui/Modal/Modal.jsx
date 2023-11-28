@@ -12,14 +12,11 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
     function backgroundClose(event) {
         const toggle = getElementFromCursor(event, 'modal__toggle-button');
         !toggle && closeCallback();
-        // console.log('bg', name, toggle)
-
         if (props.bg !== 'bg-none') event.stopPropagation();
     }
     useAddEvent("mousedown", (e) => {
         const toggle = getElementFromCursor(e, 'modal__toggle-button');
         const mod = getElementFromCursor(e, name);
-        // console.log('bg', name, mod, toggle)
         !mod && !toggle && props.bg === 'bg-none' && closeCallback();
     });
 

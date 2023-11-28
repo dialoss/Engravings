@@ -16,9 +16,10 @@
         display: none;
     }
     .navbar {
+        flex-direction: column;
         padding-top: 0;
         .nav__button--current {
-            width: 60%;
+            margin: 0;
             font-size: 20px;
             background-color: white;
             border: none;
@@ -29,11 +30,7 @@
             }
             &.extra {
                 display: block !important;
-                width: 40%;
                 border: none;
-                a {
-                    padding-top: 0;
-                }
             }
         }
     }

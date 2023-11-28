@@ -16,7 +16,6 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
 
     async function handleMessage() {
         let {text, upload} = mRef.current;
-        upload = upload[0];
         const user = store.getState().users.current;
         if (!user.id) {
             triggerEvent('user-auth', true);
@@ -33,14 +32,14 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
         if (manager.config.clearHTML) text = clearTextFromHTML(text);
         if (!clearTextFromHTML(text)) text = '';
         setMessage(emptyMessage);
-        if (!text && !upload) return;
+        if (!text && !upload.length) return;
 
-        let uploadData = upload ? {
+        let uploadData = upload.map(u => ({
             url: '',
-            type: getMediaType(upload.name),
-            filename: upload.name,
+            type: getMediaType(u.name),
+            filename: u.name,
             uploading: true,
-        } : {};
+        }))
         let msg = await manager.sendMessage({
             message: {
                 text,
@@ -49,26 +48,29 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
             user_id: user.id,
             extraFields,
         });
-        if (upload) {
+        console.log(uploadData)
+        upload.forEach((u, i) => {
             const document = manager.config.getDocument();
-            upload.msg_id = msg.id;
-            manager.uploadMedia(upload).then(data => {
-                updateDoc(doc(manager.db, document), {messages: arrayRemove(msg)});
+            u.msg_id = msg.id;
+            u.index = i;
+            manager.uploadMedia(u).then(data => {
+                updateDoc(doc(manager.db, document), {messages: arrayRemove(structuredClone(msg))});
+                uploadData[i] = {
+                    ...uploadData[i],
+                    url: data.url,
+                    uploading: false,
+                    media_width: data.media_width,
+                    media_height: data.media_height,
+                }
                 updateDoc(doc(manager.db, document), {messages: arrayUnion({
                         ...msg,
                         value: {
                             text,
-                            upload: {
-                                ...uploadData,
-                                url: data.url,
-                                uploading: false,
-                                media_width: data.media_width,
-                                media_height: data.media_height,
-                            }
+                            upload: uploadData,
                         }
                     })});
             });
-        }
+        });
         manager.config.onsuccess(msg);
         closeCallback && closeCallback();
     }

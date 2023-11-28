@@ -7,6 +7,7 @@ export const elementsSlice = createSlice({
         cache: {},
         pageItems: {},
         actionElement: {},
+        editPage: false,
     },
     reducers: {
         setItemsAll: (state, {payload: {items, page}}) => {

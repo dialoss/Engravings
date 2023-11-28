@@ -13,7 +13,13 @@
   &.warning {
     background-color: rgba(199, 168, 30, 0.56);
   }
-
+  &.loader {
+    background-color: #fff;
+    p{
+      color: #000;
+    }
+  }
+  
   p {
     white-space: nowrap;
     width: 100%;

@@ -37,7 +37,7 @@ const ContextMenuContainer = ({actions}) => {
     return (
         <ModalManager name={name} key={name}>
             <TransformItem config={{position:'fixed', width:'auto', ...position}}
-                           style={{bg:'bg-none'}} data-type={'modal'}>
+                           style={{bg:'bg-none'}} data-type={'modal'} className={name}>
                 <ContextMenu actions={actions} side={position.side}></ContextMenu>
             </TransformItem>
         </ModalManager>

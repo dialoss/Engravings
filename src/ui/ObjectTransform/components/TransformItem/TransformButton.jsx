@@ -1,10 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import {getElementFromCursor, triggerEvent} from "helpers/events";
+import {pageEditable} from "../../../../components/ItemList/ThemeManager/ThemeManager";
 
 const TransformButton = ({children, type, secure, ...props}) => {
     const ref = useRef();
     function transformCallback(event) {
-        if (secure && !window.editPage) return;
+        if (secure && !pageEditable()) return;
         event.stopPropagation();
         triggerEvent("context-window:check-opened", (isOpened) => {
             if (!getElementFromCursor(event, 'context-menu') && isOpened) {

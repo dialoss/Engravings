@@ -57,6 +57,12 @@ const LoginForm = ({callback, visible}) => {
     const [stage, setStage] = useState(0);
     const buttons = data.map((d, i) =>
         <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>);
+    // navigator.credentials.get({ password: true }).then(function (auth) {
+    //     console.log(auth); //Return NULL
+    //     console.log(auth.password); //Returns that does not exist
+    //     console.log(auth.id); //Returns that does not exist
+    //     console.log(auth.name); //Returns that does not exist
+    // });
     return (
         <div style={visible ? {visibility:'visible',opacity:1} : {visibility:"hidden",opacity:0}}>
             {
@@ -140,10 +146,16 @@ const AuthWrapper = () => {
                 if (success) {
                     toggle(false);
                     triggerEvent("sidebar:toggle", {isOpened: true});
-                    const password = data.credentials.password;
-                    // var c = new PasswordCredential(password);
+                    const creds = data.credentials;
+                    if (creds.password) {
+                        const cred = new window.PasswordCredential({
+                            id: creds.email,
+                            password:creds.password,
+                            name: creds.email,
+                        });
 
-                    password && navigator.credentials.create({password});
+                        navigator.credentials.store(cred);
+                    }
                 }
                 data.setLoader(false);
             });

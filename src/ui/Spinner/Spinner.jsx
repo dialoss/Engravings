@@ -1,9 +1,11 @@
 import React from 'react';
 import "./Spinner.scss";
 
-const Spinner = () => {
+const Spinner = ({type='fixed'}) => {
     return (
-        <div className={'spinner'}></div>
+        <div className={"spinner-wrapper " + type}>
+            <div className={'spinner'}></div>
+        </div>
     );
 };
 

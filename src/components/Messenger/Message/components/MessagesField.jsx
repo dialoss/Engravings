@@ -20,7 +20,7 @@ const MessagesField = ({messages}) => {
         setVisible(false)
         setTimeout(()=>{setVisible(true)},10);
     }, [room]);
-    useAddEvent('messenger:scroll', () => scroll('smooth', 150));
+    useAddEvent('messenger:scroll', () => scroll('smooth', 200));
     return (
         <DelayedVisibility timeout={200} trigger={room}>
 

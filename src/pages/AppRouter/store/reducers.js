@@ -3,8 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
+        // baseURL: 'http://localhost:8000',
         baseURL : 'https://matthew75.pythonanywhere.com',
-        // baseURL : 'http://localhost:8000',
         pages : {},
         fullURL : '',
         relativeURL : '',
@@ -33,6 +33,7 @@ export const locationSlice = createSlice({
             for (const p in state.pages) {
                 if ('/' + state.pages[p].path + '/' === state.relativeURL) {
                     state.currentPage = state.pages[p];
+                    state.currentPage.title = state.currentPage.title || state.pageTitle;
                     break;
                 }
             }

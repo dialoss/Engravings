@@ -43,7 +43,7 @@ export function serializeFile(data) {
     return {
         width: data.type === 'model' ? '50%' : 'auto',
         show_shadow: data.type !== 'file',
-        height: data.height + 'px',
+        height: data.type !== 'file' ? data.height + 'px' : '',
         container_width: data.width,
         media_height: data.height,
         media_width: data.width,
@@ -51,6 +51,7 @@ export function serializeFile(data) {
         type: data.type,
         filename: data.name,
         url: data.id,
+        ...(data.type === 'file' ? {position:'absolute'}:{}),
     };
 }
 

@@ -3,12 +3,11 @@ import Timeline from "../../../Timeline/Timeline";
 import {itemsFromStages, prepareStages} from "../../../Timeline/stages";
 
 const ItemTimeline = ({data}) => {
-    const [stages, setStages] = useState([]);
-    useLayoutEffect(() => {
-        setStages(prepareStages(data));
-    }, [data]);
+    let stages1 = prepareStages(data);
+    let stages2 = prepareStages(data);
+    // console.log(stages1, stages2)
     return (
-        <Timeline stages={prepareStages(data)}></Timeline>
+        <Timeline stages={stages2}></Timeline>
     );
 };
 

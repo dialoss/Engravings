@@ -7,6 +7,7 @@ class ModalStorage {
    current = 10;
    id = 1;
    opened = {[this.id]: this.current};
+   overlays = [];
    max() {
        return Math.max.apply(null, Object.values(this.opened));
    }
@@ -30,8 +31,14 @@ const storage = new ModalStorage();
 
 function overlayBody(name, opened) {
     if (isMobileDevice() && name.match(/messenger|carousel|filemanager|element|login/)) {
-        opened && document.body.classList.add('overlayed');
-        !opened && document.body.classList.remove('overlayed');
+        if (opened) {
+            document.body.classList.add('overlayed');
+            storage.overlays.push(name);
+        }
+        if (!opened) {
+            storage.overlays.pop();
+            !storage.overlays.length && document.body.classList.remove('overlayed');
+        }
     }
 }
 

@@ -12,6 +12,7 @@ export const loginForm = {
                 validate: 'email',
                 attrs: ['required'],
                 label: "Email",
+                autocomplete: 'name',
                 value: ''
             },
             password: {
@@ -20,6 +21,8 @@ export const loginForm = {
                 attrs: ['required'],
                 label: 'Пароль',
                 value: '',
+                autocomplete: 'current-password',
+                validate: 'password',
             }
         }
 };
@@ -37,6 +40,7 @@ export const registerForm = {
             validate: 'email',
             attrs: ['required'],
             label: "Email",
+            autocomplete: 'email',
             value: '',
         },
         name: {
@@ -45,7 +49,8 @@ export const registerForm = {
             attrs: ['required'],
             label: "Имя",
             min_length: 5,
-            value: ''
+            value: '',
+            autocomplete: '',
         },
         password: {
             name: 'password',
@@ -54,6 +59,7 @@ export const registerForm = {
             min_length: 8,
             label: 'Пароль',
             value: '',
+            autocomplete: 'new-password',
         }
     }
 }

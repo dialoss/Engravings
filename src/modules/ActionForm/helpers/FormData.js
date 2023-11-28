@@ -20,7 +20,7 @@ export function serializeFields(fields, method) {
         }
     }
     if (newFields.page_from !== undefined) {
-        if (newFields.page_from === '') delete newFields.page_from;
+        if (!newFields.page_from) delete newFields.page_from;
         else newFields.page_from = {path:newFields.page_from};
     }
     // console.log(newFields)
@@ -73,7 +73,8 @@ export function getFormData({method, element, extraFields=[], initialData={}}) {
     if (method === 'POST') form.specifyParent = true;
     else form.specifyElement = true;
     const getValue = (field) => serializeValue((method !== 'POST' ? getFieldData(field.name, element) :
-        initialData[field.name] || (field.initial === null ? '' : field.initial)), field.type);
+        (initialData[field.name] !== undefined ? initialData[field.name] :
+            (field.initial === null ? '' : field.initial))), field.type);
 
     fields.forEach((field) => {
         if (field.label.length > 1) {

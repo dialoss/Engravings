@@ -8,6 +8,8 @@ import {useAddEvent} from "../../hooks/useAddEvent";
 import {createRoot} from "react-dom/client";
 import {InputAttachment, InputEmoji} from "../../components/Messenger/Input/MessengerInput";
 
+configQuill();
+
 const TextEditor = React.forwardRef(function TextEditor({config, message, callback}, ref) {
     const msgRef = useRef();
     const clickEvent = useRef();
@@ -18,7 +20,6 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
     const simple = config === 'simple';
 
     useEffect(() => {
-        configQuill();
         if(!msgRef.current) return;
         let root = msgRef.current.getEditor();
         simple && root.keyboard.bindings[13].unshift({
@@ -59,6 +60,19 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             }}></InputEmoji>);
         createRoot(toolbar.querySelector('.ql-attachment')).render(
             <InputAttachment callback={(v) => callback(m => ({...m, upload:v.upload}))}></InputAttachment>);
+    }, []);
+
+    useEffect(() => {
+        if(!ref || !ref.current) return;
+        let root = ref.current.getEditor();
+        for (const picker of [...root.container.closest('.quill').querySelectorAll('.ql-picker')]) {
+            const options = picker.querySelector('.ql-picker-options');
+            picker.addEventListener('click', e => {
+                options.style.left = picker.offsetLeft + 'px';
+                options.style.top = picker.offsetTop + 50 + 'px'
+                options.style.position = 'fixed';
+            })
+        }
     }, []);
 
     function inputCallback(value) {

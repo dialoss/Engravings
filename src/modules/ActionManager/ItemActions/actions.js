@@ -80,10 +80,12 @@ export default class Actions {
 
     static action(data) {
         Promise.resolve(data).then(resolve => {
-            // console.log(resolve)
+            console.log(resolve)
             for (const request of resolve) {
                 let sendData = request.data || {};
                 if (sendData.type === 'comment') return;
+
+                sendData.page = preparePage(sendData.page);
                 if (request.specifyElement && actionElement.type !== 'page') sendData.id = actionElement.id;
                 if (request.specifyParent && !('parent' in sendData) && actionElement.type !== 'page') sendData.parent = actionElement.id;
 
@@ -91,6 +93,7 @@ export default class Actions {
                     sendData = {
                         display_pos: actionElement.display_pos,
                         type: 'base',
+                        page: sendData.page,
                         items: [structuredClone(sendData)],
                     }
                 }
@@ -105,7 +108,6 @@ export default class Actions {
                     }
                 }
 
-                sendData.page = preparePage(sendData.page);
                 if (!sendData.tab && !actionElement.data.tab) sendData.tab = window.currentTab;
                 let storeMethod = request.method;
                 if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
@@ -151,6 +153,10 @@ export default class Actions {
                         break;
                     case "timeline":
                         type = 'timeline_entry';
+                        initialData = {
+                            show_shadow: false,
+                            color: '#73ff00',
+                        };
                         break;
                 }
             }

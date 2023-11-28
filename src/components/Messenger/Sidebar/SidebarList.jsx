@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import Avatar from "../../../ui/Avatar/Avatar";
 import dayjs from "dayjs";
 import {useSelector} from "react-redux";
+import {getMessageText} from "../helpers/messages";
 
 const SidebarList = ({list, className, currentItem, text, subtext=false, selectCallback, user}) => {
     const {users} = useSelector(state => state.messenger);
@@ -33,11 +34,7 @@ const SidebarList = ({list, className, currentItem, text, subtext=false, selectC
                                 </span>}
                                 {subtext && msg && <span className={"text-block"}>
                                 <span className={"subtext subtext-message"}>
-                                    <span className={'wrapper'}>
-                                        {
-                                            !!msg.value && (!!msg.value.text ? msg.value.text : msg.value.upload.filename)
-                                        }
-                                    </span>
+                                    <span className={'wrapper'}>{getMessageText(msg)}</span>
                                 </span>
 
                                 <span className={"subtext subtext-date"}>

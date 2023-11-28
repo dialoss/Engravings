@@ -13,7 +13,11 @@ const SidebarItem = ({listItem}) => {
              data-sublist={haveSublist}
              data-itemtype={'sidebar_link'}
              data-id={listItem.id}>
-            <AccordionContainer defaultOpened={isOpened} callback={setOpened} onlyButton={true} header={
+            <AccordionContainer defaultOpened={isOpened}
+                                callback={setOpened}
+                                onlyButton={true}
+                                key={listItem.id}
+                                header={
                 <SidebarLink link={listItem.link}
                              haveSublist={haveSublist}
                              depth={listItem.depth}>

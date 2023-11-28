@@ -30,7 +30,7 @@ function prepareContent(item) {
     };
 }
 
-export const CarouselModal = () => {
+export const CarouselModal = ({name}) => {
     const windowName = 'carousel-window';
     const [item, setItem] = useState(null);
     const position = useRef();
@@ -92,6 +92,8 @@ const CarouselContainer = ({item, type, next, previous, ...props}) => {
         event.key === 'ArrowLeft' && previous();
     }
     useAddEvent('keydown', nav);
+
+
 
     return (
         <CarouselContext.Provider value={{right: next, left: previous}}>

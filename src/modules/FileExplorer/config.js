@@ -200,6 +200,7 @@ export function init() {
             });
         },
         oninitdownload: function(startdownload, folder, ids, entries) {
+            console.log(ids)
             for (const id of ids) {
                 const url = 'https://drive.google.com/uc?id=' + id + '&export=download';
                 const link = document.createElement('a');

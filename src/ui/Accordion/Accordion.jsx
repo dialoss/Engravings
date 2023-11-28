@@ -14,7 +14,7 @@ const Accordion = React.forwardRef(function ({toggle, header, isOpened, height, 
                 <div className={"accordion-header__wrapper"}>
                     {header ? header : text && <p dangerouslySetInnerHTML={{__html: text}}></p>}
                     <ToggleButton isOpened={isOpened}><IconChevronDown/></ToggleButton>
-            </div>
+                </div>
             </div>
             <div className={"accordion-body " + state} style={style}>
                 <div className={"accordion-body__container"} ref={ref}>

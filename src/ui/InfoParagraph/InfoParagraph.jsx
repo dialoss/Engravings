@@ -4,6 +4,7 @@ import {triggerEvent} from "helpers/events";
 import InlineEditor from "../../components/InlineEditor/InlineEditor";
 import {clearTextFromHTML} from "../TextEditor/helpers";
 import store from "../../store";
+import {pageEditable} from "../../components/ItemList/ThemeManager/ThemeManager";
 
 
 const InfoParagraph = ({type, children, id, ...props}) => {
@@ -13,7 +14,7 @@ const InfoParagraph = ({type, children, id, ...props}) => {
         setEditor({isOpened:false, value: children});
     }, [children]);
     function openEditor(event) {
-        if (event.detail !== 2 || !window.editPage) return;
+        if (event.detail !== 2 || !pageEditable()) return;
         triggerEvent("action:init", event);
         setEditor(e => ({...e, isOpened: true}));
     }

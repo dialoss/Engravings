@@ -85,6 +85,7 @@ export function setActionElement(event) {
     } else {
         const location = store.getState().location;
         let id = '';
+        console.log(location)
         for (const p of Object.keys(location.pages)) {
             if (location.relativeURL === '/' + location.pages[p].path + '/') {
                 id = p;

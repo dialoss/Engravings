@@ -7,7 +7,7 @@
     word-break: break-word;
     //text-align: center;
     * {
-        font-size: min(4vw, 18px);
+        //font-size: min(4vw, 18px);
     }
     display: inline-block;
     li {
@@ -73,7 +73,7 @@
     &-textfield {
         .ql-container {
             span {
-                font-size: min(4vw, 20px) !important;
+                //font-size: min(4vw, 20px) !important;
             }
         }
 

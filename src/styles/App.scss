@@ -60,7 +60,7 @@ h1 {
   font-size: min(5vw, 30px) !important;
 }
 
-button, a {
+button, a, input, textarea {
   outline: none;
   &:focus {
     outline: none;
@@ -105,4 +105,8 @@ body {
 }
 .scrollable {
   overscroll-behavior: none;
+}
+svg {
+  width: 100% !important;
+  height: 100% !important;
 }

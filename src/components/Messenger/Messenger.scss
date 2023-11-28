@@ -15,6 +15,7 @@
   box-shadow: 0 0 7px 0 grey;
   display: flex;
   background-color: $color-main;
+  transition: all 0.3s linear;
 
   @include mobile {
     width: 100vw;

@@ -39,9 +39,7 @@ export const SimpleItem = ({item, depth=0}) => {
                 if (['video', 'image', 'model'].includes(it.type)) {
                     const h = it.media_height;
                     const w = it.media_width;
-                    if (h / w * itemTransform.getBoundingClientRect().width + 100 > window.innerHeight && !isMobileDevice() && itemsRow === 1)
-                        transform.style.width = '50%';
-                    else transform.style.width = 100 / itemsRow + '%';
+                    transform.style.width = 100 / itemsRow + '%';
                 } else {
                     transform.style.width = '100%';
                 }

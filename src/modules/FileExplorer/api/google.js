@@ -2,7 +2,7 @@ import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import {triggerEvent} from "../../../helpers/events";
-import {fileToItem, getImageDimensions, getMediaDimensions, getVideoDimensions} from "../helpers";
+import {fileToItem, getMediaDimensions} from "../helpers";
 import "./upload";
 import {getLocation} from "../../../hooks/getLocation";
 
@@ -165,6 +165,7 @@ export function serializeFile(file) {
 
 export async function driveRequest({request, callback, error}) {
     token = await Credentials.getToken();
+    console.log({token})
     try {
         return Promise.all(await apiMapper(request))
             .then(response => {
@@ -242,7 +243,6 @@ export async function uploadFile(fileinfo, callback) {
 
 
 export async function testUpload(file, folder) {
-    // console.log(file)
     let props = await getMediaDimensions(file);
 
     if (getMediaType(file.name) === 'model') {
@@ -288,8 +288,10 @@ export async function testUpload(file, folder) {
                     resolve(res.result);
                     msg = 'Файл загружен!';
                 }
-                if(file.msg_id)
-                    document.querySelector(`div[data-id='${file.msg_id}']`).querySelector('.text-loader .progress').innerHTML = msg;
+                if (file.msg_id) {
+                    document.querySelector(`div[data-id='${file.msg_id}']`).
+                    querySelectorAll('.text-loader')[file.index].querySelector('.progress').innerHTML = msg;
+                }
                 window.filemanager && window.filemanager.SetNamedStatusBarText('message', ' Прогресс: ' + msg + ' ' + file.name);
             });
         }
@@ -297,9 +299,6 @@ export async function testUpload(file, folder) {
 }
 
 export async function dropUpload(e, callback, uploadToDrive=true) {
-    e.stopPropagation();
-    e.preventDefault();
-
     let files = [];
     for (const file of [...(e.dataTransfer || e.clipboardData).files]) {
         if (uploadToDrive) {
@@ -315,4 +314,8 @@ export async function dropUpload(e, callback, uploadToDrive=true) {
             files.push(fileToItem({...file, type: file.filetype}));
         }
     callback(files);
+    if (files.length) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
 }

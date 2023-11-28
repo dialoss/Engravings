@@ -17,7 +17,9 @@ const ObjectTransform = () => {
         const alreadyFocused = item.classList.contains('focused');
         clearSelection();
         item.classList.add('focused');
-        item.getAttribute('data-type') !== 'modal' && isMobileDevice() && triggerEvent("contextmenu:open", event.detail.event);
+        if (item.getAttribute('data-type') !== 'modal' &&
+            isMobileDevice() &&
+            !getElementFromCursor(event.detail.event, 'action-button')) triggerEvent("contextmenu:open", event.detail.event);
 
         prevTransform.current = item;
         triggerEvent("action:init", event.detail.event);

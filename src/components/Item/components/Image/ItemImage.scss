@@ -1,11 +1,7 @@
 
 .item__image {
-    //min-height: 100%;
-    //display: flex;
-    //flex-direction: column;
     transition: all 0.15s linear;
     img {
-      //flex-grow: 1;
       display: block;
       width: 100%;
       height: 100%;
@@ -14,12 +10,12 @@
       opacity: 0.8;
       cursor: pointer;
     }
+  &-wrapper {
+    width: 100%;
+  }
 }
 .item-image {
   .info__block {
-    //position: absolute;
-    //bottom: ;
-    //transform: translate(0, 100%);
     left: 0;
     width: 100%;
   }

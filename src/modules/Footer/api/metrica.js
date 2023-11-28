@@ -10,13 +10,10 @@ const params = {
 }
 url += '?' + (new URLSearchParams(params)).toString();
 
-export function request(page) {
+export function request() {
     return fetch(url, {
         headers: {
             "Authorization": "OAuth " + api,
         }
-    }).then(r => r.json()).then(d => {
-        return ({totalViews: d.totals[0] + 41908,
-            currentViews: d.data.filter(p => p.dimensions[0].name === page)[0].metrics[0]})
-    });
+    }).then(r => r.json()).then(d => d);
 }

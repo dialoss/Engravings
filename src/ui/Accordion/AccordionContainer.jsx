@@ -15,11 +15,12 @@ const AccordionContainer = ({children, title, onlyButton=false, header=null, cal
         if (!ref) return;
         const item = ref.current.closest('.item.depth-0');
         const container = item && item.querySelector('.transform-container');
-        const resizeObserver = new ResizeObserver(() => {
-            container && triggerEvent('container:init', {container});
-        });
-        resizeObserver.observe(ref.current);
-        // return () => resizeObserver.unobserve(ref.current);
+        if (container) {
+            const resizeObserver = new ResizeObserver(() => {
+                triggerEvent('container:init', {container});
+            });
+            resizeObserver.observe(ref.current);
+        }
     }, []);
 
     useLayoutEffect(() => {
@@ -28,13 +29,22 @@ const AccordionContainer = ({children, title, onlyButton=false, header=null, cal
 
     const [height, setHeight] = useState(0);
     const ref = useRef();
+
+    function throttle(f, delay) {
+        let timer = 0;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => f.apply(this, args), delay);
+        }
+    }
+
     useEffect(() => {
         if (height.current && height.current !== 0) return;
         let child = ref.current.children[0];
         if (!child) return;
-        const resizeObserver = new ResizeObserver(() => {
+        const resizeObserver = new ResizeObserver(throttle(() => {
             setHeight(child.getBoundingClientRect().height);
-        });
+        }, 10));
         resizeObserver.observe(child);
         return () => resizeObserver.unobserve(child);
     }, []);

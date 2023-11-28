@@ -3,17 +3,17 @@
   z-index: 2;
   background-color: #fdfdfd;
   box-shadow: 0 0 2px 0 grey;
-  padding: 5px;
   border-radius: 10px;
   max-width: 80%;
   height: 100%;
-  //box-shadow: 0 0 10px 2px #0ff;
-}
 
-.message > div {
-  margin: 0 auto;
-  justify-content: center;
-  height: 100%;
+  &.upload {
+    width: 80%;
+  }
+
+  .message__text-wrapper {
+    padding: 5px;
+  }
 }
 
 .message-block {

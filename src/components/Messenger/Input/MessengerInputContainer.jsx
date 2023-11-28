@@ -9,6 +9,7 @@ import {getGlobalTime, sendEmail} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 import {getLocation} from "../../../hooks/getLocation";
 import {sendCloudMessage} from "../api/notifications";
+import {getMessageText} from "../helpers/messages";
 
 export const MessengerInputContainer = () => {
     let config = {
@@ -16,7 +17,7 @@ export const MessengerInputContainer = () => {
             const {room, user, users} = store.getState().messenger;
             sendCloudMessage({
                 title: 'MyMount | Новое сообщение',
-                body: user.name + ': ' + (message.value.text || message.value.upload.filename),
+                body: user.name + ': ' + getMessageText(message),
                 data: {url: getLocation().fullURL + '?action=messenger&id=' + room.id},
                 companion: users[room.companion].email,
             });

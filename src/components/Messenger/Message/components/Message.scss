@@ -1,7 +1,6 @@
 .text-loader {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   span {
     color: #1E72C7;
     position: relative;
@@ -29,9 +28,31 @@
   .item__image {
     border-radius: 8px;
     overflow: hidden;
+    &-wrapper {
+      padding: 3px;
+    }
+  }
+
+  .upload-preview {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 3px;
+
+    &.media-2 {
+      > div {
+        width: 50%;
+      }
+    }
+    &.media-3 {
+      > div {
+        width: 33.3333%;
+      }
+    }
   }
 
   &-text {
+    //font-size: 62.5%;
     word-wrap: break-word;
   }
 

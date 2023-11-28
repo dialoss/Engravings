@@ -12,8 +12,16 @@ const AlertContainer = () => {
         setAlerts(al => [...al, {...event.detail, id}]);
         setTimeout(() => {
             setAlerts(al => al.filter(a => a.id !== id));
-        }, 2000);
+        }, event.detail.timeout || 2000);
     }
+    function closeAlert() {
+        setAlerts([]);
+    }
+    function replaceAlert(id) {
+
+    }
+    useAddEvent("alert:replace", replaceAlert);
+    useAddEvent("alert:close", closeAlert);
     useAddEvent('alert:trigger', triggerAlert);
     return (
         <ModalManager name={'alert-window'} defaultOpened={true} closeConditions={[]}>

@@ -22,7 +22,7 @@ const ItemListContainer = () => {
 
     async function addItems({newItems, count}, fromCache=false) {
         let items = newItems;
-        setTotalItems(count);
+        if (count) setTotalItems(count);
         items = createItemsTree(items);
         if (!fromCache) {
             globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
@@ -45,10 +45,6 @@ const ItemListContainer = () => {
         }
         fetchItems(offset, addItems, limit.current);
     }, []);
-
-    useLayoutEffect(() => {
-        setTotalItems(items.length);
-    }, [items.length]);
 
     async function handleElements(event) {
         let request = event.detail;

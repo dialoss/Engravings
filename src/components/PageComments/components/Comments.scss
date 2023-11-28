@@ -40,6 +40,7 @@
   }
 
   .comments-section__header {
+    z-index: 1;
     position: relative;
     margin-bottom: 40px;
     @media only screen and (max-width: 600px) {
@@ -179,34 +180,23 @@
     width: 100%;
     border: none;
   }
-
-
-  .icon-emojis {
-    .modal-manager {
-      width: 100%;
-      right: 0;
-      transform: translate(0, calc(-100% - 40px));
-    }
-
-    .modal__window {
-      bottom: -100px;
-    }
-
-  }
   .search {
     position: absolute;
   }
+  @include mobile {
+    .icon-emojis {
+      .transform-item {
+        left: 10px !important;
+        em-emoji-picker {
+          max-width: 90vw;
+        }
+      }
+    }
+  }
+
 }
 .comment.item {
   & > div, & > span {
     margin-top: 6px;
-  }
-}
-.icon-emojis {
-  .modal__background {
-    position: initial;
-  }
-  .modal-manager {
-    position: absolute !important;
   }
 }

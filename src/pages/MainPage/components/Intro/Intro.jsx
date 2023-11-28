@@ -1,10 +1,14 @@
 import React from 'react';
 import selfImg from './assets/img-self.jpg';
 import './Intro.scss';
+import ItemListContainer from "../../../../modules/ItemList/components/ItemListContainer";
 
 const Intro = () => {
     return (
         <div className="intro">
+            <div style={{display:'none'}}>
+                <ItemListContainer></ItemListContainer>
+            </div>
             <div className="intro__inner">
                 <div className="intro__img-wrapper">
                     <img className="intro__img-self" src={selfImg} alt=""/>

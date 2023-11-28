@@ -56,10 +56,6 @@
         flex-direction: column;
         align-items: center;
         row-gap: 10px;
-
-        input {
-            width: 100%;
-        }
     }
 
     &__title {
@@ -80,9 +76,27 @@
 }
 
 .form__block {
-    max-width: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     row-gap: 10px;
+    @include mobile {
+        row-gap: 4px;
+    }
+}
+
+.user-prompt .form__content {
+    height: auto;
+}
+
+@include mobile {
+    .element-form {
+        .form-input, .form-textarea {
+            width: 100%;
+            background-color: #fff;
+            border-bottom: 2px grey solid;
+            border-radius: 0;
+        }
+    }
 }

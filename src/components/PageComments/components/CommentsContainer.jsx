@@ -20,6 +20,7 @@ import {SearchContainer} from "../../../ui/Tools/Tools";
 import {sendCloudMessage} from "../../Messenger/api/notifications";
 import NavButton from "../../../ui/Navbar/Button/NavButton";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
+import {getMessageText} from "../../Messenger/helpers/messages";
 
 export const CommentsInput = ({message, sendCallback, inputCallback}) => {
     return (
@@ -90,7 +91,7 @@ const CommentsContainer = ({page, document, setDocument}) => {
                 const parentUser = users[comments.find(comm => comm.id === thread).user];
                 parentUser && sendCloudMessage({
                     title: 'MyMount | Новый комментарий',
-                    body: user.name + ': ' + (message.value.text || message.value.upload.filename),
+                    body: user.name + ': ' + getMessageText(message),
                     data: {url: getLocation().fullURL + '?action=comments&id=' + message.id},
                     companion: parentUser.email,
                 });

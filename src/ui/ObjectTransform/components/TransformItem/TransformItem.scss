@@ -1,4 +1,5 @@
 .transform-item {
+  transform: scale(1);
   > .transform-resizers {
     display: none;
   }
@@ -21,5 +22,8 @@
       width: 60px;
       height: 60px;
     }
+  }
+  &[data-style="fullscreen"] {
+    width: 100% !important;
   }
 }

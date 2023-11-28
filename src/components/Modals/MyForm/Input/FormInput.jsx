@@ -7,15 +7,19 @@ const FormInput = ({data, ...props}) => {
         attrs[attr] = attr;
     });
     return (
-        <input {...attrs}
-               name={data.name}
-               value={data.value}
-                {...props}
-                type={data.validate || 'input'}
-               onChange={data.callback}
-               minLength={data.min_length || 0}
-               autoComplete={data.name}
-               className="form-input"/>
+        <>
+            <label htmlFor={data.name} style={{display:'none'}}></label>
+            <input {...attrs}
+                   value={data.value}
+                   name={data.name}
+                   {...props}
+                   type={data.validate || 'input'}
+                   onChange={data.callback}
+                   minLength={data.min_length || 0}
+                   autoComplete={data.autocomplete || data.name}
+                   className="form-input"/>
+        </>
+
     );
 };
 

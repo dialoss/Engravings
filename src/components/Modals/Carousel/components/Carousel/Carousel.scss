@@ -38,6 +38,9 @@
         border-radius: 8px;
         max-height: 80vh;
         max-width: 80vw;
+        @include desktop {
+            min-width: 500px;
+        }
 
         @media only screen and (max-width:$media-resize-width) {
             & {

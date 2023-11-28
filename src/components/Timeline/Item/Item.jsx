@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AccordionContainer from "ui/Accordion/AccordionContainer";
 import {default as EntryItem} from "components/Item/Item";
 import Separator from "../Separator/Separator";
 import Dot from "../Dot/Dot";
 import Connector from "../Connector/Connector";
+import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
+import {triggerEvent} from "../../../helpers/events";
 
 export const Entry = ({data}) => {
+    const [opened, setOpened] = useState(false);
     const items = data.items.map((item, index) => {
         return <Item data={item} separator={true} count={index} all={data.items.length - 1} key={item.id}></Item>
     });
@@ -16,11 +19,14 @@ export const Entry = ({data}) => {
                     backgroundColor: data.colorPrev,
                 }} name={'extra top'}/>}
                 <Dot style={{backgroundColor:data.color}}></Dot>
-                {data.all !== data.count && <Connector style={{
+                {(data.count !== data.all) && <Connector style={{
                     backgroundColor: data.color,
+                    height: opened ? 10 : 20,
                 }} name={'extra bottom'}/>}
             </Separator>
-            {data.type === 'timeline_entry' ? <AccordionContainer title={data.title} defaultOpened={!!data.items.length}>
+            {data.type === 'timeline_entry' ? <AccordionContainer callback={setOpened}
+                                                                  title={data.title}
+                                                                  defaultOpened={!!data.items.length} key={data.id}>
                 <div className={'timeline-group'}>{items}</div>
             </AccordionContainer> : items}
         </div>
@@ -46,7 +52,11 @@ const Item = ({data, separator, count, all}) => {
                 </>
                 }
             </Separator>}
-            <EntryItem item={{...data, count, all}} depth={3}></EntryItem>
+            <div className="timeline-item__inner">
+                <EntryItem item={{...data, count, all}} depth={3}></EntryItem>
+                {count === all && data.type !== 'timeline_entry' && <ActionButton modalToggle={false} onClick={() =>
+                    triggerEvent("action:function", {name: 'add', args:'add'})}>Добавить запись</ActionButton>}
+            </div>
         </div>
     );
 };

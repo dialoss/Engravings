@@ -13,6 +13,7 @@ import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 import {getLocation} from "../../../../hooks/getLocation";
 import Avatar from "../../../../ui/Avatar/Avatar";
 import {useSelector} from "react-redux";
+import {SearchContainer} from "../../../../ui/Tools/Tools";
 
 
 const Customer = () => {
@@ -29,7 +30,7 @@ const Customer = () => {
     );
 }
 
-const Sidebar = ({data, admin}) => {
+const Sidebar = ({data, admin, setData}) => {
     const [isOpened, setOpened] = useState(false);
     const opRef = useRef();
     opRef.current = isOpened;
@@ -66,13 +67,7 @@ const Sidebar = ({data, admin}) => {
     useAddEvent("sidebar:toggle", toggleSidebar);
     useAddEvent("mousedown", toggleSidebar);
     useAddEvent("touchstart", toggleSidebar);
-
-    useEffect(() => {
-        for (const link of document.querySelectorAll(".sidebar__link")) {
-            link.addEventListener('mousedown', () => toggleSidebar({detail:{isOpened: false}}));
-        }
-    }, []);
-
+    console.log(data)
     return (
         <Swipes callback={setOpened} state={isOpened} className={'sidebar'}>
             <div className="sidebar">
@@ -84,11 +79,15 @@ const Sidebar = ({data, admin}) => {
                         {admin && <>
                             <ActionButton onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
                                  className={"sidebar__action sidebar__link"}>Хранилище</ActionButton>
-                            <ActionButton onClick={() => triggerEvent("theme:toggle")}
-                                 className={"sidebar__action sidebar__link"}>Редактор</ActionButton>
                         </>}
                             <ActionButton onClick={() => triggerEvent("messenger-window:toggle", {toggle:true})}
                                  className={"sidebar__action sidebar__link"}>сообщения</ActionButton>
+                            <ActionButton onClick={() => triggerEvent("notification-manager:toggle", {toggle: true})}
+                                          className={"sidebar__action sidebar__link"}>Уведомления</ActionButton>
+                            <SearchContainer placeholder={'Поиск страницы'}
+                                             data={Object.values(data)}
+                                             searchBy={'title'}
+                                             setData={setData}></SearchContainer>
                         </div>
                     </div>
                     <div className="sidebar__wrapper scrollable">

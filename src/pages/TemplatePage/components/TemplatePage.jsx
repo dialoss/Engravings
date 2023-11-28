@@ -12,11 +12,12 @@ const TemplatePage = () => {
         <>
             <BrowserRouter>
                 <ContentWrapper>
-                    <Container className={'container container-main'}>
+                    <div style={{minHeight: '100dvh'}}>
                         <AppRouter/>
-                        <PageComments/>
                         <div style={{flexGrow: 1, minHeight:1}}></div>
-                    </Container>
+                    </div>
+                    <PageComments/>
+                    <div style={{flexGrow: 1, minHeight:1}}></div>
                     <ActionManager></ActionManager>
                 </ContentWrapper>
                 <Footer></Footer>

@@ -1,0 +1,19 @@
+.page-editor {
+  position: fixed;
+  right: 5px;
+  top: 5px;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  @include mobile {
+    top: 65px;
+  }
+  .action-button {
+    width: 50px;
+    height: 50px;
+    svg {
+      filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(244deg) brightness(106%) contrast(100%)
+    }
+  }
+}

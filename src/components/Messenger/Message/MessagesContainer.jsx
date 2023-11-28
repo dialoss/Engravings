@@ -14,6 +14,7 @@ function getMessagesSnapshot(id, document, callback) {
         let newMessages = [];
         query.data().messages.forEach(msg => newMessages.push(msg));
         newMessages = newMessages.sort((a,b) => a.timeSent - b.timeSent);
+        console.log(newMessages)
         callback(s => ({...s, [id]: {...s[id], messages: newMessages}}));
     });
 }

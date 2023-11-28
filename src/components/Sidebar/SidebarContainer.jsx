@@ -57,7 +57,7 @@ const SidebarContainer = () => {
     const userAdmin = useSelector(state => state.users.current).isAdmin;
     return (
         <Sidebar admin={userAdmin} customer={true}
-                 data={{sublist:pages, depth:-1}}/>
+                 data={{sublist:pages, depth:-1}} setData={setPages}/>
     );
 };
 

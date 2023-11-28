@@ -160,25 +160,16 @@ export function useGetRooms() {
     useLayoutEffect(() => {
         if (!user) return;
         let newRooms = [];
-        let roomWithAdmin = null;
         Object.values(rooms_raw).map(r => {
             if (r.users.includes(user.email)) {
                 newRooms.push(r);
-                if (r.users.includes(adminEmail)) roomWithAdmin = r;
             }
         });
-        if (!roomWithAdmin) {
-            let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
-            if (u.length > 1) {
-                createRoom(u);
-            }
-        }
         let objRooms = {};
         newRooms.forEach(r => {
             objRooms[r.id] =  changeRoomData(r, user, users);
         });
         store.dispatch(actions.setField({field:'rooms', data:objRooms}));
-        roomWithAdmin && !room.id && setCurrentRoom(roomWithAdmin.id);
     }, [user, rooms_raw, Object.values(users).length]);
 
     const [meta, setMeta] = useState({});
@@ -213,6 +204,18 @@ export function useGetRooms() {
         !haveNewMessage && triggerEvent("messenger:notification", false);
         room.id && newRooms[room.id] && newRooms[room.id].newMessage &&
         newRooms[room.id].lastMessage.user !== user.id && updateRoom({newMessage: false});
+        console.log(user.currentRoom)
+        console.log(user)
+        let roomWithAdmin = null;
+        // if (r.users.includes(adminEmail)) roomWithAdmin = r;
+        //
+        // if (!roomWithAdmin) {
+        //     let u = [user, Object.values(users).filter(u => u.email === adminEmail)[0]];
+        //     if (u.length > 1) {
+        //         createRoom(u);
+        //     }
+        // }
+        // !room.id && setCurrentRoom(roomWithAdmin.id);
 
         store.dispatch(actions.setField({field:'rooms', data:newRooms}));
         if (window.messenger) {

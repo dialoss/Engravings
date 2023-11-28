@@ -8,11 +8,14 @@ import {useSelector} from "react-redux";
 import FileExplorer from "../../FileExplorer/FileExplorer";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
 import ItemActions from "../ItemActions/EntryActions";
-import ThemeManager from "../../../components/ItemList/ThemeManager";
+import ThemeManager from "../../../components/ItemList/ThemeManager/ThemeManager";
 import AuthContainer from "../../Authorization/AuthContainer";
 import AlertContainer from "../../../ui/Alert/AlertContainer";
 import ModalForm from "../../ActionForm/FormContainer";
 import {CarouselModal} from "../../../components/Modals/Carousel/CarouselContainer";
+import {triggerEvent} from "../../../helpers/events";
+import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
+import NotificationManager from "../../Notifications/NotificationManager";
 
 
 const ActionManager = () => {
@@ -49,6 +52,7 @@ const ActionManager = () => {
             <MessengerContainer></MessengerContainer>
             <AuthContainer></AuthContainer>
             <CarouselModal></CarouselModal>
+            <NotificationManager></NotificationManager>
             <ModalForm name={'user-prompt'} backgroundClose={false}></ModalForm>
         </>
     );

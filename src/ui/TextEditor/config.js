@@ -50,20 +50,22 @@ export function configQuill() {
 
 export const QuillModules = {
     editor: {
-        toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            [{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
+        toolbar: {
+            container: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
 
-            [{'header': [1, 2, 3, 4, 5, 6, false]}],
-            [{'list': 'ordered'}, {'list': 'bullet'}],
-            [{'indent': '-1'}, {'indent': '+1'}],
+                [{'header': [1, 2, 3, 4, 5, 6, false]}],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                [{'indent': '-1'}, {'indent': '+1'}],
 
-            [{'size': fontSizeArr}],
+                [{'size': fontSizeArr}],
 
-            [{'color': []}],
-
-            ['clean']
-        ]
+                [{'color': []}],
+                ['emoji'],
+                ['clean']
+            ]
+        }
     },
 
     simple: {

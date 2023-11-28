@@ -2,6 +2,8 @@ import React from 'react';
 import "./Timeline.scss";
 import Item from "./Item/Item";
 import {default as EntryItem} from "components/Item/Item";
+import ActionButton from "../../ui/Buttons/ActionButton/ActionButton";
+import {triggerEvent} from "../../helpers/events";
 
 const Timeline = ({stages}) => {
     return (
@@ -17,8 +19,9 @@ const Timeline = ({stages}) => {
                                      connector={index !== stages.length - 1}></Item>
                     })
                 }
+                <ActionButton modalToggle={false} onClick={() =>
+                    triggerEvent("action:function", {name: 'add', args:'add'})}>Добавить шаг</ActionButton>
             </div>
-
         </div>
     );
 };

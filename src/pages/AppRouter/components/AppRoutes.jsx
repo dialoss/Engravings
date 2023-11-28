@@ -18,10 +18,6 @@ const Components = {
 const PageWrapper = ({route}) => {
     const location = getLocation();
     document.title = location.pageTitle + ' | MyMount';
-    useEffect(()=>{
-        if (location.pageSlug === 'main') document.querySelector('.container-main').style.minHeight = 'auto'
-        else document.querySelector('.container-main').style.minHeight = '100dvh'
-    },[]);
 
     return (
         <>

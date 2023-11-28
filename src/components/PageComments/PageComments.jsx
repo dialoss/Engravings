@@ -6,13 +6,13 @@ import {useSelector} from "react-redux";
 import store from "../../store";
 let counter = 0;
 const PageComments = () => {
-    const visible = useSelector(state => state.location.currentPage.comments);
+    const page = useSelector(state => state.location.currentPage);
     const location = useSelector(state => state.location);
     const docRef = useRef();
     const [document, setDocument] = useState(null);
-    const page = location.relativeURL.slice(1, -1).replaceAll('/', '$');
+    const pageURL = location.relativeURL.slice(1, -1).replaceAll('/', '$');
     let t = 1;
-    if (docRef.current && docRef.current !== page && counter === 0) {
+    if (docRef.current && docRef.current !== pageURL && counter === 0) {
         setDocument(null);
         counter += 1;
         t = null;
@@ -20,11 +20,11 @@ const PageComments = () => {
         counter = 0;
     }
     return (
-        <div className={"comments"} id={'comments'} style={{marginTop:50, display: (visible ? "block" : "none")}}>
+        <div className={"comments"} id={'comments'} style={{marginTop:50, display: (page.comments ? "block" : "none")}}>
             <Container>
                 <div className="comments__inner">
-                    <Comments page={visible && page}
-                            document={t && visible && document} setDocument={(v) => {docRef.current = page; setDocument(v)}}
+                    <Comments page={page.comments && pageURL}
+                            document={t && page.comments && document} setDocument={(v) => {docRef.current = pageURL; setDocument(v)}}
                     ></Comments>
                 </div>
             </Container>

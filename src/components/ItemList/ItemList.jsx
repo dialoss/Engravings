@@ -7,6 +7,8 @@ import "./ItemList.scss";
 import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
 import {useAddEvent} from "../../hooks/useAddEvent";
+import {pageEditable} from "./ThemeManager/ThemeManager";
+import {useSelector} from "react-redux";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const [config, setConfig] = useState({});
@@ -31,21 +33,19 @@ const ItemList = ({items, className, loadMore=null}) => {
 
     let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
-    const edit = window.editPage ? 'edit' : '';
+    const edit = useSelector(state => state.elements.editPage);
     return (
-        <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit}`} ref={listRef}>
-            <Container style={{marginBottom: "50px"}}>
-                <MyMasonry
-                    maxColumns={config.columns}
-                    forceColumns={forceColumns}
-                    ref={ref}
-                >
-                    {
-                        items.map((item) => <Item item={item} key={item.id}></Item>)
-                    }
-                </MyMasonry>
-                {!!items.length && loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}
-            </Container>
+        <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit ? 'edit' : ''}`} ref={listRef}>
+            <MyMasonry
+                maxColumns={config.columns}
+                forceColumns={forceColumns}
+                ref={ref}
+            >
+                {
+                    items.map((item) => <Item item={item} key={item.id}></Item>)
+                }
+            </MyMasonry>
+            {!!items.length && loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}
         </div>
     );
 };

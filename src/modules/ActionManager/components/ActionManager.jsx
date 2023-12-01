@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useAddEvent} from "hooks/useAddEvent";
 import {setActionElement} from "./helpers";
-import ObjectTransform from "ui/ObjectTransform/ObjectTransform";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
 import Actions from "modules/ActionManager/ItemActions/actions";
 import {useSelector} from "react-redux";
@@ -13,9 +12,9 @@ import AuthContainer from "../../Authorization/AuthContainer";
 import AlertContainer from "../../../ui/Alert/AlertContainer";
 import ModalForm from "../../ActionForm/FormContainer";
 import {CarouselModal} from "../../../components/Modals/Carousel/CarouselContainer";
-import {triggerEvent} from "../../../helpers/events";
-import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import NotificationManager from "../../Notifications/NotificationManager";
+import SidebarContainer from "../../../components/Sidebar/SidebarContainer";
+import ObjectTransformContainer from "../../../ui/ObjectTransform/ObjectTransform";
 
 
 const ActionManager = () => {
@@ -47,12 +46,13 @@ const ActionManager = () => {
                     <ThemeManager></ThemeManager>
                 </>
             }
-            <ObjectTransform></ObjectTransform>
+            <ObjectTransformContainer></ObjectTransformContainer>
             <FirebaseContainer></FirebaseContainer>
             <MessengerContainer></MessengerContainer>
             <AuthContainer></AuthContainer>
             <CarouselModal></CarouselModal>
             <NotificationManager></NotificationManager>
+            <SidebarContainer></SidebarContainer>
             <ModalForm name={'user-prompt'} backgroundClose={false}></ModalForm>
         </>
     );

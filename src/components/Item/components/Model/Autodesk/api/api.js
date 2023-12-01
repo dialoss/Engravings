@@ -1,7 +1,4 @@
-import App from './components/App';
-import {useEffect, useState} from "react";
-
-let token = '';
+export let token = '';
 
 async function uploadModel(file) {
     let id = null;
@@ -41,7 +38,6 @@ function processModel(id) {
     });
 }
 
-
 export async function uploadAutodeskFile(file) {
     const id = await uploadModel(file);
     processModel(id);
@@ -73,15 +69,3 @@ export async function uploadAutodeskFile(file) {
         token = data.access_token;
     });
 })();
-
-export const AutodeskModel = ({data}) => {
-    return (
-        <>
-            {token && data.urn && <App urn={data.urn}
-                                       token={token}
-                                       ui={data.show_ui}
-                                       id={data.id}
-                                       rotate={data.rotation}/>}
-        </>
-    );
-}

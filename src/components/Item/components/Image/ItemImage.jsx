@@ -4,7 +4,7 @@ import {triggerEvent} from "helpers/events";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 import {getCompressedImage} from "./helpers";
-import {pageEditable} from "../../../ItemList/ThemeManager/ThemeManager";
+import {pageEditable} from "../../../../modules/ItemList/store/reducers";
 
 const ItemImage = ({data, ...props}) => {
     const ref = useRef();

@@ -43,9 +43,10 @@ export const FormContainer = ({formData, callback, children}) => {
     useLayoutEffect(() => {
         setFormFields(formData.data || {});
     }, [formData]);
+    console.log(formFields)
 
     return (
-        <FormContext.Provider value={inputCallback}>
+        <FormContext.Provider value={{inputCallback, setFormFields}}>
             <div className={"form__content " + (formData.style || '')}>
                 <div className="form__header">
                     <p className={"form__title"}>{formData.title}</p>

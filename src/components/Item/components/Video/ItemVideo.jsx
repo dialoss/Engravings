@@ -3,7 +3,7 @@ import "./ItemVideo.scss";
 import InfoBlock from "ui/InfoBlock/InfoBlock";
 
 const ItemVideo = ({data, ...props}) => {
-    if (!data.url.match(/youtube|google/)) data.url = "https://drive.google.com/file/d/"+data.url+'/preview'
+    if (!data.url.match(/youtube|drive/)) data.url = "https://drive.google.com/file/d/"+data.url+'/preview'
 
     return (
         <div className="item__video" {...props} id={data.url}

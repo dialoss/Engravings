@@ -1,6 +1,6 @@
 
-$color-item-background: rgb(180, 207, 242);
-$color-item-hover: rgb(141, 176, 236);
+//$color-item-background: rgb(180, 207, 242);
+//$color-item-hover: rgb(141, 176, 236);
 
 .wrapper-base {
     width: 100%;
@@ -15,7 +15,7 @@ $color-item-hover: rgb(141, 176, 236);
     }
 
     .item-base {
-        background-color: $color-item-background;
+        //background-color: $color-item-background;
         text-align: center;
         box-shadow: 0 0 7px 0 grey;
         border-radius: 8px;
@@ -23,7 +23,6 @@ $color-item-hover: rgb(141, 176, 236);
         position: relative;
         min-height: 20px;
         width: 100%;
-        //overflow: hidden;
 
         &:hover  {
             cursor: pointer;
@@ -52,5 +51,8 @@ $color-item-hover: rgb(141, 176, 236);
     .item {
         background-color: #fff;
         box-shadow: none;
+    }
+    .items-wrapper {
+        flex-direction: row;
     }
 }

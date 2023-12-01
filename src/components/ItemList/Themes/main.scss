@@ -1,20 +1,12 @@
 .item-list {
-  --masonry: 3;
-  --widthPoints: [400, 500, 800];
   @import 'parent';
   &.child {
-    --masonry: 1;
-    --widthPoints: [400, 500, 800];
     @import "child";
   }
   &.shop {
-    --masonry: 1;
-    --widthPoints: [300, 400];
     @import "shop";
   }
   &.blueprints {
-    --masonry: 2;
-    --widthPoints: [300, 400];
     .wrapper-inner {
       padding: 6px;
     }

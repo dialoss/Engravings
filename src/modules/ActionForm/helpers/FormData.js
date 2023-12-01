@@ -77,14 +77,8 @@ export function getFormData({method, element, extraFields=[], initialData={}}) {
             (field.initial === null ? '' : field.initial))), field.type);
 
     fields.forEach((field) => {
-        if (field.label.length > 1) {
-            for (const l of field.label) {
-                let name = Object.keys(l)[0];
-                form.data[name] = {value: getValue(field), ...field, name, label:Object.values(l)[0]};
-            }
-        } else {
-            form.data[field.name] = {value: getValue(field), ...field};
-        }
+        form.data[field.name] = {value: getValue(field), ...field};
     });
+    console.log(fieldsRaw)
     return form;
 }

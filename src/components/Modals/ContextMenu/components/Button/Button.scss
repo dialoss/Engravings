@@ -3,6 +3,10 @@ $color-main: rgb(219, 228, 235);
 .context__item {
     width: 100%;
     position: relative;
+
+    &.hidden {
+        display: none;
+    }
 }
 
 @mixin f($stage) {

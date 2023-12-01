@@ -53,7 +53,9 @@ export function serializeActions(actions, actionElement, depth=0) {
                 }
                 break;
         }
+        if (action.toggler) callback = (e) => console.log(e)
         return {
+            ...action,
             text,
             actions: serializeActions(subActions, actionElement, depth + 1),
             callback,

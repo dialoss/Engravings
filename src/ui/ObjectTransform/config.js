@@ -1,22 +1,12 @@
-import styles from "./components/styles/resize.module.scss";
-
-export const  Transforms = {
-    parent: {
-        name: "move",
-        style: {},
+export const Transforms = [
+    {
+        name: 'resize-left',
+        axis: [1, 1],
+        type: 'resize',
     },
-    child: {
-        resize: {
-            buttons: [
-                {
-                    name: 'resize-left',
-                    style: styles['resize-left'],
-                },
-                {
-                    name: 'resize-right',
-                    style: styles['resize-right'],
-                },
-            ],
-        }
-    }
-};
+    {
+        name: 'resize-right',
+        axis: [1, 1],
+        type: 'resize',
+    },
+];

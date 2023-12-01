@@ -6,7 +6,7 @@ import {FormContext} from "../../../../modules/ActionForm/FormContainer";
 import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 
 const FormUpload = ({data}) => {
-    const inputCallback = useContext(FormContext);
+    const inputCallback = useContext(FormContext).inputCallback;
     const [upload, setUpload] = useState([]);
     useEffect(() => {
         setUpload(data.value);

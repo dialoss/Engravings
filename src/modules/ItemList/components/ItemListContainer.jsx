@@ -9,7 +9,7 @@ import {getLocation} from "../../../hooks/getLocation";
 import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
-import NavButton from "../../../ui/Navbar/Button/NavButton";
+import NavButton from "../../../ui/Buttons/NavButton/NavButton";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 
 const ItemListContainer = () => {
@@ -19,7 +19,6 @@ const ItemListContainer = () => {
     const globalDispatch = useDispatch();
     const [totalItems, setTotalItems] = useState(0);
     let page = useSelector(state => state.location.relativeURL);
-
     async function addItems({newItems, count}, fromCache=false) {
         let items = newItems;
         if (count) setTotalItems(count);

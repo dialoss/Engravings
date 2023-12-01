@@ -2,16 +2,14 @@ import React, {useEffect, useRef, useState} from 'react';
 import Item from "components/Item/Item";
 import MyMasonry from "ui/Masonry/MyMasonry";
 import Container from "ui/Container/Container";
-import NavButton from "../../ui/Navbar/Button/NavButton";
+import NavButton from "../../ui/Buttons/NavButton/NavButton";
 import "./ItemList.scss";
 import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
 import {useAddEvent} from "../../hooks/useAddEvent";
-import {pageEditable} from "./ThemeManager/ThemeManager";
 import {useSelector} from "react-redux";
 
 const ItemList = ({items, className, loadMore=null}) => {
-    const [config, setConfig] = useState({});
     const [forceColumns, setColumns] = useState(0);
     const ref = React.useRef();
     function calcForceColumns() {
@@ -23,21 +21,13 @@ const ItemList = ({items, className, loadMore=null}) => {
 
     useAddEvent('itemlist:view', calcForceColumns);
 
-    const listRef = useRef();
-    useEffect(()=>{
-        const style = window.getComputedStyle(listRef.current);
-        setConfig({
-            columns: +style.getPropertyValue('--masonry'),
-        })
-    }, []);
-
     let style = 'parent';
     if (getLocation().parentSlug) style = 'child';
     const edit = useSelector(state => state.elements.editPage);
     return (
-        <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit ? 'edit' : ''}`} ref={listRef}>
+        <div className={`item-list ${className} ${style} ${getLocation().pageSlug} ${edit ? 'edit' : ''}`}>
             <MyMasonry
-                maxColumns={config.columns}
+                maxColumns={1}
                 forceColumns={forceColumns}
                 ref={ref}
             >

@@ -69,7 +69,7 @@ const TextEditor = React.forwardRef(function TextEditor({config, message, callba
             const options = picker.querySelector('.ql-picker-options');
             picker.addEventListener('click', e => {
                 options.style.left = picker.offsetLeft + 'px';
-                options.style.top = picker.offsetTop + 50 + 'px'
+                options.style.top = picker.offsetTop + picker.getBoundingClientRect().height + 'px'
                 options.style.position = 'fixed';
             })
         }

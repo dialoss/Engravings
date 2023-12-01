@@ -37,7 +37,12 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    padding: 3px;
+    &:not(&:empty) {
+      padding: 3px;
+    }
+    .upload {
+      width: 100%;
+    }
 
     &.media-2 {
       > div {

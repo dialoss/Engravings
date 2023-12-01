@@ -4,7 +4,7 @@ import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 import {triggerEvent} from "../../../../helpers/events";
 import "./ButtonItem.scss";
 import {preventOnTransformClick} from "../../../../ui/ObjectTransform/helpers";
-import NavButton from "../../../../ui/Navbar/Button/NavButton";
+import NavButton from "../../../../ui/Buttons/NavButton/NavButton";
 
 const ButtonItem = ({data}) => {
     const ref = useRef();
@@ -21,13 +21,16 @@ const ButtonItem = ({data}) => {
             case "$buy":
                 window.ym(95613565,'reachGoal','buy');
                 triggerEvent("action:function", {name: 'add', args: 'buy'});
-                break;
+                return;
             case "$order":
                 window.ym(95613565,'reachGoal','order');
                 triggerEvent("action:function", {name: 'add', args:'order'});
-                break;
-            default:
-                window.open(action, "_blank")
+                return;
+        }
+        if (action.match(/^\/.*/)) {
+            triggerEvent("router:navigate", {path: action});
+        } else {
+            window.open(action, "_blank")
         }
     }
     const activeTab = data.link.includes('tab') && window.currentTab === +data.link.split('_')[1];

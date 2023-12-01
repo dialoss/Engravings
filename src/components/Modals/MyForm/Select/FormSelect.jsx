@@ -6,11 +6,10 @@ const FormSelect = ({data}) => {
     return (
         <select value={data.value} className="form-select" autoComplete="off" onChange={data.callback}>
             {
-                Object.values(data.attrs).map((option, index) => {
-                    return <FormOption hidden={option.hidden || ""}
-                                       value={option.name}
-                                       text={option.value}
-                                       key={index}></FormOption>
+                Object.keys(data.options).map(option => {
+                    return <FormOption value={option}
+                                       text={data.options[option]}
+                                       key={option}></FormOption>
                 })
             }
         </select>

@@ -5,7 +5,7 @@ function getFirstItems(container) {
 }
 
 export function isResizable(container) {
-    return !['image', 'model', 'video', 'subscription'].includes(container.getAttribute('data-type'));
+    return !['image', 'model', 'video'].includes(container.getAttribute('data-type'));
 }
 
 function getMaxBottom(container) {

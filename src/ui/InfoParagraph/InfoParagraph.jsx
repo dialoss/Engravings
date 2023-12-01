@@ -4,7 +4,7 @@ import {triggerEvent} from "helpers/events";
 import InlineEditor from "../../components/InlineEditor/InlineEditor";
 import {clearTextFromHTML} from "../TextEditor/helpers";
 import store from "../../store";
-import {pageEditable} from "../../components/ItemList/ThemeManager/ThemeManager";
+import {pageEditable} from "../../modules/ItemList/store/reducers";
 
 
 const InfoParagraph = ({type, children, id, ...props}) => {

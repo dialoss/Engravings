@@ -67,5 +67,19 @@
 
 .anchor-bottom {
   height: 1px;
-  margin-top: auto;
+}
+
+.messages-enter {
+  opacity: 0;
+}
+.messages-enter-active {
+  opacity: 1;
+  transition: all 300ms;
+}
+.messages-exit {
+  opacity: 1;
+}
+.messages-exit-active {
+  opacity: 0;
+  transition: all 300ms;
 }

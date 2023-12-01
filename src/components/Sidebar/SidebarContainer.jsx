@@ -4,8 +4,6 @@ import {sendLocalRequest, sendRequest} from "api/requests";
 import Sidebar from "./components/Sidebar/Sidebar";
 import {actions} from "pages/AppRouter/store/reducers";
 import {useDispatch, useSelector} from "react-redux";
-import {NavbarRoutes} from "../Navbar/routes";
-import {triggerEvent} from "../../helpers/events";
 import {useAddEvent} from "../../hooks/useAddEvent";
 
 const SidebarContainer = () => {

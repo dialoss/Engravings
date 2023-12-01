@@ -5,8 +5,6 @@ import TextLoader from "ui/TextLoader/TextLoader";
 import ItemData, {Components} from "components/Item/components/ItemData";
 import {matchURL, triggerEvent} from "../../../../helpers/events";
 import {clearTextFromHTML} from "../../../../ui/TextEditor/helpers";
-import {preventOnTransformClick} from "../../../../ui/ObjectTransform/helpers";
-import {pageEditable} from "../../../ItemList/ThemeManager/ThemeManager";
 
 
 export const UploadPreview = ({message}) => {
@@ -48,7 +46,7 @@ const Message = ({data}) => {
     const formattedDate = (data.timeSent ? dayjs(data.timeSent).format("HH:mm DD.MM") : "");
     let text = matchURL(data.value.text);
     return (
-        <div className={"message-inner"}>
+        <div className={"message-inner " + (data.value.upload.length && "upload")}>
             <div className={"message"} data-id={data.id}>
                 <UploadPreview message={data}></UploadPreview>
                 <div className="message__text-wrapper">

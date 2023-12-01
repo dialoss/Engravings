@@ -18,7 +18,7 @@ import {getLocation} from "../../../hooks/getLocation";
 import {useSelector} from "react-redux";
 import {SearchContainer} from "../../../ui/Tools/Tools";
 import {sendCloudMessage} from "../../Messenger/api/notifications";
-import NavButton from "../../../ui/Navbar/Button/NavButton";
+import NavButton from "../../../ui/Buttons/NavButton/NavButton";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 import {getMessageText} from "../../Messenger/helpers/messages";
 

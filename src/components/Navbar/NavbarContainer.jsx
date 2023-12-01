@@ -1,15 +1,13 @@
 import React from 'react';
-import Navbar from "ui/Navbar/Navbar";
 import {NavbarRoutes} from "./routes";
-import {getLocation} from "hooks/getLocation";
 import {useSelector} from "react-redux";
+import Navbar from "./Navbar";
 
 const NavbarContainer = () => {
     const location = useSelector(state=> state.location);
     function isActive(path) {
         return location.relativeURL.split('/')[1] === path && location.parentSlug;
     }
-    console.log(location)
     return (
         <Navbar routes={[...NavbarRoutes.map(route => ({
             ...route,

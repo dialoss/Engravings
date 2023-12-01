@@ -1,26 +1,16 @@
 import React, {useEffect, useRef} from 'react';
-import {getElementFromCursor, triggerEvent} from "helpers/events";
-import {pageEditable} from "../../../../components/ItemList/ThemeManager/ThemeManager";
+import {triggerEvent} from "helpers/events";
 
-const TransformButton = ({children, type, secure, ...props}) => {
+const TransformButton = ({children, type, ...props}) => {
     const ref = useRef();
-    function transformCallback(event) {
-        if (secure && !pageEditable()) return;
-        event.stopPropagation();
-        triggerEvent("context-window:check-opened", (isOpened) => {
-            if (!getElementFromCursor(event, 'context-menu') && isOpened) {
-                triggerEvent('context-window:toggle', {isOpened: false});
-            }
-        })
-        triggerEvent("transform:init", {event, type, btn:ref.current,
-            movable: (props.style ||{}).movable,
-            resizable: (props.style ||{}).resizable});
-    }
 
     useEffect(() => {
-        const origin = ref.current.querySelector(".transform-origin");
-        if (type === 'move') origin && origin.addEventListener('mousedown', transformCallback);
-        else ref.current.addEventListener('mousedown', transformCallback);
+        let origin = ref.current.querySelector('.transform-origin') || ref.current;
+        origin.addEventListener('mousedown', e => {
+            if (props.secure) return;
+            e.stopPropagation();
+            triggerEvent("transform:init", {...e, origin, type});
+        });
     }, []);
 
     return (

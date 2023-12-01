@@ -1,6 +1,6 @@
 import React from 'react';
-import NavButton from "./Button/NavButton";
 import './Navbar.scss';
+import NavButton from "../../ui/Buttons/NavButton/NavButton";
 
 const Navbar = ({routes, ...props}) => {
     return (

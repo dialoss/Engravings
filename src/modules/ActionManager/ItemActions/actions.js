@@ -6,61 +6,67 @@ import {getLocation} from "../../../hooks/getLocation";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 import {getFormData} from "../../ActionForm/helpers/FormData";
 
-let hs = [];
-let current = 0;
+function reverseMethod(request) {
+    if (request.method === 'DELETE') return 'POST';
+    if (request.method === 'POST') return 'DELETE';
+    return request.method;
+}
+
+class HistoryManager {
+    history = [];
+    current = 0;
+    undo() {
+        if (this.current < 0) {
+            this.current = 0;
+        }
+        let request = this.history[this.current];
+        request.method = reverseMethod(request);
+        this.history.length && triggerEvent('itemlist:request', request);
+        this.current -= 1;
+    }
+    redo() {
+        if (!this.history.length) return;
+        if (this.current >= this.history.length) {
+            this.current = this.history.length - 1;
+        }
+        let request = this.history[this.current];
+        request.method = reverseMethod(request);
+        triggerEvent('itemlist:request', this.history[this.current]);
+        this.current += 1;
+    }
+    clear() {
+        this.history = [];
+    }
+
+    add(data) {
+        this.history.push(data);
+    }
+}
+
+const manager = new HistoryManager();
 
 window.addEventListener('keydown', e => {
-    function reverseMethod(request) {
-        if (request.method === 'DELETE') return 'POST';
-        if (request.method === 'POST') return 'DELETE';
-        return request.method;
-    }
     if (e.ctrlKey) {
         switch (e.code) {
             case 'KeyZ':
-            {
-                if (current < 0) {
-                    current = 0;
-                }
-                let request = hs[current];
-                request.method = reverseMethod(request);
-                hs.length && triggerEvent('itemlist:request', request);
-                current -= 1;
-                break;
-            }
-
+                return manager.undo();
             case 'KeyY':
-            {
-                if (!hs.length) return;
-                if (current >= hs.length) {
-                    current = hs.length - 1;
-                }
-                let request = hs[current];
-                request.method = reverseMethod(request);
-                triggerEvent('itemlist:request', hs[current]);
-                current += 1;
-                break;
-            }
-
+                return manager.redo();
             case 'KeyC':
-                Actions.copy();
-                break;
+                return Actions.copy();
             case 'KeyX':
-                Actions.cut();
-                break;
+                return Actions.cut();
             case 'KeyV':
-                Actions.action(Actions.paste());
-                break;
+                return Actions.action(Actions.paste());
             case 'KeyQ':
-                hs = [];
-                break;
+                return manager.clear();
         }
     }
     if (e.key === 'Delete') {
         Actions.action(Actions.delete());
     }
-    // console.log('history',Actions.history)
-    // console.log('actionel', actionElements)
+    console.log('history',Actions.history)
+    console.log('actionel', actionElements)
 })
 
 function preparePage(p) {
@@ -128,9 +134,8 @@ export default class Actions {
                     prevData[f] = actionElement.data[f] || sendData[f];
                     prevData.page = preparePage(prevData.page);
                 }
-                !request.skipHistory && hs.push({...sendRequest, data: prevData});
-                current = hs.length - 1;
-                // console.log('HISTORY', hs)
+                !request.skipHistory && manager.add({...sendRequest, data: prevData});
+                console.log(manager.history)
             }
         })
     }

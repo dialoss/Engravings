@@ -1,7 +1,7 @@
 export const CustomProfile = {
     "name": "Privet",
     "label": "Manufacturing (my profile)",
-    "description": "Default Viewer settings",
+    "description": "Default Autodesk settings",
     "storageVersion": "2.0",
     "persistent": [
         "alwaysUsePivot",

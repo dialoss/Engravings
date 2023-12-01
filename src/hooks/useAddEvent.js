@@ -8,3 +8,7 @@ export function useAddEvent(name, func) {
         }
     }, []);
 }
+
+export function addEvent(name, func) {
+    window.addEventListener(name, func);
+}

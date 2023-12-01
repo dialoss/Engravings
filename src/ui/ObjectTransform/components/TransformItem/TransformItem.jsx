@@ -3,40 +3,24 @@ import {Transforms} from "../../config";
 import TransformButton from "./TransformButton";
 import "./TransformItem.scss";
 
-const resizers = {
-    width:"100%",
-    height:"1px",
-    position:"relative"
-}
-
-const TransformItem = ({children, config, className, secure, ...props}) => {
-    const initialTransform = {
-        movable: config.movable !== undefined ? config.movable : true,
-        resizable: config.resizable !== undefined ? config.resizable : true,
-        ...config,
-        height: props['data-type'] === 'modal' ? config.height : 'auto',
-        ...(config.zindex ? {zIndex: config.zindex}: {}),
-    };
+const TransformItem = ({children, config, className, ...props}) => {
+    // console.log(config)
     return (
         <TransformButton className={"transform-item transform--move " + className || ''}
                          type={'move'}
                          {...props}
-                         secure={secure}
+                         secure={config.secure}
                          data-top={config.top}
-                         style={initialTransform}>
+                         style={{...config, height: props['data-type'] === 'modal' ? config.height : 'auto',}}>
             {children}
-            <div className={"transform-resizers"} style={resizers}>
-                {Object.keys(Transforms.child).map(name => {
-                    const tr = Transforms.child[name];
-                    return tr.buttons.map(btn => {
-                        return React.createElement(TransformButton, {
-                            className: "transform-resize " + btn.style,
-                            key: btn.name,
-                            type: btn.name,
-                            style: {resizable: config.resizable},
-                        });
-                    })
-                })}
+            <div className={"transform-resizers"}>
+                {
+                    Transforms.map(t => <TransformButton
+                        key={t.name}
+                        type={t.name}
+                        secure={config.secure}
+                        className={"transform-origin transform-resize " + t.name}></TransformButton>)
+                }
             </div>
         </TransformButton>
     );

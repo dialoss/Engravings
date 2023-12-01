@@ -1,56 +1,59 @@
-import React, {useEffect, useRef} from 'react';
-import {getElementFromCursor, isMobileDevice, triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {setItemTransform} from "./transform";
 import {initContainerDimensions} from "./helpers";
+import {triggerEvent} from "../../helpers/events";
 
-const ObjectTransform = () => {
-    const prevTransform = useRef();
-    function clearSelection() {
-        if (prevTransform.current) {
-            prevTransform.current.classList.remove('focused');
+class ObjectTransform {
+    prevItem = null;
+    clickCount = 0;
+
+    iterateItems(item, func) {
+        let index = 0;
+        while (item) {
+            if (index === 0) {
+                func(item, "focused");
+            }
+            item = item.parentElement.closest('.transform-item');
+            if (!item) break;
+            func(item, "focused-parent");
+            index++;
         }
     }
-    function initTransform(event) {
-        const btn = event.detail.btn;
-        const item = btn.closest(".transform-item");
-        const alreadyFocused = item.classList.contains('focused');
-        clearSelection();
-        item.classList.add('focused');
-        if (item.getAttribute('data-type') !== 'modal' &&
-            isMobileDevice() &&
-            !getElementFromCursor(event.detail.event, 'action-button')) triggerEvent("contextmenu:open", event.detail.event);
 
-        prevTransform.current = item;
-        triggerEvent("action:init", event.detail.event);
-        window.elementsAction = true;
-
-        const parentCont = item.closest('.transform-container').classList.contains('viewport-container');
-        if (getElementFromCursor(event, 'ql-container') || event.detail.event.button !== 0 ||
-            (event.detail.type === 'move' && !event.detail.movable) ||  (event.detail.type === 'resize' && !event.detail.resizable)) {
-            return;
+    toggleSelection(item) {
+        if (this.clickCount === 1) {
+            // item = item.parentElement.closest('.transform-item');
         }
-        (alreadyFocused || parentCont) && setItemTransform(event.detail.event, event.detail.type, item, btn);
+        this.iterateItems(this.prevItem, (it, cl) => it.classList.remove(cl));
+        this.iterateItems(item, (it, cl) => it.classList.add(cl));
+        this.prevItem = item;
+        this.clickCount++;
     }
 
-    function initContainer(event) {
+    initTransform(e) {
+        const event = e.detail;
+        const item = event.origin.closest(".transform-item");
+        const type = event.type;
+        const alreadyFocused = this.prevItem === item;
+        this.toggleSelection(item);
+        triggerEvent('action:init', event);
+        if (event.button !== 0 || !alreadyFocused) return;
+
+        alreadyFocused && setItemTransform(event, type, item, event.origin);
+    }
+
+    initContainer(event) {
         initContainerDimensions(event.detail);
     }
+}
 
-    useAddEvent("mousedown", e => {
-        const el = getElementFromCursor(e, '.transform-item');
-        if (!el || el.getAttribute('data-type') === 'modal') {
-            clearSelection();
-            window.elementsAction = false;
-        }
-    })
-
-    useAddEvent("container:init", initContainer);
-    useAddEvent("transform:init", initTransform);
-
+const ObjectTransformContainer = () => {
+    const manager = new ObjectTransform();
+    useAddEvent("container:init", e => manager.initContainer(e));
+    useAddEvent("transform:init", e => manager.initTransform(e));
     return (
         <></>
     );
-};
+}
 
-export default ObjectTransform;
+export default ObjectTransformContainer;

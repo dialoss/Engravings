@@ -25,7 +25,6 @@ function bounds(position, side, items) {
 function prepareContent(item) {
     return {
         ...item,
-        navigation: item.navigation === undefined ? true : item.navigation,
         url: getCompressedImage(item, 1500),
     };
 }
@@ -49,19 +48,10 @@ export const CarouselModal = ({name}) => {
     const itemsRef = useRef();
     itemsRef.current = items;
     function openCarousel(event) {
-        console.log(event.detail)
-        if (event.detail.navigation === false) {
-            setItem(prepareContent(event.detail));
-        } else {
-            let index = 0;
-            for (const it of itemsRef.current) {
-                if (it.id === event.detail.id) {
-                    position.current = index;
-                    setItem(itemsRef.current[index]);
-                }
-                index += 1;
-            }
-        }
+        const items = event.detail.items;
+        const item = event.detail.item;
+        setItems(items);
+        setItem(prepareContent({...items[item], navigation: items.length > 1}));
         triggerEvent(windowName + ':toggle', {isOpened: true});
     }
     useAddEvent("carousel:open", openCarousel);
@@ -92,8 +82,6 @@ const CarouselContainer = ({item, type, next, previous, ...props}) => {
         event.key === 'ArrowLeft' && previous();
     }
     useAddEvent('keydown', nav);
-
-
 
     return (
         <CarouselContext.Provider value={{right: next, left: previous}}>

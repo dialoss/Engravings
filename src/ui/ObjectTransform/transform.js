@@ -141,7 +141,6 @@ export function setItemTransform(event, type, _item, _btn) {
         }, 200)
 
         mouseMoved = false;
-        if (container.classList.contains('viewport-container')) return;
         let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
         if (isResizable(container)) top = item.offsetTop + 'px';
         item.setAttribute('data-top', item.style.top);

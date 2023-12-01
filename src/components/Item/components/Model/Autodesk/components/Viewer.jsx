@@ -129,7 +129,7 @@ class Viewer extends React.Component {
 }
 
 Viewer.propTypes = {
-    /** Viewer runtime initialization options. */
+    /** Autodesk runtime initialization options. */
     runtime: PropTypes.object,
     /** URN of model to be loaded. */
     urn: PropTypes.string,

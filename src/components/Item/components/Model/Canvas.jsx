@@ -1,10 +1,8 @@
 import {Center, OrbitControls, PresentationControls, Stage} from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useLayoutEffect, useState} from 'react';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {fetchRequest} from "api/requests";
-import {registerPress} from "helpers/events";
-import JSZip from "jszip"
 import {Mesh, MeshStandardMaterial} from "three";
 
 const MyCanvas = ({data}) => {
@@ -13,7 +11,6 @@ const MyCanvas = ({data}) => {
     }
     function disableSelect() {
         document.body.style.userSelect = 'none';
-        registerPress();
     }
     return (
         <div style={{width:"100%", height: '100%'}}>
@@ -35,7 +32,7 @@ export default MyCanvas;
 
 const Model = ({url}) => {
     const [model, setModel] = useState(null);
-    useEffect(() => {
+    useLayoutEffect(() => {
         fetchRequest(url).then(res => res.arrayBuffer()).then(file => {
             const loader = new GLTFLoader();
             loader.parse(file, '', model => {

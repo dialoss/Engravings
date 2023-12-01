@@ -3,10 +3,9 @@ import {getLocation} from "hooks/getLocation";
 import Comments from "./components/CommentsContainer";
 import Container from "../../ui/Container/Container";
 import {useSelector} from "react-redux";
-import store from "../../store";
+
 let counter = 0;
-const PageComments = () => {
-    const page = useSelector(state => state.location.currentPage);
+const PageComments = ({page}) => {
     const location = useSelector(state => state.location);
     const docRef = useRef();
     const [document, setDocument] = useState(null);

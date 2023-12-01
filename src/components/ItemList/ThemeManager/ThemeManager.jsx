@@ -9,11 +9,6 @@ import {triggerEvent} from "../../../helpers/events";
 import {ReactComponent as Edit} from "./edit.svg";
 import {ReactComponent as Backup} from "./backup.svg";
 
-
-export function pageEditable() {
-    return store.getState().elements.editPage;
-}
-
 const ThemeManager = () => {
     function setEdit() {
         const current = store.getState().elements.editPage;

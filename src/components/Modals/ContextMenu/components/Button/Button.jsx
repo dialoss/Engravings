@@ -3,6 +3,7 @@ import "./Button.scss";
 import ContextMenu from "../ContextMenu/ContextMenu";
 
 const ContextButton = ({action, depth}) => {
+
     return (
         <div className={`context__item s${depth}`}>
             <button className="context__button modal__toggle-button" onClick={action.callback}>{action.text}</button>

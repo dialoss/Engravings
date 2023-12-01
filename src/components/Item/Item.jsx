@@ -25,7 +25,7 @@ export const SimpleItem = ({item, depth=0}) => {
         if (mediaItems >= 3 && !isMobileDevice()) itemsRow = 3;
         else if (mediaItems >= 2) itemsRow = 2;
         const wrapper = container.querySelector('.items-wrapper');
-        for (const it of item.items) {
+        for (let it of item.items) {
             let transform = wrapper && wrapper.querySelector(`.item[data-id="${it.id}"]`);
             if (!transform) continue;
             transform = transform.closest('.transform-item');
@@ -37,11 +37,7 @@ export const SimpleItem = ({item, depth=0}) => {
             }
             if (it.position !== 'absolute' && it.width === 'auto') {
                 if (['video', 'image', 'model'].includes(it.type)) {
-                    const h = it.media_height;
-                    const w = it.media_width;
                     transform.style.width = 100 / itemsRow + '%';
-                } else {
-                    transform.style.width = '100%';
                 }
                 it.width = transform.style.width;
             }
@@ -51,7 +47,8 @@ export const SimpleItem = ({item, depth=0}) => {
     return (
         <div className={'wrapper-' + item.type + ' wrapper-inner'}>
             <div className={`item depth-${depth} item-${item.type} transform-origin`} data-itemtype={'content'}
-                 data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"})}} data-depth={depth}
+                 data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"}),
+                backgroundColor:item.bg_color}} data-depth={depth}
                  onDragStart={e => e.preventDefault()}>
                 {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
                 <TransformContainer data-width={item.container_width}
@@ -77,6 +74,7 @@ const Item = ({item, depth=0}) => {
                        config={item}
                        data-style={item.style}
                        data-type={item.type}
+                       data-depth={depth}
                        className={(admin ? 'edit' : '')}
                        secure={true}>
             <SimpleItem item={item} depth={depth}></SimpleItem>

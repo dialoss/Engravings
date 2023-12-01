@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import MyCanvas from "./Canvas";
-import {AutodeskModel} from "ui/Viewer";
+import {AutodeskModel} from "components/Item/components/Model/Autodesk";
 
 const Viewer = ({data}) => {
     const ref = useRef();
@@ -19,12 +19,10 @@ const Viewer = ({data}) => {
         }
     }, []);
     return (
-        <>
-            <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
-                {data.style !== 'simple' ? <AutodeskModel data={data}></AutodeskModel> :
-                    <MyCanvas data={data}></MyCanvas>}
-            </div>
-        </>
+        <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
+            {data.style !== 'simple' ? <AutodeskModel data={data}></AutodeskModel> :
+                <MyCanvas data={data}></MyCanvas>}
+        </div>
     );
 };
 

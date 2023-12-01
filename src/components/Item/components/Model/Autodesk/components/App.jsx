@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import Viewer from './Viewer';
 import './App.scss';
-import ActionButton from "../../Buttons/ActionButton/ActionButton";
+import ActionButton from "../../../../../../ui/Buttons/ActionButton/ActionButton";
 import {ReactComponent as Fullscreen} from "./fullscreen.svg";
 
 class App extends React.Component {

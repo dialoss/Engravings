@@ -6,6 +6,7 @@ import FormSelect from "./Select/FormSelect";
 import {triggerEvent} from "../../../helpers/events";
 import {FormContext} from "../../../modules/ActionForm/FormContainer";
 import FormCheckbox from "./Checkbox/FormCheckbox";
+import Slider from "./Slider/Slider";
 
 const ColorPicker = ({data}) => {
     return (
@@ -20,14 +21,15 @@ const Components = {
     'select': FormSelect,
     'checkbox': FormCheckbox,
     'color': ColorPicker,
+    'slider': Slider,
 }
 
 const FormComponent = ({field}) => {
-    const inputCallback = useContext(FormContext);
+    const inputCallback = useContext(FormContext).inputCallback;
     let TargetComponent = Components[field.type];
 
     function fieldCallback(event) {
-        inputCallback({field:field.name, value:event.target.value});
+        inputCallback({field:field.name, value:event.target.value + (field.point || '')});
     }
 
     return (

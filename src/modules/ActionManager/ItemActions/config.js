@@ -14,67 +14,72 @@ export const ContextActions = {
             'quick': {
                 callback: 'add',
                 argument: true,
-                text: 'Новая',
+                text: 'Новая запись',
             },
             'empty': {
                 callback: 'add',
                 argument: true,
                 text: 'Пустая',
             },
-            'tabs': {
-                callback: 'add',
-                argument: true,
-                text: 'Вкладки',
-            },
-            'intro': {
-                callback: 'add',
-                argument: true,
-                text: 'Шапка',
-            },
-            'shop': {
-                callback: 'add',
-                argument: true,
-                text: 'Продажа',
-            },
-            'timeline': {
-                callback: 'add',
-                argument: true,
-                text: 'Таймлайн',
-                actions: {
-                    'timeline_entry': {
-                        callback: 'add',
-                        argument: true,
-                        text: 'Запись',
-                    },
-                }
-            },
             'textfield': {
                 callback: 'add',
                 argument: true,
                 text: 'Текстовое поле',
             },
-            'price': {
-                callback: 'add',
-                argument: true,
-                text: 'Цена',
-            },
-
             'button': {
                 callback: 'add',
                 argument: true,
                 text: 'Кнопка',
             },
-
-            'table': {
-                callback: 'add',
-                argument: true,
-                text: 'Таблица',
+            'show_more': {
+                text: 'Ещё',
+                stay_opened: true,
+                toggler: true,
+                actions: {
+                    'tabs': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Вкладки',
+                    },
+                    'intro': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Шапка',
+                    },
+                    'shop': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Продажа',
+                    },
+                    'timeline': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Таймлайн',
+                        actions: {
+                            'timeline_entry': {
+                                callback: 'add',
+                                argument: true,
+                                text: 'Запись',
+                            },
+                        }
+                    },
+                    'price': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Цена',
+                    },
+                    'page': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Страница'
+                    },
+                    'navigation': {
+                        callback: 'add',
+                        argument: true,
+                        text: 'Навигация'
+                    }
+                }
             },
-            'page': {
-                callback: 'add',
-                argument: true,
-                text: 'Страница'
-            }
         }
     },
     'edit':{
@@ -157,8 +162,6 @@ export function setActionData(item) {
                 "type": "base",
                 "movable": false,
                 style: 'tabs',
-                "show_date": false,
-                "date_created": "2023-11-11T09:08:00.400088Z",
                 "items": [
                     {
                         style: 'nav',
@@ -301,7 +304,7 @@ export function setActionData(item) {
                                 "items": [
                                     {
                                         "type": "subscription",
-                                        "width": "50%",
+                                        "width": "70%",
                                         container_width: 100,
                                         "height": "100px",
                                         "top": "60px",
@@ -371,6 +374,50 @@ export function setActionData(item) {
                             }
                         ]
                     }
+                ]
+            }
+        case "navigation":
+            return {
+                "type": "base",
+                "movable": false,
+                style: 'tabs',
+                "items": [
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "Главная",
+                        "link": "/main/",
+                    },
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "модели",
+                        "link": "/models/",
+                    },
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "заказы",
+                        "link": "/orders/",
+                    },
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "детали",
+                        "link": "/parts/",
+                    },
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "чертежи",
+                        "link": "/blueprints/",
+                    },
+                    {
+                        style: 'nav',
+                        "type": "button",
+                        "text": "в продаже",
+                        "link": "/shop/",
+                    },
                 ]
             }
         case 'order':

@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import store from "../../../store";
 
 export const elementsSlice = createSlice({
     name: "elements",
@@ -55,4 +56,8 @@ export function localReducer(state, action) {
             return [...state].filter(el => el.id !== item.id);
         }
     }
+}
+
+export function pageEditable() {
+    return store.getState().elements.editPage;
 }

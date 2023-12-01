@@ -2,7 +2,6 @@ import React, { useState} from 'react';
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 import Alert from "./Alert";
 import {ModalManager} from "../../components/ModalManager";
-import TransformItem from "../ObjectTransform/components/TransformItem/TransformItem";
 import {useAddEvent} from "../../hooks/useAddEvent";
 
 const AlertContainer = () => {

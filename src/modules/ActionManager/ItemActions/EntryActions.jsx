@@ -13,7 +13,7 @@ const ItemActions = () => {
         setting.type === 'checkbox' && (actions.edit.actions[setting.name] = {
             callback: 'edit',
             argument: true,
-            text: getSettingText(setting.label[0], actionElement.data[setting.name]),
+            text: getSettingText(setting.label, actionElement.data[setting.name]),
         }));
     actions = serializeActions(actions, actionElement);
     return (

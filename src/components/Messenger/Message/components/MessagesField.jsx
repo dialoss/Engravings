@@ -3,31 +3,33 @@ import MessageBlock from "./MessageBlock";
 import {useSelector} from "react-redux";
 import {useAddEvent} from "../../../../hooks/useAddEvent";
 import DelayedVisibility from "../../../../ui/DelayedVisibility/DelayedVisibility";
+import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 const MessagesField = ({messages}) => {
     const {user, room} = useSelector(state => state.messenger);
     const ref = useRef();
-    const [visible, setVisible] = useState(false);
+    function scrollInto(behavior) {
+        ref.current && ref.current.scrollIntoView({behavior, block:'nearest'});
+    }
     function scroll(behavior, timeout) {
-        setTimeout(() => {
-            ref.current.scrollIntoView({behavior, block:'nearest'});
-        }, timeout);
+        if (!timeout) {
+            scrollInto(behavior);
+        } else {
+            setTimeout(() => scrollInto(behavior), timeout);
+        }
     }
     useLayoutEffect(() => {
         scroll('instant', 0);
-    }, [messages, room]);
-    useLayoutEffect(()=>{
-        setVisible(false)
-        setTimeout(()=>{setVisible(true)},10);
-    }, [room]);
+    }, [messages.length, room]);
+
     useAddEvent('messenger:scroll', () => scroll('smooth', 200));
     return (
-        <DelayedVisibility timeout={200} trigger={room}>
-
         <div className="messages-inner scrollable">
-            <div className={"messages-field " + (visible ? 'visible':'hidden')}>
+            {!!messages.length && <div className={"messages-field"}>
+                <DelayedVisibility timeout={200}
+                                   trigger={room.id}
+                                   className={"messages-field"}>
                 <div className="messages-field__wrapper">
-                    <DelayedVisibility timeout={10} trigger={visible}>
                     <div className={'anchor-top'}></div>
                     {
                         messages.map(message => {
@@ -39,12 +41,10 @@ const MessagesField = ({messages}) => {
                         })
                     }
                     <div className={'anchor-bottom'} ref={ref}></div>
-                    </DelayedVisibility>
                 </div>
-            </div>
+                </DelayedVisibility>
+            </div>}
         </div>
-        </DelayedVisibility>
-
     );
 };
 

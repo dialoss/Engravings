@@ -1,10 +1,10 @@
-import {uploadAutodeskFile} from "../../../ui/Viewer";
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import {triggerEvent} from "../../../helpers/events";
 import {fileToItem, getMediaDimensions} from "../helpers";
 import "./upload";
 import {getLocation} from "../../../hooks/getLocation";
+import {uploadAutodeskFile} from "../../../components/Item/components/Model/Autodesk/api/api";
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";

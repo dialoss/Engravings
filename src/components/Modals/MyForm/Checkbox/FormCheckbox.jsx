@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {FormContext} from "../../../../modules/ActionForm/FormContainer";
 
 const FormCheckbox = ({data}) => {
-    const inputCallback = useContext(FormContext);
+    const inputCallback = useContext(FormContext).inputCallback;
     return (
         <input name={data.name}
                type={'checkbox'}

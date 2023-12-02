@@ -22,13 +22,13 @@ const Swipes = ({callback, state, children, className}) => {
         },
         onSwipeStart: (e) => {
             let [x, y] = e.initial;
+            const f = (isOpened) => canSwipe.current = isOpened;
+            if (document.querySelector('.modal__background.opened:not(.bg-none)')) f(false);
             if (className === 'sidebar') {
                 if (x > getViewportWidth() / 3) {
                     canSwipe.current = false;
                     return;
                 }
-                const f = (isOpened) => canSwipe.current = isOpened;
-                if (document.querySelector('.modal__background.opened:not(.bg-none)')) f(false);
                 if (getElementFromCursor({clientX: x, clientY: y}, 'item-model')) f(false);
             } else {
                     let block = elRef.current.getBoundingClientRect();

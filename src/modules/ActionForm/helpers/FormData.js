@@ -8,13 +8,14 @@ export function serializeFields(fields, method) {
     for (const f in fields) {
         newFields[f] = fields[f].value;
     }
+
     if (newFields.url) {
         if (method === 'POST') {
             newFields.items = structuredClone(newFields.url);
             delete newFields.url;
         } else {
             for (const field of ['width', 'height', 'filename', 'type']) {
-                newFields[field] = newFields.url[0][field];
+                newFields[field] = newFields.url[0][field] || newFields[field];
             }
             newFields.url = newFields.url[0].url;
         }
@@ -23,7 +24,6 @@ export function serializeFields(fields, method) {
         if (!newFields.page_from) delete newFields.page_from;
         else newFields.page_from = {path:newFields.page_from};
     }
-    // console.log(newFields)
     return newFields;
 }
 

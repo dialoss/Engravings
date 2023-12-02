@@ -13,7 +13,7 @@ import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
 import {fetchRequest, sendRequest} from "../../api/requests";
 import {fileToItem, fileToMedia, selectItems} from "./helpers";
-import {driveRequest} from "./api/google";
+import {driveRequest, itemMediaUpload} from "./api/google";
 import {useSelector} from "react-redux";
 
 const Toolbar = ({data, setData}) => {
@@ -72,6 +72,7 @@ const FileExplorer = () => {
                     scale.current = Math.max(1, (scale.current - 1));
                 }
                 ref.current.style.setProperty('--icon-size', scale.current + 'em');
+                ref.current.style.setProperty('--scale', scale.current);
             }
         };
         window.addEventListener('mousewheel', zoomController, {passive: false});
@@ -92,6 +93,10 @@ const FileExplorer = () => {
     useAddEvent("filemanager:select", e => {
         window.filemanager.selectItems = e.detail.callback;
         triggerEvent("filemanager-window:toggle", {isOpened:true});
+    });
+
+    useAddEvent("filemanager:local", e => {
+        ref.current.querySelector('#filemanager-local').click();
     });
 
     const toolbar = useRef();
@@ -115,6 +120,7 @@ const FileExplorer = () => {
     useEffect(() => {
         scale.current = 4;
         ref.current.style.setProperty('--icon-size', scale.current + 'em');
+        ref.current.style.setProperty('--scale', scale.current);
 
         let textBar = document.createElement('div');
         textBar.classList.add('filemanager-textbar');
@@ -185,6 +191,7 @@ const FileExplorer = () => {
                     <div className="filemanager-right">
                         <ImageEditor image={curImage}></ImageEditor>
                         {/*<Sidebar image={curImage}></Sidebar>*/}
+                        <input type="file" multiple={true} style={{display:'none'}} onChange={itemMediaUpload} id={"filemanager-local"}/>
                     </div>
                 </div>
             </TransformItem>

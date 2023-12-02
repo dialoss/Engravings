@@ -1,6 +1,6 @@
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
-import {triggerEvent} from "../../../helpers/events";
+import {getElementByType, triggerEvent} from "../../../helpers/events";
 import {fileToItem, getMediaDimensions} from "../helpers";
 import "./upload";
 import {getLocation} from "../../../hooks/getLocation";
@@ -298,9 +298,9 @@ export async function testUpload(file, folder) {
     });
 }
 
-export async function dropUpload(e, callback, uploadToDrive=true) {
+export async function storageUpload(e, callback, uploadToDrive=true) {
     let files = [];
-    for (const file of [...(e.dataTransfer || e.clipboardData).files]) {
+    for (const file of [...(e.dataTransfer || e.clipboardData || e.target).files]) {
         if (uploadToDrive) {
             let data = await uploadFile({file, path:['site', 'storage', getLocation().pageSlug]});
             const f = fileToItem({...data, type: data.filetype, filename: data.name});
@@ -318,4 +318,11 @@ export async function dropUpload(e, callback, uploadToDrive=true) {
         e.stopPropagation();
         e.preventDefault();
     }
+}
+
+export async function itemMediaUpload(e) {
+    if (getElementByType(e, 'modal')) return;
+    storageUpload(e, files => {
+        triggerEvent("action:callback", files);
+    })
 }

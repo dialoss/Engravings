@@ -5,6 +5,19 @@ import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../c
 import {adminEmail} from "../../../components/Messenger/api/config";
 import {isMobileDevice, triggerEvent} from "../../../helpers/events";
 
+export const DefaultEdit = {
+    'clear_position': {
+        callback: 'edit',
+        argument: true,
+        text: 'Сбросить расположение',
+    },
+    'clear_size': {
+        callback: 'edit',
+        argument: true,
+        text: 'Сбросить размер',
+    },
+}
+
 export const ContextActions = {
     'add':{
         text: 'Добавить',
@@ -34,7 +47,6 @@ export const ContextActions = {
             'show_more': {
                 text: 'Ещё',
                 stay_opened: true,
-                toggler: true,
                 actions: {
                     'tabs': {
                         callback: 'add',
@@ -85,22 +97,20 @@ export const ContextActions = {
     'edit':{
         text: 'Редактировать',
         argument: false,
+        actions: {},
+    },
+    'media': {
+        text: 'Медиа',
         actions: {
-            'clear_position': {
-                callback: 'edit',
-                argument: true,
-                text: 'Сбросить расположение',
+            'storage': {
+                callback: () => triggerEvent("filemanager-window:toggle", {toggle:true}),
+                text: 'Хранилище',
             },
-            'clear_size': {
-                callback: 'edit',
-                argument: true,
-                text: 'Сбросить размер',
+            'local': {
+                callback: () => triggerEvent("filemanager:local"),
+                text: 'Локально',
             },
         }
-    },
-    'storage': {
-        text: 'Хранилище',
-        argument: false,
     },
     'copy':{
         argument: false,

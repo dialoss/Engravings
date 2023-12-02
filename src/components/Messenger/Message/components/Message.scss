@@ -34,6 +34,7 @@
   }
 
   .upload-preview {
+    align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
@@ -71,6 +72,7 @@
     .file__download {
       position: initial;
       &-image {
+        min-width: 30px;
         width: 30px;
       }
     }

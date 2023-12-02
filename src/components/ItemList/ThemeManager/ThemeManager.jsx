@@ -34,6 +34,11 @@ const ThemeManager = () => {
                     body:'Дамп сохранен на почту',
                     timeout: 4000,
                 })
+                else triggerEvent("alert:trigger", {
+                    type:'error',
+                    body:"Ошибка сохранения",
+                    timeout: 2000,
+                })
             }, 300);
         });
     }

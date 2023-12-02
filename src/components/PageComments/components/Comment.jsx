@@ -12,7 +12,7 @@ import {matchURL} from "../../../helpers/events";
 import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 import {UploadPreview} from "../../Messenger/Message/components/Message";
 
-const Comment = ({data}) => {
+const Comment = ({data, depth}) => {
     const users = useSelector(state => state.users.users);
     const [reply, setReply] = useState(false);
     const user = users[data.user] || data.user;
@@ -36,10 +36,10 @@ const Comment = ({data}) => {
             </div>
             {data.value.text && <InfoParagraph id={data.id} type={'comment'}>{matchURL(data.value.text)}</InfoParagraph>}
             <UploadPreview message={data}></UploadPreview>
-            <div className={"comment-reply__button"} onClick={() => {
+            {depth < 2 && <div className={"comment-reply__button"} onClick={() => {
                 if (ref.current) closeInput();
                 else setReply(r => !r)
-           }}>Ответить</div>
+           }}>Ответить</div>}
             {reply &&
                 <div className={"comment-reply"} ref={ref}>
                     <InputContainer extraFields={{parent: data.id}}

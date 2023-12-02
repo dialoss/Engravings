@@ -8,7 +8,7 @@ const Comments = ({comments, depth=0}) => {
             {
                 Object.values(comments).map(c =>
                     <div className={'comments-parent'} key={c.comment.id}>
-                        <Comment data={c.comment}></Comment>
+                        <Comment data={c.comment} depth={depth}></Comment>
                         {!!Object.values(c.comments).length &&
                             <AccordionContainer defaultOpened={true}>
                                 <div className="comments-wrapper">

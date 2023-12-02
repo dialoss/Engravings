@@ -14,6 +14,10 @@
   .message__text-wrapper {
     padding: 5px;
   }
+
+  .message-text {
+    //font-size: calc(14px + 5 * ((100% - 100px) / 500));
+  }
 }
 
 .message-block {

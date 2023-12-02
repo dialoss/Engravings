@@ -8,7 +8,16 @@ import {initContainerDimensions} from "../ObjectTransform/helpers";
 import ActionButton from "../Buttons/ActionButton/ActionButton";
 import {ReactComponent as Columns} from "./columns.svg";
 
-const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, children}, ref) {
+const MyMasonry = ({maxColumns=1, children}) => {
+    const ref = useRef();
+    const [forceColumns, setForceColumns] = useState(0);
+    function calcForceColumns() {
+        const curColumns = +ref.current.getAttribute('data-columns');
+        const mCols = 4;
+        const newCols = Math.max(1, ((mCols + (curColumns + 1)) % mCols));
+        setForceColumns(newCols);
+    }
+
     const [externalItems, setItems] = useState([]);
     const [layout, setLayout] = useState([]);
     const [count, setCount] = useState(maxColumns);
@@ -69,7 +78,7 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
                 externalItems.map(it => <>{it}</>)
             }
             {!!children.length && <div style={{width: '100%'}}>
-                <ActionButton onClick={() => triggerEvent('itemlist:view')} className={'masonry-view'}>
+                <ActionButton onClick={calcForceColumns} className={'masonry-view'}>
                     <Columns></Columns>вид
                 </ActionButton>
             </div>}
@@ -92,6 +101,6 @@ const MyMasonry = React.forwardRef(function({maxColumns=1, forceColumns=0, child
             }
         </div>
     );
-});
+};
 
 export default MyMasonry;

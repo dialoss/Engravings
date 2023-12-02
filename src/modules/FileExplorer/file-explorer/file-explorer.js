@@ -2779,7 +2779,7 @@
 					if ('tooltip' in entries[x])  node.firstChild.title = entries[x].tooltip;
 					else  node.firstChild.title = '';
 
-					itemtext.innerHTML = `<p class="text">${entries[x].name.slice(0, 20)}</p><p class="type">${entries[x].filetype}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
+					itemtext.innerHTML = `<p class="text">${entries[x].name.slice(0, 30)}</p><p class="type">${entries[x].filetype}</p><p class="time">${entries[x].modifiedTime}</p><p class="size">${GetDisplayFilesize(entries[x].size)}</p>`;
 
 					node.dataset.fehash = entries[x].hash;
 				}

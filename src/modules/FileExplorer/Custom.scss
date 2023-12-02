@@ -5,22 +5,30 @@
 $border: solid #7c7c7c;
 
 .custom-icon-img {
-  height: 100%;
-  //max-height: calc(var(--icon-size) / 2);
-  img {
-    display: block;
-    max-height: 100%;
-    height: 100%;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.view-default {
-  .custom-icon-img {
+.view-list {
+  .custom-icon-img, .custom-icon {
     height: 100%;
-    max-width: calc(var(--icon-size) / 2);
+    width: calc(100px * var(--scale) / 5);
+    img {
+      max-width: 100%;
+      display: block;
+      max-height: 100%;
+      //height: 100%;
+    }
+  }
+}
+.view-default {
+  .custom-icon-img,  .custom-icon {
+    height: calc(100px * var(--scale) / 5);
+    //height: 100%;
     img {
       display: block;
-      height: 100%;
+      max-height: 100%;
       width: 100%;
     }
   }
@@ -109,7 +117,9 @@ $border: solid #7c7c7c;
       width: 100%;
       height: var(--icon-size) ;
       display: flex;
-
+      .text {
+        margin-right: auto;
+      }
       .size {
         text-align: right;
         width: 60px;
@@ -120,7 +130,7 @@ $border: solid #7c7c7c;
       .type {
         min-width: 30px;
         margin-right: 35px;
-        margin-left: auto;
+        //margin-left: auto;
       }
     }
   }

@@ -12,6 +12,7 @@ const Slider = ({children, togglers, callback=null, defaultOpened=true}) => {
 
     useEffect(() => {
         if (callback) callback(isOpened);
+        document.documentElement.style.setProperty('--slider-width', ref.current.getBoundingClientRect().width + 'px');
     }, [isOpened]);
 
     return (

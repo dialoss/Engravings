@@ -10,9 +10,10 @@
 .file {
   &__download {
     display: flex;
-    justify-content: center;
+    //justify-content: center;
     position: relative;
     width: initial;
+    justify-content: flex-start;
 
     &:hover + .file__title {
       opacity: 1;

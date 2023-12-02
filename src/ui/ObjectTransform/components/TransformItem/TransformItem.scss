@@ -1,21 +1,20 @@
 .transform-item {
+  //margin: 2px;
   transform: scale(1);
-  > .transform-resizers {
+  > .transform-resize {
     display: none;
-    width:100%;
-    height:1px;
-    position:relative;
   }
   &.focused {
-    > .transform-resizers {
+    > .transform-resize {
       display: block;
     }
   }
   &.edit {
     &:not(&[data-type="modal"]) {
+      border: 4px solid rgba(255, 255, 255, 0);
       &.focused {
         z-index: 5 !important;
-        outline: 4px solid #e72b31;
+        border: 4px solid #e72b31;
       }
       &.focused-parent {
         z-index: 5 !important;
@@ -23,10 +22,8 @@
     }
   }
   &[data-type="modal"] {
-    > .transform-resizers {
-      display: block;
-    }
     > .transform-resize {
+      display: none;
       width: 60px;
       height: 60px;
     }
@@ -34,17 +31,15 @@
   &[data-style="fullscreen"] {
     width: 100% !important;
   }
-  .resize {
-    &-left, &-right {
-      position: absolute;
-      bottom: 0;
-      z-index: $zindex-transform;
-      width: 40px;
-      height: 40px;
-    }
+  .transform-resize {
+    position: absolute;
+    z-index: $zindex-transform;
+    width: 40px;
+    height: 40px;
 
-    &-left {
+    &.bottom-left {
       left: 0;
+      bottom: 0;
       transform: translate(-50%, 50%);
 
       &:hover {
@@ -52,12 +47,40 @@
       }
     }
 
-    &-right {
+    &.bottom-right {
       right: 0;
+      bottom: 0;
       transform: translate(50%, 50%);
 
       &:hover {
         cursor: se-resize;
+      }
+    }
+    &.right {
+      right: 0;
+      top: 50%;
+      transform: translate(50%, -50%);
+
+      &:hover {
+        cursor: e-resize;
+      }
+    }
+    &.left {
+      left: 0;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      &:hover {
+        cursor: w-resize;
+      }
+    }
+    &.bottom {
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 50%);
+
+      &:hover {
+        cursor: n-resize;
       }
     }
   }

@@ -1,11 +1,14 @@
 import {initContainerDimensions, isResizable} from "./helpers";
 import {triggerEvent} from "../../helpers/events";
 import {getElementID} from "../../modules/ActionManager/components/helpers";
+import {Axis} from "./config";
 
 let item = null;
 let container = null;
 let btn = null;
 let transform = null;
+let deltaX = 0;
+let deltaY = 0;
 
 function checkNears(px, py) {
     let curBlock = item.getBoundingClientRect();
@@ -58,27 +61,38 @@ export function setItemProps(offset, width) {
 
 function moveAt(event, shiftX, shiftY) {
     let rect = btn.getBoundingClientRect();
-    let block = item.getBoundingClientRect();
-    let win = item.closest(".transform-container").getBoundingClientRect();
 
     let btnX = rect.left + rect.width / 2 + shiftX;
     let btnY = rect.top + rect.height / 2 + shiftY;
 
-    let deltaX = event.clientX - btnX;
-    let deltaY = event.clientY - btnY;
+    deltaX = event.clientX - btnX;
+    deltaY = event.clientY - btnY;
     if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return false;
+    mouseMoved = true;
+    return true;
+}
+
+export function transformItem({item, event}) {
+    if (!item.classList.contains("transformed")) item.classList.add("transformed");
+    if (transform.type === "move") {
+        if (item.style.position !== 'fixed') item.style.position = 'absolute';
+    }
+
+    let block = item.getBoundingClientRect();
+    let win = item.closest(".transform-container").getBoundingClientRect();
 
     if (transform.type === "resize") {
-        if (transform.dir === 'resize-left') deltaX *= -1;
+        deltaX *= transform.dir[0];
+        deltaY *= transform.dir[1];
         let offsetL = item.offsetLeft;
         let width = block.width + deltaX;
         let height = block.height + deltaY;
 
-        if (transform.dir === 'resize-right' && width + offsetL > win.width) width = block.width;
+        if (transform.dir[0] > 0 && width + offsetL > win.width) width = block.width;
         width = Math.max(50, width);
         height = Math.max(20, height);
 
-        if (transform.dir === 'resize-left') {
+        if (transform.dir[0] < 0) {
             offsetL = offsetL + (block.width - width);
             if (offsetL <= 0) width = block.width;
             offsetL = Math.max(0, offsetL);
@@ -86,7 +100,8 @@ function moveAt(event, shiftX, shiftY) {
         try {
             const cont = item.querySelector('.transform-container');
             cont.style.minHeight = height + 'px';
-        } catch (e) {item.style.height = height + 'px'}
+            item.style.minHeight = height + 'px'
+        } catch (e) {}
         setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
@@ -95,23 +110,19 @@ function moveAt(event, shiftX, shiftY) {
             if (checkNears(px, py - deltaY)[0]) px = item.offsetLeft;
             if (checkNears(px - deltaX, py)[1]) py = item.offsetTop;
         }
-        if (!event.shiftKey) {
-            if (px < 0) px = 0;
-            if (py < 0) py = 0;
-            if (px + block.width > win.width) px = win.width - block.width;
-        }
+        if (py < 0) py = 0;
+        if (px < 0) px = 0;
+        if (px + block.width > win.width) px = win.width - block.width;
 
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
     initContainerDimensions({container, item});
-    mouseMoved = true;
-    return true;
 }
 
-export function setItemTransform(event, type, _item, _btn) {
+export function setItemTransform(event, type, _item, _btn, config) {
     transform = {type, dir:""};
-    if (type !== "move") transform = {type:"resize", dir:type};
+    if (type !== "move") transform = {type:"resize", dir:Axis[type]};
     container = _item.closest(".transform-container");
     item = _item;
     btn = _btn;
@@ -124,10 +135,7 @@ export function setItemTransform(event, type, _item, _btn) {
     function onMouseMove(event) {
         let moved = moveAt(event, shiftX, shiftY);
         if (!moved) return;
-        if (!item.classList.contains("transformed")) item.classList.add("transformed");
-        if (transform.type === "move") {
-            if (item.style.position !== 'fixed') item.style.position = 'absolute';
-        }
+        config.onSwipeStart({event, item});
     }
 
     function onMouseUp() {
@@ -141,35 +149,39 @@ export function setItemTransform(event, type, _item, _btn) {
         }, 200)
 
         mouseMoved = false;
-        let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
-        if (isResizable(container)) top = item.offsetTop + 'px';
-        item.setAttribute('data-top', item.style.top);
-        let parent = getElementID(item.closest('.item'));
-
-        let request = [{
-            data: {
-                id: getElementID(item.querySelector('.item')),
-                position: item.style.position || 'initial',
-                height: item.querySelector('.transform-container').getBoundingClientRect().height + 'px' || "0",
-                width: item.style.width || "0",
-                top,
-                left: item.style.left || "0",
-                container_width: item.querySelector('.transform-container').getBoundingClientRect().width || 0,
-            },
-            method: 'PATCH',
-        },
-            {
-                data: {
-                    id: parent,
-                    container_width: container.getBoundingClientRect().width || 0,
-                },
-                method: 'PATCH',
-                skipHistory: true,
-            }
-        ];
-        triggerEvent('action:callback', request);
+        config.onSwipeEnd({item});
     }
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
+}
+
+export function getTransformData({item}) {
+    let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
+    if (isResizable(container)) top = item.offsetTop + 'px';
+    item.setAttribute('data-top', item.style.top);
+    let parent = getElementID(item.closest('.item'));
+
+    let request = [{
+        data: {
+            id: getElementID(item.querySelector('.item')),
+            position: item.style.position || 'initial',
+            height: item.querySelector('.transform-container').getBoundingClientRect().height + 'px' || "0",
+            width: item.style.width || "0",
+            top,
+            left: item.style.left || "0",
+            container_width: item.querySelector('.transform-container').getBoundingClientRect().width || 0,
+        },
+        method: 'PATCH',
+    },
+        {
+            data: {
+                id: parent,
+                container_width: container.getBoundingClientRect().width || 0,
+            },
+            method: 'PATCH',
+            skipHistory: true,
+        }
+    ];
+    triggerEvent('action:callback', request);
 }

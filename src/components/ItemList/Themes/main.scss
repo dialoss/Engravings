@@ -1,15 +1,7 @@
 .item-list {
   @import 'parent';
-  &.child {
-    @import "child";
-  }
   &.shop {
     @import "shop";
-  }
-  &.blueprints {
-    .wrapper-inner {
-      padding: 6px;
-    }
   }
   &.edit {
     @import "edit";

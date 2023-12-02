@@ -15,11 +15,18 @@ import {useSelector} from "react-redux";
 import {ModalManager} from "components/ModalManager";
 import {getCompressedImage} from "../../Item/components/Image/helpers";
 
+function checkNear(n, items) {
+    n = (n + items.length) % items.length;
+    return items[n];
+}
+
 function bounds(position, side, items) {
     const n = items.current.length;
     position.current = position.current + side;
     position.current = (position.current + n) % n;
-    return items.current[position.current];
+    let group = [-1, 0, 1].map(p => checkNear(position.current + p, items.current)).map(it =>
+        prepareContent({...it, navigation: items.current.length > 1}));
+    return group;
 }
 
 function prepareContent(item) {
@@ -31,36 +38,28 @@ function prepareContent(item) {
 
 export const CarouselModal = ({name}) => {
     const windowName = 'carousel-window';
-    const [item, setItem] = useState(null);
     const position = useRef();
-
-    const itemsRaw = useSelector(state => state.elements.pageItems);
     const [items, setItems] = useState([]);
-    useLayoutEffect(() => {
-        let newItems = [];
-        for (const it of Object.values(itemsRaw)) {
-            for (const child of it.items) {
-                child.type === 'image' && newItems.push(prepareContent(child));
-            }
-        }
-        setItems(newItems);
-    }, [itemsRaw]);
     const itemsRef = useRef();
     itemsRef.current = items;
+    const [group, setGroup] = useState(null);
     function openCarousel(event) {
         const items = event.detail.items;
-        const item = event.detail.item;
         setItems(items);
-        setItem(prepareContent({...items[item], navigation: items.length > 1}));
+        itemsRef.current = items;
+        position.current = event.detail.item;
+        setGroup(bounds(position, 0, itemsRef));
         triggerEvent(windowName + ':toggle', {isOpened: true});
     }
+    console.log(items, group)
+    console.log(group)
     useAddEvent("carousel:open", openCarousel);
     return (
         <ModalManager name={windowName} key={windowName}>
-            <div style={{win: 'centered'}}>
-                {item && <CarouselContainer next={() => setItem(bounds(position, 1, itemsRef))}
-                                            previous={() => setItem(bounds(position, -1, itemsRef))}
-                                            item={item} type={'popup'}/>}
+            <div style={{}}>
+                {group && <CarouselContainer next={() => setGroup(bounds(position, 1, itemsRef))}
+                                            previous={() => setGroup(bounds(position, -1, itemsRef))}
+                                            group={group} type={'popup'}/>}
             </div>
         </ModalManager>
     );
@@ -75,9 +74,9 @@ export const CarouselInline = ({items}) => {
 
 export const CarouselContext = createContext();
 
-const CarouselContainer = ({item, type, next, previous, ...props}) => {
+const CarouselContainer = ({group, type, next, previous, ...props}) => {
     function nav(event) {
-        if (!item.navigation) return;
+        if (!group[1].navigation) return;
         event.key === 'ArrowRight' && next();
         event.key === 'ArrowLeft' && previous();
     }
@@ -86,9 +85,9 @@ const CarouselContainer = ({item, type, next, previous, ...props}) => {
     return (
         <CarouselContext.Provider value={{right: next, left: previous}}>
             <div className={'carousel-events'}>
-                {item && <Carousel type={type}
+                {group && <Carousel type={type}
                                          {...props}
-                                         item={item}/>}
+                                         group={group}/>}
             </div>
         </CarouselContext.Provider>
 

@@ -6,6 +6,7 @@ import TransformContainer from "../../ui/ObjectTransform/components/TransformCon
 import {useSelector} from "react-redux";
 import {isMobileDevice} from "../../helpers/events";
 import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
+import MyMasonry from "../../ui/Masonry/MyMasonry";
 
 export const SimpleItem = ({item, depth=0}) => {
     const ref = useRef();
@@ -37,16 +38,27 @@ export const SimpleItem = ({item, depth=0}) => {
             }
             if (it.position !== 'absolute' && it.width === 'auto') {
                 if (['video', 'image', 'model'].includes(it.type)) {
-                    transform.style.width = 100 / itemsRow + '%';
+                    // transform.style.width = 100 / itemsRow + '%';
                 }
                 it.width = transform.style.width;
             }
         }
         initContainerDimensions({container, resize:true});
     }, [item]);
+
+    const masonry = item.style.match(/masonry/);
+    let items = item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
+    if (masonry) {
+        items = <MyMasonry maxColumns={+item.style.split("_")[1]}>
+            {items}
+        </MyMasonry>
+    }
+    let padding = '';
+    if (item.style.match(/padding/)) padding = '0';
+
     return (
-        <div className={'wrapper-' + item.type + ' wrapper-inner'}>
-            <div className={`item depth-${depth} item-${item.type} transform-origin`} data-itemtype={'content'}
+        <div className={'wrapper-' + item.type + ' wrapper-inner'} style={{padding}}>
+            <div className={`item depth-${depth} item-${item.type}`} data-itemtype={'content'}
                  data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"}),
                 backgroundColor:item.bg_color}} data-depth={depth}
                  onDragStart={e => e.preventDefault()}>
@@ -56,8 +68,7 @@ export const SimpleItem = ({item, depth=0}) => {
                                     data-height={item.height === 'auto' ? 'fixed' : item.height}>
                     {!['timeline', 'timeline_entry'].includes(item.type)
                         && <div className={'items-wrapper'}>
-                            {item.items && item.items.map(item =>
-                                <Item depth={depth + 1} item={item} key={item.id}></Item>)}
+                            {items}
                         </div>}
                     {!['base', 'timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
                 </TransformContainer>

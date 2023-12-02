@@ -6,12 +6,16 @@ export const FieldsOrder = [
     'link',
     'tab',
     'width',
+    'height',
+    'left',
+    'top',
     'zindex',
     'style',
     'show_shadow',
     'movable',
     'resizable',
     'quality',
+    'type',
 ]
 
 export const ItemsVerbose = {

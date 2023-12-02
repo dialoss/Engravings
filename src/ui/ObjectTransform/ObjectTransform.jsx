@@ -1,5 +1,5 @@
 import {useAddEvent} from "hooks/useAddEvent";
-import {setItemTransform} from "./transform";
+import {changeItemPosition, getTransformData, setItemTransform, transformItem} from "./transform";
 import {initContainerDimensions} from "./helpers";
 import {triggerEvent} from "../../helpers/events";
 
@@ -9,13 +9,16 @@ class ObjectTransform {
 
     iterateItems(item, func) {
         let index = 0;
-        while (item) {
+        let it = item;
+        while (it) {
             if (index === 0) {
-                func(item, "focused");
+                func(it, "focused");
             }
-            item = item.parentElement.closest('.transform-item');
-            if (!item) break;
-            func(item, "focused-parent");
+            it = it.closest('.item');
+            if (!it) break;
+            it = it.closest('.transform-item');
+            if (!it) break;
+            func(it, "focused-parent");
             index++;
         }
     }
@@ -36,10 +39,14 @@ class ObjectTransform {
         const type = event.type;
         const alreadyFocused = this.prevItem === item;
         this.toggleSelection(item);
-        triggerEvent('action:init', event);
-        if (event.button !== 0 || !alreadyFocused) return;
-
-        alreadyFocused && setItemTransform(event, type, item, event.origin);
+        if (event.event.button !== 0 || !alreadyFocused) return;
+        if (alreadyFocused) setItemTransform(event.event, type, item, event.origin, {
+            onSwipeEnd: (d) => {
+                if (d.item.getAttribute('data-type') === 'modal') return;
+                getTransformData(d);
+            },
+            onSwipeStart: transformItem,
+        });
     }
 
     initContainer(event) {

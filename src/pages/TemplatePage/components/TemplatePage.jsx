@@ -16,8 +16,8 @@ const TemplatePage = () => {
                     <div style={{flexGrow: 1, minHeight:1}}></div>
                 </div>
                 <div style={{flexGrow: 1, minHeight:1}}></div>
+                <StaticContent></StaticContent>
             </ContentWrapper>
-            <StaticContent></StaticContent>
             <Footer></Footer>
         </BrowserRouter>
     );

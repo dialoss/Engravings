@@ -7,7 +7,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import {ModalManager} from "../../ModalManager";
 import {triggerEvent} from "../../../helpers/events";
-import {dropUpload} from "../../../modules/FileExplorer/api/google";
+import {storageUpload} from "../../../modules/FileExplorer/api/google";
 import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 
@@ -97,7 +97,7 @@ export const InputEmoji = ({callback}) => {
 }
 
 export const CustomUpload = ({children, name, inputCallback}) => {
-    const upload = (e, callback) => dropUpload(e, files => callback(m => ({...m, upload:files})), false);
+    const upload = (e, callback) => storageUpload(e, files => callback(m => ({...m, upload:files})), false);
     return (
         <div className={"custom-input " + name}
              onDragOver={(e) => e.preventDefault()}

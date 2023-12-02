@@ -6,10 +6,13 @@ import {getLocation} from "../../../hooks/getLocation";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 import {getFormData} from "../../ActionForm/helpers/FormData";
 
-function reverseMethod(request) {
-    if (request.method === 'DELETE') return 'POST';
-    if (request.method === 'POST') return 'DELETE';
-    return request.method;
+function updateRequest(request) {
+    if (request.method === 'DELETE') {
+        request.id = '';
+        request.method = 'POST';
+    }
+    if (request.method === 'POST') request.method = 'DELETE';
+    return request;
 }
 
 class HistoryManager {
@@ -20,7 +23,7 @@ class HistoryManager {
             this.current = 0;
         }
         let request = this.history[this.current];
-        request.method = reverseMethod(request);
+        request = updateRequest(request);
         this.history.length && triggerEvent('itemlist:request', request);
         this.current -= 1;
     }
@@ -30,8 +33,8 @@ class HistoryManager {
             this.current = this.history.length - 1;
         }
         let request = this.history[this.current];
-        request.method = reverseMethod(request);
-        triggerEvent('itemlist:request', this.history[this.current]);
+        request = updateRequest(request);
+        triggerEvent('itemlist:request', request);
         this.current += 1;
     }
     clear() {
@@ -152,7 +155,6 @@ export default class Actions {
                         type = 'base';
                         initialData = {
                             show_date: true,
-                            order: 0,
                         };
                         extraFields = ['url'];
                         break;
@@ -261,10 +263,5 @@ export default class Actions {
                 else resolve([]);
             }});
         });
-    }
-
-    static storage() {
-        triggerEvent("filemanager-window:toggle", {toggle:true});
-        return [];
     }
 }

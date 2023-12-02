@@ -12,6 +12,7 @@ export function getSettings(name, data) {
         case 'clear_size':
             return {
                 'width': 'auto',
+                'height': 'auto',
             };
         default:
             return {
@@ -30,30 +31,31 @@ export function getSettingText(text, positive) {
 const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});
 
 export function serializeActions(actions, actionElement, depth=0) {
-    actions = structuredClone(actions);
     return Object.keys(actions).map(name => {
         let action = actions[name];
         let subActions = action.actions || [];
         let text = action.text;
         let functionName = action.callback || name;
         let callback = () => {};
-        switch (action.argument) {
-            case null:
-                break;
-            case false:
-                callback = () => {
-                    !action.stay_opened && closeCallback();
-                    Actions.action(Actions[functionName]());
-                }
-                break;
-            case true:
-                callback = () => {
-                    !action.stay_opened && closeCallback();
-                    Actions.action(Actions[functionName](name));
-                }
-                break;
+        if (typeof action.callback === 'function') callback = action.callback;
+        else {
+            switch (action.argument) {
+                case null:
+                    break;
+                case false:
+                    callback = () => {
+                        !action.stay_opened && closeCallback();
+                        Actions.action(Actions[functionName]());
+                    }
+                    break;
+                case true:
+                    callback = () => {
+                        !action.stay_opened && closeCallback();
+                        Actions.action(Actions[functionName](name));
+                    }
+                    break;
+            }
         }
-        if (action.toggler) callback = (e) => console.log(e)
         return {
             ...action,
             text,

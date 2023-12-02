@@ -29,7 +29,7 @@ const FormComponent = ({field}) => {
     let TargetComponent = Components[field.type];
 
     function fieldCallback(event) {
-        inputCallback({field:field.name, value:event.target.value + (field.point || '')});
+        inputCallback({field:field.name, value:event.target.value});
     }
 
     return (

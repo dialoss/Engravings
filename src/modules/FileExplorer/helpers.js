@@ -75,5 +75,6 @@ export function selectItems() {
             triggerEvent("action:callback", [f]);
         }
     }
+    window.filemanager.ClearSelectedItems();
     triggerEvent("filemanager-window:toggle", {isOpened: false});
 }

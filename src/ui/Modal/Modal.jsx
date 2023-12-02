@@ -27,11 +27,6 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
         isOpened && (transformItem.style.pointerEvents = 'auto');
     }, [isOpened]);
 
-    useEffect(() => {
-        const contentOuter = ref.current.querySelector('.content-outer');
-        contentOuter && windowRef.current.querySelector('.modal__outer').appendChild(contentOuter);
-    }, [isOpened]);
-
     return (
         <div className={"modal"} ref={windowRef}>
             <div className={"modal__wrapper"}>
@@ -44,7 +39,6 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
                             {content}
                         </div>
                     </div>
-                <div className={`modal__outer modal__window ${name} ${opened}`}></div>
                 </div>
             </div>
         </div>

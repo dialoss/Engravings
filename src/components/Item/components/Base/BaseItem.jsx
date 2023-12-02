@@ -2,7 +2,6 @@ import React, {useCallback} from 'react';
 import "./BaseItem.scss";
 import PageFrom from "../PageFrom/PageFrom";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
-import {SimpleItem} from "../../Item";
 
 const ItemBase = ({data}) => {
     return (

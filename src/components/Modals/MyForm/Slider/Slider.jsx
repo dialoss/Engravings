@@ -1,24 +1,27 @@
-import React, {useContext} from 'react';
+import React, {useContext, useLayoutEffect, useState} from 'react';
 import "./Slider.scss";
-import {FormContext} from "../../../../modules/ActionForm/FormContainer";
 import FormSelect from "../Select/FormSelect";
 
 const Slider = ({data}) => {
-    const {setFormFields} = useContext(FormContext);
+    const [point, setPoint] = useState('px');
+    useLayoutEffect(() => {
+        if (data.value.match(/%/)) setPoint('%');
+        else setPoint('px');
+    }, [data.value]);
 
     let config = {
-        min: 0,
-        max: 100,
-        step: 0.25,
+        min: 50,
+        max: 1600,
+        step: 50,
     }
-    if (data.point === 'px') {
+    if (point === '%') {
         config = {
-            min: 50,
-            max: 1600,
-            step: 50,
+            min: 0,
+            max: 100,
+            step: 0.25,
         }
     }
-    const val = +data.value.replace(data.point, '') || 0;
+    const val = +data.value.replace(point, '') || 0;
     return (
         <div className="form-slider">
             <FormSelect data={{
@@ -26,20 +29,21 @@ const Slider = ({data}) => {
                     "px": "Пиксели",
                     "%": "Проценты",
                 },
-                callback: (v) => setFormFields(f => ({...f, [data.name]: {...data, point: v.target.value}}))
+                value: point,
+                callback: (v) => setPoint(v.target.value)
             }}></FormSelect>
-            <p>{val + data.point}</p>
+            <p>{val + point}</p>
             <input value={val}
                    name={data.name}
                    type={'range'}
                    {...config}
                     className={'form-input'}
-                   onChange={data.callback}/>
+                   onChange={(v) => data.callback({target:{value: v.target.value + point}})}/>
             <input value={val}
                    name={data.name}
                    type={'input'}
                    className={'form-input'}
-                   onChange={data.callback}/>
+                   onChange={(v) => data.callback({target:{value: v.target.value + point}})}/>
         </div>
     );
 };

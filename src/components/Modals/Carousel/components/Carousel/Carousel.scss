@@ -20,21 +20,35 @@
  }
 
 .carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &.popup {
+        width: 100vw;
+        height: 100dvh;
+    }
     .react-transform-wrapper {
         overflow: visible !important;
     }
     &__content {
-        height: 100dvh;
         color: white;
-        width: 300vw;
-        display: flex;
-        transition: all 0.1s linear;
+        width: 200px;
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+        align-items: center;
+    }
+    .content-container {
+        //transform: translate(-50%, 0);
+        //height: 100%;
+        //width: 300%;
     }
     .content-inner {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        transition: all 0.1s linear;
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        transform: translate(calc(100% * var(--index)), -50%);
     }
 
     &__image {
@@ -42,7 +56,7 @@
         display: block;
         border-radius: 8px;
         max-height: 80vh;
-        max-width: 80vw;
+        max-width: 80%;
         @include desktop {
             min-width: 500px;
         }
@@ -50,7 +64,7 @@
         @media only screen and (max-width:$media-resize-width) {
             & {
                 border-radius: 0;
-                max-width: 100vw;
+                max-width: 100%;
                 min-height: auto;
             }
         }

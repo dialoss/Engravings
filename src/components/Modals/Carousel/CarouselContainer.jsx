@@ -46,6 +46,7 @@ export const CarouselModal = ({name}) => {
     function openCarousel(event) {
         const items = event.detail.items;
         setItems(items);
+        console.log(items)
         itemsRef.current = items;
         position.current = event.detail.item;
         setGroup(bounds(position, 0, itemsRef));
@@ -65,17 +66,11 @@ export const CarouselModal = ({name}) => {
     );
 }
 
-export const CarouselInline = ({items}) => {
-    const content = prepareContent(items);
-    return (
-        <CarouselContainer item={content[0]} type={'inline'}></CarouselContainer>
-    );
-}
-
 export const CarouselContext = createContext();
 
 const CarouselContainer = ({group, type, next, previous, ...props}) => {
     function nav(event) {
+        console.log(event)
         if (!group[1].navigation) return;
         event.key === 'ArrowRight' && next();
         event.key === 'ArrowLeft' && previous();

@@ -15,7 +15,6 @@ const InfoParagraph = ({type, children, id, ...props}) => {
     }, [children]);
     function openEditor(event) {
         if (event.detail !== 2 || !pageEditable()) return;
-        triggerEvent("action:init", event);
         setEditor(e => ({...e, isOpened: true}));
     }
     function closeEditor(text) {

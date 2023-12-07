@@ -3,8 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
-        baseURL: 'http://localhost:8000',
-        // baseURL : 'https://matthew75.pythonanywhere.com',
+        // baseURL: 'http://localhost:8000',
+        baseURL : 'https://matthew75.pythonanywhere.com',
         pages : {},
         fullURL : '',
         relativeURL : '',

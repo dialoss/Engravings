@@ -5,6 +5,7 @@ import {fileToItem, getMediaDimensions} from "../helpers";
 import "./upload";
 import {getLocation} from "../../../hooks/getLocation";
 import {uploadAutodeskFile} from "../../../components/Item/components/Model/Autodesk/api/api";
+import axios from 'axios'
 
 const BASE_URL = "https://www.googleapis.com/drive/v2/files/";
 const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files/";
@@ -85,6 +86,28 @@ export class GoogleAPI {
             response.push(this.sendRequest(BASE_URL + el));
         }
         return response;
+    }
+    async uploadFile(file) {
+        let location = '';
+        const config = {
+            onUploadProgress: event => console.log(event.progress * 100 + '%'),
+            headers: {
+                "Content-Range": `bytes 0-${file.size - 1}\/${file.size}`,
+                'X-Upload-Content-Type': file.type,
+            },
+        };
+        token = await Credentials.getToken()
+        return [axios.post(UPLOAD_URL + "?uploadType=resumable", {
+                parents: [ROOT_FOLDER],
+                name: file.name,
+                mimeType: file.type,
+            }, {headers: {
+                "Authorization": "Bearer " + token,
+                'Content-Type': 'application/json; charset=UTF-8',
+        }}).then(r => {
+            location = r.headers.get('Location');
+            return axios.put(location, file, config).then(data => data).catch(e => console.log(e));
+        })];
     }
 }
 async function apiMapper(request) {

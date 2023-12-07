@@ -10,7 +10,6 @@ const TransformButton = ({children, type, ...props}) => {
         origin && origin.addEventListener('mousedown', e => {
             // if (props.secure) return;
             e.stopPropagation();
-            triggerEvent('action:init', e);
             triggerEvent("transform:init", {event: e, origin, type});
         });
     }, []);

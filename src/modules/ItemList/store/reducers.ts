@@ -1,17 +1,27 @@
 import {createSlice} from "@reduxjs/toolkit";
 import store from "../../../store";
 
+interface ElementsState {
+    itemsAll: object;
+    cache: object;
+    pageItems: object;
+    actionElement: object;
+    editPage: boolean;
+}
+
+const initialState: ElementsState = {
+    itemsAll: {},
+    cache: {},
+    pageItems: {},
+    actionElement: {},
+    editPage: false,
+}
+
 export const elementsSlice = createSlice({
     name: "elements",
-    initialState: {
-        itemsAll: {},
-        cache: {},
-        pageItems: {},
-        actionElement: {},
-        editPage: false,
-    },
+    initialState,
     reducers: {
-        setItemsAll: (state, {payload: {items, page}}) => {
+        setItemsAll: (state: ElementsState, {payload: {items, page}}) => {
             for (const item of items) {
                 state.itemsAll[item.id] = item;
                 for (const itemChild of item.items) {

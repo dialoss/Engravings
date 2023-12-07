@@ -14,7 +14,6 @@ const ContextMenuContainer = ({actions}) => {
     function contextMenu(event) {
         if (event.detail > 1 || getElementFromCursor(event, 'quill')) return;
         event.preventDefault();
-        triggerEvent('action:init', event);
         if (!event.ctrlKey) {
             const modal = document.querySelector('.modal__window.' + name + ' .transform-item');
             let [px, py, side] = getCorrectedPosition(modal, [event.clientX + 10, event.clientY + 10]);
@@ -25,11 +24,6 @@ const ContextMenuContainer = ({actions}) => {
     function onScroll() {
         triggerEvent(modalName, {isOpened: false});
     }
-    function onMouseDown(event) {
-        if (event.ctrlKey)
-            triggerEvent('action:init', event);
-    }
-    useAddEvent("mousedown", onMouseDown);
     useAddEvent("contextmenu", contextMenu);
     useAddEvent("scroll", onScroll, {passive: true});
     useAddEvent("contextmenu:open", e => contextMenu(e.detail));

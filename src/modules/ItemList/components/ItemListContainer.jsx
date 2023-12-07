@@ -9,7 +9,6 @@ import {getLocation} from "../../../hooks/getLocation";
 import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
-import NavButton from "../../../ui/Buttons/NavButton/NavButton";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
 
 const ItemListContainer = () => {
@@ -75,14 +74,17 @@ const ItemListContainer = () => {
         setFilter(() => (item) => (item.tab === t) || item.style === 'tabs');
         window.currentTab = t;
     }
+    function loadMore() {
+        if (totalItems < items.length) {
+            limit.current = items.length + 60;
+            fetchItems(items.length, addItems, limit.current);
+        }
+    }
     const [filter, setFilter] = useState(() => (item) => true);
     useAddEvent('itemlist:tab', changeTab);
     return (
         <DelayedVisibility timeout={300}>
-            <ItemList loadMore={totalItems === items.length ? null : () => {
-                limit.current = items.length + 60;
-                fetchItems(items.length, addItems, limit.current);
-            }} items={items.filter(filter)}></ItemList>
+            <ItemList loadMore={loadMore} items={items.filter(filter)}></ItemList>
         </DelayedVisibility>
     );
 };

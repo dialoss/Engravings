@@ -5,7 +5,6 @@ import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 import {triggerEvent} from "../../../helpers/events";
 import {doc, updateDoc, arrayRemove, arrayUnion} from "firebase/firestore";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
-import {getMediaType} from "../../../modules/FileExplorer/api/google";
 
 const emptyMessage = {text:'', upload:[]};
 
@@ -36,7 +35,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
 
         let uploadData = upload.map(u => ({
             url: '',
-            type: getMediaType(u.name),
+            // type: getMediaType(u.name),
             filename: u.name,
             uploading: true,
         }))

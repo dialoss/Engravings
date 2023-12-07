@@ -6,10 +6,6 @@ interface test {
     t: object,
 }
 
-const petya : test = {
-    name: "petya",
-    age: 123,
-}
 
 const Test = ({data: boolean}) => {
     return (

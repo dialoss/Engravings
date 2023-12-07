@@ -1,9 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./ImageEditor.scss";
-import {getLocation} from "../../../hooks/getLocation";
-import {uploadFile} from "../api/google";
-import {getViewportWidth} from "../../../ui/helpers/viewport";
-import {triggerEvent} from "../../../helpers/events";
 import {doc} from "firebase/firestore";
 const { TABS, TOOLS } = window.FilerobotImageEditor;
 

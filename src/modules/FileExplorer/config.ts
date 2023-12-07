@@ -1,9 +1,10 @@
-import {driveRequest, getMediaType, GoogleAPI, uploadFile} from "./api/google";
 import {getLocation} from "../../hooks/getLocation";
 import {triggerEvent} from "../../helpers/events";
 import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
 import React from "react";
+import {storage} from "./api/storage";
+import prettyBytes from "pretty-bytes";
 
 export const ExplorerViews = ['default', 'list'];
 export const TextBar = [
@@ -60,14 +61,11 @@ function initLayout() {
 }
 
 function updateStorageSpace() {
-    let apiSession = new GoogleAPI({method:"GET"}, {});
-    apiSession.sendRequest('https://www.googleapis.com/drive/v2/about').then(d => {
-        const f = (size) => window.filemanager.GetDisplayFilesize(size);
-        const space = `Места занято: ${f(+d.quotaBytesUsed)} из ${f(+d.quotaBytesTotal)}`;
+    storage.getSpace().then(d => {
+        const space = `Места занято: ${prettyBytes(d.used)} из ${prettyBytes(d.total)}`;
         window.filemanager.SetNamedStatusBarText('space', space);
     });
 }
-
 
 export function init() {
     let elem = document.querySelector('.filemanager');
@@ -83,55 +81,22 @@ export function init() {
             [ '1eqHekdRFxl8A_WCQkf7g9Cg9xSZP9ZJh', 'storage', { canmodify: true } ],
         ],
         onrefresh: function(folder, required) {
-            driveRequest({
-                request: {
-                    method: 'GET',
-                    action: 'list',
-                    elements: [folder.GetPathIDs().slice(-1)[0]],
-                    data: {},
-                },
-                callback: (data) => {
-                    folder.SetEntries(data);
-                    initLayout();
-                    triggerEvent('filemanager:changeFolder');
-                    updateStorageSpace();
-                },
-            });
+            storage.listFiles(folder.GetPathIDs().slice(-1)[0]).then(data => {
+                folder.SetEntries(data);
+                initLayout();
+                triggerEvent('filemanager:changeFolder');
+                updateStorageSpace();
+            })
         },
         onrename: function(renamed, folder, entry, newname) {
-            driveRequest({
-                request: {
-                    method: 'PATCH',
-                    elements: [entry.id],
-                    data: {
-                        title: newname,
-                    }
-                },
-                callback: (data) => {
-                    renamed(...data);
-                },
-                error: () => {
-                    renamed('Server/network error.');
-                },
-            });
+            storage.rename(entry.id, newname)
+                .then(data => renamed(...data))
+                .catch(er => renamed('Server/network error.'));
         },
         onnewfolder: function(created, folder) {
-            driveRequest({
-                request: {
-                    method: 'POST',
-                    parent: folder.GetPathIDs().slice(-1)[0],
-                    action: 'new folder',
-                    data: {
-                        name: 'New Folder',
-                    }
-                },
-                callback: (data) => {
-                    created(...data);
-                },
-                error: () => {
-                    created('Server/network error.');
-                },
-            });
+            storage.newFolder(folder.GetPathIDs().slice(-1)[0], 'New Folder')
+                .then(data => created(data))
+                .catch(() => created('Server/network error.'));
         },
         oncopy: function(copied, srcpath, srcids, destfolder) {
             driveRequest({

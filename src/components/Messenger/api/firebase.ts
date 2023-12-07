@@ -15,7 +15,6 @@ import store from "store";
 import {getGlobalTime, sendLocalRequest} from "../../../api/requests";
 import {actions} from "../store/reducers";
 import {triggerEvent} from "../../../helpers/events";
-import {fileToItem, uploadFile} from "../../../modules/FileExplorer";
 import {getLocation} from "../../../hooks/getLocation";
 
 const uniqueID = async () => Date.parse((await getGlobalTime()).utc_datetime);

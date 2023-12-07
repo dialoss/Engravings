@@ -11,6 +11,7 @@ const reducers = combineReducers({
     users: userReducer,
     messenger: messengerReducer,
     comments: commentsReducer,
+    filemanager: filemanagerReducer,
 })
 
 export default configureStore({

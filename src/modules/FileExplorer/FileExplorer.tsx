@@ -12,8 +12,7 @@ import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
 import {fetchRequest, sendRequest} from "../../api/requests";
-import {fileToItem, fileToMedia, selectItems} from "./helpers";
-import {driveRequest, itemMediaUpload} from "./api/google";
+import {fileToMedia, selectItems} from "./helpers";
 import {useSelector} from "react-redux";
 
 const Toolbar = ({data, setData}) => {
@@ -45,7 +44,7 @@ const FileExplorer = () => {
     },[]);
     useLayoutEffect(() => {
         triggerEvent('filemanager-window:check-opened', isOpened => {
-            !isOpened && driveRequest({
+            !isOpened && window({
                 request: {
                     method: 'POST',
                     parent: '',

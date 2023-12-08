@@ -9,14 +9,14 @@ import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 import MyMasonry from "../../ui/Masonry/MyMasonry";
 
 export const SimpleItem = ({item, depth=0}) => {
-    const ref = useRef();
+    const ref = useRef<HTMLDivElement>(null);
     useLayoutEffect(() => {
         item.items && item.items.sort((a, b) => a.order - b.order);
     }, []);
     useEffect(() => {
         const itemRef = ref.current;
         const itemTransform = itemRef.closest(".transform-item");
-        const container = itemTransform.querySelector('.transform-container');
+
         itemTransform.style.width = item.width;
         let mediaItems = 0;
         let itemsRow = 1;
@@ -25,7 +25,7 @@ export const SimpleItem = ({item, depth=0}) => {
         }
         if (mediaItems >= 3 && !isMobileDevice()) itemsRow = 3;
         else if (mediaItems >= 2) itemsRow = 2;
-        const wrapper = container.querySelector('.items-wrapper');
+        const wrapper = itemTransform.querySelector('.items-wrapper');
         for (let it of item.items) {
             let transform = wrapper && wrapper.querySelector(`.item[data-id="${it.id}"]`);
             if (!transform) continue;
@@ -43,37 +43,24 @@ export const SimpleItem = ({item, depth=0}) => {
                 it.width = transform.style.width;
             }
         }
-        initContainerDimensions({container, resize:true});
+        // initContainerDimensions({itemTransform, resize:true});
     }, [item]);
 
-    const masonry = item.style.match(/masonry/);
-    let items = item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
-    if (masonry) {
-        items = <MyMasonry maxColumns={+item.style.split("_")[1]}>
-            {items}
-        </MyMasonry>
+    function getStyle() {
+        return {}
     }
-    let padding = '';
-    if (item.style.match(/padding/)) padding = '0';
 
     return (
-        <div className={'wrapper-' + item.type + ' wrapper-inner'} style={{padding}}>
-            <div className={`item depth-${depth} item-${item.type}`} data-itemtype={'content'}
-                 data-id={item.id} ref={ref} style={{...(!item.show_shadow && {boxShadow: "none"}),
-                backgroundColor:item.bg_color}} data-depth={depth}
-                 onDragStart={e => e.preventDefault()}>
-                {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
-                <TransformContainer data-width={item.container_width}
-                                    data-type={item.type}
-                                    data-height={item.height === 'auto' ? 'fixed' : item.height}>
-                    {!['timeline', 'timeline_entry'].includes(item.type)
-                        && <div className={'items-wrapper'}>
-                            {items}
-                        </div>}
-                    {!['base', 'timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
-                </TransformContainer>
-                {['base'].includes(item.type) && <ItemData data={item}></ItemData>}
-            </div>
+        <div className={`item item-${item.type}`}
+             data-id={item.id} ref={ref} data-depth={depth} style={getStyle()}
+             onDragStart={e => e.preventDefault()}>
+            {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
+                {!['timeline', 'timeline_entry'].includes(item.type)
+                    && <div className={'items-wrapper'}>
+                        {item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>)}
+                </div>}
+                {!['base', 'timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
+            {['base'].includes(item.type) && <ItemData data={item}></ItemData>}
         </div>
     );
 }

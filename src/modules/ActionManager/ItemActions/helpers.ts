@@ -1,5 +1,6 @@
 import {triggerEvent} from "../../../helpers/events";
 import Actions from "./actions";
+import {IContextAction} from "./config";
 
 export function getSettings(name, data) {
     switch (name) {
@@ -30,7 +31,7 @@ export function getSettingText(text, positive) {
 
 const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});
 
-export function serializeActions(actions, actionElement, depth=0) {
+export function serializeActions(actions, actionElement, depth=0) : IContextAction[] {
     return Object.keys(actions).map(name => {
         let action = actions[name];
         let subActions = action.actions || [];

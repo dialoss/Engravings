@@ -1,6 +1,5 @@
 import {initContainerDimensions, isResizable} from "./helpers";
 import {triggerEvent} from "../../helpers/events";
-import {getElementID} from "../../modules/ActionManager/components/helpers";
 import {Axis} from "./config";
 
 let item = null;

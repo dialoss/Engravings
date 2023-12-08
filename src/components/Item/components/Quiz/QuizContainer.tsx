@@ -1,14 +1,34 @@
-import React, {useLayoutEffect, useReducer, useState} from 'react';
+import React, {ReducerState, useLayoutEffect, useReducer, useState} from 'react';
 import Quiz from "./Quiz";
 import data from "./data/3.json";
 import {prepareData} from "./helpers";
 
-const emptyQuiz = {
+interface QuizData {
+    question: string,
+    choices: string[],
+    answer: string,
+}
+
+export interface IQuiz {
+    current: number,
+    right: number,
+    wrong: number,
+    all: number,
+    data: QuizData,
+    userAnswer: {
+        correct: boolean,
+        choice: number,
+        question: string,
+    },
+    started: boolean,
+}
+
+const emptyQuiz : IQuiz = {
     current: 0,
     right: 0,
     wrong: 0,
     all: 0,
-    data: {},
+    data: {question: '', answer: '', choices: []},
     userAnswer: {
         correct: false,
         choice: 0,
@@ -17,13 +37,24 @@ const emptyQuiz = {
     started: false,
 };
 
-function reducer(state, action) {
+enum QuizActions {
+    USER_ANSWER = "USER_ANSWER",
+    NEXT = "NEXT",
+    START = "START"
+}
+
+interface QuizAction {
+    type: QuizActions,
+    payload?: object,
+}
+
+function reducer(state=emptyQuiz, action : QuizAction) {
     switch (action.type) {
-        case "USER_ANSWER":
+        case QuizActions.USER_ANSWER:
             if (action.payload.correct) state.right++;
             else state.wrong++;
             return {...state, userAnswer: action.payload};
-        case "NEXT":
+        case QuizActions.NEXT:
             if (state.current === data.length - 1) return {...state, started: false};
             state.data = prepareData(++state.current);
             state.userAnswer = {
@@ -32,7 +63,7 @@ function reducer(state, action) {
                 question: '',
             };
             return {...state};
-        case "START":
+        case QuizActions.START:
             const quiz = {...emptyQuiz};
             quiz.all = data.length;
             quiz.started = true;
@@ -42,24 +73,18 @@ function reducer(state, action) {
 }
 
 const QuizContainer = () => {
-    const [quiz, dispatch] = useReducer(reducer, {});
+    const [quiz, dispatch] = useReducer(reducer, emptyQuiz as ReducerState<IQuiz>);
 
     function callback(type, payload='') {
-        if (type === 'USER_ANSWER') {
+        if (type === QuizActions.USER_ANSWER) {
             if (quiz.userAnswer.question) return;
             const correct = payload.toLowerCase() === quiz.data.answer.toLowerCase();
             payload = {choice:payload,correct, question:quiz.data.question};
         }
         dispatch({type, payload})
-     // setTimeout(() => {
-        //     dispatch({type: 'NEXT', payload: correct});
-        // }, 500);
     }
-    console.log(quiz)
     return (
-
-        <Quiz quiz={quiz} callback={callback}></Quiz>
-
+        <Quiz quiz={quiz}></Quiz>
     );
 };
 

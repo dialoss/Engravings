@@ -14,6 +14,8 @@ import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
 import {fetchRequest, sendRequest} from "../../api/requests";
 import {fileToMedia, selectItems} from "./helpers";
 import {useSelector} from "react-redux";
+import {storage} from "./api/storage";
+import {UploadStatus} from "./api/google";
 
 const Toolbar = ({data, setData}) => {
     return (
@@ -44,19 +46,10 @@ const FileExplorer = () => {
     },[]);
     useLayoutEffect(() => {
         triggerEvent('filemanager-window:check-opened', isOpened => {
-            !isOpened && window({
-                request: {
-                    method: 'POST',
-                    parent: '',
-                    action: 'create folder with path',
-                    data: {
-                        path: ['site', 'storage', location],
-                    }},
-                callback: (folder) => {
+            !isOpened && storage.newFolderWithPath(['site', 'storage', location]).then(folder =>
                     window.filemanager.SetPath([...window.filemanager.settings.initpath,
-                        [ folder[0].id, folder[0].name, { canmodify: true } ]]);
-                }
-            })
+                        [ folder.id, folder.name, { canmodify: true } ]])
+            )
         })
     }, [location]);
     useEffect(() => {
@@ -159,6 +152,11 @@ const FileExplorer = () => {
            triggerEvent("filemanager-window:toggle", {toggle: true});
     });
 
+    function uploadCallback(event) {
+        storage.transferFiles(event, (status : UploadStatus) =>
+            window.filemanager.SetNamedStatusBarText('message', ' Прогресс: ' + (+status.progress * 100) + '%' + ' ' + status.filename));
+    }
+
     return (
         <ModalManager name={"filemanager-window"} closeConditions={['btn', 'esc']}>
             <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', height:'600px', width:'800px'}}
@@ -190,7 +188,7 @@ const FileExplorer = () => {
                     <div className="filemanager-right">
                         <ImageEditor image={curImage}></ImageEditor>
                         {/*<Sidebar image={curImage}></Sidebar>*/}
-                        <input type="file" multiple={true} style={{display:'none'}} onChange={itemMediaUpload} id={"filemanager-local"}/>
+                        <input type="file" multiple={true} style={{display:'none'}} onChange={uploadCallback} id={"filemanager-local"}/>
                     </div>
                 </div>
             </TransformItem>

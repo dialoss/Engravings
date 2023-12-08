@@ -5,6 +5,7 @@ import Tooltip from "./Tooltip";
 import React from "react";
 import {storage} from "./api/storage";
 import prettyBytes from "pretty-bytes";
+import {UploadStatus} from "./api/google";
 
 export const ExplorerViews = ['default', 'list'];
 export const TextBar = [
@@ -80,23 +81,23 @@ export function init() {
             [ '1G2OZ6qaAEHhVWv9VmpeURv1mOnGobHtl', 'site', { canmodify: true } ],
             [ '1eqHekdRFxl8A_WCQkf7g9Cg9xSZP9ZJh', 'storage', { canmodify: true } ],
         ],
-        onrefresh: function(folder, required) {
+        onrefresh: function(folder) {
             storage.listFiles(folder.GetPathIDs().slice(-1)[0]).then(data => {
-                folder.SetEntries(data);
+                folder.SetEntries(data.map(f => ({...f, type: f.mimeType})));
                 initLayout();
                 triggerEvent('filemanager:changeFolder');
                 updateStorageSpace();
             })
         },
         onrename: function(renamed, folder, entry, newname) {
-            storage.rename(entry.id, newname)
-                .then(data => renamed(...data))
-                .catch(er => renamed('Server/network error.'));
+            // storage.rename(entry.id, newname)
+            //     .then(data => renamed(...data))
+            //     .catch(er => renamed('Server/network error.'));
         },
         onnewfolder: function(created, folder) {
-            storage.newFolder(folder.GetPathIDs().slice(-1)[0], 'New Folder')
-                .then(data => created(data))
-                .catch(() => created('Server/network error.'));
+            // storage.newFile(folder.GetPathIDs().slice(-1)[0], 'New Folder')
+            //     .then(data => created(data))
+            //     .catch(() => created('Server/network error.'));
         },
         oncopy: function(copied, srcpath, srcids, destfolder) {
             driveRequest({
@@ -153,15 +154,18 @@ export function init() {
         oninitupload: function(startupload, fileinfo) {
             if (fileinfo.type === 'dir') return;
             const folder = fileinfo.folder.valueOf();
-            let info = {...fileinfo};
-            if (folder) info.folder = folder.GetPathIDs().slice(-1)[0];
-            window.filemanager.SetNamedStatusBarText('message', fileinfo.file.name + ' Прогресс: 0%');
-            uploadFile(info, () => {
-                window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
-                updateStorageSpace();
-                folder && setTimeout(() => {
-                    options.onrefresh(folder);
-                }, 500);
+            window.filemanager.SetNamedStatusBarText('message', 'Прогресс: 0% ' + fileinfo.file.name);
+            fileinfo.file.parent = folder.GetPathIDs().slice(-1)[0];
+            storage.uploadFile(fileinfo.file, [], (status: UploadStatus) => {
+                if (status.progress === '1') {
+                    window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
+                    updateStorageSpace();
+                    folder && setTimeout(() => {
+                        options.onrefresh(folder);
+                    }, 500);
+                } else {
+                    window.filemanager.SetNamedStatusBarText('message', ' Прогресс: ' + (+status.progress * 100) + '%' + ' ' + status.filename);
+                }
             });
         },
         oninitdownload: function(startdownload, folder, ids, entries) {
@@ -193,7 +197,7 @@ export function initTooltip(ref, folder) {
         const tt = document.createElement('div');
         tt.classList.add('filemanager-tooltip');
         root.appendChild(tt);
-        createRoot(tt).render(<Tooltip data={item}></Tooltip>);
+        // createRoot(tt).render(<Tooltip data={item}></Tooltip>);
 
         root.addEventListener('mouseover', (e) => {
             if (root.contains(e.relatedTarget)) return;

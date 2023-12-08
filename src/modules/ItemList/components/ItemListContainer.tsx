@@ -6,13 +6,13 @@ import {fetchItems} from "../api/fetchItems";
 import {useAddEvent} from "hooks/useAddEvent";
 import {sendLocalRequest} from "api/requests";
 import {getLocation} from "../../../hooks/getLocation";
-import store from "../../../store";
 import {triggerEvent} from "../../../helpers/events";
 import {createItemsTree} from "../helpers";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
+import store from "../../../store";
 
 const ItemListContainer = () => {
-    const [items, dispatch] = useReducer(localReducer, []);
+    const [items, dispatch] = useReducer(localReducer, [] as ReducerState<object[]>);
     const itemsRef = useRef();
     itemsRef.current = items;
     const globalDispatch = useDispatch();
@@ -22,26 +22,25 @@ const ItemListContainer = () => {
         let items = newItems;
         if (count) setTotalItems(count);
         items = createItemsTree(items);
-        if (!fromCache) {
-            globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
-        }
+        // if (!fromCache) {
+        //     globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
+        // }
         dispatch({method: 'SET', payload: [...itemsRef.current, ...items]});
     }
 
-    const limit = useRef();
-    limit.current = getLocation().parentSlug ? 80 : 60;
+    const limit = useRef<number>();
+    limit.current = 60;
 
     useLayoutEffect(() => {
-        changeTab({detail:0});
         let offset = 0;
-        let cachedItems = store.getState().elements.cache[page];
-        if (cachedItems) {
-            addItems({newItems:cachedItems}, true);
-            offset = cachedItems.length;
-        } else {
-            window.scrollTo(0, 0);
-        }
-        fetchItems(offset, addItems, limit.current);
+        // let cachedItems = store.getState().elements.cache[page];
+        // if (cachedItems) {
+        //     addItems({newItems:cachedItems}, true);
+        //     offset = cachedItems.length;
+        // } else {
+        //     window.scrollTo(0, 0);
+        // }
+        fetchItems(offset, limit.current, addItems);
     }, []);
 
     async function handleElements(event) {
@@ -69,22 +68,15 @@ const ItemListContainer = () => {
     }
     useAddEvent('itemlist:request', handleElements);
 
-    function changeTab(event) {
-        const t = event.detail;
-        setFilter(() => (item) => (item.tab === t) || item.style === 'tabs');
-        window.currentTab = t;
-    }
     function loadMore() {
         if (totalItems < items.length) {
             limit.current = items.length + 60;
-            fetchItems(items.length, addItems, limit.current);
+            fetchItems(items.length, limit.current, addItems);
         }
     }
-    const [filter, setFilter] = useState(() => (item) => true);
-    useAddEvent('itemlist:tab', changeTab);
     return (
         <DelayedVisibility timeout={300}>
-            <ItemList loadMore={loadMore} items={items.filter(filter)}></ItemList>
+            <ItemList loadMore={loadMore} items={items}></ItemList>
         </DelayedVisibility>
     );
 };

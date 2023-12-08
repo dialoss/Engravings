@@ -9,7 +9,7 @@ import {MediaDimensions} from "../helpers";
 
 export interface IAppStorage {
     storageAPI: StorageAPI,
-    listFiles(folder : StorageFile) : Promise<StorageFile[]>;
+    listFiles(id: string) : Promise<StorageFile[]>;
     getFile(id: string) : Promise<StorageFile>;
     copy(file : StorageFile);
     move(file : StorageFile);
@@ -31,7 +31,7 @@ export class AppStorage implements IAppStorage {
         let nextFolder : EmptyStorageFile = {parent:'', name:'', mimeType:'folder'};
         let folderData : StorageFile;
         for (const f of path) {
-            nextFolder.parent = '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb';
+            nextFolder.parent = folderID;
             nextFolder.name = f;
             folderData = (await this.storageAPI.post(true, nextFolder))[0];
             folderID = folderData.id;
@@ -39,8 +39,8 @@ export class AppStorage implements IAppStorage {
         return folderData;
     }
 
-    listFiles(folder: StorageFile) {
-        return this.storageAPI.list(folder);
+    listFiles(id: string) {
+        return this.storageAPI.list(id);
     }
 
     delete(files : StorageFile[]) {
@@ -59,7 +59,6 @@ export class AppStorage implements IAppStorage {
     }
 
     async uploadFile(file: File, path: string[], callback) {
-        if (!path.length) path = ['site', 'storage', getLocation().pageSlug];
         let props = {};
         if (getFileType(file.name).match(/image|video/)) {
             props = await new MediaDimensions(file).get();
@@ -72,15 +71,20 @@ export class AppStorage implements IAppStorage {
             }
         }
         file.props = props;
-        file.parent = (await this.newFolderWithPath(path)).id;
+        if (!file.parent) {
+            if (!path.length) path = ['site', 'storage', getLocation().pageSlug];
+            file.parent = (await this.newFolderWithPath(path)).id;
+        }
         this.storageAPI.put(file, callback);
     }
 
     getSpace(): Promise<StorageSpace> {
-        return this.storageAPI.requests.request('https://www.googleapis.com/drive/v2/about', {method: "GET"}).then(data => ({
-            used: +data.quotaBytesUsed,
-            total: +data.quotaBytesTotal,
-        }));
+        return this.storageAPI.requests.request('https://www.googleapis.com/drive/v2/about').then(d => {
+            return ({
+                used: +d.data.quotaBytesUsed,
+                total: +d.data.quotaBytesTotal,
+            })
+        });
     }
 
     getFile(id: string) {
@@ -96,7 +100,7 @@ export class AppStorage implements IAppStorage {
 
     transferFiles(event, callback) {
         for (const file of FileTransfer.getFiles(event)) {
-            // this.uploadFile(file, callback);
+            this.uploadFile(file, [], callback);
         }
     }
 }
@@ -109,17 +113,21 @@ interface StorageSpace {
 export const storage = new AppStorage();
 
 class FileTransfer {
-    static get(event: ClipboardEvent): File[] {
-        return [...event.clipboardData.files];
-    }
-    static get(event: DragEvent): File[] {
-        return [...(JSON.parse(event.dataTransfer.getData('files') || "[]")), ...event.dataTransfer.files];
-    }
-    static get(event: React.ChangeEvent<HTMLInputElement>): File[] {
-        return [...event.target.files];
+    static getTransfer(event: any): File[] {
+        switch (event.type) {
+            case "drop":
+                return [...(JSON.parse(event.dataTransfer.getData('files') || "[]")), ...event.dataTransfer.files];
+            case "change":
+                return [...event.target.files];
+            case "paste":
+                return [...event.clipboardData.files];
+            default:
+                return [];
+        }
     }
     static getFiles(event: any): File[] {
-        const files = FileTransfer.get(event);
+        console.log(event)
+        const files = FileTransfer.getTransfer(event);
         if (files.length) {
             event.stopPropagation();
             event.preventDefault();

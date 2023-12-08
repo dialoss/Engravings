@@ -1,8 +1,9 @@
 import React from 'react';
 import "./ContentWrapper.scss";
 import TransformContainer from "../ObjectTransform/components/TransformContainer/TransformContainer";
-import {itemMediaUpload} from "../../modules/FileExplorer/api/google";
 import {getElementByType, triggerEvent} from "../../helpers/events";
+import {storage} from "../../modules/FileExplorer/api/storage";
+import {UploadStatus} from "../../modules/FileExplorer/api/google";
 
 const ContentWrapper = ({children}) => {
     return (
@@ -10,7 +11,7 @@ const ContentWrapper = ({children}) => {
             <div className="content-wrapper" onDrop={e => {
                 triggerEvent("action:init", e);
                 if (getElementByType(e, 'modal')) return;
-                itemMediaUpload(e);
+                storage.transferFiles(e, (status: UploadStatus) => console.log(status));
             }} onDragOver={(e) => e.preventDefault()}>
                 {children}
             </div>

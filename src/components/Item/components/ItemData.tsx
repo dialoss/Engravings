@@ -32,7 +32,7 @@ export const Components = {
 }
 
 const ItemData = ({data}) => {
-    if (data.url && !['image','video'].includes(data.type) && !data.url.match(/google|youtube|drive/)) {
+    if (data.url && !data.type.match(/image|video/) && !data.url.match(/google|youtube|drive/)) {
         data.url = 'https://drive.google.com/uc?export=download&id=' + data.url;
     }
     return (

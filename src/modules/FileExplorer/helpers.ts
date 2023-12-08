@@ -39,7 +39,7 @@ export class MediaDimensions {
     }
 }
 
-export function fileToMedia(file: File) : string {
+export function fileToMedia(file: File | ArrayBuffer) : string {
     let blob = new Blob([file], { type: file.type});
     return window.URL.createObjectURL( blob );
 }

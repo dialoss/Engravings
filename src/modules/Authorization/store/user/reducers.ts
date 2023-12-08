@@ -1,5 +1,16 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+interface IUser {
+    isAdmin: boolean,
+    authenticated: boolean,
+    firebase: object,
+}
+
+interface IUsers {
+    current: IUser,
+    users: IUser[],
+}
+
 export const userSlice = createSlice({
     name: "users",
     initialState: {
@@ -9,16 +20,13 @@ export const userSlice = createSlice({
             firebaseUser: null,
         },
         users: {},
-    },
+    } as IUsers,
     reducers: {
-        setUser: (state, {payload: user}) => {
-            return {...state, current: {
-                ...state.current,
-                ...user
-            }};
+        setUser: (state: IUsers, {payload: user}) => {
+            state.current = {...state.current, ...user};
         },
-        setUsers: (state, {payload: users}) => {
-            return {...state, users};
+        setUsers: (state: IUsers, {payload: users}) => {
+            state.users = users;
         }
     }
 });

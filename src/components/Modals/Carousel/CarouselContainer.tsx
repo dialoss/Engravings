@@ -8,7 +8,7 @@ import React, {
     useRef,
     useState
 } from 'react';
-import Carousel from "./components/Carousel/Carousel.jsx";
+import Carousel from "./components/Carousel/Carousel";
 import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
 import {useSelector} from "react-redux";

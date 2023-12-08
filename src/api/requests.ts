@@ -1,6 +1,7 @@
 import store from "store";
 import Credentials from "../modules/Authorization/api/googleapi";
 import {triggerEvent} from "../helpers/events";
+import axios from "axios";
 
 export async function fetchRequest(url) {
     if (!url.includes('firebase')) {
@@ -30,10 +31,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+
 export async function sendRequest(url, data, method) {
     let response = null;
     const csrftoken = getCookie('csrftoken');
     let query = {
+        url,
         method: method,
         credentials: "include",
         headers: {
@@ -43,9 +47,8 @@ export async function sendRequest(url, data, method) {
         ...(method !== 'GET' ? {body: JSON.stringify(data)} : {})
     }
     try {
-        await fetch(url, query).then(res => res.json()).then(data => response = data);
+        await axios(query).then(d => response = d.data);
     } catch (e) {
-        // console.log(e);
         triggerEvent('alert:trigger', {
             body: 'failed to fetch',
             type: 'error',
@@ -55,17 +58,15 @@ export async function sendRequest(url, data, method) {
     return response;
 }
 
-export function sendLocalRequest(url, data={}, method='GET', includePath=true) {
+export function sendLocalRequest(url, data={}, method='GET') {
     const location = store.getState().location;
-    url = new URL(location.baseURL + url);
-    includePath && (url.search += '&' + new URLSearchParams({path: location.relativeURL.slice(1, -1)}).toString());
+    url = new URL(location.serverURL + url);
     return sendRequest(url.toString(), data, method);
 }
 
 export async function getGlobalTime() {
     let r = null
-    await fetch('https://worldtimeapi.org/api/timezone/Europe/London').
-        then(res => res.json()).then(data => r = data);
+    await axios.get('https://worldtimeapi.org/api/timezone/Europe/London').then(data => r = data);
     return r;
 }
 

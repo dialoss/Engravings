@@ -1,8 +1,10 @@
 import React from 'react';
 import "./Quiz.scss";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
+import {IQuiz} from "./QuizContainer";
+import Body from "./components/Body";
 
-const Quiz = ({quiz, callback}) => {
+const Quiz: React.FunctionComponent<IQuiz> = (quiz) => {
     const progress = (quiz.wrong + quiz.right) / quiz.all * 100;
 
     return (
@@ -18,33 +20,7 @@ const Quiz = ({quiz, callback}) => {
                 </div>}
                 <TransitionGroup component={null}>
                     <CSSTransition timeout={300} classNames={"quiz"} key={quiz.current}>
-                        {quiz.started ? <div className="quiz__body">
-                            <div className="quiz__title">{quiz.data.question}</div>
-                            <div className="quiz__choices">
-                                {
-                                    quiz.data.choices.map((c, i) =>
-                                        <div className={"quiz__button quiz__choice " +
-                                            (quiz.userAnswer.choice === c &&
-                                                (quiz.userAnswer.correct ? 'correct' : 'wrong'))} key={i}
-                                             onClick={() => callback('USER_ANSWER', c)}>{c}</div>)
-                                }
-                            </div>
-                            {quiz.userAnswer.question &&
-                                <div className={"quiz__answer"}>
-                                    {quiz.userAnswer.correct ? <p>Верно!</p> : <p>Неверно! Правильный ответ: {quiz.data.answer}</p>}
-                                    <div className="quiz__button quiz__next" onClick={() => callback("NEXT")}>
-                                        Дальше
-                                    </div>
-                                </div>}
-                        </div> : <div className={"quiz__body"}>
-                            {quiz.all === quiz.current + 1 && <div className={"quiz__end"}>
-                                <p className={"quiz__end-text"}>Конец!</p>
-                                <img src={require('./celebration-icon-png-7.jpg')} alt=""/>
-                            </div>}
-                            {!quiz.started && <div className="quiz__button quiz__play" onClick={() => callback("START")}>
-                                Играть
-                            </div>}
-                        </div>}
+                        <Body quiz={quiz}></Body>
                     </CSSTransition>
                 </TransitionGroup>
             </div>

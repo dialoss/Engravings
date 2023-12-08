@@ -1,10 +1,16 @@
 import React from 'react';
+import {StorageFile} from "./api/google";
 
-export function TooltipFields(data) {
-    let tooltipFields = [];
-    if (data.filetype === 'model') tooltipFields.push({
+interface TooltipField {
+    title: string,
+    text: string,
+}
+
+export function TooltipFields(file: StorageFile) {
+    let tooltipFields: TooltipField[] = [];
+    if (file.type === 'model') tooltipFields.push({
         title: 'ID Модели',
-        text: data.urn.slice(0, 12) + '...' + data.urn.slice(-12, -1),
+        text: file.props.urn.slice(0, 12) + '...' + file.props.urn.slice(-12, -1),
     });
 
     const fieldTranslate = {
@@ -16,31 +22,31 @@ export function TooltipFields(data) {
 
     tooltipFields.push({
         title: fieldTranslate.size,
-        text: window.filemanager.GetDisplayFilesize(data.size),
+        text: window.filemanager.GetDisplayFilesize(file.size),
     })
 
     for (const field of ['modifiedTime']) {
         tooltipFields.push({
             title: fieldTranslate[field],
-            text: data[field],
+            text: file[field],
         })
     }
-    if (['video', 'image'].includes(data.filetype)) {
+    if (file.type.match(/video|image/)) {
         for (const field of ['width', 'height']) {
             tooltipFields.push({
                 title: fieldTranslate[field],
-                text: data[field],
+                text: file[field],
             })
         }
     }
     return tooltipFields;
 }
 
-const Tooltip = ({data}) => {
+const Tooltip = ({file}) => {
     return (
         <>
             {
-                TooltipFields(data).map(t => <div className={'tooltip-item'} key={t.title}>
+                TooltipFields(file).map(t => <div className={'tooltip-item'} key={t.title}>
                     <p>{t.title}:</p>
                     <p>{t.text}</p>
                 </div>)

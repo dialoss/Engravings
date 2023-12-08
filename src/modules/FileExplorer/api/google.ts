@@ -17,10 +17,10 @@ interface RequestData {
 }
 
 export class GoogleRequests {
-    async request(url: string, data: RequestData) {
+    async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
         let body = {};
+        console.log('storage request', data, url);
         if (Object.values(data.body).length) body = {data: data.body};
-        console.log('storage request', data);
         return await axios({
             method: data.method,
             url,
@@ -38,7 +38,7 @@ export class GoogleRequests {
 
 export interface StorageAPI {
     request(url: string, data: RequestData) : Promise<StorageFile[]>;
-    list(folder: StorageFile) : Promise<StorageFile[]>;
+    list(id: string) : Promise<StorageFile[]>;
     update(file: StorageFile) : Promise<StorageFile[]>;
     get(id: string) : Promise<StorageFile[]>;
     put(file: File, callback: (status: UploadStatus) => void) : void;
@@ -52,8 +52,8 @@ export class GoogleDriveAPI implements StorageAPI {
         return (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
     }
 
-    list(folder: StorageFile) {
-        let q = GoogleDrive.BASE_URL + `?q='${folder.id || GoogleDrive.ROOT_FOLDER}'+in+parents and trashed=false`;
+    list(id: string) {
+        let q = GoogleDrive.BASE_URL + `?q='${id || GoogleDrive.ROOT_FOLDER}'+in+parents and trashed=false`;
         return this.request(q);
     }
 
@@ -99,6 +99,8 @@ export class GoogleDriveAPI implements StorageAPI {
         const config = {
             onUploadProgress: e => callback({
                 progress: e.progress,
+                filename: file.name,
+                message: 'Загрузка'
             }),
             headers: {
                 "Content-Range": `bytes 0-${file.size - 1}\/${file.size}`,
@@ -122,8 +124,10 @@ export class GoogleDriveAPI implements StorageAPI {
     }
 }
 
-interface UploadStatus {
+export interface UploadStatus {
     progress: string,
+    filename: string,
+    message: string,
 }
 
 enum FileType {

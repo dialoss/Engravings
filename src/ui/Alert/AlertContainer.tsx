@@ -23,7 +23,7 @@ const AlertContainer = () => {
     useAddEvent("alert:close", closeAlert);
     useAddEvent('alert:trigger', triggerAlert);
     return (
-        <ModalManager name={'alert-window'} defaultOpened={true} closeConditions={[]}>
+        <ModalManager name={'alert'} defaultOpened={true} closeConditions={[]}>
             <div className={'alerts-container'} style={{bg: 'bg-none'}}>
                 <TransitionGroup key={'alerts'} component={null}>
                     {

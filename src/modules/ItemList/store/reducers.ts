@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import store from "../../../store";
 
-interface ElementsState {
+interface IElements {
     itemsAll: object;
     cache: object;
     pageItems: object;
@@ -9,19 +9,17 @@ interface ElementsState {
     editPage: boolean;
 }
 
-const initialState: ElementsState = {
-    itemsAll: {},
-    cache: {},
-    pageItems: {},
-    actionElement: {},
-    editPage: false,
-}
-
 export const elementsSlice = createSlice({
     name: "elements",
-    initialState,
+    initialState: {
+        itemsAll: {},
+        cache: {},
+        pageItems: {},
+        actionElement: {},
+        editPage: false,
+    } as IElements,
     reducers: {
-        setItemsAll: (state: ElementsState, {payload: {items, page}}) => {
+        setItemsAll: (state: IElements, {payload: {items, page}}) => {
             for (const item of items) {
                 state.itemsAll[item.id] = item;
                 for (const itemChild of item.items) {

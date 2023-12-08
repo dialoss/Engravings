@@ -11,10 +11,17 @@ const reducers = combineReducers({
     users: userReducer,
     messenger: messengerReducer,
     comments: commentsReducer,
-    filemanager: filemanagerReducer,
 })
 
-export default configureStore({
-    reducer: reducers,
-    devTools: true,
-});
+export const setupStore = () => {
+    return configureStore({
+        reducer: reducers,
+        devTools: true,
+    });
+}
+
+export type RootState = ReturnType<typeof reducers>;
+export type AppStore = ReturnType<typeof setupStore>;
+export type AppDispatch = AppStore['dispatch'];
+
+export default setupStore();

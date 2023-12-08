@@ -1,7 +1,7 @@
 import {sendLocalRequest} from "api/requests";
-import {triggerEvent} from "../../../helpers/events";
+import {AppDispatch} from "../../../store";
 
-export async function fetchItems(offset, callback, limit) {
+export const fetchItems = async (offset, limit, callback) => {
     let step = 20;
     let cur = offset;
     while (true) {

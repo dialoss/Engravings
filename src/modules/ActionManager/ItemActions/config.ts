@@ -5,7 +5,7 @@ import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../c
 import {adminEmail} from "../../../components/Messenger/api/config";
 import {isMobileDevice, triggerEvent} from "../../../helpers/events";
 
-export const DefaultEdit = {
+export const DefaultEdit : IContextAction = {
     'clear_position': {
         callback: 'edit',
         argument: true,
@@ -18,7 +18,17 @@ export const DefaultEdit = {
     },
 }
 
-export const ContextActions = {
+export interface IContextAction {
+    [key: string]: {
+        text: string,
+        callback?: string | (() => void);
+        argument?: boolean,
+        stay_opened?: boolean,
+        actions?: IContextAction;
+    }
+}
+
+export const ContextActions : IContextAction = {
     'add':{
         text: 'Добавить',
         argument: true,

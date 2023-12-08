@@ -1,1 +1,1 @@
-export {default as ActionManager} from "./ActionManager.jsx";
+export {default as ActionManager} from "./ActionManager";

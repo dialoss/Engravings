@@ -5,9 +5,10 @@ import {doc, onSnapshot} from "firebase/firestore";
 import store from "store";
 import {actions} from "modules/Authorization/store/user/reducers";
 import {signInWithCustomToken} from "firebase/auth";
+import {useAppSelector} from "../hooks/redux";
 
 export const FirebaseContainer = () => {
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
 
     useLayoutEffect(() => {
         const unsubscribe = onSnapshot(doc(firestore, 'apps', 'users'), q => {
@@ -16,7 +17,7 @@ export const FirebaseContainer = () => {
                 if (!Object.values(user).length) return;
                 newUsers[user.id] = user;
             });
-            store.dispatch(actions.setUsers(newUsers));
+            RootState.dispatch(actions.setUsers(newUsers));
         });
 
         if (!user.authenticated) return;

@@ -1,14 +1,11 @@
 import {triggerEvent} from "helpers/events";
-import {actionElement, actionElements, clearElements, setUnselected} from "modules/ActionManager/components/helpers";
 import {setActionData} from "./config";
 import {getSettings} from "./helpers";
-import {getLocation} from "../../../hooks/getLocation";
 import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 import {getFormData} from "../../ActionForm/helpers/FormData";
 
 function updateRequest(request) {
     if (request.method === 'DELETE') {
-        request.id = '';
         request.method = 'POST';
     }
     if (request.method === 'POST') request.method = 'DELETE';
@@ -45,129 +42,83 @@ class HistoryManager {
         this.history.push(data);
     }
 }
+//
+// window.addEventListener('keydown', e => {
+// if e.target === null
+//     if (e.ctrlKey) {
+//         switch (e.code) {
+//             case 'KeyZ':
+//                 return manager.undo();
+//             case 'KeyY':
+//                 return manager.redo();
+//             case 'KeyC':
+//                 return Actions.copy();
+//             case 'KeyX':
+//                 return Actions.cut();
+//             case 'KeyV':
+//                 return Actions.action(Actions.paste());
+//             case 'KeyQ':
+//                 return manager.clear();
+//         }
+//     }
+//     if (e.key === 'Delete') {
+//         Actions.action(Actions.delete());
+//     }
+// })
 
-const manager = new HistoryManager();
 
-window.addEventListener('keydown', e => {
-    if (e.ctrlKey) {
-        switch (e.code) {
-            case 'KeyZ':
-                return manager.undo();
-            case 'KeyY':
-                return manager.redo();
-            case 'KeyC':
-                return Actions.copy();
-            case 'KeyX':
-                return Actions.cut();
-            case 'KeyV':
-                return Actions.action(Actions.paste());
-            case 'KeyQ':
-                return manager.clear();
-        }
-    }
-    if (e.key === 'Delete') {
-        Actions.action(Actions.delete());
-    }
-    console.log('history',Actions.history)
-    console.log('actionel', actionElements)
-})
-
-function preparePage(p) {
-    if (typeof (p) !== 'object') {
-        const location = getLocation();
-        return {
-            path: location.relativeURL.slice(1, -1),
-        }
-    }
-    return p;
+interface IRequest {
+    method: string,
+    url: string,
 }
 
-export default class Actions {
-    static element = null;
-    static elements = [];
-    static history = [];
+interface IElement {
+    data: object;
+    request?: IRequest;
+}
 
-    static action(data) {
-        Promise.resolve(data).then(resolve => {
-            console.log(resolve)
-            for (const request of resolve) {
-                let sendData = request.data || {};
-                if (sendData.type === 'comment') return;
+declare global {
+    interface Window {
+        actions: IActions;
+    }
+}
 
-                sendData.page = preparePage(sendData.page);
-                if (request.specifyElement && actionElement.type !== 'page') sendData.id = actionElement.id;
-                if (request.specifyParent && !('parent' in sendData) && actionElement.type !== 'page') sendData.parent = actionElement.id;
+interface IActions {
+    focused : IElement;
+    selected : IElement[];
+    history : HistoryManager;
+    request(elements: IElement[])
+    update();
+    delete();
+    create();
+    copy();
+    move();
+    paste();
+}
 
-                if (request.method === "POST" && !sendData.parent && !['base', 'page'].includes(sendData.type)) {
-                    sendData = {
-                        display_pos: actionElement.display_pos,
-                        type: 'base',
-                        page: sendData.page,
-                        items: [structuredClone(sendData)],
-                    }
-                }
-                let url = '/api/items/';
-                if (sendData.type === 'page') url = '/api/pages/';
-                if (request.method !== 'POST') {
-                    if (!actionElement.id) request.method = 'POST';
-                    else {
-                        let id = sendData.id;
-                        if (!id) id = actionElement.id;
-                        url += id + '/';
-                    }
-                }
+export default class Actions implements IActions{
+    focused = {data: {}};
+    selected = [];
+    history = new HistoryManager();
 
-                if (!sendData.tab && !actionElement.data.tab) sendData.tab = window.currentTab;
-                let storeMethod = request.method;
-                if ((sendData.parent || sendData.parent_0 || actionElement.parent || actionElement.parent_0) &&
-                    (['POST', 'DELETE'].includes(request.method))) storeMethod = 'PATCH';
+    request(elements: IElement[]) {
+        if (!sendData.tab && !actionElement.data.tab) sendData.tab = window.currentTab;
+        if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData)
 
-                if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData);
-
-                let sendRequest = {
-                    initialRequest: request,
-                    data: sendData,
-                    url,
-                    method: request.method,
-                    storeMethod,
-                };
-                triggerEvent('itemlist:request', sendRequest);
-                let prevData = {};
-                for (const f in sendData) {
-                    prevData[f] = actionElement.data[f] || sendData[f];
-                    prevData.page = preparePage(prevData.page);
-                }
-                !request.skipHistory && manager.add({...sendRequest, data: prevData});
-                console.log(manager.history)
-            }
-        })
+        let prevData = {};
+        for (const f in sendData) {
+            prevData[f] = actionElement.data[f] || sendData[f];
+            prevData.page = preparePage(prevData.page);
+        }
     }
 
-    static add(item='') {
+    create(item='') {
         let data = setActionData(item);
         if (!data) {
             let type = item;
             let initialData = {};
             let extraFields = [];
-            if (item === 'add') {
-                switch (actionElement.data.type) {
-                    case "timeline_entry":
-                        type = 'base';
-                        initialData = {
-                            show_date: true,
-                        };
-                        extraFields = ['url'];
-                        break;
-                    case "timeline":
-                        type = 'timeline_entry';
-                        initialData = {
-                            show_shadow: false,
-                            color: '#73ff00',
-                        };
-                        break;
-                }
-            }
-            if (type === 'add') return [];
+
             triggerEvent('element-form', getFormData({initialData, extraFields, method:'POST', element: {data:{type}}}));
             return [];
         }
@@ -185,7 +136,7 @@ export default class Actions {
             }}));
     }
 
-    static edit(item='') {
+    update(item='') {
         if (!actionElement.id) return [];
         if (!item) {
             triggerEvent('element-form', getFormData({method:'PATCH', element: actionElement}));
@@ -200,7 +151,7 @@ export default class Actions {
         }];
     }
 
-    static baseAction(type, name) {
+    baseAction(type, name) {
         // console.log(Actions.history)
         Actions.history.forEach(hs => hs.element.html.classList.remove(hs.className));
         Actions.history = [];
@@ -218,15 +169,19 @@ export default class Actions {
         return [];
     }
 
-    static copy() {
+    copy() {
        return Actions.baseAction('copy', 'copied');
     }
 
-    static cut() {
+    move() {
+
+    }
+
+    cut() {
         return Actions.baseAction('cut', 'cutted');
     }
 
-    static paste() {
+    paste() {
         let historyData = Actions.history;
         if (!historyData) return [];
         let action = actionElement;
@@ -250,8 +205,7 @@ export default class Actions {
         return request;
     }
 
-    static delete(elements=[]) {
-        if (!elements.length) elements = [...actionElements];
+    delete() {
         const f = el => ({data: structuredClone(el.data), method: 'DELETE', element: el.html});
         let data = elements.map(el => f(el));
         if (!data.length) data = [f(actionElement)];
@@ -265,3 +219,5 @@ export default class Actions {
         });
     }
 }
+
+window.actions = new Actions();

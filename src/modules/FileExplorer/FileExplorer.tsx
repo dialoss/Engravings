@@ -1,194 +1,80 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./file-explorer/file-explorer.css";
 import "./file-explorer/file-explorer";
-import {ExplorerViews, init, initItems, initTooltip, TextBar} from "./config";
+import {changeUploadStatus, ExplorerViews, init, initItems, TextBar} from "./config";
 import "./Custom.scss";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
-import {createRoot} from "react-dom/client";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
-import {SearchContainer, SortContainer} from "../../ui/Tools/Tools";
-import {fetchRequest, sendRequest} from "../../api/requests";
-import {fileToMedia, selectItems} from "./helpers";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {storage} from "./api/storage";
-import {UploadStatus} from "./api/google";
-
-const Toolbar = ({data, setData}) => {
-    return (
-        <div className="filemanager-sort fe_fileexplorer_item_text">
-            {
-                TextBar.map(t => <SortContainer data={data}
-                                                config={t}
-                                                setData={setData} key={t.sortBy}>
-                </SortContainer>)
-            }
-        </div>
-    );
-}
-
-const Sidebar = ({image}) => {
-    if (!image.meta) return;
-    return (
-        <div className="filemanager__sidebar">
-            <img src={image.meta.url} alt=""/>
-        </div>
-    );
-}
+import Toolbar from "./components/Toolbar";
+import {useAppSelector} from "../../hooks/redux";
 
 const FileExplorer = () => {
-    const location = useSelector(state => state.location).pageSlug;
-    useLayoutEffect(()=>{
-        window.filemanager = init();
-    },[]);
+    const location = useAppSelector(state => state.location);
     useLayoutEffect(() => {
-        triggerEvent('filemanager-window:check-opened', isOpened => {
-            !isOpened && storage.newFolderWithPath(['site', 'storage', location]).then(folder =>
+        init();
+        window.filemanager.changeFolder = () => {
+            if (window.filemanager.fromSearch) {
+                window.filemanager.fromSearch = false;
+                return;
+            }
+            const f = window.filemanager.GetCurrentFolder();
+            setFolder(f.GetEntries());
+        };
+        window.filemanager.open = () => document.querySelector("#filemanager-local").click();
+    }, []);
+
+    useEffect(() => {
+        if (!window.modals.checkState("filemanager")) {
+            console.log(location)
+            storage.newFolderWithPath(['site', 'storage', location.pageSlug]).then(folder =>
                     window.filemanager.SetPath([...window.filemanager.settings.initpath,
                         [ folder.id, folder.name, { canmodify: true } ]])
             )
-        })
+        }
     }, [location]);
-    useEffect(() => {
-        const zoomController = (e) => {
-            if(e.ctrlKey) {
-                if (!getElementFromCursor(e, 'fe_fileexplorer_wrap')) return;
-                e.preventDefault();
-                e.stopPropagation();
-                if (e.deltaY < 0) {
-                    scale.current = Math.min(15, (scale.current + 1));
-                } else {
-                    scale.current = Math.max(1, (scale.current - 1));
-                }
-                ref.current.style.setProperty('--icon-size', scale.current + 'em');
-                ref.current.style.setProperty('--scale', scale.current);
-            }
-        };
-        window.addEventListener('mousewheel', zoomController, {passive: false});
-        return () => window.removeEventListener('mousewheel', zoomController);
-    }, []);
 
-    const ref = useRef();
-    const scale = useRef();
-    const [view, setView] = useState(0);
     const [folder, setFolder] = useState([]);
-    const [search, setSearch] = useState([]);
-    const [curImage, setImage] = useState({});
-
-    function changeView() {
-        setView(v => (v + 1) % ExplorerViews.length);
-    }
 
     useAddEvent("filemanager:select", e => {
         window.filemanager.selectItems = e.detail.callback;
-        triggerEvent("filemanager-window:toggle", {isOpened:true});
+        window.modals.open("filemanager");
     });
 
-    useAddEvent("filemanager:local", e => {
-        ref.current.querySelector('#filemanager-local').click();
-    });
-
-    const toolbar = useRef();
-
-    useEffect(() => {
-        toolbar.current && !window.filemanager.fromSearch && toolbar.current.render(<Toolbar data={search} setData={setSearch}></Toolbar>);
-    }, [search]);
-
-    const openEditor = (folder, entry) => {
-        if (entry.filetype !== 'image') return;
-        setImage({meta: entry});
-        console.log(entry)
-        fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
-            const url = fileToMedia(file);
-            let img = new Image();
-            img.src = url;
-            setImage({image:img, folder: window.filemanager.GetCurrentFolder(), meta: entry});
-        });
-    }
-
-    useEffect(() => {
-        scale.current = 4;
-        ref.current.style.setProperty('--icon-size', scale.current + 'em');
-        ref.current.style.setProperty('--scale', scale.current);
-
-        let textBar = document.createElement('div');
-        textBar.classList.add('filemanager-textbar');
-        let field = ref.current.querySelector('.fe_fileexplorer_toolbar');
-        field.parentNode.insertBefore(textBar, field.nextSibling);
-        toolbar.current = createRoot(textBar);
-
-        window.filemanager.addEventListener('open_file', openEditor);
-    }, []);
-
-    useLayoutEffect(() => {
-        if (!ref.current) return;
-        initTooltip(ref, folder);
-    }, [folder]);
-
-    function refreshFolder() {
-        window.filemanager.RefreshFolders(true);
-    }
     useLayoutEffect(() => {
         if (!window.filemanager.GetCurrentFolder) return;
-        window.filemanager.GetCurrentFolder().SetEntries(search);
+        window.filemanager.GetCurrentFolder().SetEntries(folder);
         initItems();
-    }, [search]);
-
-    useAddEvent('filemanager:changeFolder', () => {
-        if (window.filemanager.fromSearch) {
-            window.filemanager.fromSearch = false;
-            return;
-        }
-        const f = window.filemanager.GetCurrentFolder();
-        setFolder(f.GetEntries());
-        setSearch(f.GetEntries());
-    });
-
-    useAddEvent('keydown', e => {
-       if (e.ctrlKey && e.shiftKey && e.code === 'KeyF')
-           triggerEvent("filemanager-window:toggle", {toggle: true});
-    });
-
-    function uploadCallback(event) {
-        storage.transferFiles(event, (status : UploadStatus) =>
-            window.filemanager.SetNamedStatusBarText('message', ' Прогресс: ' + (+status.progress * 100) + '%' + ' ' + status.filename));
-    }
+    }, [folder]);
 
     return (
-        <ModalManager name={"filemanager-window"} closeConditions={['btn', 'esc']}>
-            <TransformItem config={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', height:'600px', width:'800px'}}
-                           style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
+        <ModalManager name={"filemanager"}
+                      style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
+                      closeConditions={['btn', 'esc']}>
+            <TransformItem style={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', height:'600px', width:'800px'}}
                            className={'edit'}
-                           data-type={'modal'}>
-                <div className={"filemanager view-" + ExplorerViews[view]} ref={ref}>
+                           type={'modal'}>
+                <div className={"filemanager"}>
                     <div className="filemanager-left">
                         <div className={"filemanager-header__wrapper"}>
                             <div className="filemanager-header buttons transform-origin">
                                 <WindowButton type={'close'}></WindowButton>
-                            </div>
-                            <div className="filemanager-header toolbar">
-                                <div className="filemanager-search">
-                                    <SearchContainer data={folder}
-                                                     searchBy={'name'}
-                                                     setData={setSearch}
-                                                     placeholder={'Поиск по файлам'}>
-                                    </SearchContainer>
-                                </div>
-                                <div className="filemanager__button refresh" onClick={refreshFolder}>
-                                    Обновить
-                                </div>
-                                <div className="filemanager__button" onClick={changeView}>Вид</div>
-                                <div className="filemanager__button" onClick={selectItems}>Добавить</div>
+                                <Toolbar data={folder} setData={setFolder}></Toolbar>
                             </div>
                         </div>
                     </div>
                     <div className="filemanager-right">
-                        <ImageEditor image={curImage}></ImageEditor>
-                        {/*<Sidebar image={curImage}></Sidebar>*/}
-                        <input type="file" multiple={true} style={{display:'none'}} onChange={uploadCallback} id={"filemanager-local"}/>
+                        <ImageEditor></ImageEditor>
+                        <input type="file"
+                               multiple={true}
+                               style={{display:'none'}}
+                               onChange={e => storage.transferFiles(e, changeUploadStatus)}
+                               id={"filemanager-local"}/>
                     </div>
                 </div>
             </TransformItem>

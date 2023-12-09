@@ -5,13 +5,13 @@ import "./Messenger.scss";
 import MessengerHeader from "./Header/Header";
 import MessengerSidebar from "./Sidebar/MessengerSidebar";
 import MessagesContainer from "./Message/MessagesContainer";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {MessengerInputContainer} from "./Input/MessengerInputContainer";
 import {useGetRooms} from "./api/firebase";
 
 const Messenger = () => {
     useGetRooms();
-    const {room} = useSelector(state => state.messenger);
+    const {room} = useAppSelector(state => state.messenger);
 
     return (
         <div className={"messenger"}>

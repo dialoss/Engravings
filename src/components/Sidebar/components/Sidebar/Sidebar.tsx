@@ -12,12 +12,12 @@ import Swipes from "../../../../ui/Swipes/Swipes";
 import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 import {getLocation} from "../../../../hooks/getLocation";
 import Avatar from "../../../../ui/Avatar/Avatar";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {SearchContainer} from "../../../../ui/Tools/Tools";
 
 
 const Customer = () => {
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
     return (
         <div className={"user-profile " + ((getLocation().relativeURL === '/customer/') ? 'active' : '')}>
             {user.authenticated && <div className="wrapper">
@@ -77,12 +77,12 @@ const Sidebar = ({data, admin, setData}) => {
                         <div className="sidebar__inner">
                         <Customer></Customer>
                         {admin && <>
-                            <ActionButton onClick={() => triggerEvent("filemanager-window:toggle", {toggle:true})}
+                            <ActionButton onClick={() => window.modals.toggle("filemanager")}
                                  className={"sidebar__action sidebar__link"}>Хранилище</ActionButton>
                         </>}
-                            <ActionButton onClick={() => triggerEvent("messenger-window:toggle", {toggle:true})}
+                            <ActionButton onClick={() => window.modals.toggle("messenger")}
                                  className={"sidebar__action sidebar__link"}>сообщения</ActionButton>
-                            <ActionButton onClick={() => triggerEvent("notification-manager:toggle", {toggle: true})}
+                            <ActionButton onClick={() => window.modals.toggle("notifications")}
                                           className={"sidebar__action sidebar__link"}>Уведомления</ActionButton>
                             <SearchContainer placeholder={'Поиск страницы'}
                                              data={Object.values(data)}

@@ -1,5 +1,5 @@
-import React, {useEffect, useLayoutEffect, useReducer, useRef, useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import React, {ReducerState, useEffect, useLayoutEffect, useReducer, useRef, useState} from 'react';
+import {useAppDispatch, useAppSelector} from "hooks/redux";
 import ItemList from "components/ItemList/ItemList";
 import {actions, localReducer} from "../store/reducers";
 import {fetchItems} from "../api/fetchItems";
@@ -15,9 +15,9 @@ const ItemListContainer = () => {
     const [items, dispatch] = useReducer(localReducer, [] as ReducerState<object[]>);
     const itemsRef = useRef();
     itemsRef.current = items;
-    const globalDispatch = useDispatch();
+    const globalDispatch = useAppDispatch();
     const [totalItems, setTotalItems] = useState(0);
-    let page = useSelector(state => state.location.relativeURL);
+    let page = useAppSelector(state => state.location.relativeURL);
     async function addItems({newItems, count}, fromCache=false) {
         let items = newItems;
         if (count) setTotalItems(count);

@@ -2,8 +2,7 @@ import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'r
 import './Item.scss';
 import ItemData from "./components/ItemData";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
-import TransformContainer from "../../ui/ObjectTransform/components/TransformContainer/TransformContainer";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {isMobileDevice} from "../../helpers/events";
 import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 import MyMasonry from "../../ui/Masonry/MyMasonry";
@@ -17,64 +16,47 @@ export const SimpleItem = ({item, depth=0}) => {
         const itemRef = ref.current;
         const itemTransform = itemRef.closest(".transform-item");
 
-        itemTransform.style.width = item.width;
-        let mediaItems = 0;
-        let itemsRow = 1;
-        for (const it of item.items) {
-            if (['video', 'image', 'model'].includes(it.type) && it.position !== 'absolute') mediaItems += 1;
-        }
-        if (mediaItems >= 3 && !isMobileDevice()) itemsRow = 3;
-        else if (mediaItems >= 2) itemsRow = 2;
         const wrapper = itemTransform.querySelector('.items-wrapper');
         for (let it of item.items) {
             let transform = wrapper && wrapper.querySelector(`.item[data-id="${it.id}"]`);
             if (!transform) continue;
             transform = transform.closest('.transform-item');
-            if (isMobileDevice()) {
-                if (!['model', 'image','video', 'textfield'].includes(item.type)) {
-                    it.position = 'initial';
-                    it.width = 'auto';
-                }
-            }
-            if (it.position !== 'absolute' && it.width === 'auto') {
-                if (['video', 'image', 'model'].includes(it.type)) {
-                    // transform.style.width = 100 / itemsRow + '%';
-                }
-                it.width = transform.style.width;
+            if (isMobileDevice() && !item.type.match(/model|image|video|textfield/)) {
+                it.position = 'initial';
+                it.width = 'auto';
             }
         }
-        // initContainerDimensions({itemTransform, resize:true});
     }, [item]);
 
-    function getStyle() {
-        return {}
-    }
+    const itemData = <ItemData data={{...item.data, type: item.type, id: item.id}}></ItemData>;
+
+    const masonry = item.data.modifiers ? <MyMasonry maxColumns={1}>{
+        item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>)
+    }</MyMasonry> : item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
 
     return (
-        <div className={`item item-${item.type}`}
-             data-id={item.id} ref={ref} data-depth={depth} style={getStyle()}
+        <div className={`item item-${item.type}`} ref={ref} data-depth={depth}
              onDragStart={e => e.preventDefault()}>
-            {['timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
+            {['timeline_entry'].includes(item.type) && itemData}
                 {!['timeline', 'timeline_entry'].includes(item.type)
                     && <div className={'items-wrapper'}>
-                        {item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>)}
+                        {masonry}
                 </div>}
-                {!['base', 'timeline_entry'].includes(item.type) && <ItemData data={item}></ItemData>}
-            {['base'].includes(item.type) && <ItemData data={item}></ItemData>}
+                {!['base', 'timeline_entry'].includes(item.type) && itemData}
+            {['base'].includes(item.type) && itemData}
         </div>
     );
 }
 
 const Item = ({item, depth=0}) => {
-    const admin = useSelector(state => state.users.current.isAdmin);
+    const admin = useAppSelector(state => state.users.current.isAdmin);
     return (
         <TransformItem key={item.id + item.items.length}
-                       config={item}
-                       data-style={item.style}
-                       data-type={item.type}
-                       data-depth={depth}
-                       className={(admin ? 'edit' : '')}
-                       secure={true}>
+                       style={{...item.style, secure: true}}
+                       type={item.type}
+                       depth={depth}
+                       id={item.id}
+                       className={(admin ? 'edit' : '')}>
             <SimpleItem item={item} depth={depth}></SimpleItem>
         </TransformItem>
     );

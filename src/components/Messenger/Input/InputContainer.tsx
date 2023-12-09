@@ -52,7 +52,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
             const document = manager.config.getDocument();
             u.msg_id = msg.id;
             u.index = i;
-            manager.uploadMedia(u).then(data => {
+            manager.uploadMedia(u, ()=>{}).then(data => {
                 updateDoc(doc(manager.db, document), {messages: arrayRemove(structuredClone(msg))});
                 uploadData[i] = {
                     ...uploadData[i],

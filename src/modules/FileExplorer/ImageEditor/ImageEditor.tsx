@@ -1,9 +1,29 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./ImageEditor.scss";
 import {doc} from "firebase/firestore";
+import {fetchRequest} from "../../../api/requests";
+import {fileToMedia} from "../helpers";
 const { TABS, TOOLS } = window.FilerobotImageEditor;
 
-export function ImageEditor({image}) {
+export function ImageEditor() {
+    const [image, setImage] = useState({});
+
+    const openEditor = (folder, entry) => {
+        if (entry.filetype !== 'image') return;
+        setImage({meta: entry});
+        console.log(entry)
+        fetchRequest(entry.url).then(res => res.arrayBuffer()).then(file => {
+            const url = fileToMedia(file);
+            let img = new Image();
+            img.src = url;
+            setImage({image:img, folder: window.filemanager.GetCurrentFolder(), meta: entry});
+        });
+    }
+
+    useEffect(() => {
+        window.filemanager.addEventListener('open_file', openEditor);
+    }, []);
+
     useLayoutEffect(()=>{
         if (!image.image) return;
         const config = {

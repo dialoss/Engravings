@@ -53,7 +53,7 @@ export function selectItems() {
         window.filemanager.selectItems = null;
     } else {
         for (const f of selected.map(f => fileToItem({...f, type: f.filetype}))) {
-            triggerEvent("action:callback", [f]);
+            window.actions.request(f);
         }
     }
     window.filemanager.ClearSelectedItems();

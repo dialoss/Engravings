@@ -2,11 +2,11 @@ import React, {useLayoutEffect, useRef, useState} from 'react';
 import {getLocation} from "hooks/getLocation";
 import Comments from "./components/CommentsContainer";
 import Container from "../../ui/Container/Container";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 
 let counter = 0;
 const PageComments = ({page}) => {
-    const location = useSelector(state => state.location);
+    const location = useAppSelector(state => state.location);
     const docRef = useRef();
     const [document, setDocument] = useState(null);
     const pageURL = location.relativeURL.slice(1, -1).replaceAll('/', '$');

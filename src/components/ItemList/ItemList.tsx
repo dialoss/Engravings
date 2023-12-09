@@ -4,10 +4,10 @@ import NavButton from "../../ui/Buttons/NavButton/NavButton";
 import "./ItemList.scss";
 import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 
 const ItemList = ({items, className, loadMore=null}) => {
-    const edit = useSelector(state => state.elements.editPage);
+    const edit = useAppSelector(state => state.elements.editPage);
     return (
         <div className={`item-list ${className} ${getLocation().pageSlug} ${edit ? 'edit' : ''}`}>
             {

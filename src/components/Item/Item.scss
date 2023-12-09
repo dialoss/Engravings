@@ -9,14 +9,7 @@
 .item-list {
   .item {
     position: relative;
-    border-radius: 8px;
     transition: opacity 0.2s linear;
-    box-shadow: 0 0 5px gray;
-    z-index: $zindex-item;
-
-    &.selected {
-      outline: 6px solid #2b76e7;
-    }
 
     &.copied {
       opacity: 0.8;

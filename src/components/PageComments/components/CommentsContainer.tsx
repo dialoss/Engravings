@@ -15,7 +15,7 @@ import {createCommentsTree, sortFunction} from "./helpers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import {sendEmail} from "../../../api/requests";
 import {getLocation} from "../../../hooks/getLocation";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {SearchContainer} from "../../../ui/Tools/Tools";
 import {sendCloudMessage} from "../../Messenger/api/notifications";
 import NavButton from "../../../ui/Buttons/NavButton/NavButton";
@@ -51,7 +51,7 @@ const CommentsContainer = ({page, document, setDocument}) => {
     const [comments, setComments] = useState([]);
     const [commentsTree, setCommentsTree] = useState({});
     const [sorting, setSorting] = useState(() => sortFunction('default'));
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
     useLayoutEffect(() => {
         if (!page) return;
 

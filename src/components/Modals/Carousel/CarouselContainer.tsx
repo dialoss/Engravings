@@ -11,7 +11,7 @@ import React, {
 import Carousel from "./components/Carousel/Carousel";
 import {triggerEvent} from "helpers/events";
 import {useAddEvent} from "hooks/useAddEvent";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {ModalManager} from "components/ModalManager";
 import {getCompressedImage} from "../../Item/components/Image/helpers";
 
@@ -37,10 +37,10 @@ function prepareContent(item) {
 }
 
 export const CarouselModal = ({name}) => {
-    const windowName = 'carousel-window';
+    const windowName = 'carousel';
     const position = useRef();
-    const [items, setItems] = useState([]);
-    const itemsRef = useRef();
+    const [items, setItems] = useState<object>([]);
+    const itemsRef = useRef<object>([]);
     itemsRef.current = items;
     const [group, setGroup] = useState(null);
     function openCarousel(event) {
@@ -50,23 +50,21 @@ export const CarouselModal = ({name}) => {
         itemsRef.current = items;
         position.current = event.detail.item;
         setGroup(bounds(position, 0, itemsRef));
-        triggerEvent(windowName + ':toggle', {isOpened: true});
+        window.modals.open(windowName);
     }
     console.log(items, group)
     console.log(group)
     useAddEvent("carousel:open", openCarousel);
     return (
-        <ModalManager name={windowName} key={windowName}>
-            <div style={{}}>
-                {group && <CarouselContainer next={() => setGroup(bounds(position, 1, itemsRef))}
-                                            previous={() => setGroup(bounds(position, -1, itemsRef))}
-                                            group={group} type={'popup'}/>}
-            </div>
+        <ModalManager name={windowName} key={windowName} style={{}}>
+            {group && <CarouselContainer next={() => setGroup(bounds(position, 1, itemsRef))}
+                                         previous={() => setGroup(bounds(position, -1, itemsRef))}
+                                         group={group} type={'popup'}/>}
         </ModalManager>
     );
 }
 
-export const CarouselContext = createContext();
+export const CarouselContext = createContext({});
 
 const CarouselContainer = ({group, type, next, previous, ...props}) => {
     function nav(event) {

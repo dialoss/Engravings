@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useAddEvent} from "../../hooks/useAddEvent";
 import ModalForm from "../ActionForm/FormContainer";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 
 const form = {
     title: 'Выберите страницы для получения уведомлений',
@@ -10,7 +10,7 @@ const form = {
 }
 
 const NotificationManager = () => {
-    const pages = useSelector(state => state.location).pages;
+    const pages = useAppSelector(state => state.location).pages;
 
     Object.values(pages).forEach(p => form.data[p.title] = {
         name: p.path,
@@ -22,7 +22,7 @@ const NotificationManager = () => {
     console.log(pages)
     useAddEvent('notifications:dialog');
     return (
-        <ModalForm name={'notification-manager'} data={form}></ModalForm>
+        <ModalForm name={'notifications'} data={form}></ModalForm>
     );
 };
 

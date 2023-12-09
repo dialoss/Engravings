@@ -57,12 +57,6 @@ const LoginForm = ({callback, visible}) => {
     const [stage, setStage] = useState(0);
     const buttons = data.map((d, i) =>
         <ActionButton onClick={()=>setStage(i)} key={i}>{d.title}</ActionButton>);
-    // navigator.credentials.get({ password: true }).then(function (auth) {
-    //     console.log(auth); //Return NULL
-    //     console.log(auth.password); //Returns that does not exist
-    //     console.log(auth.id); //Returns that does not exist
-    //     console.log(auth.name); //Returns that does not exist
-    // });
     return (
         <div style={visible ? {visibility:'visible',opacity:1} : {visibility:"hidden",opacity:0}}>
             {
@@ -95,7 +89,7 @@ const LoginWindow = ({callback}) => {
     });
     const [authType, setType] = useState('');
     return (
-        <ModalForm name={'login-form'} data={{submitCallback: () => {
+        <ModalForm name={'login'} data={{submitCallback: () => {
             callback(null);
             setLoader(false);
             }}}>
@@ -136,8 +130,8 @@ const AuthWrapper = () => {
         LocalAuth.auth();
     }, []);
 
-    function toggle(state) {
-        triggerEvent('login-form:toggle', {isOpened: state});
+    function toggle(isOpened) {
+        window.modals.toggle('login', isOpened);
     }
 
     function callback(data) {

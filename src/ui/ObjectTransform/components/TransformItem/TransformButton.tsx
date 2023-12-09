@@ -1,16 +1,16 @@
 import React, {useEffect, useRef} from 'react';
-import {triggerEvent} from "helpers/events";
 
-const TransformButton = ({children, type, ...props}) => {
-    const ref = useRef();
+const TransformButton = ({children, type, secure, ...props}) => {
+    const ref = useRef<HTMLElement>(null);
 
     useEffect(() => {
         let origin = ref.current;
-        if (type === 'move') origin = ref.current.querySelector('.transform-origin');
+        // if (type === 'move') origin = ref.current.querySelector('.transform-origin');
         origin && origin.addEventListener('mousedown', e => {
-            // if (props.secure) return;
+            // e (props.secure) return;
+            if (e.button !== 0) return;
             e.stopPropagation();
-            triggerEvent("transform:init", {event: e, origin, type});
+            window.actions.elements.init(e, origin, type);
         });
     }, []);
 

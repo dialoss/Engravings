@@ -9,20 +9,20 @@ import PageFrom from "./PageFrom/PageFrom";
 import ItemTimeline from "./Timeline/ItemTimeline";
 import ItemPrice from "./Price/ItemPrice";
 import TimelineEntry from "./Timeline/TimelineEntry";
-import ItemLink from "./Link/ItemLink";
 import SubscriptionItem from "./Subscription/SubscriptionItem";
 import ButtonItem from "./Button/ButtonItem";
 import Viewer from "./Model/Viewer";
+import Section from "./Section/Section";
 
 export const Components = {
     'base': ItemBase,
-    'link': ItemLink,
     'page_from': PageFrom,
     'image': ItemImage,
     'table': ItemTable,
     'video': ItemVideo,
     'file': ItemFile,
     'model': Viewer,
+    'section': Section,
     'textfield': ItemTextfield,
     'timeline': ItemTimeline,
     'timeline_entry': TimelineEntry,

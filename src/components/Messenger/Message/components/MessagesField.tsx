@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import MessageBlock from "./MessageBlock";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {useAddEvent} from "../../../../hooks/useAddEvent";
 import DelayedVisibility from "../../../../ui/DelayedVisibility/DelayedVisibility";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 
 const MessagesField = ({messages}) => {
-    const {user, room} = useSelector(state => state.messenger);
+    const {user, room} = useAppSelector(state => state.messenger);
     const ref = useRef();
     function scrollInto(behavior) {
         ref.current && ref.current.scrollIntoView({behavior, block:'nearest'});

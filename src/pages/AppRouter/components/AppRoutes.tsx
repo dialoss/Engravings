@@ -4,7 +4,7 @@ import {routes} from "../constants/routes";
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import ItemListContainer from "../../../modules/ItemList/components/ItemListContainer";
 import store from "../../../store";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 
 const AppRoutes = () => {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ const AppRoutes = () => {
         }
     }, []);
 
-    const location = useSelector(state => state.location);
+    const location = useAppSelector(state => state.location);
     document.title = location.pageTitle + ' | MyMount';
 
     return (

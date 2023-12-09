@@ -7,27 +7,26 @@ import TransformItem from "../../ui/ObjectTransform/components/TransformItem/Tra
 import {serializeFields} from "./helpers/FormData";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
 
+
+
 const ModalForm = ({children, data=null, name, backgroundClose=true}) => {
     const [form, setForm] = useState(data);
-    function handleFormData(event) {
-        setForm(event.detail);
-        triggerEvent(name + ':toggle', {isOpened: true});
-    }
-    useAddEvent(name, handleFormData);
+    useEffect(() => {
+        // window.modals.all[name].openCallback = e => setForm(e.detail);
+    }, []);
     return (
-        <ModalManager name={name} key={name}
+        <ModalManager name={name} key={name} style={{bg:'bg-none', win: 'centered'}}
                       callback={(o) => !o && form && form.submitCallback && form.submitCallback(false)}
-                      closeConditions={['esc', 'btn', backgroundClose && 'bg']}>
-            <TransformItem config={{}} style={{bg:'bg-none', win: 'centered'}} data-type={'modal'}>
+                      closeConditions={['esc', 'btn', backgroundClose ? 'bg' : '']}>
+            <TransformItem style={{}} type={'modal'}>
                 {form && <FormContainer formData={form} callback={form.submitCallback ? (value) => {
                     form.submitCallback(value);
-                    triggerEvent(name + ':toggle', {isOpened: false});
+                    window.modals.close(name);
                 } : ((fields) => {
-                    triggerEvent(name + ':toggle', {isOpened: false});
+                    window.modals.close(name);
                     setForm(null);
                     if (!fields) return;
                     let data = serializeFields(fields, form.method);
-                    triggerEvent("action:callback", [{...form, data}]);
                 })}>{children}
                 </FormContainer>}
             </TransformItem>
@@ -35,7 +34,7 @@ const ModalForm = ({children, data=null, name, backgroundClose=true}) => {
     );
 }
 
-export const FormContext = createContext();
+export const FormContext = createContext({});
 
 export const FormContainer = ({formData, callback, children}) => {
     const [formFields, setFormFields] = useState(formData.data || {});

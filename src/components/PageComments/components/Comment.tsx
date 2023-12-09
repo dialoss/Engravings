@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import dayjs from "dayjs";
 import InfoParagraph from "../../../ui/InfoParagraph/InfoParagraph";
 import Avatar from "../../../ui/Avatar/Avatar";
@@ -13,7 +13,7 @@ import {clearTextFromHTML} from "../../../ui/TextEditor/helpers";
 import {UploadPreview} from "../../Messenger/Message/components/Message";
 
 const Comment = ({data, depth}) => {
-    const users = useSelector(state => state.users.users);
+    const users = useAppSelector(state => state.users.users);
     const [reply, setReply] = useState(false);
     const user = users[data.user] || data.user;
     const manager = useContext(CommentsContext);

@@ -10,14 +10,14 @@ import {
 import {ref, set, onValue, update} from "firebase/database";
 import {useLayoutEffect, useRef, useState} from "react";
 import {realtime, firestore, storage, MDB, adminEmail} from "./config";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import store from "store";
 import {getGlobalTime, sendLocalRequest} from "../../../api/requests";
-import {actions} from "../store/reducers";
+import {actions, IRoom, IUser} from "../store/reducers";
 import {triggerEvent} from "../../../helpers/events";
 import {getLocation} from "../../../hooks/getLocation";
 
-const uniqueID = async () => Date.parse((await getGlobalTime()).utc_datetime);
+const uniqueID = async () => +Date.parse((await getGlobalTime()).utc_datetime);
 
 export class MessageManager {
     db = null;
@@ -46,21 +46,20 @@ export class MessageManager {
         return sendData;
     }
 
-    uploadMedia(upload) {
+    uploadMedia(upload, callback) {
         return new Promise((resolve) => {
             let path = [this.appName];
             if (path[0] === 'comments') path.push(getLocation().pageSlug);
             (async function () {
-                const file = await uploadFile({file: upload, path});
-                let data = fileToItem({...file, type: file.filetype});
-                resolve(data.data);
+                const file = await window.storage.uploadFile(upload, path, callback);
+                resolve(file);
             })();
         });
     }
 }
 
 export function updateUser(type, data) {
-    const {user} = store.getState().messenger;
+    const user: IUser = store.getState().messenger.user;
     if (type === 'firestore') {
         const newUser = {[user.id]: {...user, ...data}};
         delete newUser[user.id].isTyping;
@@ -85,16 +84,13 @@ export function changeRoomData(room, user, users) {
     }
 }
 
-export async function createRoom(usersInRoom) {
+export async function createRoom(usersInRoom: IUser[]) {
     const messagesID = JSON.stringify(usersInRoom.map(u => u.email).sort());
-    const room = {
+    const room: IRoom = {
         users: usersInRoom.map(u => u.email),
         picture: '',
         title: '',
         messages: messagesID,
-        lastMessage: {},
-        newMessage: false,
-        notified: false,
         id: await uniqueID(),
     };
     const messagesDoc = {
@@ -123,37 +119,32 @@ export function customUpdate(name, raw, newData) {
 }
 
 export function useGetUsers() {
-    useLayoutEffect(() => {
-        const unsubscribe = onSnapshot(doc(MDB, 'users'), q => {
-            let newUsers = {};
-            q.data().users.forEach(user => {
-                newUsers[user.id] = user;
-            });
-            store.dispatch(actions.setField({field:'users', data: newUsers}));
-            // console.log('snapshot users', newUsers);
+    onSnapshot(doc(MDB, 'users'), q => {
+        let newUsers = {};
+        q.data().users.forEach(user => {
+            newUsers[user.id] = user;
         });
-        return () => unsubscribe;
-    }, []);
-    useLayoutEffect(() => {
-        const usersMeta = ref(realtime, 'users');
-        onValue(usersMeta, (snapshot) => {
-            const data = snapshot.val();
-            store.dispatch(actions.setUsersMeta({data}));
-        });
-    }, []);
+        store.dispatch(actions.setField({field:'users', data: newUsers}));
+        // console.log('snapshot users', newUsers);
+    });
+
+    const usersMeta = ref(realtime, 'users');
+    onValue(usersMeta, (snapshot) => {
+        const data = snapshot.val();
+        store.dispatch(actions.setUsersMeta({data}));
+    });
 }
 
 export function useGetRooms() {
-    const {rooms_raw, user, users, room, rooms} = useSelector(state => state.messenger);
+    const {rooms_raw, user, users, room, rooms} = useAppSelector(state => state.messenger);
     useLayoutEffect(() => {
-        const unsubscribe = onSnapshot(doc(MDB, 'rooms'), q => {
+        onSnapshot(doc(MDB, 'rooms'), q => {
             let newRooms = {};
             q.data().rooms.forEach(r => newRooms[r.id] = r);
             store.dispatch(actions.setField({field:'rooms_raw', data:newRooms}));
             // console.log(newRooms)
             // console.log('SNAPSHOT ROOMS')
         });
-        return () => unsubscribe;
     }, []);
 
     useLayoutEffect(() => {

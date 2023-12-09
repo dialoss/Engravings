@@ -3,15 +3,15 @@ import React, {useEffect, useState} from 'react';
 import {sendLocalRequest, sendRequest} from "api/requests";
 import Sidebar from "./components/Sidebar/Sidebar";
 import {actions} from "pages/AppRouter/store/reducers";
-import {useDispatch, useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "hooks/redux";
 import {useAddEvent} from "../../hooks/useAddEvent";
 
 const SidebarContainer = () => {
     const [pages, setPages] = useState([]);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     async function fetchPages() {
-        const response = await sendLocalRequest('/api/pages/', {}, 'GET', false);
+        const response = await sendLocalRequest('/api/pages/', {}, 'GET');
         function spl(p) {
             return p.split('/').length;
         }
@@ -52,7 +52,7 @@ const SidebarContainer = () => {
         fetchPages();
     }, []);
 
-    const userAdmin = useSelector(state => state.users.current).isAdmin;
+    const userAdmin = useAppSelector(state => state.users.current).isAdmin;
     return (
         <Sidebar admin={userAdmin} customer={true}
                  data={{sublist:pages, depth:-1}} setData={setPages}/>

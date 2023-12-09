@@ -8,7 +8,7 @@ import {sendLocalRequest} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 import {ReactComponent as Edit} from "./edit.svg";
 import {ReactComponent as Backup} from "./backup.svg";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 
 const ThemeManager = () => {
     function setEdit() {
@@ -43,12 +43,11 @@ const ThemeManager = () => {
             }, 300);
         });
     }
-    const element = useSelector(state => state.elements.actionElement);
-    let data = {...element.data, display_pos: element.display_pos};
+    const element = useAppSelector(state => state.elements.focused);
+    let data = {...element.data};
     for (let d in data) {
         if (!['id', 'parent_id', 'parent_0', 'width', 'height', 'left', 'top'].includes(d)) delete data[d];
     }
-    console.log(element)
     return (
         <div className={'page-editor'}>
             <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>

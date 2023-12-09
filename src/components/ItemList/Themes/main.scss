@@ -1,5 +1,4 @@
 .item-list {
-  @import 'parent';
   &.shop {
     @import "shop";
   }

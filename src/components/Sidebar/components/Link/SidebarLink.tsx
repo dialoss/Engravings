@@ -1,11 +1,11 @@
 import React from 'react';
 import {darkenColor} from "../rgbmanip";
 import {Link} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {isMobileDevice, triggerEvent} from "../../../../helpers/events";
 
 const SidebarLink = ({link, children, depth, haveSublist}) => {
-    const location = useSelector(state => state.location);
+    const location = useAppSelector(state => state.location);
     const isCurrent = location.relativeURL === link;
     let style = {
         backgroundColor: darkenColor('rgb(235, 239, 242)', depth * 10 / 100),

@@ -63,13 +63,13 @@ const MyMasonry = ({maxColumns=1, children}) => {
     useAddEvent('resize', () => {
         forceRef.current === 0 && setColumns();
         for (const container of ref.current.querySelectorAll('.transform-container')) {
-            initContainerDimensions({container})
+            // initContainerDimensions({container})
         }
     });
 
     useEffect(() => {
         for (const container of ref.current.querySelectorAll('.transform-container')) {
-            initContainerDimensions({container})
+            // initContainerDimensions({container})
         }
     }, [layout]);
     return (

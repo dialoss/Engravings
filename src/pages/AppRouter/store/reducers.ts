@@ -14,17 +14,17 @@ interface ILocation {
     relativeURL: string;
     pages: {key: number, value: IPage};
     currentPage: IPage;
+    pageSlug: string;
 }
 
 export const locationSlice = createSlice({
     name: "location",
     initialState: {
-        // serverURL: 'http://localhost:8000',
-        serverURL : 'https://matthew75.pythonanywhere.com',
         pages : {},
         fullURL : '',
         relativeURL : '',
         currentPage: {},
+        pageSlug: '',
     } as ILocation,
     reducers: {
         setLocation: (state : ILocation) => {
@@ -34,6 +34,7 @@ export const locationSlice = createSlice({
             if (state.relativeURL[0] !== '/') state.relativeURL = '/' + state.relativeURL;
             if (state.relativeURL.slice(-1) !== '/') state.relativeURL = state.relativeURL + '/';
             state.fullURL = url;
+            state.pageSlug = state.relativeURL.split('/').slice(-2, -1)[0];
             for (const p in state.pages) {
                 if ('/' + state.pages[p].path + '/' === state.relativeURL) {
                     state.currentPage = state.pages[p];

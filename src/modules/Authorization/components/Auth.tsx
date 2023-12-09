@@ -1,11 +1,11 @@
 import React from 'react';
 import "./Auth.scss";
 import AuthButton from "./AuthButton";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {triggerEvent} from "../../../helpers/events";
 
 const Auth = () => {
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
     function login() {
         triggerEvent('user-auth', true);
     }

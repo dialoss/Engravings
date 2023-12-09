@@ -29,10 +29,11 @@ function getMaxBottom(container) {
     }
     return m;
 }
-export function initContainerDimensions({container, item, resize}) {
+export function initContainerDimensions(item: HTMLElement, resize=false) {
+    let container = item.parentElement;
     if (!container) return;
     if (container.classList.contains('viewport-container')) return;
-    let contHeight = getMaxBottom(container, resize);
+    let contHeight = getMaxBottom(container);
     if (!isResizable(container) && item) {
         let itemBlock = item.getBoundingClientRect();
         let contBlock = container.getBoundingClientRect();
@@ -42,8 +43,8 @@ export function initContainerDimensions({container, item, resize}) {
     }
     container.style.minHeight = contHeight + "px";
     if (!resize) {
-        let parentContainer = container.parentElement.closest('.transform-container');
-        parentContainer && initContainerDimensions({container: parentContainer});
+        let parentContainer = container.closest('.transform-item').parentElement;
+        parentContainer && initContainerDimensions(parentContainer);
     }
 }
 

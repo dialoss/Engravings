@@ -116,7 +116,7 @@ export function transformItem({item, event}) {
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
-    initContainerDimensions({container, item});
+    initContainerDimensions(item);
 }
 
 export function setItemTransform(event, type, _item, _btn, config) {
@@ -159,28 +159,30 @@ export function getTransformData({item}) {
     let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
     if (isResizable(container)) top = item.offsetTop + 'px';
     item.setAttribute('data-top', item.style.top);
-    let parent = getElementID(item.closest('.item'));
 
-    let request = [{
+    window.actions.request({
         data: {
-            id: getElementID(item.querySelector('.item')),
+            id: window.actions.elements.focused.id,
             position: item.style.position || 'initial',
             height: item.querySelector('.transform-container').getBoundingClientRect().height + 'px' || "0",
             width: item.style.width || "0",
             top,
             left: item.style.left || "0",
-            container_width: item.querySelector('.transform-container').getBoundingClientRect().width || 0,
         },
-        method: 'PATCH',
-    },
-        {
-            data: {
-                id: parent,
-                container_width: container.getBoundingClientRect().width || 0,
-            },
+        request: {
             method: 'PATCH',
-            skipHistory: true,
+            url: "items"
         }
-    ];
-    triggerEvent('action:callback', request);
+    });
+
+    window.actions.request({
+        data: {
+            id: window.actions.elements.focused.parent,
+            container_width: container.getBoundingClientRect().width || 0,
+        },
+        request: {
+            method: 'PATCH',
+            url: "items"
+        }
+    });
 }

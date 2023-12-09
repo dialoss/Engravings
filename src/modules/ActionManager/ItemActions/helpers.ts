@@ -1,5 +1,4 @@
-import {triggerEvent} from "../../../helpers/events";
-import Actions from "./actions";
+//@ts-nocheck
 import {IContextAction} from "./config";
 
 export function getSettings(name, data) {
@@ -29,7 +28,7 @@ export function getSettingText(text, positive) {
     return text;
 }
 
-const closeCallback = () => triggerEvent('context-window:toggle', {isOpened: false});
+const closeCallback = () => window.modals.close("context");
 
 export function serializeActions(actions, actionElement, depth=0) : IContextAction[] {
     return Object.keys(actions).map(name => {
@@ -46,13 +45,13 @@ export function serializeActions(actions, actionElement, depth=0) : IContextActi
                 case false:
                     callback = () => {
                         !action.stay_opened && closeCallback();
-                        Actions.action(Actions[functionName]());
+                        window.actions[functionName]();
                     }
                     break;
                 case true:
                     callback = () => {
                         !action.stay_opened && closeCallback();
-                        Actions.action(Actions[functionName](name));
+                        window.actions[functionName](name);
                     }
                     break;
             }

@@ -6,21 +6,22 @@ import {ReactComponent as IconChevronRight} from "ui/Iconpack/icons/chevron-righ
 import Slider from "ui/Slider/Slider";
 import SidebarList from "./SidebarList";
 import FormInput from "../../Modals/MyForm/Input/FormInput";
-import {createRoom, createUser, setCurrentRoom, updateRoom, updateUser} from "../api/firebase";
+import {createRoom, setCurrentRoom, updateRoom, updateUser} from "../api/firebase";
 import {getViewportSize} from "../../../ui/helpers/viewport";
 import Swipes from "../../../ui/Swipes/Swipes";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
 import {actions} from "../store/reducers";
 import store from "../../../store";
 import {loginForm} from "../../../modules/Authorization/forms/loginForm";
 import {adminEmail} from "../api/config";
 import {SearchContainer} from "../../../ui/Tools/Tools";
+import {useAppSelector} from "../../../hooks/redux";
 
 
 const MessengerSidebar = () => {
-    const userAdmin = useSelector(state => state.users.current);
-    const {rooms, room, users, user} = useSelector(state => state.messenger);
+    const userAdmin = useAppSelector(state => state.users.current);
+    const {rooms, room, users, user} = useAppSelector(state => state.messenger);
 
     function setRoom(id) {
         if (!user) {

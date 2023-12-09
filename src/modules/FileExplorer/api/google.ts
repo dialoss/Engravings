@@ -49,7 +49,9 @@ export interface StorageAPI {
 export class GoogleDriveAPI implements StorageAPI {
     requests = new GoogleRequests();
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
-        return (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
+        const serialized = (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
+        console.log(url, data, serialized);
+        return serialized;
     }
 
     list(id: string) {

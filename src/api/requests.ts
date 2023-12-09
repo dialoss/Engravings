@@ -3,6 +3,9 @@ import Credentials from "../modules/Authorization/api/googleapi";
 import {triggerEvent} from "../helpers/events";
 import axios from "axios";
 
+// const SERVER_URL = 'https://matthew75.pythonanywhere.com';
+const SERVER_URL = 'http://localhost:8000';
+
 export async function fetchRequest(url) {
     if (!url.includes('firebase')) {
         const query = new URL(url);
@@ -31,8 +34,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
-
 export async function sendRequest(url, data, method) {
     let response = null;
     const csrftoken = getCookie('csrftoken');
@@ -44,7 +45,7 @@ export async function sendRequest(url, data, method) {
             'X-CSRFToken': csrftoken,
             "Content-Type": 'application/json;charset=utf-8',
         },
-        ...(method !== 'GET' ? {body: JSON.stringify(data)} : {})
+        ...(method !== 'GET' ? {data} : {})
     }
     try {
         await axios(query).then(d => response = d.data);
@@ -58,9 +59,10 @@ export async function sendRequest(url, data, method) {
     return response;
 }
 
-export function sendLocalRequest(url, data={}, method='GET') {
+export function sendLocalRequest(endpoint, data={}, method='GET') {
     const location = store.getState().location;
-    url = new URL(location.serverURL + url);
+    let url = new URL(SERVER_URL + endpoint);
+    url.search += "&" + new URLSearchParams({path: location.relativeURL.slice(1, -1)}).toString();
     return sendRequest(url.toString(), data, method);
 }
 

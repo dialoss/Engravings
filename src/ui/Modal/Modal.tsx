@@ -3,20 +3,19 @@ import './Modal.scss';
 import {getElementFromCursor} from "../../helpers/events";
 import {useAddEvent} from "../../hooks/useAddEvent";
 
-const Modal = ({content, name, isOpened, closeCallback}) => {
+const Modal = ({content, style, name, isOpened, closeCallback}) => {
     const ref = useRef<HTMLElement>(null);
-    const props = content.props.style;
     const opened = (isOpened ? "opened" : "");
-
+    console.log(name, style)
     function backgroundClose(event) {
         const toggle = getElementFromCursor(event, 'modal__toggle-button');
         !toggle && closeCallback();
-        if (props.bg !== 'bg-none') event.stopPropagation();
+        if (style.bg !== 'bg-none') event.stopPropagation();
     }
     useAddEvent("mousedown", (e) => {
         const toggle = getElementFromCursor(e, 'modal__toggle-button');
         const mod = getElementFromCursor(e, name);
-        !mod && !toggle && props.bg === 'bg-none' && closeCallback();
+        !mod && !toggle && style.bg === 'bg-none' && closeCallback();
     });
 
     useEffect(() => {
@@ -29,9 +28,9 @@ const Modal = ({content, name, isOpened, closeCallback}) => {
     return (
         <div className={"modal"} ref={ref}>
             <div className={"modal__wrapper"}>
-                <div className={`modal__background ${opened} ${!!props && (props.bg || '')}`}
+                <div className={`modal__background ${opened} ${!!style && (style.bg || '')}`}
                      onClick={backgroundClose}>
-                    <div className={`modal__window ${name} ${opened} ${!!props && ((props.win || '') + ' ' + (props.bg || ''))}`}
+                    <div className={`modal__window ${name} ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
                          onClick={e => e.stopPropagation()}>
                         <div className="modal__content">
                             {content}

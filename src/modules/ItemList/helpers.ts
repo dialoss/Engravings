@@ -20,7 +20,7 @@ export function createItemsTree(items) {
         links[c.id] = p.items[p.items.length - 1];
     });
 
-    return (Object.values(tree)).sort((a, b) => a.display_pos - b.display_pos);
+    return (Object.values(tree)).sort((a, b) => a.order - b.order);
     // console.log('AFTER TREE', sorted);
 }
 

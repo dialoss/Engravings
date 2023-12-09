@@ -1,10 +1,10 @@
 import React from 'react';
 import {NavbarRoutes} from "./routes";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import Navbar from "./Navbar";
 
 const NavbarContainer = () => {
-    const location = useSelector(state=> state.location);
+    const location = useAppSelector(state=> state.location);
     function isActive(path) {
         return location.relativeURL.split('/')[1] === path && location.parentSlug;
     }

@@ -3,20 +3,53 @@ import {Transforms} from "../../config";
 import TransformButton from "./TransformButton";
 import "./TransformItem.scss";
 
-const TransformItem = ({children, config, className, ...props}) => {
+
+export interface TransformItemStyle {
+    secure?: boolean;
+    height?: string;
+    width?: string;
+    top?: string;
+    left?: string;
+    zIndex?: number;
+    movable?: boolean;
+    resizable?: boolean;
+    aspectRatio?: string;
+    padding?: string;
+    background?: string;
+    border?: string;
+}
+
+export interface TransformItemProps {
+    children: React.ReactNode;
+    style: TransformItemStyle,
+    className: string;
+    type: string;
+    id: number;
+}
+
+function getStyle(style, type) {
+    return {
+        ...style,
+        height: (type === 'modal' || style.height.match('px')) ? style.height : 'auto',
+        padding: style.padding ? (style.padding + "px").repeat(4) : '0',
+        ...{border: '0', borderRadius: style.border}
+    }
+}
+
+const TransformItem = ({children, style, type, className, id} : TransformItemProps) => {
     return (
         <TransformButton className={"transform-item transform--move " + className || ''}
                          type={'move'}
-                         {...props}
-                         secure={config.secure}
-                         data-top={config.top}
-                         style={{...config, height: (props['data-type'] === 'modal' || config.height.match('px')) ? config.height : 'auto',}}>
+                         secure={style.secure}
+                         data-type={type}
+                         data-id={id}
+                         style={getStyle(style, type)}>
             {children}
             {
                 Object.values(Transforms).map(t => <TransformButton
                         key={t.name}
                         type={t.name}
-                        secure={config.secure}
+                        secure={style.secure}
                         className={"transform-resize " + t.name}></TransformButton>)
             }
 

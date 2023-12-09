@@ -1,8 +1,8 @@
 import {triggerEvent} from "helpers/events";
 import {setActionData} from "./config";
 import {getSettings} from "./helpers";
-import {childItemsTree, createItemsTree} from "../../ItemList/helpers";
 import {getFormData} from "../../ActionForm/helpers/FormData";
+import {ElementActions, IActionElement} from "../../../ui/ObjectTransform/ObjectTransform";
 
 function updateRequest(request) {
     if (request.method === 'DELETE') {
@@ -15,6 +15,7 @@ function updateRequest(request) {
 class HistoryManager {
     history = [];
     current = 0;
+
     undo() {
         if (this.current < 0) {
             this.current = 0;
@@ -24,6 +25,7 @@ class HistoryManager {
         this.history.length && triggerEvent('itemlist:request', request);
         this.current -= 1;
     }
+
     redo() {
         if (!this.history.length) return;
         if (this.current >= this.history.length) {
@@ -34,6 +36,7 @@ class HistoryManager {
         triggerEvent('itemlist:request', request);
         this.current += 1;
     }
+
     clear() {
         this.history = [];
     }
@@ -42,74 +45,36 @@ class HistoryManager {
         this.history.push(data);
     }
 }
-//
-// window.addEventListener('keydown', e => {
-// if e.target === null
-//     if (e.ctrlKey) {
-//         switch (e.code) {
-//             case 'KeyZ':
-//                 return manager.undo();
-//             case 'KeyY':
-//                 return manager.redo();
-//             case 'KeyC':
-//                 return Actions.copy();
-//             case 'KeyX':
-//                 return Actions.cut();
-//             case 'KeyV':
-//                 return Actions.action(Actions.paste());
-//             case 'KeyQ':
-//                 return manager.clear();
-//         }
-//     }
-//     if (e.key === 'Delete') {
-//         Actions.action(Actions.delete());
-//     }
-// })
-
 
 interface IRequest {
     method: string,
     url: string,
 }
 
-interface IElement {
-    data: object;
-    request?: IRequest;
-}
-
-declare global {
-    interface Window {
-        actions: IActions;
-    }
+export interface IElement {
+    data: IActionElement;
+    request: IRequest;
 }
 
 interface IActions {
-    focused : IElement;
-    selected : IElement[];
+    elements : ElementActions;
     history : HistoryManager;
-    request(elements: IElement[])
+    request(element: IElement)
     update();
     delete();
     create();
     copy();
+    cut();
     move();
     paste();
 }
 
 export default class Actions implements IActions{
-    focused = {data: {}};
-    selected = [];
+    elements = new ElementActions();
     history = new HistoryManager();
 
-    request(elements: IElement[]) {
-        if (!sendData.tab && !actionElement.data.tab) sendData.tab = window.currentTab;
-        if (request.method === 'POST' && request.createTree) sendData = childItemsTree(sendData)
+    request(element: IElement) {
 
-        let prevData = {};
-        for (const f in sendData) {
-            prevData[f] = actionElement.data[f] || sendData[f];
-            prevData.page = preparePage(prevData.page);
-        }
     }
 
     create(item='') {
@@ -119,7 +84,7 @@ export default class Actions implements IActions{
             let initialData = {};
             let extraFields = [];
 
-            triggerEvent('element-form', getFormData({initialData, extraFields, method:'POST', element: {data:{type}}}));
+            // window.modals.open("element-form") getFormData({initialData, extraFields, method:'POST', element: {data:{type}}}));
             return [];
         }
         if (!Array.isArray(data)) {
@@ -131,28 +96,25 @@ export default class Actions implements IActions{
             specifyParent: true,
             data: {
                 type: item,
-                display_pos: actionElement.display_pos,
                 ...d,
             }}));
     }
 
     update(item='') {
-        if (!actionElement.id) return [];
         if (!item) {
-            triggerEvent('element-form', getFormData({method:'PATCH', element: actionElement}));
+            triggerEvent('element-form', getFormData({method:'PATCH', element: this.focused}));
             return [];
         }
         return [{
             method: 'PATCH',
             specifyElement: true,
             data: {
-                ...getSettings(item, actionElement.data)
+                ...getSettings(item, this.focused.data)
             }
         }];
     }
 
     baseAction(type, name) {
-        // console.log(Actions.history)
         Actions.history.forEach(hs => hs.element.html.classList.remove(hs.className));
         Actions.history = [];
         let elements = [...actionElements];
@@ -192,7 +154,6 @@ export default class Actions implements IActions{
         historyData.forEach(hs => {
             let item = {
                 ...hs.element.data,
-                display_pos: actionData.display_pos,
                 parent: action.id,
             };
             request.push({
@@ -220,4 +181,9 @@ export default class Actions implements IActions{
     }
 }
 
-window.actions = new Actions();
+declare global {
+    interface Window {
+        actions: Actions;
+    }
+}
+

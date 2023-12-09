@@ -4,6 +4,7 @@ interface IUser {
     isAdmin: boolean,
     authenticated: boolean,
     firebase: object,
+    id: number;
 }
 
 interface IUsers {
@@ -15,10 +16,11 @@ export const userSlice = createSlice({
     name: "users",
     initialState: {
         current: {
+            id: 0,
             isAdmin: false,
             authenticated: false,
             firebaseUser: null,
-        },
+        } as IUser,
         users: {},
     } as IUsers,
     reducers: {

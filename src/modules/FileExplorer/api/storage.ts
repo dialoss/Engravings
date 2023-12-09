@@ -11,9 +11,8 @@ export interface IAppStorage {
     storageAPI: StorageAPI,
     listFiles(id: string) : Promise<StorageFile[]>;
     getFile(id: string) : Promise<StorageFile>;
-    copy(file : StorageFile);
+    copy(id: string, dest: string);
     move(file : StorageFile);
-    rename(file : StorageFile);
     delete(files : StorageFile[]);
     uploadFile(file: File, path: string[], callback);
     getSpace(): Promise<StorageSpace>;
@@ -22,7 +21,7 @@ export interface IAppStorage {
 export class AppStorage implements IAppStorage {
     storageAPI = new GoogleDriveAPI();
 
-    newFile(path: string[], file: StorageFile) {
+    newFile(path: string[], file: EmptyStorageFile) {
         return this.storageAPI.post(false, file);
     }
 
@@ -33,6 +32,7 @@ export class AppStorage implements IAppStorage {
         for (const f of path) {
             nextFolder.parent = folderID;
             nextFolder.name = f;
+            console.log(path, nextFolder)
             folderData = (await this.storageAPI.post(true, nextFolder))[0];
             folderID = folderData.id;
         }
@@ -91,11 +91,12 @@ export class AppStorage implements IAppStorage {
         return this.storageAPI.get(id)[0];
     }
 
-    copy(file: StorageFile) {
+    copy(id: string, dest: string) {
     }
-    rename(file: StorageFile) {
+    update(file: StorageFile) {
+        return this.storageAPI.update(file);
     }
-    move(file: StorageFile) {
+    move() {
     }
 
     transferFiles(event, callback) {
@@ -110,7 +111,14 @@ interface StorageSpace {
     total: number,
 }
 
+declare global {
+    interface Window {
+        storage: AppStorage;
+    }
+}
+
 export const storage = new AppStorage();
+window.storage = storage;
 
 class FileTransfer {
     static getTransfer(event: any): File[] {

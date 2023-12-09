@@ -2,12 +2,12 @@ import React, {useLayoutEffect, useState} from 'react';
 import Footer from "ui/Footer/Footer";
 import {getLocation} from "hooks/getLocation";
 import {sendLocalRequest} from "api/requests";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {request} from "../api/metrica";
 
 const FooterContainer = () => {
     const [views, setViews] = useState({currentViews: 0, totalViews: 0});
-    const location = useSelector(state => state.location);
+    const location = useAppSelector(state => state.location);
     useLayoutEffect(() => {
         request().then(data => {
             let currentViews = 0;

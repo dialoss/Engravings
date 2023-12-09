@@ -1,4 +1,4 @@
-import store from "store";
+import store, {RootState} from "store";
 import {getLocation} from "../../../hooks/getLocation";
 import {sendEmail} from "../../../api/requests";
 import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
@@ -7,12 +7,12 @@ import {isMobileDevice, triggerEvent} from "../../../helpers/events";
 
 export const DefaultEdit : IContextAction = {
     'clear_position': {
-        callback: 'edit',
+        callback: 'update',
         argument: true,
         text: 'Сбросить расположение',
     },
     'clear_size': {
-        callback: 'edit',
+        callback: 'update',
         argument: true,
         text: 'Сбросить размер',
     },
@@ -29,28 +29,28 @@ export interface IContextAction {
 }
 
 export const ContextActions : IContextAction = {
-    'add':{
+    'create':{
         text: 'Добавить',
         argument: true,
         stay_opened: true,
         actions: {
             'quick': {
-                callback: 'add',
+                callback: 'create',
                 argument: true,
                 text: 'Новая запись',
             },
             'empty': {
-                callback: 'add',
+                callback: 'create',
                 argument: true,
                 text: 'Пустая',
             },
             'textfield': {
-                callback: 'add',
+                callback: 'create',
                 argument: true,
                 text: 'Текстовое поле',
             },
             'button': {
-                callback: 'add',
+                callback: 'create',
                 argument: true,
                 text: 'Кнопка',
             },
@@ -59,44 +59,44 @@ export const ContextActions : IContextAction = {
                 stay_opened: true,
                 actions: {
                     'tabs': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Вкладки',
                     },
                     'intro': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Шапка',
                     },
                     'shop': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Продажа',
                     },
                     'timeline': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Таймлайн',
                         actions: {
                             'timeline_entry': {
-                                callback: 'add',
+                                callback: 'create',
                                 argument: true,
                                 text: 'Запись',
                             },
                         }
                     },
                     'price': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Цена',
                     },
                     'page': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Страница'
                     },
                     'navigation': {
-                        callback: 'add',
+                        callback: 'create',
                         argument: true,
                         text: 'Навигация'
                     }
@@ -104,7 +104,7 @@ export const ContextActions : IContextAction = {
             },
         }
     },
-    'edit':{
+    'update':{
         text: 'Редактировать',
         argument: false,
         actions: {},
@@ -526,7 +526,6 @@ async function actionMessage(text) {
         getDocument: () => adminRoom.messages,
     }
     const manager = new MessageManager('messenger', null, config);
-
     let msg = await manager.sendMessage({
         message: {
             text,
@@ -535,11 +534,6 @@ async function actionMessage(text) {
         user_id: admin.id,
     });
     updateRoom({lastMessage: msg, newMessage: true, notified:false}, adminRoom.id);
-    const messenger = document.querySelector('.messenger-window .transform-item');
-    if (!isMobileDevice()) {
-        messenger.style.right = '50px';
-        messenger.style.bottom = '200px';
-    }
     setCurrentRoom(adminRoom.id);
-    triggerEvent("messenger-window:toggle", {isOpened: true});
+    window.modals.open("messenger");
 }

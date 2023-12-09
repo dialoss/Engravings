@@ -1,11 +1,11 @@
 import React, {useEffect, useLayoutEffect, useRef} from 'react';
 import './ActionButton.scss';
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {triggerEvent} from "../../../helpers/events";
 
 const ActionButton = ({children, focus=false, modalToggle=true, authorizeAction, className, ...props}) => {
     const ref = useRef();
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
     const f = props.onClick;
     if (authorizeAction) {
         props.onClick = (e) => {

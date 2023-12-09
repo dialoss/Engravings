@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import TextEditor from "../../../ui/TextEditor/TextEditor";
 import {ReactComponent as Attachment} from '../Message/assets/attachment.svg';
 import {ReactComponent as Send} from '../Message/assets/send.svg';
@@ -8,7 +8,6 @@ import Picker from "@emoji-mart/react";
 import {ModalManager} from "../../ModalManager";
 import {triggerEvent} from "../../../helpers/events";
 import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
-import {useAddEvent} from "../../../hooks/useAddEvent";
 import {storage} from "../../../modules/FileExplorer/api/storage";
 
 export const InputAttachment = ({callback}) => {
@@ -50,7 +49,7 @@ export const InputSend = ({callback}) => {
 }
 
 export const InputEmoji = ({callback}) => {
-    const modalName = useRef();
+    const modalName = useRef<string>('');
     if (!modalName.current) modalName.current = `emojis-window` + new Date().getTime();
     useEffect(() => {
         let sheet = new CSSStyleSheet;
@@ -76,7 +75,7 @@ export const InputEmoji = ({callback}) => {
     const [position, setPosition] = useState({left: 0, top: 0});
     const ref = useRef();
     function open() {
-        triggerEvent(modalName.current + ":toggle", {toggle:true});
+        window.modals.toggle(modalName.current);
         const height = ref.current.querySelector('.transform-item').getBoundingClientRect().height;
         setPosition({left: 0, top: -height - 10 + 'px'});
     }
@@ -84,9 +83,11 @@ export const InputEmoji = ({callback}) => {
     return (
         <div className={"icon icon-emojis"} ref={ref}>
             <p className={'modal__toggle-button'} onClick={open}>😃</p>
-                <ModalManager name={modalName.current} closeConditions={['bg', 'esc']}>
-                    <TransformItem config={{position:'fixed', width:'auto', ...position}}
-                                   style={{bg:'bg-none'}} data-type={'modal'} className={modalName.current}>
+                <ModalManager style={{bg:'bg-none'}}
+                              name={modalName.current}
+                              closeConditions={['btn', 'esc', 'bg']}>
+                    <TransformItem style={{position:'fixed', width:'auto', ...position}}
+                                   data-type={'modal'} className={modalName.current}>
                         <Picker icons={'solid'}
                                 data={data}
                                 onEmojiSelect={(e) => callback(e.native)}/>

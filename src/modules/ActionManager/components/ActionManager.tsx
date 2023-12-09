@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {useAddEvent} from "hooks/useAddEvent";
-import {setActionElement} from "./helpers";
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
 import Actions from "modules/ActionManager/ItemActions/actions";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import FileExplorer from "../../FileExplorer/FileExplorer";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
 import ItemActions from "../ItemActions/ItemActions";
@@ -14,14 +12,14 @@ import ModalForm from "../../ActionForm/FormContainer";
 import {CarouselModal} from "../../../components/Modals/Carousel/CarouselContainer";
 import NotificationManager from "../../Notifications/NotificationManager";
 import SidebarContainer from "../../../components/Sidebar/SidebarContainer";
-import ObjectTransformContainer from "../../../ui/ObjectTransform/ObjectTransform";
 
+window.actions = new Actions();
 
 const ActionManager = () => {
-    const user = useSelector(state => state.users.current);
+    const user = useAppSelector(state => state.users.current);
     return (
         <>
-            {user.isAdmin &&
+            {user.authenticated &&
                 <>
                     <ItemActions></ItemActions>
                     <ModalForm name={'element-form'}></ModalForm>
@@ -30,7 +28,6 @@ const ActionManager = () => {
                     <ThemeManager></ThemeManager>
                 </>
             }
-            <ObjectTransformContainer></ObjectTransformContainer>
             <FirebaseContainer></FirebaseContainer>
             <MessengerContainer></MessengerContainer>
             <AuthContainer></AuthContainer>

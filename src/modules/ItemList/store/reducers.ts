@@ -5,7 +5,7 @@ interface IElements {
     itemsAll: object;
     cache: object;
     pageItems: object;
-    actionElement: object;
+    focused: object;
     editPage: boolean;
 }
 
@@ -15,7 +15,7 @@ export const elementsSlice = createSlice({
         itemsAll: {},
         cache: {},
         pageItems: {},
-        actionElement: {},
+        focused: {},
         editPage: false,
     } as IElements,
     reducers: {
@@ -56,7 +56,7 @@ export function localReducer(state, action) {
         case "POST":
         {
             let newState = [...state];
-            newState.splice(item.display_pos, 0, item);
+            newState.splice(item.order, 0, item);
             return newState;
         }
         case 'DELETE':

@@ -2,6 +2,11 @@
 import formData from './data.json';
 import allFields from './all.json';
 import {FieldsOrder, ItemsVerbose} from "./config";
+import FormUpload from "../../../components/Modals/MyForm/Upload/FormUpload";
+import FormInput from "../../../components/Modals/MyForm/Input/FormInput";
+import FormTextarea from "../../../components/Modals/MyForm/Textarea/FormTextarea";
+import FormSelect from "../../../components/Modals/MyForm/Select/FormSelect";
+import FormCheckbox from "../../../components/Modals/MyForm/Checkbox/FormCheckbox";
 
 export function serializeFields(fields, method) {
     let newFields = {};
@@ -51,6 +56,27 @@ export function mapFields(fields) {
     return fields.map(f => allFields[f]);
 }
 
+interface IFormField {
+    name: string;
+    type: "input" | "textarea" | "checkbox" | "color" | "slider" | "upload";
+    validate?: string;
+    attrs?: ['required'];
+    label: string;
+    autocomplete?: string;
+    value: string;
+}
+
+export interface IFormData {
+    [key: string] : IFormField;
+}
+
+interface IForm {
+    button: string;
+    method: "POST" | "PATCH";
+    title: string;
+    data: IFormData;
+}
+
 export function getFormData({method, element, extraFields=[], initialData={}}) {
     let elType = element.data.type;
     let fieldsRaw = [...mapFields(formData[elType]), ...mapFields(extraFields)];
@@ -62,16 +88,14 @@ export function getFormData({method, element, extraFields=[], initialData={}}) {
             else otherFields.push(field);
         })
     }
-    let fields = [...orderedFields,...otherFields];
+    let fields: IFormField[] = [...orderedFields,...otherFields];
 
-    let form = {
+    let form: IForm = {
         method,
         title: (method === 'PATCH' ? 'Редактировать ' : 'Добавить ') + (ItemsVerbose[elType].text || ''),
         button: 'ok',
-        data: {type: {value: elType}},
+        data: {},
     };
-    if (method === 'POST') form.specifyParent = true;
-    else form.specifyElement = true;
     const getValue = (field) => serializeValue((method !== 'POST' ? getFieldData(field.name, element) :
         (initialData[field.name] !== undefined ? initialData[field.name] :
             (field.initial === null ? '' : field.initial))), field.type);

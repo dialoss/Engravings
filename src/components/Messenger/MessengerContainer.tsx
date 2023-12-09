@@ -1,15 +1,9 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useLayoutEffect} from 'react';
 import Messenger from "components/Messenger/Messenger";
-import {
-    setCurrentRoom,
-    updateUser,
-    useGetRooms,
-    useGetUsers,
-
-} from "./api/firebase";
+import {updateUser, useGetUsers,} from "./api/firebase";
 import {ModalManager} from "components/ModalManager";
 import {isMobileDevice, triggerEvent} from "../../helpers/events";
-import {useDispatch, useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "hooks/redux";
 import {actions} from "./store/reducers";
 import store from "../../store";
 import {onDisconnect, ref, serverTimestamp} from "firebase/database";
@@ -20,11 +14,11 @@ import {getToken, onMessage} from "firebase/messaging";
 import {notifyUser} from "./api/notifications";
 
 const MessengerContainer = () => {
-    const {users} = useSelector(state => state.messenger);
-    const user = useSelector(state => state.users.current);
-    const dispatch = useDispatch();
+    const {users} = useAppSelector(state => state.messenger);
+    const user = useAppSelector(state => state.users.current);
+    const dispatch = useAppDispatch();
     useGetUsers();
-    const windowName = "messenger-window";
+    const windowName = "messenger";
 
     useLayoutEffect(() => {
         let messengerUser = users[user.id];
@@ -48,11 +42,12 @@ const MessengerContainer = () => {
 
     return (
         <>
-        {!isMobileDevice() && <OpenButton callback={() => triggerEvent(windowName + ':toggle', {toggle: true})}></OpenButton>}
+        {!isMobileDevice() && <OpenButton callback={() => window.modals.toggle(windowName)}></OpenButton>}
             <ModalManager name={windowName}
+                          style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
                           closeConditions={['btn', 'esc']}>
-                <TransformItem config={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}
-                               style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}} data-type={'modal'}>
+                <TransformItem style={isMobileDevice() ? {} : {position:'fixed', right:'5%', bottom:'250px', width:'auto', zIndex:8}}
+                                type={'modal'}>
                     <Messenger></Messenger>
                 </TransformItem>
             </ModalManager>

@@ -1,11 +1,11 @@
 import React, {useContext} from 'react';
 import Avatar from "../../../ui/Avatar/Avatar";
 import dayjs from "dayjs";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "hooks/redux";
 import {getMessageText} from "../helpers/messages";
 
 const SidebarList = ({list, className, currentItem, text, subtext=false, selectCallback, user}) => {
-    const {users} = useSelector(state => state.messenger);
+    const {users} = useAppSelector(state => state.messenger);
     return (
         <div className={"messenger-sidebar__list " + className}>
             {

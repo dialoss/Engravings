@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useRef, useState} from 'react';
 import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 import SidebarList from "../List/SidebarList";
@@ -63,8 +64,8 @@ const Sidebar = ({data, admin, setData}) => {
         if (!el && opRef.current && isMobileDevice())
             close();
     }
+    window.callbacks.register("sidebar:toggle", toggleSidebar);
 
-    useAddEvent("sidebar:toggle", toggleSidebar);
     useAddEvent("mousedown", toggleSidebar);
     useAddEvent("touchstart", toggleSidebar);
     console.log(data)

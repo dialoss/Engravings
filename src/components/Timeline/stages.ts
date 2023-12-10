@@ -1,3 +1,4 @@
+//@ts-nocheck
 export function itemsFromStages(data) {
     let _items = [];
     function traverse(items) {

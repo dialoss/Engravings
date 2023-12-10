@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useState} from 'react';
 import "./ItemTable.scss";
 import {fetchRequest} from "api/requests";

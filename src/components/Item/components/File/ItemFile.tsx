@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useRef} from 'react';
 import "./ItemFile.scss";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";

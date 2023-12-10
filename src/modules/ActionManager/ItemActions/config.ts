@@ -1,9 +1,6 @@
-import store, {RootState} from "store";
-import {getLocation} from "../../../hooks/getLocation";
-import {sendEmail} from "../../../api/requests";
-import {MessageManager, setCurrentRoom, updateRoom, updateUser} from "../../../components/Messenger/api/firebase";
-import {adminEmail} from "../../../components/Messenger/api/config";
-import {isMobileDevice, triggerEvent} from "../../../helpers/events";
+//@ts-nocheck
+
+import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
 
 export const DefaultEdit : IContextAction = {
     'clear_position': {
@@ -34,6 +31,16 @@ export const ContextActions : IContextAction = {
         argument: true,
         stay_opened: true,
         actions: {
+            'print': {
+                callback: "create",
+                argument: true,
+                text: "Гравюра",
+            },
+            'section': {
+                callback: "create",
+                argument: true,
+                text: "Секция",
+            },
             'quick': {
                 callback: 'create',
                 argument: true,
@@ -113,11 +120,11 @@ export const ContextActions : IContextAction = {
         text: 'Медиа',
         actions: {
             'storage': {
-                callback: () => triggerEvent("filemanager-window:toggle", {toggle:true}),
+                callback: () => window.modals.toggle("filemanager"),
                 text: 'Хранилище',
             },
             'local': {
-                callback: () => triggerEvent("filemanager:local"),
+                callback: () => window.filemanager.open(),
                 text: 'Локально',
             },
         }
@@ -142,398 +149,441 @@ export const ContextActions : IContextAction = {
 // argument - null not callback, false no need arg, true pass name as argument
 // if callback - function with  name of this value - else function with action name
 
-export function setActionData(item) {
-    switch (item) {
-        case 'page_from':
-            return {
-                type: 'page_from',
-            }
-        case 'empty':
-            return {
-                type: 'base',
-                movable: false,
-                width: '100%',
-            }
-        case 'quick':
-            return {
-                type: 'base',
-                show_date: true,
-                description: 'Описание',
-                title: 'Заголовок',
-                width: '100%',
-            }
-        case 'table':
-            return {
-                width: '30%',
-                height: '100px',
-            }
-        case 'textfield':
-            return {
-                text: "Текстовое поле"
-            }
-        case 'button':
-            return {
-                width: '40%',
-                style: 'nav',
-                text: 'кнопка'
-            }
-        case 'tabs':
-            return {
-                "type": "base",
-                "movable": false,
-                style: 'tabs',
-                "items": [
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "width": "35%",
-                        "height": "52.75px",
-                        "text": "текст",
-                        "link": "$tab_0",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "width": "35%",
-                        "height": "52.75px",
-                        "text": "текст",
-                        "link": "$tab_1",
-                    }
-                ]
-            }
-        case 'shop':
-            return {
-                type: 'base',
-                items: [
-                    {
-                        type: 'subscription',
-                        width: "50%",
-                        container_width: 100,
-                        height: '100px',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'subscription',
-                        width: "50%",
-                        container_width: 100,
-                        height: '100px',
-                        show_shadow: false,
-                        movable: false,
-                        items: [
-                            {
-                                type: 'subscription',
-                                width: '100%',
-                                title: 'Заголовок',
-                                description: 'Описание',
-                                show_shadow: false,
-                                movable: false,
-                            },
-                            {
-                                type: 'price',
-                                width: '100%',
-                                price: "999",
-                                style: 'action',
-                                text: 'Приобрести',
-                                link: '$buy',
-                                show_shadow: false,
-                                movable: false,
-                            }
-                        ]
-                    },
-                ],
-            }
-        case 'price':
-            return {
-                price: "999",
-                text: 'Приобрести',
-                link: '$buy',
-                style: 'action',
-            }
-        case "timeline":
-            return {
-                type: 'timeline',
-                show_shadow: false,
-                width: '100%',
-                items: [
-                    {
-                        type: 'timeline_entry',
-                        title: 'Подготовка материала',
-                        color: '#f00',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'timeline_entry',
-                        title: 'Изготовление деталей',
-                        color: '#e2b624',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'timeline_entry',
-                        title: 'Сборка',
-                        color: '#0932ae',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'timeline_entry',
-                        title: 'Тестирование',
-                        color: '#710dd5',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'timeline_entry',
-                        title: 'Упаковка',
-                        color: '#3ddf20',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                    {
-                        type: 'timeline_entry',
-                        title: 'Отправлено',
-                        color: '#005102',
-                        show_shadow: false,
-                        movable: false,
-                    },
-                ]
-            }
-        case 'timeline_entry':
-            return {
-                type: 'timeline_entry',
-                color: '#00f',
-                title: 'Заголовок',
-                show_shadow: false,
-                movable: false,
-            }
-        case 'intro':
-            return {
-                "type": "base",
-                container_width: 1200,
-                "items": [
-                    {
-                        "type": "base",
-                        "width": "100%",
-                        "items": [
-                            {
-                                "type": "base",
-                                "width": "100%",
-                                "height": "850px",
-                                "items": [
-                                    {
-                                        "type": "subscription",
-                                        "width": "70%",
-                                        container_width: 100,
-                                        "height": "100px",
-                                        "top": "60px",
-                                        "left": "0px",
-                                        "position": "absolute",
-                                        "movable": false,
-                                        "show_shadow": false,
-                                        order: 1,
-                                    },
-                                    {
-                                        "type": "subscription",
-                                        "width": "50%",
-                                        "top": "50px",
-                                        "left": "50%",
-                                        "position": "absolute",
-                                        "show_shadow": false,
-                                        order: 2,
-                                        "items": [
-                                            {
-                                                text: '<h1>Заголовок</h1>',
-                                                "show_shadow": false,
-                                                "type": "textfield",
-                                                "width": "100%",
-                                                "height": "100px",
-                                                "movable": false,
-                                            },
-                                            {
-                                                text: 'Описание',
-                                                "show_shadow": false,
-                                                "type": "textfield",
-                                                "width": "100%",
-                                                "height": "660px",
-                                                "movable": false,
 
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "base",
-                        "width": "100%",
-                        "height": "400px",
-                        "items": [
-                            {
-                                "type": "table",
-                                "width": "100%",
-                                "height": "300px",
-                                "url": "1TT6KWUcn4_4shc-DK--2JDR4W4_nUuPT",
-                            },
-                        ]
-                    },
-                    {
-                        "type": "base",
-                        "width": "100%",
-                        "height": "80px",
-                        "items": [
-                            {
-                                width: '100%',
-                                style: 'action',
-                                "type": "price",
-                                "text": "Заказать изготовление",
-                                "link": "$order",
-                                "price": "<p>от 160000</p>",
-                            }
-                        ]
-                    }
-                ]
-            }
-        case "navigation":
-            return {
-                "type": "base",
-                "movable": false,
-                style: 'tabs',
-                "items": [
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "Главная",
-                        "link": "/main/",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "модели",
-                        "link": "/models/",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "заказы",
-                        "link": "/orders/",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "детали",
-                        "link": "/parts/",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "чертежи",
-                        "link": "/blueprints/",
-                    },
-                    {
-                        style: 'nav',
-                        "type": "button",
-                        "text": "в продаже",
-                        "link": "/shop/",
-                    },
-                ]
-            }
-        case 'order':
-            actionMessage(`Здравствуйте! Я принял Ваш заказ и в скором времени свяжусь с Вами,
-                     чтобы обсудить детали заказа. По любым вопросам Вы можете связаться со мной в этом чате, в комментариях 
-                     на странице заказа или по почте fomenko75@mail.ru. Включите уведомления с моего сайта, чтобы всегда быть 
-                      в курсе новостей.`);
-
-            const user = store.getState().users.current;
-            const location = getLocation();
-            const name = user.name.replaceAll(' ', '-');
-            const orderName = location.pageSlug.toUpperCase();
-            const unique = JSON.stringify({customer: user.name, order: orderName});
-            const page = {
-                path: 'orders/' + name.toLowerCase(),
-            }
-
-            setTimeout(() => {
-                triggerEvent("user-prompt", {title:'Перейти на страницу заказа?', button: 'да', submitCallback: agree => {
-                        agree && triggerEvent("router:navigate", page);
-                    }})
-            }, 1000);
-
-            sendEmail({
-                recipient: 'matthewwimsten@gmail.com',
-                type: 'order',
-                subject: 'MyMount | Новый заказ',
-                data: {
-                    user,
-                    order: orderName,
-                }
-            });
-
-            return [{
-                type: 'page',
-                ...page,
-                title: name,
-            },
-                {
-                    unique,
-                type: 'base',
-                title: orderName,
-                description: `Заказ ` + user.name,
-                parent: '',
-                page,
-                items: [
-                    {
-                        show_shadow: false,
-                        type: 'subscription',
-                        title: 'Дата начала изготовления ',
-                    },
-                ]
-                },
-                {
-                    ...setActionData('timeline'),
-                    page,
-                    unique,
-                },
-                {
-                    unique,
-                    type: 'base',
-                    title: orderName,
-                    description: `Заказ ` + user.name,
-                    tab: 1,
-                    parent: '',
-                    page: {
-                        path: 'orders',
-                    },
-                    page_from: page,
-                },
-            ]
-        case 'buy':
-            actionMessage(`Здравствуйте! По любым вопросам Вы можете связаться со мной в этом чате или по почте fomenko75@mail.ru. 
-            Включите уведомления с моего сайта, чтобы всегда быть в курсе новостей.`)
-            return [];
-    }
+interface IActionData {
+    [key: string] : ItemElement;
 }
 
-async function actionMessage(text) {
-    const admin = Object.values(store.getState().users.users).find(u => u.email === adminEmail);
-    const user = store.getState().users.current;
-    const {rooms} = store.getState().messenger;
-    const adminRoom = Object.values(rooms).find(r => r.users.includes(adminEmail) && r.users.includes(user.email));
-    if (!!Object.values(adminRoom.lastMessage).length) return;
-    const config = {
-        getDocument: () => adminRoom.messages,
-    }
-    const manager = new MessageManager('messenger', null, config);
-    let msg = await manager.sendMessage({
-        message: {
-            text,
-            upload: [],
+export const ActionData: IActionData = {
+    print: {
+        type: "print",
+        data: {
+            url: "6575ea77d853170013a7b268",
         },
-        user_id: admin.id,
-    });
-    updateRoom({lastMessage: msg, newMessage: true, notified:false}, adminRoom.id);
-    setCurrentRoom(adminRoom.id);
-    window.modals.open("messenger");
+        style: {
+            width: "1000px"
+        }
+    },
+    section: {
+        type: "section",
+        style: {
+            aspectRatio: 1,
+            boxShadow:"none",
+        }
+    },
+    page_from: {
+        type: 'page_from',
+    },
+    button: {
+        type: 'button',
+        data: {
+            style: "nav",
+            text: 'Кнопка',
+        }
+    },
+    textfield: {
+        type: 'textfield',
+        data: {
+            text: "Текстовое поле"
+        }
+    },
+    empty: {
+        type: 'base',
+        style: {
+            movable: false,
+            width: '1200px',
+            height: "50px",
+        }
+    },
+    quick: {
+        type: 'base',
+        data: {
+            show_date: true,
+            description: 'Описание',
+            title: 'Заголовок',
+        },
+        style: {
+            width: '1200px',
+        }
+    },
+    tabs: {
+        type: 'base',
+        style: {
+            movable: false
+        },
+        data: {
+            style: "tabs"
+        },
+        items: [
+            {
+                style: {
+                    width: "35%",
+                    height: "52.75px"
+                },
+                data: {
+                    style: "nav",
+                    text: "текст",
+                    link: "$tab_0"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {
+                    width: "35%",
+                    height: "52.75px"
+                },
+                data: {
+                    style: "nav",
+                    text: "текст",
+                    link: "$tab_1"
+                },
+                items: [],
+                type: "button"
+            }
+        ],
+    },
+    intro: {
+        items: [
+            {
+                style: {
+                    width: "100%"
+                },
+                items: [
+                    {
+                        style: {
+                            width: "100%",
+                            height: "850px"
+                        },
+                        items: [
+                            {
+                                style: {
+                                    width: "70%",
+                                    height: "100px",
+                                    top: "60px",
+                                    left: "0px",
+                                    movable: false,
+                                    boxShadow: "none"
+                                },
+                                data: {
+                                    position: "absolute"
+                                },
+                                items: [],
+                                type: "subscription",
+                                order: 1
+                            },
+                            {
+                                style: {
+                                    width: "50%",
+                                    top: "50px",
+                                    left: "50%",
+                                    boxShadow: "none"
+                                },
+                                data: {
+                                    position: "absolute"
+                                },
+                                items: [
+                                    {
+                                        style: {
+                                            boxShadow: "none",
+                                            width: "100%",
+                                            height: "100px",
+                                            movable: false
+                                        },
+                                        data: {
+                                            text: "<h1>Заголовок</h1>"
+                                        },
+                                        items: [],
+                                        type: "textfield"
+                                    },
+                                    {
+                                        style: {
+                                            boxShadow: "none",
+                                            width: "100%",
+                                            height: "660px",
+                                            movable: false
+                                        },
+                                        data: {
+                                            text: "Описание"
+                                        },
+                                        items: [],
+                                        type: "textfield"
+                                    }
+                                ],
+                                type: "subscription",
+                                order: 2
+                            }
+                        ],
+                        type: "base"
+                    }
+                ],
+                type: "base"
+            },
+            {
+                style: {
+                    width: "100%",
+                    height: "400px"
+                },
+                data: {},
+                items: [
+                    {
+                        style: {
+                            width: "100%",
+                            height: "300px"
+                        },
+                        data: {
+                            url: "1TT6KWUcn4_4shc-DK--2JDR4W4_nUuPT"
+                        },
+                        items: [],
+                        type: "file"
+                    }
+                ],
+                type: "base"
+            },
+            {
+                style: {
+                    width: "100%",
+                    height: "80px"
+                },
+                data: {},
+                items: [
+                    {
+                        style: {
+                            width: "100%"
+                        },
+                        data: {
+                            style: "action",
+                            text: "Заказать изготовление",
+                            link: "$order",
+                            price: "<p>от 160000</p>"
+                        },
+                        items: [],
+                        type: "button"
+                    }
+                ],
+                type: "base"
+            }
+        ],
+        type: "base"
+    },
+    shop: {
+        items: [
+            {
+                style: {
+                    width: "50%",
+                    height: "100px",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {},
+                items: [],
+                type: "subscription"
+            },
+            {
+                style: {
+                    width: "50%",
+                    height: "100px",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {},
+                items: [
+                    {
+                        style: {
+                            width: "100%",
+                            boxShadow: "none",
+                            movable: false
+                        },
+                        data: {
+                            title: "Заголовок",
+                            description: "Описание"
+                        },
+                        items: [],
+                        type: "subscription"
+                    },
+                    {
+                        style: {
+                            width: "100%",
+                            boxShadow: "none",
+                            movable: false
+                        },
+                        data: {
+                            price: "999",
+                            style: "action",
+                            text: "Приобрести",
+                            link: "$buy"
+                        },
+                        items: [],
+                        type: "button"
+                    }
+                ],
+                type: "subscription"
+            }
+        ],
+        type: "base"
+    },
+    timeline: {
+        style: {
+            boxShadow: "none",
+            width: "100%"
+        },
+        data: {},
+        items: [
+            {
+                style: {
+                    background: "#f00",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Подготовка материала"
+                },
+                items: [],
+                type: "timeline_entry"
+            },
+            {
+                style: {
+                    background: "#e2b624",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Изготовление деталей"
+                },
+                items: [],
+                type: "timeline_entry"
+            },
+            {
+                style: {
+                    background: "#0932ae",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Сборка"
+                },
+                items: [],
+                type: "timeline_entry"
+            },
+            {
+                style: {
+                    background: "#710dd5",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Тестирование"
+                },
+                items: [],
+                type: "timeline_entry"
+            },
+            {
+                style: {
+                    background: "#3ddf20",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Упаковка"
+                },
+                items: [],
+                type: "timeline_entry"
+            },
+            {
+                style: {
+                    background: "#005102",
+                    boxShadow: "none",
+                    movable: false
+                },
+                data: {
+                    title: "Отправлено"
+                },
+                items: [],
+                type: "timeline_entry"
+            }
+        ],
+        type: "timeline"
+    },
+    price: {
+        type:"button",
+        style: {},
+        data: {
+            price: "999",
+            text: "Приобрести",
+            link: "$buy",
+            style: "action"
+        },
+        items: []
+    },
+    navigation: {
+        style: {
+            movable: false
+        },
+        data: {
+            style: "tabs"
+        },
+        items: [
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "Главная",
+                    link: "/main/"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "модели",
+                    link: "/models/"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "заказы",
+                    link: "/orders/"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "детали",
+                    link: "/parts/"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "чертежи",
+                    link: "/blueprints/"
+                },
+                items: [],
+                type: "button"
+            },
+            {
+                style: {},
+                data: {
+                    style: "nav",
+                    text: "в продаже",
+                    link: "/shop/"
+                },
+                items: [],
+                type: "button"
+            }
+        ],
+        type: "base"
+    }
 }

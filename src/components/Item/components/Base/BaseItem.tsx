@@ -1,5 +1,5 @@
+//@ts-nocheck
 import React, {useCallback} from 'react';
-import "./BaseItem.scss";
 import PageFrom from "../PageFrom/PageFrom";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 

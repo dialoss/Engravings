@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useState} from 'react';
 import {Footer} from "modules/Footer";
 import ContentWrapper from "ui/ContentWrapper/ContentWrapper";
@@ -9,8 +10,8 @@ import NavbarContainer from "../../../components/Navbar/NavbarContainer";
 const TemplatePage = () => {
     return (
         <BrowserRouter>
-            <NavbarContainer></NavbarContainer>
             <ContentWrapper>
+                <NavbarContainer></NavbarContainer>
                 <div style={{minHeight: '100dvh'}}>
                     <AppRouter/>
                     <div style={{flexGrow: 1, minHeight:1}}></div>

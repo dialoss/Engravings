@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import "./Auth.scss";
 import AuthButton from "./AuthButton";

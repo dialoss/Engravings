@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Accordion from "./Accordion";
 import {getElementFromCursor, triggerEvent} from "../../helpers/events";

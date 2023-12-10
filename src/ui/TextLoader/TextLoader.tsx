@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 const TextLoader = ({children, isLoading, dots=3, ...props}) => {

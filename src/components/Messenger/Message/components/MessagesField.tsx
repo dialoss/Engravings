@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import MessageBlock from "./MessageBlock";
 import {useAppSelector} from "hooks/redux";

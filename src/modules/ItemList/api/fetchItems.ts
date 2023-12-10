@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {sendLocalRequest} from "api/requests";
 import {AppDispatch} from "../../../store";
 
@@ -14,7 +15,7 @@ export const fetchItems = async (offset, limit, callback) => {
         const urlParams = new URLSearchParams(page).toString();
         const response = await sendLocalRequest(`/api/items/?${urlParams}`, {method:"GET"})
         console.log('FETCHED ITEMS' , response)
-        if (!response.results) return;
+        if (!response) return;
         callback({newItems: response.results, count: response.count});
         cur += step;
         if (cur >= response.count) break;

@@ -1,3 +1,4 @@
+//@ts-nocheck
 export function getMessageText(message) {
     let msgText = '';
     if (message.value) {

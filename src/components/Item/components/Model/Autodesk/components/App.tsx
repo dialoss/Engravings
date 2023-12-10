@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useRef, useState} from 'react';
 import Viewer from './Viewer';
 import './App.scss';

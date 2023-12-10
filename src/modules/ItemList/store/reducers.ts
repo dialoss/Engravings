@@ -1,12 +1,24 @@
+//@ts-nocheck
 import {createSlice} from "@reduxjs/toolkit";
 import store from "../../../store";
+import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
+import {IPage} from "../../../pages/AppRouter/store/reducers";
 
 interface IElements {
-    itemsAll: object;
+    itemsAll: {
+        [key: number]: ItemElement,
+    };
     cache: object;
     pageItems: object;
     focused: object;
     editPage: boolean;
+}
+
+interface Payload {
+    payload: {
+        items: ItemElement[];
+        page: string;
+    }
 }
 
 export const elementsSlice = createSlice({
@@ -19,19 +31,16 @@ export const elementsSlice = createSlice({
         editPage: false,
     } as IElements,
     reducers: {
-        setItemsAll: (state: IElements, {payload: {items, page}}) => {
+        setItemsAll: (state: IElements, {payload: {items, page}} : Payload) => {
             for (const item of items) {
                 state.itemsAll[item.id] = item;
-                for (const itemChild of item.items) {
-                    state.itemsAll[itemChild.id] = itemChild;
-                }
             }
             state.cache[page] = [...(state.cache[page]||[]), ...items];
             state.pageItems = state.cache[page];
             return state;
         },
-        setField: (state, {payload: {field, element}}) => {
-            state[field] = element;
+        setField: (state, {payload: {field, data}}) => {
+            state[field] = data;
             return state;
         },
     }
@@ -39,12 +48,19 @@ export const elementsSlice = createSlice({
 
 export const { actions, reducer } = elementsSlice;
 
+let tree = {};
+
+function updateTree(state, data) {
+
+}
+
 export function localReducer(state, action) {
-    let item = action.payload[0];
     switch (action.method) {
         case "SET":
+            tree = action.payload;
             return action.payload;
         case "PATCH":
+            
             for (let i = 0; i < state.length; i++) {
                 if (state[i].id === item.id) {
                     let newState = [...state];

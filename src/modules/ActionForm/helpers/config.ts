@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const FieldsOrder = [
     'title',
     'description',
@@ -19,6 +20,9 @@ export const FieldsOrder = [
 ]
 
 export const ItemsVerbose = {
+    'section': {
+        text:"Секция"
+    },
     'base': {
         text: 'Запись',
     },
@@ -61,4 +65,10 @@ export const ItemsVerbose = {
     'timeline_entry': {
         text: 'Шаг'
     },
+    "modal": {
+        text: "Окно"
+    },
+    "print":{
+        text: "Гравюра"
+    }
 }

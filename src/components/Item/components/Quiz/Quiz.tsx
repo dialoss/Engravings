@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import "./Quiz.scss";
 import {CSSTransition, TransitionGroup} from "react-transition-group";

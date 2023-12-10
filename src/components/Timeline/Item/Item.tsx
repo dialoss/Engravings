@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useState} from 'react';
 import AccordionContainer from "ui/Accordion/AccordionContainer";
 import {default as EntryItem} from "components/Item/Item";

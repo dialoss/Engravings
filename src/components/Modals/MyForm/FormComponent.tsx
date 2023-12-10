@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext} from 'react';
 import FormUpload from "./Upload/FormUpload";
 import FormInput from "components/Modals/MyForm/Input/FormInput";
@@ -7,6 +8,7 @@ import {triggerEvent} from "../../../helpers/events";
 import {FormContext} from "../../../modules/ActionForm/FormContainer";
 import FormCheckbox from "./Checkbox/FormCheckbox";
 import Slider from "./Slider/Slider";
+import {IFormField} from "../../../modules/ActionForm/helpers/FormData";
 
 const ColorPicker = ({data}) => {
     return (
@@ -24,7 +26,7 @@ const Components = {
     'slider': Slider,
 }
 
-const FormComponent = ({field}) => {
+const FormComponent = ({field} : {field: IFormField}) => {
     const inputCallback = useContext(FormContext).inputCallback;
     let TargetComponent = Components[field.type];
 

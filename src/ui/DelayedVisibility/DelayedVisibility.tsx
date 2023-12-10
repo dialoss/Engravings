@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import "./DelayedVisibility.scss";
 

@@ -1,8 +1,11 @@
+//@ts-nocheck
 import {storage} from "./api/storage";
 import prettyBytes from "pretty-bytes";
 import {UploadStatus} from "./api/google";
 import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
+import {useAddEvent} from "../../hooks/useAddEvent";
+import React from "react";
 
 declare global {
     interface Window {
@@ -47,7 +50,6 @@ export const TextBar = [
 
 export function initItems() {
     const dragArea = document.querySelector('.fe_fileexplorer_items_wrap');
-    if (!dragArea) return;
     for (const item of dragArea.querySelectorAll('.custom-icon')) {
         if (item.querySelector('img')) {
             item.className = 'custom-icon custom-icon-img'
@@ -57,6 +59,7 @@ export function initItems() {
 
 function initLayout() {
     const dragArea: HTMLElement = document.querySelector('.fe_fileexplorer_items_wrap');
+    if (!dragArea) return;
     dragArea.ondragstart = e => {
         const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
         const selected = window.filemanager.GetSelectedItemIDs().map(id => itemsAll.find(it => it.id === id));
@@ -164,8 +167,15 @@ export function init() {
 
     window.addEventListener("keydown", e => {
         if (e.ctrlKey && e.shiftKey && e.code === 'KeyF')
-            window.modals.toggle("filemanager")
+            window.modals.toggle("filemanager");
     });
+
+    window.filemanager.select = e => {
+        window.filemanager.selectItems = e.detail.callback;
+        window.modals.open("filemanager");
+    };
+
+    window.filemanager.open = () => document.querySelector("#filemanager-local").click();
 }
 
 function initTooltip() {
@@ -181,7 +191,7 @@ function initTooltip() {
         const tt = document.createElement('div');
         tt.classList.add('filemanager-tooltip');
         root.appendChild(tt);
-        // createRoot(tt).render(Tooltip);
+        createRoot(tt).render(React.createElement(Tooltip, {file: item}));
 
         root.addEventListener('mouseover', (e) => {
             if (root.contains(e.relatedTarget)) return;

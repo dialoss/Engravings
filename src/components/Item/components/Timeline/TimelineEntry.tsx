@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import SubscriptionItem from "../Subscription/SubscriptionItem";
 import {Entry} from "../../../Timeline/Item/Item";

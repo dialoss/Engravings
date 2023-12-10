@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState} from 'react';
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 import Alert from "./Alert";

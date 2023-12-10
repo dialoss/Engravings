@@ -1,11 +1,12 @@
+//@ts-nocheck
 import React, {useEffect, useState} from 'react';
 import MessengerContainer from "../../../components/Messenger/MessengerContainer";
-import Actions from "modules/ActionManager/ItemActions/actions";
+import Actions, {Callbacks} from "modules/ActionManager/ItemActions/actions";
 import {useAppSelector} from "hooks/redux";
 import FileExplorer from "../../FileExplorer/FileExplorer";
 import {FirebaseContainer} from "../../../api/FirebaseContainer";
 import ItemActions from "../ItemActions/ItemActions";
-import ThemeManager from "../../../components/ItemList/ThemeManager/ThemeManager";
+import EventManager from "../../../components/ItemList/EventManager/EventManager";
 import AuthContainer from "../../Authorization/AuthContainer";
 import AlertContainer from "../../../ui/Alert/AlertContainer";
 import ModalForm from "../../ActionForm/FormContainer";
@@ -14,18 +15,19 @@ import NotificationManager from "../../Notifications/NotificationManager";
 import SidebarContainer from "../../../components/Sidebar/SidebarContainer";
 
 window.actions = new Actions();
+window.callbacks = new Callbacks();
 
 const ActionManager = () => {
     const user = useAppSelector(state => state.users.current);
     return (
         <>
-            {user.authenticated &&
+            {true &&
                 <>
                     <ItemActions></ItemActions>
                     <ModalForm name={'element-form'}></ModalForm>
                     <FileExplorer></FileExplorer>
                     <AlertContainer></AlertContainer>
-                    <ThemeManager></ThemeManager>
+                    <EventManager></EventManager>
                 </>
             }
             <FirebaseContainer></FirebaseContainer>

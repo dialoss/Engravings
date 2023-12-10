@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {cloneElement, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./Slider.scss";
 

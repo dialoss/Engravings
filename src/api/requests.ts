@@ -1,7 +1,9 @@
+//@ts-nocheck
 import store from "store";
 import Credentials from "../modules/Authorization/api/googleapi";
 import {triggerEvent} from "../helpers/events";
 import axios from "axios";
+import {IUser} from "../components/Messenger/store/reducers";
 
 // const SERVER_URL = 'https://matthew75.pythonanywhere.com';
 const SERVER_URL = 'http://localhost:8000';
@@ -34,8 +36,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-export async function sendRequest(url, data, method) {
-    let response = null;
+export function sendRequest(url, data, method) {
     const csrftoken = getCookie('csrftoken');
     let query = {
         url,
@@ -47,22 +48,19 @@ export async function sendRequest(url, data, method) {
         },
         ...(method !== 'GET' ? {data} : {})
     }
-    try {
-        await axios(query).then(d => response = d.data);
-    } catch (e) {
+    return axios(query).then(d => d.data).catch(r => {
         triggerEvent('alert:trigger', {
             body: 'failed to fetch',
             type: 'error',
         })
-        return {"detail": "failed to fetch"};
-    }
-    return response;
+    });
 }
 
 export function sendLocalRequest(endpoint, data={}, method='GET') {
     const location = store.getState().location;
     let url = new URL(SERVER_URL + endpoint);
-    url.search += "&" + new URLSearchParams({path: location.relativeURL.slice(1, -1)}).toString();
+    if (url.search) url.search += '&';
+    url.search += new URLSearchParams({path: location.relativeURL.slice(1, -1)}).toString();
     return sendRequest(url.toString(), data, method);
 }
 
@@ -72,6 +70,24 @@ export async function getGlobalTime() {
     return r;
 }
 
-export function sendEmail(email) {
+interface IOrder {
+    name: string,
+}
+
+interface IBuy {
+}
+
+export interface IEmail {
+    recipient: string;
+    type: 'order' | "buy";
+    subject: string;
+    data: {
+        user: IUser;
+        order?: IOrder,
+        buy?: IBuy,
+    }
+}
+
+export function sendEmail(email: IEmail) {
     sendLocalRequest('/api/notification/email/', email, 'POST');
 }

@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const NavbarRoutes = [
     {path:'/main/',         text:'главная'},
     {path:'/models/',       text:'модели'},

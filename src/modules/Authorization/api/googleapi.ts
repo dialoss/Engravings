@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {sendLocalRequest} from "api/requests";
 
 export default class Credentials {

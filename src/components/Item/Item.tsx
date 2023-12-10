@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import './Item.scss';
 import ItemData from "./components/ItemData";
@@ -6,26 +7,25 @@ import {useAppSelector} from "hooks/redux";
 import {isMobileDevice} from "../../helpers/events";
 import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 import MyMasonry from "../../ui/Masonry/MyMasonry";
+import {ItemElement} from "../../ui/ObjectTransform/ObjectTransform";
 
-export const SimpleItem = ({item, depth=0}) => {
+interface ItemProps {
+    item: ItemElement;
+    depth: number;
+}
+
+export const SimpleItem = ({item, depth=0}: ItemProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    useLayoutEffect(() => {
-        item.items && item.items.sort((a, b) => a.order - b.order);
-    }, []);
     useEffect(() => {
-        const itemRef = ref.current;
-        const itemTransform = itemRef.closest(".transform-item");
-
-        const wrapper = itemTransform.querySelector('.items-wrapper');
         for (let it of item.items) {
-            let transform = wrapper && wrapper.querySelector(`.item[data-id="${it.id}"]`);
-            if (!transform) continue;
-            transform = transform.closest('.transform-item');
             if (isMobileDevice() && !item.type.match(/model|image|video|textfield/)) {
-                it.position = 'initial';
-                it.width = 'auto';
+                it.style.position = 'initial';
+                it.style.width = 'auto';
             }
         }
+        setTimeout(()=>{
+            initContainerDimensions(ref.current.parentElement);
+        },0)
     }, [item]);
 
     const itemData = <ItemData data={{...item.data, type: item.type, id: item.id}}></ItemData>;
@@ -48,15 +48,15 @@ export const SimpleItem = ({item, depth=0}) => {
     );
 }
 
-const Item = ({item, depth=0}) => {
-    const admin = useAppSelector(state => state.users.current.isAdmin);
+const Item = ({item, depth=0} : ItemProps) => {
+    const edit = useAppSelector(state => state.elements.editPage);
     return (
         <TransformItem key={item.id + item.items.length}
                        style={{...item.style, secure: true}}
                        type={item.type}
                        depth={depth}
                        id={item.id}
-                       className={(admin ? 'edit' : '')}>
+                       className={(edit ? 'edit ' : '') + 'transform-origin'}>
             <SimpleItem item={item} depth={depth}></SimpleItem>
         </TransformItem>
     );

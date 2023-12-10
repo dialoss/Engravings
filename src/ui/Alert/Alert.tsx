@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import "./Alert.scss";
 import {AlertTitles} from "./config";

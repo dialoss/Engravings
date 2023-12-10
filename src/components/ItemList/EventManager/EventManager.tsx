@@ -1,19 +1,20 @@
-import React, {useEffect} from 'react';
+//@ts-nocheck
+import React from 'react';
 import {useAddEvent} from "../../../hooks/useAddEvent";
 import store from "../../../store";
 import {actions} from "../../../modules/ItemList/store/reducers";
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
-import "./ThemeManager.scss";
+import "./EventManager.scss";
 import {sendLocalRequest} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 import {ReactComponent as Edit} from "./edit.svg";
 import {ReactComponent as Backup} from "./backup.svg";
 import {useAppSelector} from "hooks/redux";
 
-const ThemeManager = () => {
+const EventManager = () => {
     function setEdit() {
         const current = store.getState().elements.editPage;
-        store.dispatch(actions.setField({field:'editPage', element: !current}));
+        store.dispatch(actions.setField({field:'editPage', data: !current}));
     }
     useAddEvent('keydown', e => {
         if (e.ctrlKey && e.altKey && e.code === 'KeyE') setEdit();
@@ -44,21 +45,26 @@ const ThemeManager = () => {
         });
     }
     const element = useAppSelector(state => state.elements.focused);
-    let data = {...element.data};
-    for (let d in data) {
-        if (!['id', 'parent_id', 'parent_0', 'width', 'height', 'left', 'top'].includes(d)) delete data[d];
-    }
+    let data = {...element.data, id:element.id};
+    let style = {...element.style};
     return (
         <div className={'page-editor'}>
             <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>
             <ActionButton modalToggle={false} onClick={setEdit}><Edit></Edit></ActionButton>
-            <div style={{backgroundColor:"#fff", width:200}}>
-                {
-                    Object.keys(data).map(v => <p>{v}: {data[v]}</p>)
-                }
+            <div style={{backgroundColor:"#fff", width:200, fontSize:17}}>
+                <div>
+                    {
+                        Object.keys(data).map(v => <p>{v}: {data[v]}</p>)
+                    }
+                </div>
+                <div>
+                    {
+                        Object.keys(style).map(v => <p>{v}: {style[v]}</p>)
+                    }
+                </div>
             </div>
         </div>
     );
 };
 
-export default ThemeManager;
+export default EventManager;

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import InfoParagraph from "../../../../ui/InfoParagraph/InfoParagraph";
 import "./ItemPrice.scss";

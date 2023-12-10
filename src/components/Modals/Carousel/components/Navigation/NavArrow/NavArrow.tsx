@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useCallback, useContext} from 'react';
 import rightArrow from './right.svg';
 import {triggerEvent} from "helpers/events";

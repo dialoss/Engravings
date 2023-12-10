@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const CustomProfile = {
     "name": "Privet",
     "label": "Manufacturing (my profile)",

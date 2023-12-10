@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useLayoutEffect, useState} from 'react';
 import "./Slider.scss";
 import FormSelect from "../Select/FormSelect";

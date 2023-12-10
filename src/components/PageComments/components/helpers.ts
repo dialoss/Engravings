@@ -1,3 +1,4 @@
+//@ts-nocheck
 export function createCommentsTree(comments, sorting, search, limit=null) {
     let newComments = comments.sort(sorting).sort((a, b) => a.parent - b.parent);
     search = search.sort(sorting).sort((a, b) => a.parent - b.parent);

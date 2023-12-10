@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef} from 'react';
 import './ActionButton.scss';
 import {useAppSelector} from "hooks/redux";

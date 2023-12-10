@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useRef} from 'react';
 
 const TransformButton = ({children, type, secure, ...props}) => {
@@ -5,11 +6,11 @@ const TransformButton = ({children, type, secure, ...props}) => {
 
     useEffect(() => {
         let origin = ref.current;
-        // if (type === 'move') origin = ref.current.querySelector('.transform-origin');
+        if (type === 'move' && !origin.classList.contains("transform-origin"))
+            origin = ref.current.querySelector('.transform-origin');
         origin && origin.addEventListener('mousedown', e => {
-            // e (props.secure) return;
-            if (e.button !== 0) return;
-            e.stopPropagation();
+            console.log(type, origin)
+            if (e.button !== 0 || window.actions.elements.transformed) return;
             window.actions.elements.init(e, origin, type);
         });
     }, []);

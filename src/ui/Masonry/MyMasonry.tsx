@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./MyMasonry.scss";
 import {CSSTransition, TransitionGroup} from "react-transition-group";

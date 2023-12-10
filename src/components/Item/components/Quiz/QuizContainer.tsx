@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {ReducerState, useLayoutEffect, useReducer, useState} from 'react';
 import Quiz from "./Quiz";
 import data from "./data/3.json";

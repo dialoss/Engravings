@@ -10,7 +10,13 @@ $border: solid #7c7c7c;
   align-items: center;
 }
 
-.view-list {
+.filemanager {
+  &-view, &-left, &-right {
+    height: calc(100% + 20px);
+
+  }
+}
+.filemanager-view.list {
   .custom-icon-img, .custom-icon {
     height: 100%;
     width: calc(100px * var(--scale) / 5);
@@ -22,7 +28,7 @@ $border: solid #7c7c7c;
     }
   }
 }
-.view-default {
+.filemanager-view.default {
   .custom-icon-img,  .custom-icon {
     height: calc(100px * var(--scale) / 5);
     //height: 100%;
@@ -62,7 +68,7 @@ $border: solid #7c7c7c;
   &-left {
     width: 100%;
   }
-  &.view-default {
+  &-view.default {
     .filemanager-textbar {
       display: none;
     }
@@ -72,7 +78,7 @@ $border: solid #7c7c7c;
       }
     }
   }
-  &.view-list {
+  &-view.list {
     flex-direction: column;
 
     .fe_fileexplorer_item_wrap {

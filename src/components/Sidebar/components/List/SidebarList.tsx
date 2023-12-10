@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import SidebarItem from "../Item/SidebarItem";
 import "./SidebarList.scss";

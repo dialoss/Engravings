@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const config = {
     delta: 10,                             // min distance(px) before a swipe starts. *See Notes*
     preventScrollOnSwipe: false,           // prevents scroll during swipe (*See Details*)

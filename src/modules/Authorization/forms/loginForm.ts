@@ -1,30 +1,37 @@
+//@ts-nocheck
+import {IForm} from "../../ActionForm/helpers/FormData";
+
+export interface CustomForm extends IForm {
+    message: string;
+    stage: string;
+}
+
 export const loginForm = {
     title: 'Вход',
     stage: 'login',
     button: 'Войти',
     style: 'inline',
     message: 'Впервые на сайте? ',
-    data:
-        {
-            email: {
-                name: 'email',
-                type: "input",
-                validate: 'email',
-                attrs: ['required'],
-                label: "Email",
-                autocomplete: 'name',
-                value: ''
-            },
-            password: {
-                name: 'password',
-                type: 'input',
-                attrs: ['required'],
-                label: 'Пароль',
-                value: '',
-                autocomplete: 'current-password',
-                validate: 'password',
-            }
+    data: {
+        email: {
+            name: 'email',
+            type: "input",
+            validate: 'email',
+            attrs: ['required'],
+            label: "Email",
+            autocomplete: 'name',
+            value: ''
+        },
+        password: {
+            name: 'password',
+            type: 'input',
+            attrs: ['required'],
+            label: 'Пароль',
+            value: '',
+            autocomplete: 'current-password',
+            validate: 'password',
         }
+    }
 };
 
 export const registerForm = {

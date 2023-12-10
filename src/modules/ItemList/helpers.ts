@@ -1,27 +1,34 @@
+//@ts-nocheck
 import store from "../../store";
 
+export let links = {};
+
 export function createItemsTree(items) {
-    if (!items.length || items[0].empty) return items;
+    console.log(links)
+    if (!items.length) return items;
     // console.log('BEFORE TREE', items)
 
     let tree = {};
-    let links = {};
     let childItems = [];
     items.forEach(c => {
-        childItems = [...childItems, ...c.items];
-        tree[c.id] = {...c, items: []};
-        links[c.id] = tree[c.id];
+        if (c.parent) childItems.push({
+            ...c, items:[],
+        });
+        else {
+            tree[c.id] = {...c, items:[]};
+            links[c.id] = tree[c.id];
+        }
     })
+    // console.log(childItems)
     childItems = childItems.sort((a, b) => +a.parent - +b.parent)
-    // console.log('BEFORE TREE CHILD', childItems)
     childItems.forEach(c => {
         let p = links[c.parent];
+        if (!p) return;
         p.items.push({...c, items: []});
         links[c.id] = p.items[p.items.length - 1];
     });
-
-    return (Object.values(tree)).sort((a, b) => a.order - b.order);
-    // console.log('AFTER TREE', sorted);
+    console.log('AFTER TREE', tree);
+    return (Object.values(tree));
 }
 
 export function childItemsTree(current) {

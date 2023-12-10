@@ -1,49 +1,41 @@
+//@ts-nocheck
 function getFirstItems(container) {
     let items = container.querySelector('.items-wrapper');
     if (items) return items.querySelectorAll(':scope > .transform-item');
     return [];
 }
 
-export function isResizable(container) {
-    return !['image', 'model', 'video'].includes(container.getAttribute('data-type'));
+export function isResizable(item) {
+    return !item.getAttribute('data-type').match(/image|model|video/);
 }
 
 function getMaxBottom(container) {
     let m = 0;
-    const parentWidth = +(container.getAttribute('data-width') || '');
 
-    const curWidth = container.getBoundingClientRect().width;
-
-    const ratio = (curWidth / parentWidth) || 1;
     for (const block of getFirstItems(container)) {
-        if (block.style.position === 'absolute' && !block.classList.contains('transformed')) {
-            block.style.top = +block.getAttribute('data-top').replace('px', '') * ratio + 'px';
-        }
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
     }
-    const dataHeight = +container.getAttribute('data-height').replace('px','');
-    if (dataHeight && m < dataHeight &&
-        !['timeline'].includes(container.getAttribute('data-type'))) {
-        m = dataHeight * ratio;
-    }
+    // const dataHeight = +container.getAttribute('data-height').replace('px','');
+    // if (dataHeight && m < dataHeight &&
+    //     !['timeline'].includes(container.getAttribute('data-type'))) {
+    //     m = dataHeight * ratio;
+    // }
     return m;
 }
-export function initContainerDimensions(item: HTMLElement, resize=false) {
-    let container = item.parentElement;
+export function initContainerDimensions(container: HTMLElement, resize=false) {
     if (!container) return;
-    if (container.classList.contains('viewport-container')) return;
     let contHeight = getMaxBottom(container);
-    if (!isResizable(container) && item) {
-        let itemBlock = item.getBoundingClientRect();
-        let contBlock = container.getBoundingClientRect();
-        if (item.offsetTop + itemBlock.height > contBlock.height)
-            item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
-        return;
-    }
-    container.style.minHeight = contHeight + "px";
+    // if (!isResizable(container) && item) {
+    //     let itemBlock = item.getBoundingClientRect();
+    //     let contBlock = container.getBoundingClientRect();
+    //     if (item.offsetTop + itemBlock.height > contBlock.height)
+    //         item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
+    //     return;
+    // }
+    container.style.aspectRatio = container.getBoundingClientRect().width / contHeight;
     if (!resize) {
-        let parentContainer = container.closest('.transform-item').parentElement;
+        let parentContainer = container.parentElement.closest('.transform-item');
         parentContainer && initContainerDimensions(parentContainer);
     }
 }

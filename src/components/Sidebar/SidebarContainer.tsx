@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useState} from 'react';
 
 import {sendLocalRequest, sendRequest} from "api/requests";
@@ -5,13 +6,15 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import {actions} from "pages/AppRouter/store/reducers";
 import {useAppDispatch, useAppSelector} from "hooks/redux";
 import {useAddEvent} from "../../hooks/useAddEvent";
+import {getLocation} from "../../hooks/getLocation";
 
 const SidebarContainer = () => {
     const [pages, setPages] = useState([]);
     const dispatch = useAppDispatch();
 
     async function fetchPages() {
-        const response = await sendLocalRequest('/api/pages/', {}, 'GET');
+        const response = await sendLocalRequest('/api/pages/');
+        if (!response) return;
         function spl(p) {
             return p.split('/').length;
         }
@@ -46,7 +49,7 @@ const SidebarContainer = () => {
         dispatch(actions.setLocation());
     }
 
-    useAddEvent("sidebar:update", fetchPages);
+    window.callbacks.register("sidebar:update", fetchPages);
 
     useEffect(() => {
         fetchPages();

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import axios from 'axios'
@@ -19,7 +20,7 @@ interface RequestData {
 export class GoogleRequests {
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
         let body = {};
-        console.log('storage request', data, url);
+        // console.log('storage request', data, url);
         if (Object.values(data.body).length) body = {data: data.body};
         return await axios({
             method: data.method,
@@ -30,7 +31,7 @@ export class GoogleRequests {
             },
             ...body,
         }).then(d => {
-            console.log('storage response', d);
+            // console.log('storage response', d);
             return d;
         });
     }
@@ -50,7 +51,7 @@ export class GoogleDriveAPI implements StorageAPI {
     requests = new GoogleRequests();
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
         const serialized = (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
-        console.log(url, data, serialized);
+        // console.log(url, data, serialized);
         return serialized;
     }
 
@@ -71,7 +72,7 @@ export class GoogleDriveAPI implements StorageAPI {
         if (unique) {
             let q = GoogleDrive.BASE_URL + `?q='${file.parent || GoogleDrive.ROOT_FOLDER}'+in+parents and trashed=false and mimeType='application/vnd.google-apps.${file.mimeType}'`;
             for (const f of (await this.request(q))) {
-                if (f.name === file.name) return f;
+                if (f.name === file.name) return [f];
             }
         }
         return await this.request(GoogleDrive.BASE_URL, {
@@ -97,7 +98,7 @@ export class GoogleDriveAPI implements StorageAPI {
     }
 
     put(file: File, callback: (status: UploadStatus) => void) {
-        console.log(file);
+        // console.log(file);
         const config = {
             onUploadProgress: e => callback({
                 progress: e.progress,
@@ -109,7 +110,7 @@ export class GoogleDriveAPI implements StorageAPI {
                 'X-Upload-Content-Type': file.type,
             },
         };
-        this.requests.request(GoogleDrive.UPLOAD_URL + "?uploadType=resumable", {
+        return this.requests.request(GoogleDrive.UPLOAD_URL + "?uploadType=resumable", {
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
             },

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {BaseMessagesContainer} from "../../Messenger/Message/MessagesContainer";
 import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";

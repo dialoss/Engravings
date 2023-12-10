@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import TextEditor from "ui/TextEditor/TextEditor";
 import {getElementFromCursor, triggerEvent} from "../../helpers/events";

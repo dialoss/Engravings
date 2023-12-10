@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {initializeApp} from "firebase/app";
 import {getAuth} from "firebase/auth";
 import {collection, getFirestore, initializeFirestore, persistentMultipleTabManager, persistentLocalCache} from "firebase/firestore";

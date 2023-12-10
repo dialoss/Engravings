@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Quill } from 'react-quill';
 import {triggerEvent} from "../../helpers/events";
 

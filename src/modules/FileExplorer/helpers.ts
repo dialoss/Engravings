@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {triggerEvent} from "../../helpers/events";
 import {getFileType} from "./api/google";
 

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useState} from 'react';
 import ActionButton from "../../../ui/Buttons/ActionButton/ActionButton";
 import {ReactComponent as MessageIcon} from "./message.svg";

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useLayoutEffect, useState} from 'react';
 import Timeline from "../../../Timeline/Timeline";
 import {itemsFromStages, prepareStages} from "../../../Timeline/stages";

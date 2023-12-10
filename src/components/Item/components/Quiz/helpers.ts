@@ -1,3 +1,4 @@
+//@ts-nocheck
 import data from "./data/2.json";
 
 export function shuffle(array) {

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./Carousel.scss";
 import InfoBlock from "../../../../../ui/InfoBlock/InfoBlock";

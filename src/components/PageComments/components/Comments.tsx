@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import Comment from "./Comment";
 import Accordion from "../../../ui/Accordion/Accordion";

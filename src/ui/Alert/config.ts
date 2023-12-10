@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const AlertTitles = {
     error: 'Произошла ошибка',
     success: "Успешно",

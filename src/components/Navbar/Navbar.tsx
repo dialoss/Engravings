@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import './Navbar.scss';
 import NavButton from "../../ui/Buttons/NavButton/NavButton";

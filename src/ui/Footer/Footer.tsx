@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import './Footer.scss';
 import Container from "ui/Container/Container";

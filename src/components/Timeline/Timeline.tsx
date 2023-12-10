@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import "./Timeline.scss";
 import Item from "./Item/Item";

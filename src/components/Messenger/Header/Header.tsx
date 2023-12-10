@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useLayoutEffect, useRef, useState} from 'react';
 import "./Header.scss"
 import Avatar from "ui/Avatar/Avatar";

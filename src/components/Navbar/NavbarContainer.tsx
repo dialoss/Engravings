@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import {NavbarRoutes} from "./routes";
 import {useAppSelector} from "hooks/redux";

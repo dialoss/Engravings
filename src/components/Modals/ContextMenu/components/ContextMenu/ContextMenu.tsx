@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import ContextButton from "../Button/Button";
 import './ContextMenu.scss';

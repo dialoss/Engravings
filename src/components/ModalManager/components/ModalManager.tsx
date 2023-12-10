@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Modal from "ui/Modal/Modal";
 import {isMobileDevice} from "../../../helpers/events";
@@ -22,6 +23,7 @@ interface IModals {
     toggle(name: string, state);
     checkState(name: string) : boolean;
     add(modal: IModal);
+    hasOpened(): boolean;
 }
 
 class Modals implements IModals {
@@ -76,7 +78,7 @@ class Modals implements IModals {
         this.all[modal.name] = modal;
         console.log(this)
     }
-    toggle(name: string, state) {
+    toggle(name: string, state=undefined) {
         if (state !== undefined) {
             if (!state) this.close(name);
             else this.open(name);
@@ -84,6 +86,9 @@ class Modals implements IModals {
             if (this.all[name].isOpened.current) this.close(name);
             else this.open(name);
         }
+    }
+    hasOpened(): boolean {
+        return this.opened.length > 1;
     }
 }
 
@@ -101,7 +106,7 @@ interface ModalProps {
     name: string;
     children?: React.ReactNode;
     closeConditions: string[];
-    defaultOpened: boolean;
+    defaultOpened?: boolean;
     style: {
         bg?: 'bg-none' | '',
         win?: 'centered' | 'bottom' | '',
@@ -115,7 +120,7 @@ const ModalManager = ({name, children, style={},
     const openRef = useRef<boolean>(false);
     openRef.current = isOpened;
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         modals.add({
             name,
             isOpened: openRef,
@@ -146,7 +151,7 @@ const ModalManager = ({name, children, style={},
     }, [closeConditions]);
 
     useEffect(() => {
-        if (isOpened) {
+        if (isOpened && modals.top) {
             let front = modals.top.zindex;
             ref.current.style.zIndex = front;
             const item : HTMLElement = ref.current.querySelector('.transform-item');

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import "./MessengerSidebar.scss";
 import {isMobileDevice, triggerEvent} from "helpers/events";
@@ -9,7 +10,6 @@ import FormInput from "../../Modals/MyForm/Input/FormInput";
 import {createRoom, setCurrentRoom, updateRoom, updateUser} from "../api/firebase";
 import {getViewportSize} from "../../../ui/helpers/viewport";
 import Swipes from "../../../ui/Swipes/Swipes";
-import {useAppSelector} from "hooks/redux";
 import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
 import {actions} from "../store/reducers";
 import store from "../../../store";

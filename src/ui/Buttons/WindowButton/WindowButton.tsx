@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import './WindowButton.scss';
 import burger from './assets/burger.svg';

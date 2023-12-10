@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import {darkenColor} from "../rgbmanip";
 import {Link} from "react-router-dom";
@@ -20,7 +21,7 @@ const SidebarLink = ({link, children, depth, haveSublist}) => {
                           e.preventDefault();
                           e.stopPropagation();
                       } else {
-                          isMobileDevice() && triggerEvent("sidebar:toggle", {isOpened: false});
+                          isMobileDevice() && window.callbacks.call("sidebar:toggle", false);
                       }
             }}>{children}
             </Link>

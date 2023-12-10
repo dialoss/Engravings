@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useLayoutEffect, useState} from "react";
 import {auth, firestore, messaging} from "../components/Messenger/api/config";
 import {useAppSelector} from "hooks/redux";

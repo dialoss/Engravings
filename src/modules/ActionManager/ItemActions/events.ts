@@ -1,6 +1,14 @@
+//@ts-nocheck
+
+import store from "../../../store";
 
 window.addEventListener('keydown', e => {
-    // if e.target === null
+    if(e.target.nodeName == "INPUT" ||
+        e.target.nodeName == "TEXTAREA" ||
+        e.target.isContentEditable ||
+        window.modals.hasOpened() ||
+        !store.getState().elements.editPage) return;
+
     if (e.ctrlKey) {
         switch (e.code) {
             case 'KeyZ':

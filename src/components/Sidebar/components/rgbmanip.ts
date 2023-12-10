@@ -1,3 +1,4 @@
+//@ts-nocheck
 function stringToRGB(rgbStr) {
     return rgbStr.match(/\d+/g).map(Number);
 }

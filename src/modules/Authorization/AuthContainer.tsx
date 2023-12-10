@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {GoogleOAuthProvider, useGoogleLogin} from '@react-oauth/google';
 import store from "../../store";
@@ -9,8 +10,8 @@ import AuthButton, {GoogleIcon} from "./components/AuthButton";
 import ModalForm, {FormContainer} from "../ActionForm/FormContainer";
 import {loginForm, registerForm} from "./forms/loginForm";
 import ActionButton from "../../ui/Buttons/ActionButton/ActionButton";
-import {serializeFields} from "../ActionForm/helpers/FormData";
 import Spinner from "../../ui/Spinner/Spinner";
+import {FormSerializer} from "../ActionForm/helpers/FormData";
 
 const CLEINT_ID = '1024510478167-dufqr18l2g3nmt7gkr5rakc9sjk5nf54.apps.googleusercontent.com';
 
@@ -63,9 +64,9 @@ const LoginForm = ({callback, visible}) => {
                 data.map((d, i) =>
                     <div className={'form-wrapper'} style={{display: stage===i?'block':'none'}} key={i}>
                         <p className={'question'}>{d.message}{buttons[1 - i]}</p>
-                        <FormContainer formData={d}
+                        <FormContainer form={d}
                                        callback={(data) =>
-                                           callback({credentials:serializeFields(data), stage: d.stage})}>
+                                           callback({credentials:new FormSerializer(data).serialize(), stage: d.stage})}>
                         </FormContainer>
                     </div>
                 )
@@ -139,7 +140,7 @@ const AuthWrapper = () => {
             LocalAuth.login(data, (success) => {
                 if (success) {
                     toggle(false);
-                    triggerEvent("sidebar:toggle", {isOpened: true});
+                    window.callbacks.call("sidebar:toggle", false);
                     const creds = data.credentials;
                     if (creds.password) {
                         const cred = new window.PasswordCredential({

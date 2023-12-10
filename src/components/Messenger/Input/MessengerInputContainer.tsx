@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useRef} from "react";
 import {MessageManager, updateRoom, updateUser} from "../api/firebase";
 import {useAddEvent} from "../../../hooks/useAddEvent";
@@ -51,9 +52,8 @@ export const MessengerInputContainer = () => {
             let curTime = await getGlobalTime();
             let a = new Date(new Date(curTime.datetime).toISOString()).getTime() / 1000;
             let b = new Date(new Date(lastTime).toISOString()).getTime() / 1000;
-            let prompt = false;
-            triggerEvent('user-prompt:check-opened', (isOpened) => prompt = isOpened);
-            if (prompt) return [false, 'time'];
+            if (window.modals.checkState("user-prompt"))
+                return [false, 'time'];
             return [!lastTime || !(a - b < 0.5), 'time'];
         },
     }

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useRef, useState} from 'react';
 import MyCanvas from "./Canvas";
 import {AutodeskModel} from "components/Item/components/Model/Autodesk";
@@ -20,6 +21,7 @@ const Viewer = ({data}) => {
     }, []);
     return (
         <div className={"model-wrapper"} ref={ref} style={{height:'100%', flex: 1}}>
+            <div className={"item__overlay"}></div>
             {data.style !== 'simple' ? <AutodeskModel data={data}></AutodeskModel> :
                 <MyCanvas data={data}></MyCanvas>}
         </div>

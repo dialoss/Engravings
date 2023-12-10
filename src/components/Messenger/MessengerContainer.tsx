@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useLayoutEffect} from 'react';
 import Messenger from "components/Messenger/Messenger";
 import {updateUser, useGetUsers,} from "./api/firebase";

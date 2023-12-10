@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useAppSelector} from "hooks/redux";
 import dayjs from "dayjs";

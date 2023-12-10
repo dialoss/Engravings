@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {initContainerDimensions, isResizable} from "./helpers";
 import {triggerEvent} from "../../helpers/events";
 import {Axis} from "./config";
@@ -11,7 +12,7 @@ let deltaY = 0;
 
 function checkNears(px, py) {
     let curBlock = item.getBoundingClientRect();
-    let items = container.children[0].children;
+    let items = container.querySelector('.items-wrapper').children;
     let ch = curBlock.height;
     let ox = false;
     let oy = false;
@@ -78,7 +79,7 @@ export function transformItem({item, event}) {
     }
 
     let block = item.getBoundingClientRect();
-    let win = item.closest(".transform-container").getBoundingClientRect();
+    let win = container.getBoundingClientRect();
 
     if (transform.type === "resize") {
         deltaX *= transform.dir[0];
@@ -96,11 +97,7 @@ export function transformItem({item, event}) {
             if (offsetL <= 0) width = block.width;
             offsetL = Math.max(0, offsetL);
         }
-        try {
-            const cont = item.querySelector('.transform-container');
-            cont.style.minHeight = height + 'px';
-            item.style.minHeight = height + 'px'
-        } catch (e) {}
+        item.style.aspectRatio = width / height;
         setItemProps(offsetL, width);
     } else {
         let px = item.offsetLeft + deltaX;
@@ -116,16 +113,17 @@ export function transformItem({item, event}) {
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
-    initContainerDimensions(item);
+    initContainerDimensions(container);
 }
 
 export function setItemTransform(event, type, _item, _btn, config) {
     transform = {type, dir:""};
     if (type !== "move") transform = {type:"resize", dir:Axis[type]};
-    container = _item.closest(".transform-container");
+    container = _item.parentElement.closest(".transform-item");
     item = _item;
     btn = _btn;
 
+    window.actions.elements.transformed = item;
     item.style.userSelect = 'none';
 
     let shiftX = event.clientX - (btn.getBoundingClientRect().left + btn.getBoundingClientRect().width / 2);
@@ -141,6 +139,8 @@ export function setItemTransform(event, type, _item, _btn, config) {
         item.style.userSelect = 'auto';
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
+        window.actions.elements.transformed = null;
+        console.log(window.actions.elements)
         if (!mouseMoved) return;
 
         setTimeout(() => {
@@ -158,31 +158,12 @@ export function setItemTransform(event, type, _item, _btn, config) {
 export function getTransformData({item}) {
     let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
     if (isResizable(container)) top = item.offsetTop + 'px';
-    item.setAttribute('data-top', item.style.top);
 
-    window.actions.request({
-        data: {
-            id: window.actions.elements.focused.id,
-            position: item.style.position || 'initial',
-            height: item.querySelector('.transform-container').getBoundingClientRect().height + 'px' || "0",
-            width: item.style.width || "0",
-            top,
-            left: item.style.left || "0",
-        },
-        request: {
-            method: 'PATCH',
-            url: "items"
-        }
-    });
-
-    window.actions.request({
-        data: {
-            id: window.actions.elements.focused.parent,
-            container_width: container.getBoundingClientRect().width || 0,
-        },
-        request: {
-            method: 'PATCH',
-            url: "items"
-        }
-    });
+    window.actions.request([window.actions.prepareRequest('PATCH', undefined, {style: {
+        position: item.style.position || 'initial',
+        aspectRatio: item.style.aspectRatio,
+        width: item.style.width || "0",
+        top,
+        left: item.style.left || "0",
+    }})]);
 }

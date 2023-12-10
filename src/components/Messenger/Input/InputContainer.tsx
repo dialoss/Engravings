@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import store from "store";
 import {useAddEvent} from "../../../hooks/useAddEvent";
@@ -25,7 +26,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
             let form = {};
             if (response === 'time') form = 'Подтвердите, что вы человек';
             if (response === 'upload') form = 'Максимальный размер файла 50мб';
-            triggerEvent("user-prompt", {title:form, button: 'ok'});
+            window.callbacks.call("user-prompt", {title:form, button: 'ok'});
             return;
         }
         if (manager.config.clearHTML) text = clearTextFromHTML(text);

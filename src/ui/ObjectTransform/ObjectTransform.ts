@@ -1,26 +1,50 @@
+//@ts-nocheck
 import {getTransformData, setItemTransform, transformItem} from "./transform";
 import {initContainerDimensions} from "./helpers";
 import {actions} from "../../modules/ItemList/store/reducers";
 import store from "../../store";
+import {IPage} from "../../pages/AppRouter/store/reducers";
 
-export interface IActionElement {
-    [key: string]: number | string | object
+export interface ItemElement {
+    id?: number;
+    type: string;
+    parent?: number | null;
+    tab?: number;
+    order?: number;
+    items?: ItemElement[];
+    page?: IPage;
+    date_created?: string;
+    data?: {
+        [key: string]: number | string | boolean;
+    },
+    style?: {
+        [key: string] : number | string | boolean;
+    }
 }
+
+export const emptyItem: ItemElement = {
+    type: "base",
+    tab: 0,
+    order: 0,
+    items: [],
+};
 
 export interface IElementActions {
     clickCount: number;
-    focused: IActionElement;
-    selected: IActionElement[];
+    focused: ItemElement | IPage;
+    selected: ItemElement[];
+    transformed: ItemElement;
 
     init(event, origin: HTMLElement, type: "move" | "resize");
 }
 
-export class ElementActions implements IElementActions{
+export class ElementActions implements IElementActions {
     clickCount = 0;
-    focused = {data: {}, id:-1, html:''};
+    focused = null;
     selected = [];
+    transformed = null;
 
-    iterateItems(item, func, style) {
+    iterateItems(func, item, style) {
         let index = 0;
         let it = item;
         while (it) {
@@ -36,51 +60,77 @@ export class ElementActions implements IElementActions{
         }
     }
 
-    selectItems(item, event) {
+    static getElement(item: HTMLElement | ItemElement) : HTMLElement {
+        if (!(item instanceof HTMLElement)) return document.querySelector(`.transform-item[data-id="${item.id}"]`);
+        return item as HTMLElement;
+    }
+
+    clearStyle(item: any, style: string) {
+        ElementActions.getElement(item).classList.remove(style);
+    }
+
+    addStyle(item: any, style: string) {
+        ElementActions.getElement(item).classList.add(style);
+    }
+
+    selectItems(item: HTMLElement, event) {
         if (!item) return;
-        if (this.clickCount === 1) {
-            // item = item.parentElement.closest('.transform-item');
-        }
         let style = "focused";
         if (event.ctrlKey) {
             style = "selected";
             let alreadySelected = false;
             for (const it of this.selected) {
-                if (it.id === this.focused.id) alreadySelected = true;
+                if (this.focused && it.id === this.focused.id) alreadySelected = true;
             }
-            if (alreadySelected) this.selected = this.selected.filter(it => it.id !== this.focused.id);
+            if (alreadySelected) {
+                this.iterateItems(this.clearStyle, ElementActions.getElement(this.focused), style);
+                this.selected = this.selected.filter(it => it.id !== this.focused.id);
+            }
             else this.selected.push(this.focused);
+        } else {
+            this.focused && this.iterateItems(this.clearStyle, ElementActions.getElement(this.focused), style);
         }
+        this.iterateItems(this.addStyle, item, style);
+        let type = item.getAttribute("data-type");
+        let items = {};
+        if (type === 'page') {
+            items = store.getState().location.pages;
+        } else {
+            items = store.getState().elements.itemsAll;
+        }
+        this.focused = {...items[+item.getAttribute('data-id')]};
 
-        this.iterateItems(this.focused.html, (it, cl) => it.classList.remove(cl), style);
-        this.iterateItems(item, (it, cl) => it.classList.add(cl), style);
-        this.clickCount++;
-        this.focused = store.getState().elements.itemsAll[+item.getAttribute('data-id')];
-        this.focused.html = item;
-
-        store.dispatch(actions.setField({field: "focused", payload: {...this.focused, html: ''}}));
-        console.log(this.focused, this.selected)
+        store.dispatch(actions.setField({field: "focused", data: this.focused}));
+        console.log('ACTION',this.focused, this.selected, this)
     }
 
     init(event, origin: HTMLElement, type: "move" | "resize") {
-        const item = origin.closest(".transform-item");
+        if (this.transformed) return;
+        let item: HTMLElement = origin.closest(".transform-item");
         let alreadyFocused;
         if (item.getAttribute('data-type') !== 'modal') {
-            alreadyFocused = this.focused.id === +item.getAttribute('data-id');
-            this.selectItems(item, event);
+            alreadyFocused = this.focused && this.focused.id === +item.getAttribute('data-id');
+            // if (!alreadyFocused) this.clickCount = 0;
+            // let clicks = this.clickCount;
+            // while (item.parentElement.closest('.transform-item') && clicks > 0 && alreadyFocused) {
+            //     item = item.parentElement.closest('.transform-item');
+            //     clicks--;
+            //     console.log(clicks, item)
+            // }
+            // this.selectItems(item, event);
         } else {
             alreadyFocused = true;
         }
+        this.clickCount++;
         if (alreadyFocused) setItemTransform(event, type, item, origin, {
             onSwipeEnd: (d) => {
+                this.clickCount--;
                 if (d.item.getAttribute('data-type') === 'modal') return;
                 getTransformData(d);
             },
-            onSwipeStart: transformItem,
+            onSwipeStart: data => {
+                transformItem(data);
+            },
         });
-    }
-
-    initContainer(data) {
-        initContainerDimensions(data);
     }
 }

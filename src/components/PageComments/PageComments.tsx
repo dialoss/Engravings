@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useLayoutEffect, useRef, useState} from 'react';
 import {getLocation} from "hooks/getLocation";
 import Comments from "./components/CommentsContainer";

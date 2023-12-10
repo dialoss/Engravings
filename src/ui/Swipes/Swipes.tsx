@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useRef} from 'react';
 import {useSwipeable} from "react-swipeable";
 import {config} from "./config";

@@ -1,3 +1,4 @@
+//@ts-nocheck
 
 const api = 'y0_AgAAAABukr7nAArhjQAAAADy71owRDIlq5olSkmKtlXfYwQvCqZy-rk';
 let url = 'https://api-metrika.yandex.net/stat/v1/data';

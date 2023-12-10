@@ -1,3 +1,4 @@
+//@ts-nocheck
 
 export function triggerEvent(name, data={}) {
     window.dispatchEvent(new CustomEvent(name, {detail: data}));
@@ -27,8 +28,8 @@ export function getElementFromCursor(event, className, classNames=[]) {
                     return element;
                 }
             }
-            if (element.classList.contains('transform-resize') && classNames.includes('item')) {
-                return element.closest('.transform-item').querySelector(classNames[0]);
+            if (element.classList.contains('transform-resize')) {
+                return element.closest('.transform-item');
             }
         }
     } catch (e) {}
@@ -41,7 +42,7 @@ export function getElementByType(event, type) {
     try {
         const intersect = document.elementsFromPoint(event.clientX, event.clientY);
         for (const element of intersect) {
-            if (element.getAttribute('data-type') === type) {
+            if (element.closest('.transform-item').getAttribute('data-type') === type) {
                 return element;
             }
         }

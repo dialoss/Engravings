@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useCallback, useEffect, useLayoutEffect} from 'react';
 import ItemImage from "./Image/ItemImage";
 import ItemTable from "./Table/ItemTable";
@@ -13,6 +14,7 @@ import SubscriptionItem from "./Subscription/SubscriptionItem";
 import ButtonItem from "./Button/ButtonItem";
 import Viewer from "./Model/Viewer";
 import Section from "./Section/Section";
+import Print from "./Print/Print";
 
 export const Components = {
     'base': ItemBase,
@@ -22,6 +24,7 @@ export const Components = {
     'video': ItemVideo,
     'file': ItemFile,
     'model': Viewer,
+    'print': Print,
     'section': Section,
     'textfield': ItemTextfield,
     'timeline': ItemTimeline,
@@ -32,7 +35,7 @@ export const Components = {
 }
 
 const ItemData = ({data}) => {
-    if (data.url && !data.type.match(/image|video/) && !data.url.match(/google|youtube|drive/)) {
+    if (data.url && data.type.match(/model|file/) && !data.url.match(/google|youtube|drive/)) {
         data.url = 'https://drive.google.com/uc?export=download&id=' + data.url;
     }
     return (

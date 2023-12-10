@@ -1,3 +1,4 @@
+//@ts-nocheck
 export let token = '';
 
 async function uploadModel(file) {

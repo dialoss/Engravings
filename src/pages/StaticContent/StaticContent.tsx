@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useState} from 'react';
 import PageComments from "../../components/PageComments/PageComments";
 import ActionManager from "../../modules/ActionManager/components/ActionManager";

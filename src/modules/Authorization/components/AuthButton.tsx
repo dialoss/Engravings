@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import "./AuthButton.scss";
 import {ReactComponent as Icon} from "./icon.svg";

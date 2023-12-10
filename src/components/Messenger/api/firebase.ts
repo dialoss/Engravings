@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 import {
     doc,
@@ -119,20 +120,23 @@ export function customUpdate(name, raw, newData) {
 }
 
 export function useGetUsers() {
-    onSnapshot(doc(MDB, 'users'), q => {
-        let newUsers = {};
-        q.data().users.forEach(user => {
-            newUsers[user.id] = user;
+    useLayoutEffect(() => {
+        onSnapshot(doc(MDB, 'users'), q => {
+            let newUsers = {};
+            q.data().users.forEach(user => {
+                newUsers[user.id] = user;
+            });
+            store.dispatch(actions.setField({field:'users', data: newUsers}));
+            // console.log('snapshot users', newUsers);
         });
-        store.dispatch(actions.setField({field:'users', data: newUsers}));
-        // console.log('snapshot users', newUsers);
-    });
 
-    const usersMeta = ref(realtime, 'users');
-    onValue(usersMeta, (snapshot) => {
-        const data = snapshot.val();
-        store.dispatch(actions.setUsersMeta({data}));
-    });
+        const usersMeta = ref(realtime, 'users');
+        onValue(usersMeta, (snapshot) => {
+            const data = snapshot.val();
+            store.dispatch(actions.setUsersMeta({data}));
+        });
+    }, []);
+
 }
 
 export function useGetRooms() {

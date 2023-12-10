@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useContext, useEffect, useState} from 'react';
 import './FormUpload.scss';
 import FormMedia from "./FormMedia";

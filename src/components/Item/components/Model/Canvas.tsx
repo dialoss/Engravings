@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {Center, OrbitControls, PresentationControls, Stage} from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import React, {Suspense, useEffect, useLayoutEffect, useState} from 'react';

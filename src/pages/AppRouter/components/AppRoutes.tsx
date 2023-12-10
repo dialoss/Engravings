@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect} from 'react';
 import {Navigate, Route, Routes, useNavigate, useSearchParams} from "react-router-dom";
 import {routes} from "../constants/routes";
@@ -9,11 +10,7 @@ import {useAppSelector} from "hooks/redux";
 const AppRoutes = () => {
     const navigate = useNavigate();
 
-    function handleNavigate(event) {
-        navigate(event.detail.path);
-    }
-
-    useAddEvent("router:navigate", handleNavigate)
+    window.callbacks.register("router:navigate", navigate);
 
     useLayoutEffect(() => {
         const query = new URLSearchParams(window.location.search);
@@ -26,7 +23,7 @@ const AppRoutes = () => {
     }, []);
 
     const location = useAppSelector(state => state.location);
-    document.title = location.pageTitle + ' | MyMount';
+    document.title = location.currentPage.title.toUpperCase() + ' | MyMount';
 
     return (
         <Routes>

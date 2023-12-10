@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import './Modal.scss';
 import {getElementFromCursor} from "../../helpers/events";
@@ -30,7 +31,7 @@ const Modal = ({content, style, name, isOpened, closeCallback}) => {
             <div className={"modal__wrapper"}>
                 <div className={`modal__background ${opened} ${!!style && (style.bg || '')}`}
                      onClick={backgroundClose}>
-                    <div className={`modal__window ${name} ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
+                    <div className={`modal__window ${name}-window ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
                          onClick={e => e.stopPropagation()}>
                         <div className="modal__content">
                             {content}

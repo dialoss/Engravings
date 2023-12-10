@@ -1,9 +1,10 @@
+//@ts-nocheck
 import {createSlice} from "@reduxjs/toolkit";
 
 interface IUser {
     isAdmin: boolean,
     authenticated: boolean,
-    firebase: object,
+    firebaseUser: object,
     id: number;
 }
 

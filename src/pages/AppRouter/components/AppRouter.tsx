@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useLayoutEffect} from 'react';
 import AppRoutes from "./AppRoutes";
 import {useNavigate} from "react-router-dom";
@@ -6,6 +7,7 @@ import {sendLocalRequest} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 import store from "../../../store";
 import {useAppDispatch} from "../../../hooks/redux";
+import {getLocation} from "../../../hooks/getLocation";
 
 const AppRouter = () => {
     const location = useNavigate();
@@ -13,10 +15,8 @@ const AppRouter = () => {
     dispatch(actions.setLocation());
     useLayoutEffect(() => {
         dispatch(actions.setLocation());
-        sendLocalRequest('/api/pages/', {}, "GET").then(r => {
-            if (r.detail) {
-                triggerEvent("router:navigate", {path: '/main/'});
-            }
+        sendLocalRequest('/api/pages/' + getLocation().pageSlug).then(r => {
+            !r && window.callbacks.call("router:navigate", '/main/');
         });
     }, [location]);
 

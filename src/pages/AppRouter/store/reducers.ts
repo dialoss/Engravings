@@ -1,20 +1,34 @@
+//@ts-nocheck
 import {createSlice} from "@reduxjs/toolkit";
 
-interface IPage {
+export interface IPage {
+    id: number;
     title: string;
     path: string;
     views: number;
     slug: string;
     comments: boolean;
+    type: "page";
 }
 
-interface ILocation {
+let emptyPage: IPage = {
+    id:-1,
+    title:'',
+    path:'',
+    views:0,
+    slug:'',
+    comments:false,
+    type:'page',
+}
+
+export interface ILocation {
     serverURL: string,
     fullURL: string;
     relativeURL: string;
     pages: {key: number, value: IPage};
     currentPage: IPage;
     pageSlug: string;
+    tab: number;
 }
 
 export const locationSlice = createSlice({
@@ -25,6 +39,7 @@ export const locationSlice = createSlice({
         relativeURL : '',
         currentPage: {},
         pageSlug: '',
+        tab: 0,
     } as ILocation,
     reducers: {
         setLocation: (state : ILocation) => {
@@ -38,9 +53,11 @@ export const locationSlice = createSlice({
             for (const p in state.pages) {
                 if ('/' + state.pages[p].path + '/' === state.relativeURL) {
                     state.currentPage = state.pages[p];
-                    break;
+                    state.currentPage.type = 'page';
+                    return;
                 }
             }
+            state.currentPage = emptyPage;
         },
         setPages: (state: ILocation, {payload: pages}) => {
             let pagesObj = {};
@@ -48,6 +65,10 @@ export const locationSlice = createSlice({
                 pagesObj[page.id] = page;
             });
             state.pages = pagesObj;
+
+        },
+        setTab: (state: ILocation, {payload: tab}) => {
+            state.tab = tab;
         }
     }
 });

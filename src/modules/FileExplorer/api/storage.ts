@@ -1,3 +1,4 @@
+//@ts-nocheck
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import {getElementByType, triggerEvent} from "../../../helpers/events";
@@ -32,7 +33,6 @@ export class AppStorage implements IAppStorage {
         for (const f of path) {
             nextFolder.parent = folderID;
             nextFolder.name = f;
-            console.log(path, nextFolder)
             folderData = (await this.storageAPI.post(true, nextFolder))[0];
             folderID = folderData.id;
         }
@@ -45,7 +45,7 @@ export class AppStorage implements IAppStorage {
 
     delete(files : StorageFile[]) {
         return new Promise((resolve) => {
-            triggerEvent('user-prompt', {title: "Подтвердить удаление", button: 'ок', submitCallback: async (submit) => {
+            window.callbacks.call("user-prompt", {title: "Подтвердить удаление", button: 'ок', submitCallback: (submit) => {
                     if (!!submit) {
                         let removedFiles = [];
                         for (const f of files) {
@@ -75,7 +75,7 @@ export class AppStorage implements IAppStorage {
             if (!path.length) path = ['site', 'storage', getLocation().pageSlug];
             file.parent = (await this.newFolderWithPath(path)).id;
         }
-        this.storageAPI.put(file, callback);
+        return this.storageAPI.put(file, callback).then((d) => console.log(d));
     }
 
     getSpace(): Promise<StorageSpace> {
@@ -100,9 +100,8 @@ export class AppStorage implements IAppStorage {
     }
 
     transferFiles(event, callback) {
-        for (const file of FileTransfer.getFiles(event)) {
-            this.uploadFile(file, [], callback);
-        }
+        return Promise.all(FileTransfer.getFiles(event).map(f =>
+            this.uploadFile(f, [], callback)));
     }
 }
 

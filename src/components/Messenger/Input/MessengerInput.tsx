@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, {useEffect, useRef, useState} from 'react';
 import TextEditor from "../../../ui/TextEditor/TextEditor";
 import {ReactComponent as Attachment} from '../Message/assets/attachment.svg';

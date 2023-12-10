@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {sendLocalRequest} from "../../../api/requests";
 import {triggerEvent} from "../../../helpers/events";
 
@@ -23,7 +24,7 @@ export function notifyUser(info) {
     if (Notification.permission === "granted") {
         createNotification(info);
     } else {
-        triggerEvent('user-prompt', {title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.', button:'ok'})
+        window.callbacks.call("user-prompt", {title:'Разрешите уведомления, чтобы всегда быть в курсе новостей.', button:'ok'})
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
                 createNotification(info);

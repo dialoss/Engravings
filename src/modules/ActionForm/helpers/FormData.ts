@@ -1,50 +1,81 @@
+//@ts-nocheck
 
 import formData from './data.json';
 import allFields from './all.json';
 import {FieldsOrder, ItemsVerbose} from "./config";
-import FormUpload from "../../../components/Modals/MyForm/Upload/FormUpload";
-import FormInput from "../../../components/Modals/MyForm/Input/FormInput";
-import FormTextarea from "../../../components/Modals/MyForm/Textarea/FormTextarea";
-import FormSelect from "../../../components/Modals/MyForm/Select/FormSelect";
-import FormCheckbox from "../../../components/Modals/MyForm/Checkbox/FormCheckbox";
+import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
+import {IPage} from "../../../pages/AppRouter/store/reducers";
 
-export function serializeFields(fields, method) {
-    let newFields = {};
-    for (const f in fields) {
-        newFields[f] = fields[f].value;
-    }
-
-    if (newFields.url) {
-        if (method === 'POST') {
-            newFields.items = structuredClone(newFields.url);
-            delete newFields.url;
-        } else {
-            for (const field of ['width', 'height', 'filename', 'type']) {
-                newFields[field] = newFields.url[0][field] || newFields[field];
-            }
-            newFields.url = newFields.url[0].url;
+export class FormSerializer {
+    fields: IFormSerialized;
+    form: IForm;
+    constructor(form: IForm) {
+        let newFields = {};
+        for (const f in form.data) {
+            newFields[f] = form.data[f].value;
         }
+        this.fields = newFields;
+        this.form = form;
     }
-    if (newFields.page_from !== undefined) {
-        if (!newFields.page_from) delete newFields.page_from;
-        else newFields.page_from = {path:newFields.page_from};
+    serialize() : object {
+        return this.fields;
     }
-    return newFields;
 }
 
-function getFieldData(field, element) {
-    if (!element.id) return '';
+class ItemSerializer extends FormSerializer {
+    constructor(args) {
+        super(args);
+    }
+    serialize() {
+        if (this.fields.url) {
+            if (this.form.method === 'POST') {
+                this.fields.items = structuredClone(newFields.url);
+                delete this.fields.url;
+            } else {
+                for (const field of ['width', 'height', 'filename', 'type']) {
+                    this.fields[field] = this.fields.url[0][field] || this.fields[field];
+                }
+                this.fields.url = this.fields.url[0].url;
+            }
+        }
+        if (this.fields.page_from !== undefined) {
+            if (!this.fields.page_from) delete this.fields.page_from;
+            else this.fields.page_from = {path:this.fields.page_from};
+        }
+        return {
+            data: {...this.fields},
+            style: {},
+            type: this.form.item.type,
+        };
+    }
+}
+
+class PageSerializer extends FormSerializer {
+    constructor(args) {
+        super(args);
+    }
+    serialize() {
+        return this.fields as IPage;
+    }
+}
+
+function getFieldData(field: string, item: ItemElement | IPage) {
+    let flatItem = {
+        ...item,
+        ...item.data,
+        ...item.style,
+    }
     if (field === 'url') {
-        if (!['video', 'image', 'model', 'file'].includes(element.data.type)) return [];
+        if (!['video', 'image', 'model', 'file'].includes(flatItem.type)) return [];
         return [{
-            type: element.data.type,
-            id: element.data.id,
-            url: element.data.url,
-            filename: element.data.filename,
+            type: flatItem.type,
+            id: flatItem.id,
+            url: flatItem.url,
+            filename: flatItem.filename,
         }];
     }
-    if (field === 'page_from' && element.data[field]) return element.data[field].path;
-    return element.data[field];
+    if (field === 'page_from' && flatItem[field]) return flatItem[field].path;
+    return flatItem[field];
 }
 
 function serializeValue(value, type) {
@@ -56,30 +87,49 @@ export function mapFields(fields) {
     return fields.map(f => allFields[f]);
 }
 
-interface IFormField {
+export type IFormField = {
     name: string;
     type: "input" | "textarea" | "checkbox" | "color" | "slider" | "upload";
     validate?: string;
     attrs?: ['required'];
     label: string;
     autocomplete?: string;
-    value: string;
+    value: string | boolean | number;
+    [key: string] : number;
 }
 
-export interface IFormData {
+export type IFormSerialized = {
+    [key: string] : string | number | boolean;
+}
+
+export type IFormFields = {
     [key: string] : IFormField;
 }
 
-interface IForm {
+export type IForm = {
     button: string;
     method: "POST" | "PATCH";
     title: string;
-    data: IFormData;
+    data: IFormFields;
+    submitCallback?: (...args: any[]) => any;
+    windowButton?: boolean;
+    style: "inline" | "default";
+    item?: ItemElement;
 }
 
-export function getFormData({method, element, extraFields=[], initialData={}}) {
-    let elType = element.data.type;
-    let fieldsRaw = [...mapFields(formData[elType]), ...mapFields(extraFields)];
+export function createForm(data, fields: IFormField) : IForm {
+    return {
+        submitCallback: fields => console.log(fields),
+        windowButton: false,
+        style: 'default',
+        data: fields,
+        ...data,
+    }
+}
+
+export function getFormData(method: "POST" | 'PATCH', item: ItemElement, extraFields: IFormField[]=[], initialData={}) {
+    let type = item.type;
+    let fieldsRaw = [...mapFields(formData[type]), ...mapFields(extraFields)];
     let orderedFields = [];
     let otherFields = [];
     for (const f of FieldsOrder) {
@@ -92,11 +142,24 @@ export function getFormData({method, element, extraFields=[], initialData={}}) {
 
     let form: IForm = {
         method,
-        title: (method === 'PATCH' ? 'Редактировать ' : 'Добавить ') + (ItemsVerbose[elType].text || ''),
+        title: (method === 'PATCH' ? 'Редактировать ' : 'Добавить ') + (ItemsVerbose[type].text || ''),
         button: 'ok',
         data: {},
+        item,
+        submitCallback: fields => {
+            if (!fields) return;
+            let data = new ItemSerializer(form).serialize();
+            window.actions.request([{
+                method: form.method,
+                endpoint: type === 'page' ? "pages" : "items",
+                item: data,
+            }])
+        },
+        windowButton: true,
+        style: "default",
     };
-    const getValue = (field) => serializeValue((method !== 'POST' ? getFieldData(field.name, element) :
+
+    const getValue = (field) => serializeValue((method !== 'POST' ? getFieldData(field.name, item) :
         (initialData[field.name] !== undefined ? initialData[field.name] :
             (field.initial === null ? '' : field.initial))), field.type);
 

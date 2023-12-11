@@ -93,6 +93,12 @@
     height: auto;
 }
 
+.modal__window.centered {
+    .transform-item {
+        position: initial !important;
+    }
+}
+
 @include mobile {
     .element-form {
         .form-input, .form-textarea {

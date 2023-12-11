@@ -3,6 +3,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import store from "../../../store";
 import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
 import {IPage} from "../../../pages/AppRouter/store/reducers";
+import {Intermediate} from "../../ActionManager/ItemActions/actions";
 
 interface IElements {
     itemsAll: {
@@ -12,6 +13,7 @@ interface IElements {
     pageItems: object;
     focused: object;
     editPage: boolean;
+    intermediate: Intermediate[];
 }
 
 interface Payload {
@@ -28,14 +30,16 @@ export const elementsSlice = createSlice({
         cache: {},
         pageItems: {},
         focused: {},
+        intermediate: [],
         editPage: false,
     } as IElements,
     reducers: {
         setItemsAll: (state: IElements, {payload: {items, page}} : Payload) => {
+            if (!state.cache[page]) state.cache[page] = {};
             for (const item of items) {
                 state.itemsAll[item.id] = item;
+                state.cache[page][item.id] = item;
             }
-            state.cache[page] = [...(state.cache[page]||[]), ...items];
             state.pageItems = state.cache[page];
             return state;
         },
@@ -48,16 +52,9 @@ export const elementsSlice = createSlice({
 
 export const { actions, reducer } = elementsSlice;
 
-let tree = {};
-
-function updateTree(state, data) {
-
-}
-
 export function localReducer(state, action) {
     switch (action.method) {
         case "SET":
-            tree = action.payload;
             return action.payload;
         case "PATCH":
             

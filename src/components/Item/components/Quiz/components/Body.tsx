@@ -1,8 +1,9 @@
 //@ts-nocheck
-import React from 'react';
-import {IQuiz} from "../QuizContainer";
+import React, {useContext} from 'react';
+import {IQuiz, QuizContext} from "../QuizContainer";
 
-const Body = (quiz : IQuiz) => {
+const Body = ({quiz} : {quiz: IQuiz}) => {
+    const callback = useContext(QuizContext)
     return (
         <>
         {quiz.started ? <div className="quiz__body">

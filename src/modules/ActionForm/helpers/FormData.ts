@@ -9,10 +9,10 @@ import {IPage} from "../../../pages/AppRouter/store/reducers";
 export class FormSerializer {
     fields: IFormSerialized;
     form: IForm;
-    constructor(form: IForm) {
+    constructor(form: IForm, fields: IFormFields) {
         let newFields = {};
-        for (const f in form.data) {
-            newFields[f] = form.data[f].value;
+        for (const f in fields) {
+            newFields[f] = fields[f].value;
         }
         this.fields = newFields;
         this.form = form;
@@ -23,8 +23,8 @@ export class FormSerializer {
 }
 
 class ItemSerializer extends FormSerializer {
-    constructor(args) {
-        super(args);
+    constructor(...args) {
+        super(...args);
     }
     serialize() {
         if (this.fields.url) {
@@ -32,9 +32,9 @@ class ItemSerializer extends FormSerializer {
                 this.fields.items = structuredClone(newFields.url);
                 delete this.fields.url;
             } else {
-                for (const field of ['width', 'height', 'filename', 'type']) {
-                    this.fields[field] = this.fields.url[0][field] || this.fields[field];
-                }
+                // for (const field of ['width', 'height', 'filename', 'type']) {
+                //     this.fields[field] = this.fields.url[0][field] || this.fields[field];
+                // }
                 this.fields.url = this.fields.url[0].url;
             }
         }
@@ -43,16 +43,16 @@ class ItemSerializer extends FormSerializer {
             else this.fields.page_from = {path:this.fields.page_from};
         }
         return {
+            ...this.form.item,
             data: {...this.fields},
             style: {},
-            type: this.form.item.type,
         };
     }
 }
 
 class PageSerializer extends FormSerializer {
-    constructor(args) {
-        super(args);
+    constructor(...args) {
+        super(...args);
     }
     serialize() {
         return this.fields as IPage;
@@ -148,12 +148,11 @@ export function getFormData(method: "POST" | 'PATCH', item: ItemElement, extraFi
         item,
         submitCallback: fields => {
             if (!fields) return;
-            let data = new ItemSerializer(form).serialize();
-            window.actions.request([{
-                method: form.method,
-                endpoint: type === 'page' ? "pages" : "items",
-                item: data,
-            }])
+            let data: IPage | ItemElement = {type};
+            if (type === "page") data = new PageSerializer(form, fields).serialize();
+            else data = new ItemSerializer(form, fields).serialize();
+            window.actions.request([{...window.actions.prepareRequest(form.method, data),
+            endpoint: type === 'page' ? "pages" : "items"}]);
         },
         windowButton: true,
         style: "default",

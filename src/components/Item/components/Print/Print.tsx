@@ -6,9 +6,11 @@ import "./Print.scss";
 const Print = ({data}) => {
     return (
         <div className={"item__print"}>
-            <div className={"item__overlay"}></div>
+            <div className={"item__overlay"}>
+                {/*<div className={"hide__logo"}></div>*/}
+            </div>
             <iframe title="Луна Китаяма"
-                    src={"https://view.genial.ly/" + data.url}
+                    src={data.url}
                     allowtransparency={"always"} allowFullScreen={true}></iframe>
         </div>
     );

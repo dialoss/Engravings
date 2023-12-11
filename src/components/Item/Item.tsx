@@ -19,8 +19,8 @@ export const SimpleItem = ({item, depth=0}: ItemProps) => {
     useEffect(() => {
         for (let it of item.items) {
             if (isMobileDevice() && !item.type.match(/model|image|video|textfield/)) {
-                it.style.position = 'initial';
-                it.style.width = 'auto';
+                // it.style.position = 'initial';
+                // it.style.width = 'auto';
             }
         }
         setTimeout(()=>{
@@ -30,7 +30,7 @@ export const SimpleItem = ({item, depth=0}: ItemProps) => {
 
     const itemData = <ItemData data={{...item.data, type: item.type, id: item.id}}></ItemData>;
 
-    const masonry = item.data.modifiers ? <MyMasonry maxColumns={1}>{
+    const masonry = item.data.modifiers ? <MyMasonry maxColumns={+item.data.modifiers.split("_")[1]}>{
         item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>)
     }</MyMasonry> : item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
 
@@ -49,14 +49,13 @@ export const SimpleItem = ({item, depth=0}: ItemProps) => {
 }
 
 const Item = ({item, depth=0} : ItemProps) => {
-    const edit = useAppSelector(state => state.elements.editPage);
     return (
-        <TransformItem key={item.id + item.items.length}
-                       style={{...item.style, secure: true}}
+        <TransformItem key={item.id}
+                       style={item.style}
                        type={item.type}
                        depth={depth}
                        id={item.id}
-                       className={(edit ? 'edit ' : '') + 'transform-origin'}>
+                       className={'transform-origin'}>
             <SimpleItem item={item} depth={depth}></SimpleItem>
         </TransformItem>
     );

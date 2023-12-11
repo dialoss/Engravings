@@ -1,8 +1,7 @@
 //@ts-nocheck
-import React, {ReducerState, useLayoutEffect, useReducer, useState} from 'react';
+import React, {createContext, ReducerState, useLayoutEffect, useReducer, useState} from 'react';
 import Quiz from "./Quiz";
-import data from "./data/3.json";
-import {prepareData} from "./helpers";
+import {fetchRequest} from "../../../../api/requests";
 
 interface QuizData {
     question: string,
@@ -15,6 +14,7 @@ export interface IQuiz {
     right: number,
     wrong: number,
     all: number,
+    dataAll: QuizData[],
     data: QuizData,
     userAnswer: {
         correct: boolean,
@@ -29,6 +29,7 @@ const emptyQuiz : IQuiz = {
     right: 0,
     wrong: 0,
     all: 0,
+    dataAll: [],
     data: {question: '', answer: '', choices: []},
     userAnswer: {
         correct: false,
@@ -41,12 +42,23 @@ const emptyQuiz : IQuiz = {
 enum QuizActions {
     USER_ANSWER = "USER_ANSWER",
     NEXT = "NEXT",
-    START = "START"
+    START = "START",
+    SET_DATA = "SET_DATA",
 }
 
 interface QuizAction {
     type: QuizActions,
-    payload?: object,
+    payload?: any,
+}
+
+export function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+export function prepareData(index, data: QuizData[]) {
+    const quiz = {...data[index++]};
+    shuffle(quiz.choices);
+    return quiz;
 }
 
 function reducer(state=emptyQuiz, action : QuizAction) {
@@ -56,8 +68,8 @@ function reducer(state=emptyQuiz, action : QuizAction) {
             else state.wrong++;
             return {...state, userAnswer: action.payload};
         case QuizActions.NEXT:
-            if (state.current === data.length - 1) return {...state, started: false};
-            state.data = prepareData(++state.current);
+            if (state.current === state.dataAll.length - 1) return {...state, started: false};
+            state.data = prepareData(++state.current, state.dataAll);
             state.userAnswer = {
                 correct: false,
                 choice: 0,
@@ -66,15 +78,27 @@ function reducer(state=emptyQuiz, action : QuizAction) {
             return {...state};
         case QuizActions.START:
             const quiz = {...emptyQuiz};
-            quiz.all = data.length;
+            quiz.dataAll = state.dataAll;
+            quiz.all = quiz.dataAll.length;
             quiz.started = true;
-            quiz.data = prepareData(0);
+            quiz.data = prepareData(0, state.dataAll);
             return quiz;
+        case QuizActions.SET_DATA:
+            state.dataAll = action.payload;
+            return {...state};
     }
 }
 
-const QuizContainer = () => {
+export const QuizContext = createContext<(...args: any[]) => void>(()=>{});
+
+
+const QuizContainer = ({data}) => {
     const [quiz, dispatch] = useReducer(reducer, emptyQuiz as ReducerState<IQuiz>);
+    useLayoutEffect(() => {
+        fetchRequest(data.url).then((data) => {
+            dispatch({type: "SET_DATA", payload: data.data as QuizData[]});
+        })
+    }, []);
 
     function callback(type, payload='') {
         if (type === QuizActions.USER_ANSWER) {
@@ -85,7 +109,9 @@ const QuizContainer = () => {
         dispatch({type, payload})
     }
     return (
-        <Quiz quiz={quiz}></Quiz>
+        <QuizContext.Provider value={callback}>
+            <Quiz quiz={quiz}></Quiz>
+        </QuizContext.Provider>
     );
 };
 

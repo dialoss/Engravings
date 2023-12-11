@@ -5,7 +5,7 @@ import {CSSTransition, TransitionGroup} from "react-transition-group";
 import {IQuiz} from "./QuizContainer";
 import Body from "./components/Body";
 
-const Quiz: React.FunctionComponent<IQuiz> = (quiz) => {
+const Quiz = ({quiz} : {quiz: IQuiz}) => {
     const progress = (quiz.wrong + quiz.right) / quiz.all * 100;
 
     return (

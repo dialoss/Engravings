@@ -10,6 +10,61 @@ import {triggerEvent} from "../../../helpers/events";
 import {ReactComponent as Edit} from "./edit.svg";
 import {ReactComponent as Backup} from "./backup.svg";
 import {useAppSelector} from "hooks/redux";
+import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
+import {Intermediate} from "../../../modules/ActionManager/ItemActions/actions";
+import Hierarchy from "../../../ui/Hierarchy/Hierarchy";
+import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
+
+function splitItem(item: ItemElement) {
+    const baseFields = {...item};
+    if (baseFields.items) delete baseFields.items;
+    if (baseFields.style) delete baseFields.style;
+    if (baseFields.data) delete baseFields.data;
+    return {base: baseFields, data: item.data || {}, style: item.style || {}};
+}
+
+const Verbose = {
+    base: "Основная",
+    data: "Данные",
+    style: "Стиль"
+}
+
+const ItemsInfo = ({items, type, title}) => {
+    const info = items.map(it => splitItem(it));
+    console.log(info)
+    return (
+        <div className={type}>
+            {!!items.length && <h3>{title}</h3>}
+            <div className="info">
+                {
+                    info.map(it =>
+                        Object.keys(it).map(k => <>
+                            <h5>{Verbose[k]}</h5>
+                            <div className={k}>
+                                {
+                                    Object.keys(it[k]).map(f =>
+                                        <p>{f}: {it[k][f]}</p>
+                                    )
+                                }
+                            </div>
+                            </>
+                        )
+                    )
+                }
+            </div>
+        </div>
+    );
+}
+
+const ItemInfo = ({data, children}) => {
+    return (
+        <div className={"info"}>
+            <AccordionContainer title={data.type}>
+                {children}
+            </AccordionContainer>
+        </div>
+    );
+}
 
 const EventManager = () => {
     function setEdit() {
@@ -44,24 +99,31 @@ const EventManager = () => {
             }, 300);
         });
     }
-    const element = useAppSelector(state => state.elements.focused);
-    let data = {...element.data, id:element.id};
-    let style = {...element.style};
+    const elements = useAppSelector(state => state.elements);
+    const item = elements.focused;
+    const intermediate: Intermediate[] = elements.intermediate;
+    const state = useAppSelector(state => state.elements.pageItems);
     return (
         <div className={'page-editor'}>
             <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>
             <ActionButton modalToggle={false} onClick={setEdit}><Edit></Edit></ActionButton>
-            <div style={{backgroundColor:"#fff", width:200, fontSize:17}}>
-                <div>
-                    {
-                        Object.keys(data).map(v => <p>{v}: {data[v]}</p>)
-                    }
-                </div>
-                <div>
-                    {
-                        Object.keys(style).map(v => <p>{v}: {style[v]}</p>)
-                    }
-                </div>
+            <div className={"action-elements"}>
+                <ItemsInfo items={[item]}
+                           type={"focused"}
+                           title={"Выделенный предмет"}></ItemsInfo>
+                <ItemsInfo items={intermediate.filter(it => it.type === 'cut').map(it=>({id:it.item.id}))}
+                           type={"cutted"}
+                           title={"Вырезанные предметы"}></ItemsInfo>
+                <ItemsInfo items={intermediate.filter(it => it.type === 'copy').map(it=>({id:it.item.id}))}
+                           type={"copied"}
+                           title={"Скопированные предметы"}></ItemsInfo>
+                <Hierarchy data={Object.values(state)} config={{
+                    childSelector: "items",
+                    parentSelector: "parent",
+                    recursiveComponent: ItemInfo,
+                    componentDataProp: "data",
+                    accordion: true,
+                }}></Hierarchy>
             </div>
         </div>
     );

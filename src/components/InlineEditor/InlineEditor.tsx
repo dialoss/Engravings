@@ -34,6 +34,7 @@ const InlineEditor = ({data, closeCallback}) => {
         });
         ref.current.focus();
         if (data.config === 'editor') {
+            ref.current.editor.container.closest(".quill").querySelector('.ql-toolbar').classList.add('transform-origin');
             let block = ref.current.editor.container.closest('.quill');
             let item = block.closest('.transform-item');
             if (item) item.style.width = Math.max(300, item.clientWidth) + "px";

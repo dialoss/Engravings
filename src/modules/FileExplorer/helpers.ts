@@ -50,13 +50,13 @@ export function selectItems() {
     const selected = window.filemanager.GetSelectedItemIDs()
         .map(id => itemsAll.find(it => it.id === id));
     if (window.filemanager.selectItems) {
-        window.filemanager.selectItems(selected.map(f => serializeFile({...f, type: f.filetype})));
+        window.filemanager.selectItems(selected);
         window.filemanager.selectItems = null;
     } else {
-        for (const f of selected.map(f => fileToItem({...f, type: f.filetype}))) {
+        for (const f of selected) {
             window.actions.request(f);
         }
     }
     window.filemanager.ClearSelectedItems();
-    triggerEvent("filemanager-window:toggle", {isOpened: false});
+    window.modals.close("filemanager");
 }

@@ -63,8 +63,6 @@ const ItemListContainer = () => {
         const response = await sendLocalRequest(url, request.item, request.method);
         console.log('RESPONSE', response)
         let item = response;
-        // if (response) item = createItemsTree(response);
-        console.log({...links})
 
         if (request.method === 'DELETE') {
             delete links[request.item.id];
@@ -76,7 +74,9 @@ const ItemListContainer = () => {
                 links[item.id].items = childItems;
             } else {
                 links[item.id] = item;
-                links[item.parent].items.push(links[item.id]);
+                if (item.parent) {
+                    links[item.parent].items.push(links[item.id]);
+                }
             }
 
             globalDispatch(actions.setItemsAll({items: [item], page}));

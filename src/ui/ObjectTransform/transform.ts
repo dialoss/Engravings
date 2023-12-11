@@ -10,6 +10,39 @@ let transform = null;
 let deltaX = 0;
 let deltaY = 0;
 
+function getTop(elem) {
+    let box = elem.getBoundingClientRect();
+    let body = document.body;
+    let docEl = document.documentElement;
+
+    let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    let clientTop = docEl.clientTop || body.clientTop || 0;
+    let top = box.top +  scrollTop - clientTop;
+    return Math.round(top);
+}
+
+function getLeft(elem) {
+    let box = elem.getBoundingClientRect();
+    let body = document.body;
+    let docEl = document.documentElement;
+
+    let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+    let clientLeft = docEl.clientLeft || body.clientLeft || 0;
+    let left = box.left + scrollLeft - clientLeft;
+    return Math.round(left);
+}
+
+export function offsetTop(item, container) {
+    console.log(getTop(container))
+    console.log(getTop(item))
+
+    return getTop(item) - getTop(container);
+}
+
+function offsetLeft(item, container) {
+    return getLeft(item) - getLeft(container);
+}
+
 function checkNears(px, py) {
     let curBlock = item.getBoundingClientRect();
     let items = container.querySelector('.items-wrapper').children;
@@ -74,9 +107,7 @@ function moveAt(event, shiftX, shiftY) {
 
 export function transformItem({item, event}) {
     if (!item.classList.contains("transformed")) item.classList.add("transformed");
-    if (transform.type === "move") {
-        if (item.style.position !== 'fixed') item.style.position = 'absolute';
-    }
+    if (transform.type === 'move') item.style.position = "absolute";
 
     let block = item.getBoundingClientRect();
     let win = container.getBoundingClientRect();
@@ -84,14 +115,13 @@ export function transformItem({item, event}) {
     if (transform.type === "resize") {
         deltaX *= transform.dir[0];
         deltaY *= transform.dir[1];
-        let offsetL = item.offsetLeft;
+        let offsetL = offsetLeft(item, container);
         let width = block.width + deltaX;
         let height = block.height + deltaY;
 
         if (transform.dir[0] > 0 && width + offsetL > win.width) width = block.width;
         width = Math.max(50, width);
         height = Math.max(20, height);
-
         if (transform.dir[0] < 0) {
             offsetL = offsetL + (block.width - width);
             if (offsetL <= 0) width = block.width;
@@ -100,11 +130,13 @@ export function transformItem({item, event}) {
         item.style.aspectRatio = width / height;
         setItemProps(offsetL, width);
     } else {
-        let px = item.offsetLeft + deltaX;
-        let py = item.offsetTop + deltaY;
+        let offsetL = item.offsetLeft;
+        let offsetT = item.offsetTop;
+        let px = offsetL + deltaX;
+        let py = offsetT + deltaY;
         if (event.ctrlKey) {
-            if (checkNears(px, py - deltaY)[0]) px = item.offsetLeft;
-            if (checkNears(px - deltaX, py)[1]) py = item.offsetTop;
+            if (checkNears(px, py - deltaY)[0]) px = offsetL;
+            if (checkNears(px - deltaX, py)[1]) py = offsetT;
         }
         if (py < 0) py = 0;
         if (px < 0) px = 0;
@@ -113,7 +145,7 @@ export function transformItem({item, event}) {
         item.style.top = py + "px";
         setItemProps(px, block.width);
     }
-    initContainerDimensions(container);
+    initContainerDimensions(item);
 }
 
 export function setItemTransform(event, type, _item, _btn, config) {
@@ -125,6 +157,8 @@ export function setItemTransform(event, type, _item, _btn, config) {
 
     window.actions.elements.transformed = item;
     item.style.userSelect = 'none';
+
+    console.log(offsetTop(item, container));
 
     let shiftX = event.clientX - (btn.getBoundingClientRect().left + btn.getBoundingClientRect().width / 2);
     let shiftY = event.clientY - (btn.getBoundingClientRect().top + btn.getBoundingClientRect().height / 2);
@@ -156,11 +190,10 @@ export function setItemTransform(event, type, _item, _btn, config) {
 }
 
 export function getTransformData({item}) {
-    let top = item.offsetTop / container.getBoundingClientRect().height * 100 + '%';
-    if (isResizable(container)) top = item.offsetTop + 'px';
+    let top = item.style.top;
 
     window.actions.request([window.actions.prepareRequest('PATCH', undefined, {style: {
-        position: item.style.position || 'initial',
+        position: item.style.position,
         aspectRatio: item.style.aspectRatio,
         width: item.style.width || "0",
         top,

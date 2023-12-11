@@ -44,6 +44,8 @@ type FormContainerProps = {
 
 export const FormContainer = ({form, callback, children} : FormContainerProps) => {
     const [formFields, setFormFields] = useState<IFormFields>({});
+    const ref = useRef();
+    ref.current = formFields;
     const inputCallback = ({value, field} : {value: any; field: string}) =>
         setFormFields(current => ({...current, [field]: {...current[field], value: value}}));
 
@@ -60,7 +62,7 @@ export const FormContainer = ({form, callback, children} : FormContainerProps) =
                     {form.windowButton && <WindowButton onClick={() => callback(false)} type={'close'}/>}
                 </div>
             {children ? children : <MyForm form={form}
-                                           submitCallback={() => callback(formFields)}
+                                           submitCallback={() => callback(ref.current)}
                                            formFields={formFields}></MyForm>}
             </div>
         </FormContext.Provider>

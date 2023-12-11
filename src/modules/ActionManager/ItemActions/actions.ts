@@ -7,6 +7,8 @@ import {ElementActions, emptyItem, ItemElement} from "../../../ui/ObjectTransfor
 import {ItemlistManager, manager} from "../../ItemList/components/ItemListContainer";
 import store from "../../../store";
 import {IPage} from "../../../pages/AppRouter/store/reducers";
+import {actions} from "../../ItemList/store/reducers";
+import {getSettings} from "./helpers";
 
 function updateRequest(request: IRequest) : IRequest {
     if (request.method === 'DELETE') {
@@ -16,7 +18,7 @@ function updateRequest(request: IRequest) : IRequest {
     return request;
 }
 
-type Intermediate = {
+export type Intermediate = {
     type: "cut" | "copy";
     className: "cutted" | "copied";
     item: ItemElement;
@@ -99,7 +101,7 @@ export default class Actions implements IActions{
 
     create(item='') {
         let data: ItemElement[] = [ActionData[item]];
-        if (!data) {
+        if (!data[0]) {
             window.callbacks.call("element-form", getFormData("POST", this.elements.focused));
             return [];
         }
@@ -112,12 +114,10 @@ export default class Actions implements IActions{
             window.callbacks.call("element-form", getFormData('PATCH', this.elements.focused));
             return [];
         }
-        return [this.prepareRequest('PATCH')];
+        return [this.prepareRequest('PATCH', undefined, getSettings(item, this.elements.focused.style))];
     }
 
     baseAction(type: ('copy'|'cut'), name: ('copied'|'cutted')) {
-        this.history.intermediate.forEach(hs => this.elements.clearStyle(hs.item, hs.className));
-        this.history.intermediate = [];
         let elements: ItemElement[] = [...this.elements.selected];
         if (!elements.length) elements = [this.elements.focused];
         elements.forEach(el => {
@@ -128,6 +128,7 @@ export default class Actions implements IActions{
                 item: el,
             })
         });
+        store.dispatch(actions.setField({field:"intermediate", data:this.history.intermediate}));
         return [];
     }
 
@@ -142,6 +143,10 @@ export default class Actions implements IActions{
     paste() {
         let historyData = this.history.intermediate;
         if (!historyData) return [];
+        this.history.intermediate.forEach(hs => this.elements.clearStyle(hs.item, hs.className));
+        this.history.intermediate = [];
+        store.dispatch(actions.setField({field:"intermediate", data:[]}));
+
         let action = this.elements.focused;
 
         let requests: IRequest[] = [];

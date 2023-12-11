@@ -105,8 +105,9 @@ export class ElementActions implements IElementActions {
     }
 
     init(event, origin: HTMLElement, type: "move" | "resize") {
-        if (this.transformed) return;
         let item: HTMLElement = origin.closest(".transform-item");
+        if (this.transformed || type==='move' && item.getAttribute("data-type") === 'section') return;
+
         let alreadyFocused;
         if (item.getAttribute('data-type') !== 'modal') {
             alreadyFocused = this.focused && this.focused.id === +item.getAttribute('data-id');

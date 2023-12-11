@@ -31,6 +31,11 @@ export const ContextActions : IContextAction = {
         argument: true,
         stay_opened: true,
         actions: {
+            'quiz': {
+                callback: "create",
+                argument: true,
+                text: "Квиз",
+            },
             'print': {
                 callback: "create",
                 argument: true,
@@ -155,10 +160,20 @@ interface IActionData {
 }
 
 export const ActionData: IActionData = {
+    quiz: {
+        type: "quiz",
+        data: {
+            url: "https://drive.google.com/uc?id=1Qzhf-dFfLhskhLvOC4toVvtOgA7bAM9U",
+        },
+        style: {
+            width: "500px",
+            aspectRatio: 1,
+        }
+    },
     print: {
         type: "print",
         data: {
-            url: "6575ea77d853170013a7b268",
+            url: "https://view.genial.ly/6575ea77d853170013a7b268",
         },
         style: {
             width: "1000px"
@@ -189,6 +204,9 @@ export const ActionData: IActionData = {
     },
     empty: {
         type: 'base',
+        data: {
+            modifiers: "masonry_1"
+        },
         style: {
             movable: false,
             width: '1200px',

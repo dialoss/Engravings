@@ -35,28 +35,10 @@
       align-items: flex-start;
       justify-content: center;
       flex-wrap: wrap;
-
       display: flex;
       width: 100%;
-
-      &--2 .transform-item {
-        &.item-image, .item-video, .item-model {
-          width: 50%;
-        }
-      }
-
-      &--3 .transform-item {
-        &.item-image, .item-video, .item-model {
-          width: 33.3333%;
-        }
-      }
+      //height: 100%;
     }
-
-    &__image, &__video, &-model {
-      overflow: hidden;
-      border-radius: 8px;
-    }
-
     &-file {
       overflow: visible;
 

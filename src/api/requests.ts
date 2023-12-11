@@ -14,10 +14,21 @@ export async function fetchRequest(url) {
         const FILE_ID = query.searchParams.get('id');
             url = `https://www.googleapis.com/drive/v2/files/${FILE_ID}?alt=media`;
     }
-    return await fetch(url, {
+
+    return await axios({
+        method: "GET",
+        url,
         headers: {
-            'Authorization': 'Bearer ' + await Credentials.getToken(),
-        }
+            "Authorization": "Bearer " + await Credentials.getToken(),
+        },
+        onDownloadProgress: (progressEvent) => {
+            console.log(progressEvent)
+            // const total = parseFloat(progressEvent.currentTarget.responseHeaders['Content-Length'])
+            // const current = progressEvent.currentTarget.response.length
+            //
+            // let percentCompleted = Math.floor(current / total * 100)
+            // console.log('completed: ', percentCompleted)
+        },
     });
 }
 

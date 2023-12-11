@@ -170,8 +170,8 @@ export function init() {
             window.modals.toggle("filemanager");
     });
 
-    window.filemanager.select = e => {
-        window.filemanager.selectItems = e.detail.callback;
+    window.filemanager.select = (callback) => {
+        window.filemanager.selectItems = callback;
         window.modals.open("filemanager");
     };
 

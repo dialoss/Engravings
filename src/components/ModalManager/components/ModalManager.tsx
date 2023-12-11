@@ -8,7 +8,6 @@ interface IModal {
     isOpened: React.Ref<boolean>;
     zindex: number;
     setOpened: React.Dispatch<React.SetStateAction<boolean>>;
-    openCallback?: any;
 }
 
 interface IModals {
@@ -38,26 +37,25 @@ class Modals implements IModals {
                 m = this.opened[modal];
             }
         }
-        return m || {zindex: 10};
+        return m || {zindex: 11};
     }
     open(name: string) {
-        console.log(name, this)
+        console.log('OPEN',name, this)
         this.top = this.all[name];
         this.top.zindex = this.max().zindex + 1;
         this.opened.push(this.top);
         this.overlayBody(true);
         this.all[name].setOpened(true);
-        // this.all[name].openCallback && this.all[name].openCallback();
     }
     close(name: string, checkOverlay: boolean=false) {
-        console.log(name, this)
         if (checkOverlay && this.top.zindex !== this.all[name].zindex) return;
+        console.log('CLOSE',name, this)
+        this.all[name].setOpened(false);
         setTimeout(() => {
             this.overlayBody(false);
             this.opened.splice(this.opened.indexOf(this.top), 1);
             this.top = this.max();
-            this.all[name].setOpened(false);
-        }, 0);
+        }, 10);
     }
     checkState(name: string) {
         return this.all[name].isOpened.current;
@@ -79,6 +77,7 @@ class Modals implements IModals {
         console.log(this)
     }
     toggle(name: string, state=undefined) {
+        console.log('TOGGLE', name)
         if (state !== undefined) {
             if (!state) this.close(name);
             else this.open(name);

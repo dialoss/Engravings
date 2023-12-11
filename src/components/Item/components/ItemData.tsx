@@ -15,6 +15,7 @@ import ButtonItem from "./Button/ButtonItem";
 import Viewer from "./Model/Viewer";
 import Section from "./Section/Section";
 import Print from "./Print/Print";
+import QuizContainer from "./Quiz/QuizContainer";
 
 export const Components = {
     'base': ItemBase,
@@ -25,6 +26,7 @@ export const Components = {
     'file': ItemFile,
     'model': Viewer,
     'print': Print,
+    'quiz': QuizContainer,
     'section': Section,
     'textfield': ItemTextfield,
     'timeline': ItemTimeline,

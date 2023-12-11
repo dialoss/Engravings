@@ -5,14 +5,19 @@ export function getSettings(name, data) {
     switch (name) {
         case 'clear_position':
             return {
-                'position': 'initial',
-                'top': '0',
-                'left': '0',
+                style: {
+                    'position': 'initial',
+                    'top': '0',
+                    'left': '0',
+                }
             };
         case 'clear_size':
             return {
-                'width': 'auto',
-                'height': 'auto',
+                style: {
+                    'width': 'auto',
+                    'height': 'auto',
+                    aspectRatio: 'auto',
+                }
             };
         default:
             return {

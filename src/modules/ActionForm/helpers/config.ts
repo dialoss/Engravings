@@ -70,5 +70,8 @@ export const ItemsVerbose = {
     },
     "print":{
         text: "Гравюра"
+    },
+    "quiz": {
+        text: "Квиз"
     }
 }

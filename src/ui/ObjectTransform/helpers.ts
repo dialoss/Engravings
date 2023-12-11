@@ -1,4 +1,6 @@
 //@ts-nocheck
+import {offsetTop} from "./transform";
+
 function getFirstItems(container) {
     let items = container.querySelector('.items-wrapper');
     if (items) return items.querySelectorAll(':scope > .transform-item');
@@ -11,21 +13,24 @@ export function isResizable(item) {
 
 function getMaxBottom(container) {
     let m = 0;
-
     for (const block of getFirstItems(container)) {
+
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
     }
-    // const dataHeight = +container.getAttribute('data-height').replace('px','');
-    // if (dataHeight && m < dataHeight &&
-    //     !['timeline'].includes(container.getAttribute('data-type'))) {
-    //     m = dataHeight * ratio;
+    // if (container.getAttribute('data-height')) {
+    //     const dataHeight = +container.getAttribute('data-height').replace('px', '');
+    //     if (dataHeight && m < dataHeight &&
+    //         !['timeline'].includes(container.getAttribute('data-type'))) {
+    //         m = dataHeight;
+    //     }
     // }
     return m;
 }
 export function initContainerDimensions(container: HTMLElement, resize=false) {
     if (!container) return;
     let contHeight = getMaxBottom(container);
+    // console.log(contHeight)
     // if (!isResizable(container) && item) {
     //     let itemBlock = item.getBoundingClientRect();
     //     let contBlock = container.getBoundingClientRect();
@@ -33,7 +38,7 @@ export function initContainerDimensions(container: HTMLElement, resize=false) {
     //         item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
     //     return;
     // }
-    container.style.aspectRatio = container.getBoundingClientRect().width / contHeight;
+    // container.style.aspectRatio = container.getBoundingClientRect().width / contHeight;
     if (!resize) {
         let parentContainer = container.parentElement.closest('.transform-item');
         parentContainer && initContainerDimensions(parentContainer);

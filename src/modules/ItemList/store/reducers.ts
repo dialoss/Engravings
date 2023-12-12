@@ -90,6 +90,7 @@ export function localReducer(state, action) {
         }
         case "POST":
             findItem(item.parent, {items: state});
+            if (!found.item) return [...state, item];
             found.item.items.push(item);
             found.item.items.sort((a, b) => a.order - b.order);
             return structuredClone(state);

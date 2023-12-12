@@ -48,7 +48,6 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
             user_id: user.id,
             extraFields,
         });
-        console.log(uploadData)
         upload.forEach((u, i) => {
             const document = manager.config.getDocument();
             u.msg_id = msg.id;

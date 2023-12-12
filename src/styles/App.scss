@@ -73,17 +73,15 @@ button, a, input, textarea {
 p, span {
   color: #000;
 }
-//@import url("./font/stylesheet.css");
-
 body {
   font-size: 16px;
   font-weight: 400;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   height: 100%;
+  pointer-events: auto !important;
+  overscroll-behavior: auto !important;
   overflow-y: scroll !important;
   @include scrollbar;
-
-
 }
 
 .comments__wrapper {

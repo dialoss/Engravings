@@ -75,7 +75,6 @@ class Modals implements IModals {
     }
     add(modal: IModal) {
         this.all[modal.name] = modal;
-        console.log(this)
     }
     toggle(name: string, state=undefined) {
         console.log('TOGGLE', name)

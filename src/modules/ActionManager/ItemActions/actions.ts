@@ -181,6 +181,7 @@ export default class Actions implements IActions{
         if (!item) {
             item = this.elements.focused;
         }
+        if (item.style && typeof item.style !== 'string') item.style = JSON.stringify(item.style);
         return {
             method,
             endpoint: "items",

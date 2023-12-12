@@ -5,6 +5,7 @@ import TransformButton from "./TransformButton";
 import "./TransformItem.scss";
 import {ItemsVerbose} from "../../../../modules/ActionForm/helpers/config";
 import {useAppSelector} from "../../../../hooks/redux";
+import {format} from "../../../../components/ItemList/CSSEditor/CSSEditor";
 
 
 export interface TransformItemStyle {
@@ -30,16 +31,27 @@ export interface TransformItemProps {
     id?: number;
 }
 
+const defaultStyle = {
+    backgroundColor: "#fff",
+    aspectRatio: "auto",
+    boxShadow: "0 0 5px grey",
+    zIndex: 1,
+    resizable: true,
+    movable: true,
+    borderRadius: "8px",
+    padding: "4px",
+};
+
 function getStyle(style, type) {
-    let height = style.height;
-    // if (style.height.match("px")) height =
+    console.log({...style})
+    for (const s in defaultStyle) {
+        if (style[s] === undefined) style[s] = defaultStyle[s];
+    }
+    // console.log(style)
     return {
         ...style,
         height: 'auto',
-        minHeight: height,
-        background: style.background || "#fff",
-        padding: style.padding ? (style.padding + "px").repeat(4) : '0',
-        ...{border: '0', borderRadius: style.border}
+        // minHeight: style.height || 'auto',
     }
 }
 
@@ -94,7 +106,8 @@ const TransformItem = ({children, style, type, className, id} : TransformItemPro
                          data-id={id}
                          data-width={style.width}
                          data-height={style.height}
-                         style={getStyle(style, type)}>
+                         style={getStyle(style, type)}
+        >
             {children}
             {focused.id === id && <div className={"item__edit " + (focused.id === id ? 'focused' : '')}>
                 <Borders type={type}></Borders>

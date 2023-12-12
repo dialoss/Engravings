@@ -17,9 +17,7 @@ export interface ItemElement {
     data?: {
         [key: string]: number | string | boolean;
     },
-    style?: {
-        [key: string] : number | string | boolean;
-    }
+    style?: string | object;
 }
 
 export const emptyItem: ItemElement = {

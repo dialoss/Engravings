@@ -21,20 +21,17 @@ function splitItem(item: ItemElement) {
     const baseFields = {...item};
     for (const field of ["items","style","data","page"]){
         if (baseFields[field]) delete baseFields[field];
-
     }
-    return {base: baseFields, data: item.data || {}, style: item.style || {}};
+    return {base: baseFields, data: item.data || {}};
 }
 
 const Verbose = {
     base: "Основная",
     data: "Данные",
-    style: "Стиль"
 }
 
 const ItemsInfo = ({items, type, title}) => {
     const info = items.map(it => splitItem(it));
-    console.log(info)
     return (
         <div className={type}>
             {!!items.length && <h3>{title}</h3>}
@@ -102,12 +99,17 @@ const EventManager = () => {
             }, 300);
         });
     }
+    function setItemStyle(style) {
+        const item = window.actions.elements.focused;
+        if (!item) return;
+        window.actions.request([window.actions.prepareRequest("PATCH", {...item, style})]);
+    }
     const elements = useAppSelector(state => state.elements);
     const item = elements.focused;
     const intermediate: Intermediate[] = elements.intermediate;
     const state = useAppSelector(state => state.elements.pageItems);
     return (
-        <div className={'page-editor'}>
+        <div className={'page-editor'} onMouseDown={e => e.stopPropagation()}>
             <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>
             <ActionButton modalToggle={false} onClick={setEdit}><Edit></Edit></ActionButton>
             <div className={"action-elements"}>
@@ -128,7 +130,7 @@ const EventManager = () => {
                     accordion: true,
                 }}></Hierarchy>
             </div>
-            <CSSEditor></CSSEditor>
+            {item.style && <CSSEditor style={item.style} setStyle={setItemStyle}></CSSEditor>}
         </div>
     );
 };

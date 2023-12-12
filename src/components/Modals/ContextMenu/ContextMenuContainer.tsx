@@ -6,6 +6,7 @@ import {ModalManager} from "components/ModalManager";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getCorrectedPosition} from "../../../ui/helpers/viewport";
 import TransformItem from "../../../ui/ObjectTransform/components/TransformItem/TransformItem";
+import {pageEditable} from "../../../modules/ItemList/store/reducers";
 
 const ContextMenuContainer = ({actions}) => {
     const name = "context";
@@ -13,7 +14,7 @@ const ContextMenuContainer = ({actions}) => {
     const [position, setPosition] = useState({left: 0, top: 0});
 
     function selectItem(event) {
-        if (getElementByType(event, "modal")) return;
+        if (getElementByType(event, "modal") || !pageEditable()) return;
         window.actions.elements.selectItems(getElementFromCursor(event, 'transform-item'), event);
     }
 

@@ -130,7 +130,6 @@ class FileTransfer {
         }
     }
     static getFiles(event: any): File[] {
-        console.log(event)
         const files = FileTransfer.getTransfer(event);
         if (files.length) {
             event.stopPropagation();

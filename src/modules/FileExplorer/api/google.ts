@@ -187,7 +187,6 @@ export function serializeObject(file: object) : StorageFile {
     let fileProps : MediaFileProps | ModelFileProps;
     const name = file.title || file.name || '';
     let id = file.id;
-    console.log(name)
     let type: string = getFileType(name);
 
     if (mimeType !== 'folder') {

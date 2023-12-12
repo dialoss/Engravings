@@ -167,7 +167,7 @@ export const ActionData: IActionData = {
         },
         style: {
             width: "500px",
-            aspectRatio: 1,
+            aspectRatio: "1 / 1",
         }
     },
     print: {
@@ -182,8 +182,9 @@ export const ActionData: IActionData = {
     section: {
         type: "section",
         style: {
-            aspectRatio: 1,
+            aspectRatio: "1 / 1",
             boxShadow:"none",
+            padding: "0 0 0 0",
         }
     },
     page_from: {

@@ -50,6 +50,7 @@ class Modals implements IModals {
     close(name: string, checkOverlay: boolean=false) {
         if (checkOverlay && this.top.zindex !== this.all[name].zindex) return;
         console.log('CLOSE',name, this)
+
         this.all[name].setOpened(false);
         setTimeout(() => {
             this.overlayBody(false);

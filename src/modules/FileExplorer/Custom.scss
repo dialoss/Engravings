@@ -140,23 +140,26 @@ $border: solid #7c7c7c;
       }
     }
   }
-
+  &__buttons{
+    display: flex;
+    flex-direction: row-reverse;
+  }
   &-header {
     border: 2px $border;
     border-bottom: none;
     background-color: #fff;
     width: 100%;
     display: flex;
-    flex-direction: column;
 
     &__wrapper {
       margin-bottom: -2px;
     }
-
-    &.buttons, &.toolbar {
+    &.buttons {
+      height: 30px;
+    }
+     &.toolbar {
       height: 30px;
       display: flex;
-      flex-direction: row-reverse;
       align-items: center;
       padding-right: 10px;
       column-gap: 5px;
@@ -181,14 +184,9 @@ $border: solid #7c7c7c;
       width: 30px;
       height: 30px;
     }
-
-    &__button {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      &:hover {
-        cursor: pointer;
-      }
+    .window-close{
+      left: auto;
+      right: 5px;
     }
   }
 }

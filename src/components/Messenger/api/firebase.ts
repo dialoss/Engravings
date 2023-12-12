@@ -213,7 +213,7 @@ export function useGetRooms() {
 
         store.dispatch(actions.setField({field:'rooms', data:newRooms}));
         if (window.messenger) {
-            triggerEvent('messenger-window:toggle', {isOpened:true});
+            window.modals.open("messenger");
             setCurrentRoom(window.messenger);
             window.messenger = null;
         }

@@ -35,7 +35,7 @@ class ItemSerializer extends FormSerializer {
                 // for (const field of ['width', 'height', 'filename', 'type']) {
                 //     this.fields[field] = this.fields.url[0][field] || this.fields[field];
                 // }
-                this.fields.url = this.fields.url[0].url;
+                // this.fields.url = this.fields.url[0].url;
             }
         }
         if (this.fields.page_from !== undefined) {

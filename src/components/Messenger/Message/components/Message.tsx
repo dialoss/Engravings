@@ -24,7 +24,7 @@ export const UploadPreview = ({message}) => {
         }]
     }
     const carouselCallback = (index) => {
-        triggerEvent('carousel:open', {item: index, items: upload.filter(u => u.type === 'image')});
+        window.callbacks.call("carousel", {item: index, items: upload.filter(u => u.type === 'image')});
     }
     const mediaItems = Math.min(3, upload.filter(u => ['image', 'video'].includes(u.type)).length);
     return (

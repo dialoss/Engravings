@@ -62,27 +62,9 @@ const ItemListContainer = () => {
         console.log('REQUEST', request)
         const response = await sendLocalRequest(url, request.item, request.method);
         console.log('RESPONSE', response)
-        let item = response;
-
-        if (request.method === 'DELETE') {
-            delete links[request.item.id];
-        }
-        else {
-            if (request.method === "PATCH") {
-                const childItems = links[item.id].items;
-                links[item.id] = item;
-                links[item.id].items = childItems;
-            } else {
-                links[item.id] = item;
-                if (item.parent) {
-                    links[item.parent].items.push(links[item.id]);
-                }
-            }
-
-            globalDispatch(actions.setItemsAll({items: [item], page}));
-        }
-        console.log({...links})
-        dispatch({method: "SET", payload: createItemsTree(Object.values(structuredClone(links)))});
+        dispatch({method: request.method, payload: [request.item]})
+        if (request.method !== 'DELETE')
+            globalDispatch(actions.setItemsAll({items: [request.item], page}));
     }
 
     useEffect(() => {
@@ -95,6 +77,7 @@ const ItemListContainer = () => {
             fetchItems(items.length, limit.current, addItems);
         }
     }
+    console.log(items)
     return (
         <DelayedVisibility timeout={300}>
             <ItemList loadMore={loadMore} items={items}></ItemList>

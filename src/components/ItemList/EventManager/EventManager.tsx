@@ -14,12 +14,15 @@ import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
 import {Intermediate} from "../../../modules/ActionManager/ItemActions/actions";
 import Hierarchy from "../../../ui/Hierarchy/Hierarchy";
 import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
+import {ItemsVerbose} from "../../../modules/ActionForm/helpers/config";
+import {CSSEditor} from "../CSSEditor/CSSEditor";
 
 function splitItem(item: ItemElement) {
     const baseFields = {...item};
-    if (baseFields.items) delete baseFields.items;
-    if (baseFields.style) delete baseFields.style;
-    if (baseFields.data) delete baseFields.data;
+    for (const field of ["items","style","data","page"]){
+        if (baseFields[field]) delete baseFields[field];
+
+    }
     return {base: baseFields, data: item.data || {}, style: item.style || {}};
 }
 
@@ -110,7 +113,7 @@ const EventManager = () => {
             <div className={"action-elements"}>
                 <ItemsInfo items={[item]}
                            type={"focused"}
-                           title={"Выделенный предмет"}></ItemsInfo>
+                           title={"Выделенный предмет " + (item.type ? ItemsVerbose[item.type].text : '')}></ItemsInfo>
                 <ItemsInfo items={intermediate.filter(it => it.type === 'cut').map(it=>({id:it.item.id}))}
                            type={"cutted"}
                            title={"Вырезанные предметы"}></ItemsInfo>
@@ -125,6 +128,7 @@ const EventManager = () => {
                     accordion: true,
                 }}></Hierarchy>
             </div>
+            <CSSEditor></CSSEditor>
         </div>
     );
 };

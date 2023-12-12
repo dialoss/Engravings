@@ -45,7 +45,7 @@ const FileExplorer = () => {
         window.filemanager.GetCurrentFolder().SetEntries(folder);
         initItems();
     }, [folder]);
-
+    console.log(folder)
     return (
         <ModalManager name={"filemanager"}
                       style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
@@ -59,8 +59,8 @@ const FileExplorer = () => {
                             <div className={"filemanager-header__wrapper"}>
                                 <div className="filemanager-header buttons transform-origin">
                                     <WindowButton type={'close'}></WindowButton>
-                                    <Toolbar data={folder} setData={setFolder}></Toolbar>
                                 </div>
+                                <Toolbar data={folder} setData={setFolder}></Toolbar>
                             </div>
                         </div>
                         <div className="filemanager-right">

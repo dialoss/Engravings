@@ -8,10 +8,10 @@ import {triggerEvent} from "../../../helpers/events";
 const Auth = () => {
     const user = useAppSelector(state => state.users.current);
     function login() {
-        triggerEvent('user-auth', true);
+        window.callbacks.call("user-auth", true);
     }
     function logout() {
-        triggerEvent('user-auth', false);
+        window.callbacks.call("user-auth", false);
     }
     return (
         <div className={"auth"}>

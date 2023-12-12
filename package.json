@@ -4,6 +4,7 @@
   "private": false,
   "homepage": "https://www.mymountmt.ru/",
   "dependencies": {
+    "@compai/css-gui": "^0.0.247",
     "@emoji-mart/data": "^1.1.2",
     "@react-oauth/google": "^0.11.1",
     "@react-three/drei": "^9.84.2",

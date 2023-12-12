@@ -78,8 +78,7 @@ interface IActions {
     paste();
     prepareRequest(method: ('POST'|'DELETE'|'PATCH'),
                    data: object,
-                   item: ItemElement,
-                   empty: boolean) : IRequest;
+                   item: ItemElement) : IRequest;
 }
 
 export default class Actions implements IActions{
@@ -178,11 +177,9 @@ export default class Actions implements IActions{
 
     prepareRequest(method: ('POST'|'DELETE'|'PATCH'),
                    item: ItemElement=undefined,
-                   data: object={},
-                   empty: boolean=false) : IRequest {
+                   data: object={}) : IRequest {
         if (!item) {
-            if (empty) item = data;
-            else item = this.elements.focused;
+            item = this.elements.focused;
         }
         return {
             method,
@@ -200,9 +197,10 @@ export default class Actions implements IActions{
 export class Callbacks {
     callbacks = {};
     register(name: string, callback: any) {
+        console.log(this)
         this.callbacks[name] = callback;
     }
-    call(name: string, data: any) {
+    call(name: string, data: any={}) {
         console.log('CALLBACK', name, data, this)
         if (name in this.callbacks)
             return this.callbacks[name](data);

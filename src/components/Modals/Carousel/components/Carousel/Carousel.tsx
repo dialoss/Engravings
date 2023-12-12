@@ -35,7 +35,7 @@ const Carousel = ({group, type}) => {
     function checkClose(e) {
         setCurScale(e.state.scale);
         if (e.state.scale === 1 && e.state.positionY < -50)
-            triggerEvent('carousel-window:toggle', {isOpened: false});
+            window.modals.close("carousel")
     }
 
     const width = 200;

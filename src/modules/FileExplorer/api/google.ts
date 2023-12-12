@@ -47,6 +47,18 @@ export interface StorageAPI {
     delete(file: StorageFile) : Promise<StorageFile[]>;
 }
 
+export interface GoogleFileParent {
+    id: string;
+}
+
+export interface GoogleFile {
+    parents: string[] | ({id: string})[];
+    title: string;
+    kind: 'drive#file';
+    mimeType: 'application/vnd.google-apps.folder' | 'application/vnd.google-apps.file';
+    properties?: {[key:string]:string};
+}
+
 export class GoogleDriveAPI implements StorageAPI {
     requests = new GoogleRequests();
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
@@ -160,7 +172,7 @@ export interface EmptyStorageFile {
 export interface StorageFile {
     id: string,
     name: string,
-    type: FileType,
+    type: string,
     size: number,
     hash: string,
     props: MediaFileProps | ModelFileProps | {},
@@ -173,9 +185,10 @@ export function serializeObject(file: object) : StorageFile {
     let mimeType = file.mimeType.split('.').slice(-1)[0];
     let props = (file.properties || []);
     let fileProps : MediaFileProps | ModelFileProps;
-
+    const name = file.title || file.name || '';
     let id = file.id;
-    let type: FileType = getFileType(file.mimeType);
+    console.log(name)
+    let type: string = getFileType(name);
 
     if (mimeType !== 'folder') {
         mimeType = 'file';
@@ -209,7 +222,7 @@ export function serializeObject(file: object) : StorageFile {
     return {
         id,
         parent: '',
-        name: file.title || file.name || '',
+        name,
         type,
         mimeType,
         size: +file.fileSize || 0,
@@ -219,7 +232,7 @@ export function serializeObject(file: object) : StorageFile {
     };
 }
 
-export function getFileType(filename: string) : FileType {
+export function getFileType(filename: string) : string {
     const types = {
         'image': ['png', 'jpeg', 'jpg', 'webp', 'gif', 'image'],
         'model': ['sldprt', 'sld', 'sldw', 'sldasm', 'sdas', 'glb', 'gltf'],
@@ -228,8 +241,10 @@ export function getFileType(filename: string) : FileType {
     };
     for (const type in types) {
         for (const ext of types[type]) {
-            if (filename.toLowerCase().includes(ext)) return Object.keys(FileType)[Object.values(FileType).indexOf(type)];
+            if (filename.toLowerCase().match(/`${ext}`/)) return type;
+                // return Object.keys(FileType)[Object.values(FileType).indexOf(type)];
         }
     }
-    return FileType.FILE;
+    return "file";
+    // return FileType.FILE;
 }

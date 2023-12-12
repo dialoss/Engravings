@@ -164,7 +164,7 @@ const AuthWrapper = () => {
         else LocalAuth.logout();
     }
 
-    useAddEvent('user-auth', e => auth(e.detail));
+    window.callbacks.register("user-auth", auth);
 
     return (
         <LoginWindow callback={callback}></LoginWindow>

@@ -18,7 +18,7 @@ const InputContainer = ({extraFields={}, manager, children, closeCallback}) => {
         let {text, upload} = mRef.current;
         const user = store.getState().users.current;
         if (!user.id) {
-            triggerEvent('user-auth', true);
+            window.callbacks.call("user-auth", true);
             return;
         }
         const [messageSubmit, response] = await manager.config.messageSubmit(message);

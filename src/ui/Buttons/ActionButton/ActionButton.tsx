@@ -11,7 +11,7 @@ const ActionButton = ({children, focus=false, modalToggle=true, authorizeAction,
     if (authorizeAction) {
         props.onClick = (e) => {
             if (!user.authenticated) {
-                triggerEvent('user-auth', true);
+                window.callbacks.call("user-auth", true);
                 return;
             }
             f(e);

@@ -1,7 +1,4 @@
 //@ts-nocheck
-import Credentials from "../../Authorization/api/googleapi";
-import dayjs from "dayjs";
-import {getElementByType, triggerEvent} from "../../../helpers/events";
 import {getLocation} from "../../../hooks/getLocation";
 import {EmptyStorageFile, getFileType, GoogleDriveAPI, StorageAPI, StorageFile} from "./google";
 import {uploadAutodeskFile} from "../../../components/Item/components/Model/Autodesk/api/api";

@@ -2,13 +2,15 @@
     flex-grow: 1;
     transform: none !important;
     pointer-events: auto !important;
+    position: relative;
+    //overflow: hidden ;
     //width: 80vw;
 }
 .container-main {
     min-height: 100dvh;
 }
 .content-wrapper {
-    //overflow: hidden !important;
+    overflow: hidden !important;
     height: 100%;
     .container {
         height: 100%;

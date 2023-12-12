@@ -3,6 +3,8 @@ $color-focused: #495CEF;
 
 .transform-item {
     transform: scale(1);
+    //background-image: url("./bg.png") !important;
+
 
     &.copied {
         opacity: 0.8;
@@ -28,9 +30,7 @@ $color-focused: #495CEF;
         > .item__edit {
             display: none;
         }
-        margin-left: auto !important;
-        margin-top: auto !important;
-        position: absolute !important;
+        border-radius: 8px !important;
     }
 
     &[data-style="fullscreen"], &[data-type="section"] {
@@ -79,6 +79,13 @@ $color-focused: #495CEF;
             background-color: $color-focused;
             color: #fff;
         }
+    }
+
+    .borders {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
     }
 
     .borders, .resizers {

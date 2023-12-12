@@ -7,15 +7,16 @@ import {useAddEvent} from "../../hooks/useAddEvent";
 const Modal = ({content, style, name, isOpened, closeCallback}) => {
     const ref = useRef<HTMLElement>(null);
     const opened = (isOpened ? "opened" : "");
-    console.log(name, style)
+    const windowName = name + "-window";
     function backgroundClose(event) {
         const toggle = getElementFromCursor(event, 'modal__toggle-button');
         !toggle && closeCallback();
+        console.log("BG", toggle)
         if (style.bg !== 'bg-none') event.stopPropagation();
     }
     useAddEvent("mousedown", (e) => {
         const toggle = getElementFromCursor(e, 'modal__toggle-button');
-        const mod = getElementFromCursor(e, name);
+        const mod = getElementFromCursor(e, windowName);
         !mod && !toggle && style.bg === 'bg-none' && closeCallback();
     });
 
@@ -31,7 +32,7 @@ const Modal = ({content, style, name, isOpened, closeCallback}) => {
             <div className={"modal__wrapper"}>
                 <div className={`modal__background ${opened} ${!!style && (style.bg || '')}`}
                      onClick={backgroundClose}>
-                    <div className={`modal__window ${name}-window ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
+                    <div className={`modal__window ${windowName} ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
                          onClick={e => e.stopPropagation()}>
                         <div className="modal__content">
                             {content}

@@ -10,39 +10,6 @@ let transform = null;
 let deltaX = 0;
 let deltaY = 0;
 
-function getTop(elem) {
-    let box = elem.getBoundingClientRect();
-    let body = document.body;
-    let docEl = document.documentElement;
-
-    let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    let clientTop = docEl.clientTop || body.clientTop || 0;
-    let top = box.top +  scrollTop - clientTop;
-    return Math.round(top);
-}
-
-function getLeft(elem) {
-    let box = elem.getBoundingClientRect();
-    let body = document.body;
-    let docEl = document.documentElement;
-
-    let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    let clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    let left = box.left + scrollLeft - clientLeft;
-    return Math.round(left);
-}
-
-export function offsetTop(item, container) {
-    console.log(getTop(container))
-    console.log(getTop(item))
-
-    return getTop(item) - getTop(container);
-}
-
-function offsetLeft(item, container) {
-    return getLeft(item) - getLeft(container);
-}
-
 function checkNears(px, py) {
     let curBlock = item.getBoundingClientRect();
     let items = container.querySelector('.items-wrapper').children;
@@ -115,7 +82,7 @@ export function transformItem({item, event}) {
     if (transform.type === "resize") {
         deltaX *= transform.dir[0];
         deltaY *= transform.dir[1];
-        let offsetL = offsetLeft(item, container);
+        let offsetL = block.offsetLeft;
         let width = block.width + deltaX;
         let height = block.height + deltaY;
 
@@ -157,8 +124,6 @@ export function setItemTransform(event, type, _item, _btn, config) {
 
     window.actions.elements.transformed = item;
     item.style.userSelect = 'none';
-
-    console.log(offsetTop(item, container));
 
     let shiftX = event.clientX - (btn.getBoundingClientRect().left + btn.getBoundingClientRect().width / 2);
     let shiftY = event.clientY - (btn.getBoundingClientRect().top + btn.getBoundingClientRect().height / 2);

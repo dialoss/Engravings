@@ -1,13 +1,10 @@
 //@ts-nocheck
 import store from "../../store";
 
-export let links = {};
-
 export function createItemsTree(items) {
-    console.log(links)
     if (!items.length) return items;
-    // console.log('BEFORE TREE', items)
 
+    let links = {};
     let tree = {};
     let childItems = [];
     items.forEach(c => {

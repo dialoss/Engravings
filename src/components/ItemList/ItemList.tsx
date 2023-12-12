@@ -22,7 +22,7 @@ const ItemList = ({items, className, loadMore=null}) => {
             {
                 items.map(it=><Item item={it} depth={0}></Item>)
             }
-            {loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}
+            {/*{loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}*/}
         </div>
     );
 };

@@ -12,18 +12,6 @@ const Toolbar = ({data, setData}) => {
 
     return (
         <div className="filemanager-header toolbar">
-            <div className="filemanager-search">
-                <SearchContainer data={data}
-                                 searchBy={'name'}
-                                 setData={setData}
-                                 placeholder={'Поиск по файлам'}>
-                </SearchContainer>
-            </div>
-            <div className="filemanager__button" onClick={() => window.filemanager.changeView}>Вид</div>
-            <div className="filemanager__button refresh" onClick={refreshFolder}>
-                Обновить
-            </div>
-            <div className="filemanager__button" onClick={selectItems}>Добавить</div>
             <div className="filemanager-sort fe_fileexplorer_item_text">
                 {
                     TextBar.map(t => <SortContainer data={data}
@@ -31,6 +19,20 @@ const Toolbar = ({data, setData}) => {
                                                     setData={setData} key={t.sortBy}>
                     </SortContainer>)
                 }
+            </div>
+            <div className="filemanager__buttons">
+                <div className="filemanager-search">
+                    <SearchContainer data={data}
+                                     searchBy={'name'}
+                                     setData={setData}
+                                     placeholder={'Поиск по файлам'}>
+                    </SearchContainer>
+                </div>
+                <div className="filemanager__button" onClick={() => window.filemanager.changeView()}>Вид</div>
+                <div className="filemanager__button refresh" onClick={refreshFolder}>
+                    Обновить
+                </div>
+                <div className="filemanager__button" onClick={selectItems}>Добавить</div>
             </div>
         </div>
     );

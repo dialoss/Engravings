@@ -14,9 +14,11 @@ export function isResizable(item) {
 function getMaxBottom(container) {
     let m = 0;
     for (const block of getFirstItems(container)) {
-
         let rect = block.getBoundingClientRect();
         m = Math.max(m, block.offsetTop + rect.height);
+    }
+    if (container.style.aspectRatio !== 'auto') {
+        return Math.max(m, container.getBoundingClientRect().height);
     }
     // if (container.getAttribute('data-height')) {
     //     const dataHeight = +container.getAttribute('data-height').replace('px', '');
@@ -38,7 +40,7 @@ export function initContainerDimensions(container: HTMLElement, resize=false) {
     //         item.style.top = Math.max(0, contBlock.height - itemBlock.height) + 'px';
     //     return;
     // }
-    // container.style.aspectRatio = container.getBoundingClientRect().width / contHeight;
+    container.style.aspectRatio = container.getBoundingClientRect().width / contHeight;
     if (!resize) {
         let parentContainer = container.parentElement.closest('.transform-item');
         parentContainer && initContainerDimensions(parentContainer);

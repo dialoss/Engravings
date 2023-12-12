@@ -11,7 +11,7 @@ const ItemImage = ({data, ...props}) => {
     const ref = useRef();
     const carouselCallback = useCallback((event) => {
         if (preventOnTransformClick(ref) || event.ctrlKey || pageEditable() || data.carousel === false) return;
-        triggerEvent('carousel:open', data);
+        window.callbacks.call("carousel", data);
     }, []);
 
     return (

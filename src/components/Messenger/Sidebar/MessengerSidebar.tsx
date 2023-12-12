@@ -25,7 +25,7 @@ const MessengerSidebar = () => {
 
     function setRoom(id) {
         if (!user) {
-            triggerEvent('user-auth', true);
+            window.callbacks.call("user-auth", true);
             return;
         }
         if (room.id === id) id = '';
@@ -48,7 +48,7 @@ const MessengerSidebar = () => {
         let room = null;
 
         if (!user) {
-            triggerEvent('user-auth', true);
+            window.callbacks.call("user-auth", true);
             return;
         }
 

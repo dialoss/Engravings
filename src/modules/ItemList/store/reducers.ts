@@ -4,6 +4,7 @@ import store from "../../../store";
 import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
 import {IPage} from "../../../pages/AppRouter/store/reducers";
 import {Intermediate} from "../../ActionManager/ItemActions/actions";
+import {links} from "../helpers";
 
 interface IElements {
     itemsAll: {
@@ -52,30 +53,56 @@ export const elementsSlice = createSlice({
 
 export const { actions, reducer } = elementsSlice;
 
+let found = {
+    item: null,
+    parent: null,
+}
+function findItem(id, parent) {
+    if (found.item) return;
+    for (const it of parent.items) {
+        if (it.id === id) {
+            found = {item: it, parent};
+            return;
+        }
+        findItem(id, it);
+    }
+}
+
 export function localReducer(state, action) {
-    switch (action.method) {
-        case "SET":
-            return action.payload;
+    const item = action.payload[0];
+    const method = action.method;
+    if (method === "SET") return action.payload;
+
+    found = {item:null,parent:null};
+    switch (method) {
         case "PATCH":
-            
-            for (let i = 0; i < state.length; i++) {
-                if (state[i].id === item.id) {
-                    let newState = [...state];
-                    newState[i] = item;
-                    return newState;
+        {
+            findItem(item.id, {items: state});
+            const items = found.parent.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].id === item.id) {
+                    const childItems = items[i].items;
+                    items[i] = {...item, items: childItems};
+                    break;
                 }
             }
-            return state;
+            return structuredClone(state);
+        }
         case "POST":
-        {
-            let newState = [...state];
-            newState.splice(item.order, 0, item);
-            return newState;
-        }
+            findItem(item.parent, {items: state});
+            found.item.items.push(item);
+            found.item.items.sort((a, b) => a.order - b.order);
+            return structuredClone(state);
         case 'DELETE':
-        {
-            return [...state].filter(el => el.id !== item.id);
-        }
+            findItem(item.id, {items: state});
+            const items = found.parent.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].id === item.id) {
+                    delete items[i];
+                    break;
+                }
+            }
+            return structuredClone(state);
     }
 }
 

@@ -15,6 +15,7 @@ import {useAddEvent} from "hooks/useAddEvent";
 import {useAppSelector} from "hooks/redux";
 import {ModalManager} from "components/ModalManager";
 import {getCompressedImage} from "../../Item/components/Image/helpers";
+import carousel from "./components/Carousel/Carousel";
 
 function checkNear(n, items) {
     n = (n + items.length) % items.length;
@@ -55,7 +56,7 @@ export const CarouselModal = ({name}) => {
     }
     console.log(items, group)
     console.log(group)
-    useAddEvent("carousel:open", openCarousel);
+    window.callbacks.register("carousel", openCarousel);
     return (
         <ModalManager name={windowName} key={windowName} style={{}}>
             {group && <CarouselContainer next={() => setGroup(bounds(position, 1, itemsRef))}

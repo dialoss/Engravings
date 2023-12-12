@@ -56,19 +56,15 @@ const Sidebar = ({data, admin, setData}) => {
     ];
 
     function toggleSidebar(event) {
-        if (event.detail.isOpened !== undefined) {
-            setOpened(event.detail.isOpened);
-            return;
-        }
         const el = getElementFromCursor(event, '', ['sidebar', 'window-button']);
         if (!el && opRef.current && isMobileDevice())
             close();
     }
-    window.callbacks.register("sidebar:toggle", toggleSidebar);
+
+    window.callbacks.register("sidebar:toggle", setOpened);
 
     useAddEvent("mousedown", toggleSidebar);
     useAddEvent("touchstart", toggleSidebar);
-    console.log(data)
     return (
         <Swipes callback={setOpened} state={isOpened} className={'sidebar'}>
             <div className="sidebar">

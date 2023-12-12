@@ -33,7 +33,7 @@ const InfoParagraph = ({type, children, id, ...props}) => {
             data = {data: {[type]:text}, type:store.getState().elements.itemsAll[id].type};
         }
         data.id = id;
-        window.actions.request([window.actions.prepareRequest('PATCH', data)]);
+        window.actions.request('PATCH', data);
         setEditor({isOpened: false, value: text});
     }
 

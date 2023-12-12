@@ -18,9 +18,13 @@
     }
 }
 
+$masonry-spacing: 6px;
+
 .masonry__column {
     display: flex;
     flex-direction: column;
+    padding: 0 $masonry-spacing 0 $masonry-spacing;
+    row-gap: calc($masonry-spacing * 2);
 }
 
 .masonry__item-enter {

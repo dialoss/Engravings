@@ -2517,7 +2517,6 @@
 			{
 				if (entries[x].thumb && (typeof entries[x].thumb !== 'string' || !queuedthumbfailed[entries[x].thumb]))
 				{
-					// Build the thumbnail queue options.
 					if (typeof entries[x].thumb === 'string')
 					{
 						entries[x].thumb = {

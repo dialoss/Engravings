@@ -6,18 +6,18 @@ body.overlayed {
 
 .modal {
     &__window {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: $zindex-modal;
+        //top: 0;
+        //left: 0;
 
         &.centered {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
         &.bottom {
+            position: fixed;
             width: 100%;
             top: auto;
             bottom: 0;

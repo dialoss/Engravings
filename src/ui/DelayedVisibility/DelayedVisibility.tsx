@@ -2,7 +2,7 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import "./DelayedVisibility.scss";
 
-const DelayedVisibility = ({trigger, timeout, children, className}) => {
+const DelayedVisibility = ({trigger, timeout, children, className, style={}}) => {
     const [visible, setVisible] = useState(false);
 
     useLayoutEffect(() => {
@@ -10,7 +10,7 @@ const DelayedVisibility = ({trigger, timeout, children, className}) => {
         setTimeout(()=>{setVisible(true)},timeout);
     }, [trigger]);
     return (
-        <div className={'delayed-visibility ' + (className || '') + ' ' + (visible ? 'visible':'hidden')}>
+        <div className={'delayed-visibility ' + (className || '') + ' ' + (visible ? 'visible':'hidden')} style={style}>
             {children}
         </div>
     );

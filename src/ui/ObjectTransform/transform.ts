@@ -157,11 +157,11 @@ export function setItemTransform(event, type, _item, _btn, config) {
 export function getTransformData({item}) {
     let top = item.style.top;
 
-    window.actions.request([window.actions.prepareRequest('PATCH', undefined, {style: {
+    window.actions.request('PATCH', [{style: {
         position: item.style.position,
         aspectRatio: item.style.aspectRatio,
         width: item.style.width || "0",
         top,
         left: item.style.left || "0",
-    }})]);
+    }}]);
 }

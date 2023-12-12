@@ -50,13 +50,13 @@ export function serializeActions(actions, actionElement, depth=0) : IContextActi
                 case false:
                     callback = () => {
                         !action.stay_opened && closeCallback();
-                        window.actions.request(window.actions[functionName]());
+                        window.actions[functionName]();
                     }
                     break;
                 case true:
                     callback = () => {
                         !action.stay_opened && closeCallback();
-                        window.actions.request(window.actions[functionName](name));
+                        window.actions[functionName](name);
                     }
                     break;
             }

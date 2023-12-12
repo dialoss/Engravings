@@ -39,7 +39,7 @@ const defaultStyle = {
     resizable: true,
     movable: true,
     borderRadius: "8px",
-    padding: "4px",
+    padding: "0",
 };
 
 function getStyle(style, type) {

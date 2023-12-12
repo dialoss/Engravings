@@ -1,6 +1,6 @@
 //@ts-nocheck
 import {triggerEvent} from "../../helpers/events";
-import {getFileType} from "./api/google";
+import {StorageFile} from "./api/google";
 
 export class MediaDimensions {
     media: File;
@@ -53,10 +53,39 @@ export function selectItems() {
         window.filemanager.selectItems(selected);
         window.filemanager.selectItems = null;
     } else {
-        for (const f of selected) {
-            window.actions.request(f);
-        }
+        window.actions.request('POST', selected.map(f => fileToItem(f)));
     }
     window.filemanager.ClearSelectedItems();
     window.modals.close("filemanager");
+}
+
+export function fileToItem(file: StorageFile) {
+    return {
+        type: getFileType(file.name),
+        data: {
+            filename: file.name,
+            url: file.id,
+            ...file.props,
+        },
+        style: {
+            aspectRatio: "1 / 1",
+
+        }
+    }
+}
+
+const types = {
+    'image': ['png', 'jpeg', 'jpg', 'webp', 'gif', 'image'],
+    'model': ['sldprt', 'sld', 'sldw', 'sldasm', 'sdas', 'glb', 'gltf'],
+    'video': ['mp4', 'mkv', 'matroska', 'avi', 'mov', 'video'],
+    'folder': ['folder'],
+};
+
+export function getFileType(filename: string) : string {
+    for (const type in types) {
+        for (const ext of types[type]) {
+            if (filename.toLowerCase().includes(ext)) return type;
+        }
+    }
+    return "file";
 }

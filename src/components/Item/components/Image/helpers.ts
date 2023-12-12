@@ -13,8 +13,6 @@ export function getCompressedImage(img: Image, targetWidth: number) : string {
         const w = img.media_width;
         const r = w / img.media_height;
         let new_w = w;
-        // if (item.width === '100%' && document.querySelector(`.item.depth-1[data-id="${item.id}"]`))
-        //     targetWidth = Math.max(1000, targetWidth);
         if (targetWidth) new_w = Math.min(w, targetWidth);
         const new_h = Math.floor(new_w / r);
         new_w = Math.floor(new_w);

@@ -3,8 +3,6 @@ $color-focused: #495CEF;
 
 .transform-item {
     transform: scale(1);
-    //background-image: url("./bg.png") !important;
-
 
     &.copied {
         opacity: 0.8;

@@ -6,6 +6,8 @@ import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import React from "react";
+import {fileToItem} from "./helpers";
+import {IAlertData} from "../../ui/Alert/AlertContainer";
 
 declare global {
     interface Window {
@@ -16,12 +18,6 @@ declare global {
 
 export const ExplorerViews = ['default', 'list'];
 export const TextBar = [
-    {
-        name: 'preview',
-        text: '',
-        sortBy: '',
-        order: -1,
-    },
     {
         name: 'name',
         text: 'Имя',
@@ -76,9 +72,31 @@ function updateStorageSpace() {
     });
 }
 
+let uploadAlerts: {status: UploadStatus, alert: number}[] = [];
+function findAlertID(status: UploadStatus) {
+    for (const al of uploadAlerts) {
+        if (al.status.uploadID === status.uploadID) {
+            return al.alert;
+        }
+    }
+}
+
 export function changeUploadStatus(status: UploadStatus) {
-    window.filemanager
-        .SetNamedStatusBarText('message', ' Прогресс: ' + (+status.progress * 100) + '%' + ' ' + status.filename);
+    let alert: IAlertData = {
+        type: "message",
+        body: '',
+        timeout: 0,
+    };
+    if (!status.rate) uploadAlerts.push({status, alert: window.alerts.open(alert)});
+    else if (status.progress === 1) {
+        window.alerts.update(findAlertID(status),
+            {...alert, body: "Файл загружен! " + status.filename});
+        setTimeout(() => {
+            window.alerts.close(findAlertID(status));
+        }, 1000);
+    }
+    else window.alerts.update(findAlertID(status),
+            {...alert, body: `Прогресс: ${String(+status.progress * 100).slice(0, 2)}% ${status.filename}`});
 }
 
 export function init() {
@@ -123,7 +141,7 @@ export function init() {
                 }).catch(() => copied(false, 'Server/network error.'));
         },
         ondelete: function(deleted, folder, ids, entries, recycle) {
-            Promise.all(ids.map(el => storage.copy({id: el}))).then(data => {
+            Promise.resolve(storage.delete(ids.map(id => ({id})))).then(data => {
                 deleted(!!data.length);
                 options.onrefresh(folder);
                 updateStorageSpace();
@@ -139,15 +157,12 @@ export function init() {
             const folder = fileinfo.folder.valueOf();
             fileinfo.file.parent = folder.GetPathIDs().slice(-1)[0];
             storage.uploadFile(fileinfo.file, [], (status: UploadStatus) => {
-                if (status.progress === '1') {
-                    window.filemanager.SetNamedStatusBarText('message', 'Файл загружен!', 1000);
-                    updateStorageSpace();
+                if (status.progress === 1) {
                     folder && setTimeout(() => {
                         options.onrefresh(folder);
-                    }, 500);
-                } else {
-                    changeUploadStatus(status);
+                    }, 2000);
                 }
+                changeUploadStatus(status);
             });
         },
         oninitdownload: function(startdownload, folder, ids, entries) {
@@ -173,6 +188,12 @@ export function init() {
         window.filemanager.selectItems = callback;
         window.modals.open("filemanager");
     };
+
+    window.filemanager.transferFiles = (e, serialize=false) => {
+        const files = storage.transferFiles(e, (status: UploadStatus) => console.log(status));
+        if (serialize) return files.then(files => files.map(f => fileToItem(f)));
+        return files;
+    }
 
     window.filemanager.open = () => document.querySelector("#filemanager-local").click();
 }

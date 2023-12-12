@@ -1,8 +1,12 @@
+$color-main: #093057;
+$border-image: 40px;
+
 .quiz {
   margin: 0 auto;
   text-align: center;
   padding: 10px;
   &__body {
+    margin-top: 200px;
     width: 100%;
   }
   &__container {
@@ -13,9 +17,9 @@
     row-gap: 10px;
   }
   &__button {
-    box-shadow: 0 0 8px 0 grey;
+    border: solid 1px black;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: #b2c4ea;
     display: inline-block;
     &:hover {
@@ -23,13 +27,30 @@
     }
   }
   &__choice {
-    width: 100%;
+    transition: all 0.2s linear;
+    width: 90%;
+    margin: 0 auto;
     background-color: white;
     &.correct {
-      background-color: #1EC71E;
+      background-color: rgba(161, 242, 147, 1);
     }
     &.wrong {
-      background-color: #e72b31;
+      background-color: rgba(255, 103, 103, 1);
+    }
+  }
+  &__image {
+    border-radius: $border-image;
+    width: 50%;
+    position: absolute;
+    left: 50%;
+    top: -100px;
+    padding: 20px;
+    background-color: #fff;
+    transform: translate(-50%, 0);
+    img {
+      overflow: hidden;
+      border-radius: $border-image;
+      width: 100%;
     }
   }
   &__choices {
@@ -60,8 +81,18 @@
       width: 50%;
     }
   }
+  &__title {
+    border: solid 1px black;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
   &__title, &__answer {
     padding: 10px;
+  }
+  &__answer {
+    width: 80%;
+    margin: 0 auto;
   }
   &__answer p {
     padding-bottom: 10px;

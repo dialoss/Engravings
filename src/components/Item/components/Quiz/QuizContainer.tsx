@@ -1,12 +1,13 @@
 //@ts-nocheck
 import React, {createContext, ReducerState, useLayoutEffect, useReducer, useState} from 'react';
 import Quiz from "./Quiz";
-import {fetchRequest} from "../../../../api/requests";
+import {fetchRequest} from "api/requests";
 
 interface QuizData {
     question: string,
     choices: string[],
     answer: string,
+    image: string;
 }
 
 export interface IQuiz {
@@ -30,7 +31,7 @@ const emptyQuiz : IQuiz = {
     wrong: 0,
     all: 0,
     dataAll: [],
-    data: {question: '', answer: '', choices: []},
+    data: {question: '', answer: '', choices: [], image:''},
     userAnswer: {
         correct: false,
         choice: 0,
@@ -96,7 +97,8 @@ const QuizContainer = ({data}) => {
     const [quiz, dispatch] = useReducer(reducer, emptyQuiz as ReducerState<IQuiz>);
     useLayoutEffect(() => {
         fetchRequest(data.url).then((data) => {
-            dispatch({type: "SET_DATA", payload: data.data as QuizData[]});
+            dispatch({type: QuizActions.SET_DATA, payload: data.data as QuizData[]});
+            dispatch({type: QuizActions.START});
         })
     }, []);
 
@@ -105,6 +107,9 @@ const QuizContainer = ({data}) => {
             if (quiz.userAnswer.question) return;
             const correct = payload.toLowerCase() === quiz.data.answer.toLowerCase();
             payload = {choice:payload,correct, question:quiz.data.question};
+            // setTimeout(() => {
+            //     dispatch({type: QuizActions.NEXT});
+            // }, 3000);
         }
         dispatch({type, payload})
     }

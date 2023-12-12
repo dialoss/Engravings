@@ -9,6 +9,9 @@
   &.success {
     background-color: rgba(44, 199, 30, 0.8);
   }
+  &.message {
+    background-color: rgba(30, 84, 199, 0.74);
+  }
 
   &.warning {
     background-color: rgba(199, 168, 30, 0.56);
@@ -33,6 +36,7 @@
 }
 
 .alert-window {
+  position: fixed;
   left: auto;
   top: auto;
   right: 50px;

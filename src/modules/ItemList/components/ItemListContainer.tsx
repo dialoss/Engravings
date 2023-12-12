@@ -62,9 +62,9 @@ const ItemListContainer = () => {
         console.log('REQUEST', request)
         const response = await sendLocalRequest(url, request.item, request.method);
         console.log('RESPONSE', response)
-        dispatch({method: request.method, payload: [request.item]})
+        response && dispatch({method: request.method, payload: [response]})
         if (request.method !== 'DELETE')
-            globalDispatch(actions.setItemsAll({items: [request.item], page}));
+            globalDispatch(actions.setItemsAll({items: [response], page}));
     }
 
     useEffect(() => {

@@ -1,8 +1,8 @@
 //@ts-nocheck
 import {getLocation} from "../../../hooks/getLocation";
-import {EmptyStorageFile, getFileType, GoogleDriveAPI, StorageAPI, StorageFile} from "./google";
+import {EmptyStorageFile, GoogleDriveAPI, StorageAPI, StorageFile} from "./google";
 import {uploadAutodeskFile} from "../../../components/Item/components/Model/Autodesk/api/api";
-import {MediaDimensions} from "../helpers";
+import {getFileType, MediaDimensions} from "../helpers";
 
 
 export interface IAppStorage {
@@ -48,7 +48,7 @@ export class AppStorage implements IAppStorage {
                         for (const f of files) {
                             removedFiles.push(this.storageAPI.delete(f));
                         }
-                        new Promise.all(removedFiles).then(data => resolve(data));
+                        Promise.all(removedFiles).then(data => resolve(data));
                     }
                     else resolve([]);
                 }});
@@ -61,7 +61,7 @@ export class AppStorage implements IAppStorage {
             props = await new MediaDimensions(file).get();
         }
         if (getFileType(file.name).match(/model/)) {
-            let urn = await uploadAutodeskFile(file);
+            let urn = await uploadAutodeskFile(file, callback);
             props = {
                 modelurn1: urn.slice(0, urn.length / 2),
                 modelurn2: urn.slice(urn.length / 2),
@@ -97,8 +97,10 @@ export class AppStorage implements IAppStorage {
     }
 
     transferFiles(event, callback) {
-        return Promise.all(FileTransfer.getFiles(event).map(f =>
-            this.uploadFile(f, [], callback)));
+        return Promise.all(FileTransfer.getFiles(event).map(f => {
+            if (f.needUpload === undefined) return this.uploadFile(f, [], callback);
+            return f;
+        }))
     }
 }
 
@@ -120,7 +122,8 @@ class FileTransfer {
     static getTransfer(event: any): File[] {
         switch (event.type) {
             case "drop":
-                return [...(JSON.parse(event.dataTransfer.getData('files') || "[]")), ...event.dataTransfer.files];
+                return [...(JSON.parse(event.dataTransfer.getData('files') || "[]")).map(f => ({...f, needUpload: false})),
+                    ...event.dataTransfer.files];
             case "change":
                 return [...event.target.files];
             case "paste":

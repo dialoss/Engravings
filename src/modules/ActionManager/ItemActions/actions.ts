@@ -69,16 +69,14 @@ interface IActions {
     itemlist: ItemlistManager;
     elements : ElementActions;
     history : HistoryManager;
-    request(requests: IRequest[])
+    request(method: string, items: ItemElement[] | ItemElement, endpoint: string);
     update();
     delete();
     create();
     copy();
     cut();
     paste();
-    prepareRequest(method: ('POST'|'DELETE'|'PATCH'),
-                   data: object,
-                   item: ItemElement) : IRequest;
+    prepareItemForRequest(method: ('POST'|'DELETE'|'PATCH'), item: ItemElement) : ItemElement;
 }
 
 export default class Actions implements IActions{
@@ -86,13 +84,19 @@ export default class Actions implements IActions{
     history = new HistoryManager();
     itemlist = manager;
 
-    request(requests: IRequest[]) {
-        for (const request of requests) {
-            let url = "/api/" + request.endpoint + "/";
-            if (request.method !== 'POST') url += request.item.id + "/";
+    request(method: string, items: ItemElement[] | ItemElement, endpoint: string="items") {
+        if (!Array.isArray(items)) items = [items];
+        console.log(method, items, endpoint);
 
-            console.log(request);
+        for (const item of items.map(it => this.prepareItemForRequest(method, it))) {
+            let url = "/api/" + endpoint + "/";
+            if (method !== 'POST') url += item.id + "/";
 
+            const request: IRequest = {
+                method,
+                endpoint,
+                item,
+            }
             this.itemlist.request(url, request);
             this.history.add(request);
         }
@@ -105,15 +109,16 @@ export default class Actions implements IActions{
             return [];
         }
         let parent = this.elements.focused.type !== 'page' ? this.elements.focused.id : null;
-        return data.map(d => this.prepareRequest('POST', {parent, ...d}));
+        return this.request('POST', data.map(d => ({parent, ...d})));
     }
 
     update(item='') {
+        const focused = this.elements.focused;
         if (!item) {
-            window.callbacks.call("element-form", getFormData('PATCH', this.elements.focused));
+            window.callbacks.call("element-form", getFormData('PATCH', focused));
             return [];
         }
-        return [this.prepareRequest('PATCH', undefined, getSettings(item, this.elements.focused.style))];
+        return this.request('PATCH', {...focused, ...getSettings(item, focused.style)});
     }
 
     baseAction(type: ('copy'|'cut'), name: ('copied'|'cutted')) {
@@ -128,15 +133,14 @@ export default class Actions implements IActions{
             })
         });
         store.dispatch(actions.setField({field:"intermediate", data:this.history.intermediate}));
-        return [];
     }
 
     copy() {
-       return this.baseAction('copy', 'copied');
+       this.baseAction('copy', 'copied');
     }
 
     cut() {
-        return this.baseAction('cut', 'cutted');
+        this.baseAction('cut', 'cutted');
     }
 
     paste() {
@@ -148,49 +152,40 @@ export default class Actions implements IActions{
 
         let action = this.elements.focused;
 
-        let requests: IRequest[] = [];
+        let items: ItemElement[] = [];
         historyData.forEach(hs => {
-            let item: ItemElement = {
+            items.push({
                 ...hs.item,
                 parent: action.id,
-            };
-            requests.push(this.prepareRequest('POST', item));
-            if (hs.type === 'cut') requests.push(...this.delete([hs.item]));
+            });
+            if (hs.type === 'cut') this.delete([hs.item]);
         });
         historyData.forEach(hs => this.elements.clearStyle(hs.item, hs.className));
-        return requests;
+        this.request('POST', items);
     }
 
     delete(elements: ItemElement[]=[]) {
         let force = elements.length > 0;
         if (!elements.length) elements = this.elements.selected;
         if (!elements.length) elements = [this.elements.focused];
-        let data = elements.map(el => this.prepareRequest('DELETE', el));
-        if (force) return data;
+        if (force) return this.request('DELETE', elements);
         window.callbacks.call("user-prompt", {title: "Подтвердить удаление", button: 'ок', submitCallback: (submit) => {
             if (!!submit) {
-                this.request(data);
+                this.request('DELETE', elements);
             }
         }});
-        return [];
     }
 
-    prepareRequest(method: ('POST'|'DELETE'|'PATCH'),
-                   item: ItemElement=undefined,
-                   data: object={}) : IRequest {
-        if (!item) {
-            item = this.elements.focused;
-        }
+    prepareItemForRequest(method: ('POST'|'DELETE'|'PATCH'), item: ItemElement={}) : ItemElement {
+        let baseData = {};
+        if (!item.id && method === "PATCH") baseData = this.elements.focused;
+        if (item.parent === undefined && method === "POST") item.parent = this.elements.focused.id;
         if (item.style && typeof item.style !== 'string') item.style = JSON.stringify(item.style);
         return {
-            method,
-            endpoint: "items",
-            item: {
-                ...item,
-                ...data,
-                tab: store.getState().location.tab,
-                page: store.getState().location.currentPage,
-            }
+            ...baseData,
+            ...item,
+            tab: store.getState().location.tab,
+            page: store.getState().location.currentPage,
         };
     }
 }

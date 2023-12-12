@@ -7,7 +7,9 @@ const Body = ({quiz} : {quiz: IQuiz}) => {
     return (
         <>
         {quiz.started ? <div className="quiz__body">
-                <div className="quiz__title">{quiz.data.question}</div>
+            <h3 className="quiz__title">
+                <p className={"quiz__all"}>Вопрос №{Math.max(quiz.current)}/{quiz.all}</p>
+                {quiz.data.question}</h3>
                 <div className="quiz__choices">
                     {
                         quiz.data.choices.map((c, i) =>
@@ -26,11 +28,15 @@ const Body = ({quiz} : {quiz: IQuiz}) => {
                     </div>}
             </div> : <div className={"quiz__body"}>
                 {quiz.all === quiz.current + 1 && <div className={"quiz__end"}>
-                    <p className={"quiz__end-text"}>Конец!</p>
-                    <img src={require('../media/end.jpg')} alt=""/>
-                </div>}
-                {!quiz.started && <div className="quiz__button quiz__play" onClick={() => callback("START")}>
-                    Играть
+                    <h3 className="quiz__title">
+                        <p className={"quiz__all"}>Всего ответов: {quiz.all}</p>
+                        <p className={"quiz__right"}>Правильные: {quiz.right}</p>
+                        <p className={"quiz__wrong"}>Неправильные: {quiz.wrong}</p>
+                    </h3>
+                    <img src={require('../media/end.jpg')} style={{margin: "0 auto"}} alt=""/>
+                    <div className="quiz__button quiz__play" onClick={() => callback("START")}>
+                        Заново
+                    </div>
                 </div>}
             </div>}
         </>

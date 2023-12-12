@@ -1,12 +1,11 @@
 //@ts-nocheck
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./file-explorer/file-explorer.css";
 import "./file-explorer/file-explorer";
-import {changeUploadStatus, ExplorerViews, init, initItems, TextBar} from "./config";
+import {init, initItems} from "./config";
 import "./Custom.scss";
 import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
-import {useAddEvent} from "../../hooks/useAddEvent";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {ImageEditor} from "./ImageEditor/ImageEditor";
 import WindowButton from "../../ui/Buttons/WindowButton/WindowButton";
@@ -20,10 +19,6 @@ const FileExplorer = () => {
     useEffect(() => {
         init();
         window.filemanager.changeFolder = () => {
-            if (window.filemanager.fromSearch) {
-                window.filemanager.fromSearch = false;
-                return;
-            }
             const f = window.filemanager.GetCurrentFolder();
             setFolder(f.GetEntries());
         };
@@ -50,7 +45,7 @@ const FileExplorer = () => {
         <ModalManager name={"filemanager"}
                       style={{bg:'bg-none', win: isMobileDevice() ? 'bottom': ''}}
                       closeConditions={['btn', 'esc']}>
-            <TransformItem style={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', height:'600px', width:'800px'}}
+            <TransformItem style={isMobileDevice() ? {} : {position:'fixed', left:'20%', top:'100px', aspectRatio:"1/0.75", width:'800px'}}
                            className={'edit'}
                            type={'modal'}>
                 <div className={"filemanager"}>
@@ -68,7 +63,7 @@ const FileExplorer = () => {
                             <input type="file"
                                    multiple={true}
                                    style={{display:'none'}}
-                                   onChange={e => storage.transferFiles(e, changeUploadStatus)}
+                                   onChange={e => window.filemanager.transferFiles(e)}
                                    id={"filemanager-local"}/>
                         </div>
                     </View>

@@ -2,8 +2,9 @@
 import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import axios from 'axios'
-import {call} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
+import {call, mul} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
 import {getCompressedImage} from "../../../components/Item/components/Image/helpers";
+import {getFileType} from "../helpers";
 
 enum GoogleDrive {
     BASE_URL = "https://www.googleapis.com/drive/v2/files/",
@@ -21,7 +22,8 @@ export class GoogleRequests {
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
         let body = {};
         // console.log('storage request', data, url);
-        if (Object.values(data.body).length) body = {data: data.body};
+        if (data.body && Object.values(data.body).length) body = {data: data.body};
+        if (!data.headers) data.headers = {};
         return await axios({
             method: data.method,
             url,
@@ -62,9 +64,7 @@ export interface GoogleFile {
 export class GoogleDriveAPI implements StorageAPI {
     requests = new GoogleRequests();
     async request(url: string, data: RequestData={method: "GET", headers: {}, body:{}}) {
-        const serialized = (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
-        // console.log(url, data, serialized);
-        return serialized;
+        return (await this.requests.request(url, data).then(d => d.data.items || [d.data])).map(f => serializeObject(f));
     }
 
     list(id: string) {
@@ -106,16 +106,19 @@ export class GoogleDriveAPI implements StorageAPI {
     }
 
     delete(file: StorageFile) {
-        return this.request(GoogleDrive.BASE_URL + file.id);
+        return this.request(GoogleDrive.BASE_URL + file.id, {method: "DELETE"});
     }
 
     put(file: File, callback: (status: UploadStatus) => void) {
         // console.log(file);
+        const id = Math.floor(Math.random() * 100000000);
         const config = {
             onUploadProgress: e => callback({
-                progress: e.progress,
-                filename: file.name,
-                message: 'Загрузка'
+                    uploadID: id,
+                    rate: e.rate,
+                    progress: e.progress,
+                    filename: file.name,
+                    message: 'Загрузка'
             }),
             headers: {
                 "Content-Range": `bytes 0-${file.size - 1}\/${file.size}`,
@@ -140,9 +143,11 @@ export class GoogleDriveAPI implements StorageAPI {
 }
 
 export interface UploadStatus {
-    progress: string,
-    filename: string,
-    message: string,
+    uploadID: number;
+    progress: number;
+    filename: string;
+    message: string;
+    rate: number;
 }
 
 enum FileType {
@@ -173,6 +178,7 @@ export interface StorageFile {
     id: string,
     name: string,
     type: string,
+    mediaType: string,
     size: number,
     hash: string,
     props: MediaFileProps | ModelFileProps | {},
@@ -182,13 +188,12 @@ export interface StorageFile {
 }
 
 export function serializeObject(file: object) : StorageFile {
+    console.log(file)
     let mimeType = file.mimeType.split('.').slice(-1)[0];
     let props = (file.properties || []);
-    let fileProps : MediaFileProps | ModelFileProps;
+    let fileProps : MediaFileProps | ModelFileProps = {};
     const name = file.title || file.name || '';
     let id = file.id;
-    let type: string = getFileType(name);
-
     if (mimeType !== 'folder') {
         mimeType = 'file';
     }
@@ -200,10 +205,10 @@ export function serializeObject(file: object) : StorageFile {
         if (prop.key === 'width') width = +prop.value;
         if (prop.key === 'height') height = +prop.value;
     }
-
+    let type: string = getFileType(name);
     if (type.match(/image|video/)) {
         fileProps = {
-            thumb: file.thumbnailLink || getCompressedImage({
+            thumb: getCompressedImage({
                 media_width: width,
                 media_height: height,
                 url: id,
@@ -222,28 +227,13 @@ export function serializeObject(file: object) : StorageFile {
         id,
         parent: '',
         name,
-        type,
+        type: mimeType,
+        thumb: fileProps.thumb,
         mimeType,
+        mediaType: type,
         size: +file.fileSize || 0,
         hash: id + (new Date().getTime()) as string,
         props: fileProps,
         modifiedTime: dayjs(file.modifiedDate).format("HH:mm DD.MM.YYYY") as string,
     };
-}
-
-export function getFileType(filename: string) : string {
-    const types = {
-        'image': ['png', 'jpeg', 'jpg', 'webp', 'gif', 'image'],
-        'model': ['sldprt', 'sld', 'sldw', 'sldasm', 'sdas', 'glb', 'gltf'],
-        'video': ['mp4', 'mkv', 'matroska', 'avi', 'mov', 'video'],
-        'folder': ['folder'],
-    };
-    for (const type in types) {
-        for (const ext of types[type]) {
-            if (filename.toLowerCase().match(/`${ext}`/)) return type;
-                // return Object.keys(FileType)[Object.values(FileType).indexOf(type)];
-        }
-    }
-    return "file";
-    // return FileType.FILE;
 }

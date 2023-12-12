@@ -1,10 +1,7 @@
 //@ts-nocheck
-import React, {useRef} from 'react';
+import React from 'react';
 import "./ContentWrapper.scss";
-import {getElementByType, triggerEvent} from "../../helpers/events";
-import {storage} from "../../modules/FileExplorer/api/storage";
-import {UploadStatus} from "../../modules/FileExplorer/api/google";
-import {getLocation} from "../../hooks/getLocation";
+import {getElementByType, getElementFromCursor} from "../../helpers/events";
 import {useAppSelector} from "../../hooks/redux";
 import TransformItem from "../ObjectTransform/components/TransformItem/TransformItem";
 
@@ -15,9 +12,9 @@ const ContentWrapper = ({children}) => {
             <div className="content-wrapper"
                  onDrop={e => {
                      if (getElementByType(e, 'modal')) return;
-                     storage.transferFiles(e, (status: UploadStatus) => console.log(status)).then(files => {
-                         window.actions.request(files.map(f => window.actions.prepareRequest('POST', f)));
-                     });
+                     window.actions.elements.selectFromCursor(e);
+                     window.filemanager.transferFiles(e, true).then(files =>
+                         window.actions.request('POST', files))
                  }} onDragOver={(e) => e.preventDefault()}>
                 {children}
             </div>

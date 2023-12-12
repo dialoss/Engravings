@@ -151,8 +151,7 @@ export function getFormData(method: "POST" | 'PATCH', item: ItemElement, extraFi
             let data: IPage | ItemElement = {type};
             if (type === "page") data = new PageSerializer(form, fields).serialize();
             else data = new ItemSerializer(form, fields).serialize();
-            window.actions.request([{...window.actions.prepareRequest(form.method, data),
-            endpoint: type === 'page' ? "pages" : "items"}]);
+            window.actions.request(form.method, data, type === 'page' ? "pages" : "items");
         },
         windowButton: true,
         style: "default",

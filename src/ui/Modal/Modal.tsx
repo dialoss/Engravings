@@ -34,9 +34,7 @@ const Modal = ({content, style, name, isOpened, closeCallback}) => {
                      onClick={backgroundClose}>
                     <div className={`modal__window ${windowName} ${opened} ${!!style && ((style.win || '') + ' ' + (style.bg || ''))}`}
                          onClick={e => e.stopPropagation()}>
-                        <div className="modal__content">
-                            {content}
-                        </div>
+                        {content}
                     </div>
                 </div>
             </div>

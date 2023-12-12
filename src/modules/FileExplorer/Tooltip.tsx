@@ -9,7 +9,7 @@ interface TooltipField {
 
 export function TooltipFields(file: StorageFile) {
     let tooltipFields: TooltipField[] = [];
-    if (file.type === 'model') tooltipFields.push({
+    if (file.mediaType === 'model') tooltipFields.push({
         title: 'ID Модели',
         text: file.props.urn.slice(0, 12) + '...' + file.props.urn.slice(-12, -1),
     });
@@ -17,8 +17,8 @@ export function TooltipFields(file: StorageFile) {
     const fieldTranslate = {
         size: 'Размер',
         modifiedTime: 'Время изменения',
-        width: 'Ширина',
-        height: 'Высота',
+        media_width: 'Ширина',
+        media_height: 'Высота',
     }
 
     tooltipFields.push({
@@ -32,11 +32,11 @@ export function TooltipFields(file: StorageFile) {
             text: file[field],
         })
     }
-    if (file.type.match(/video|image/)) {
-        for (const field of ['width', 'height']) {
+    if (file.mediaType.match(/video|image/)) {
+        for (const field of ['media_width', 'media_height']) {
             tooltipFields.push({
                 title: fieldTranslate[field],
-                text: file[field],
+                text: file.props[field],
             })
         }
     }

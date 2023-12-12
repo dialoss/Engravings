@@ -50,16 +50,15 @@ function getCookie(name) {
 export function sendRequest(url, data, method) {
     const csrftoken = getCookie('csrftoken');
     let query = {
-        url,
         method: method,
         credentials: "include",
         headers: {
             'X-CSRFToken': csrftoken,
             "Content-Type": 'application/json;charset=utf-8',
         },
-        ...(method !== 'GET' ? {data} : {})
+        ...(method !== 'GET' ? {body:JSON.stringify(data)} : {})
     }
-    return axios(query).then(d => d.data).catch(r => {
+    return fetch(url, query).then(d => d.json()).then(d => d).catch(r => {
         triggerEvent('alert:trigger', {
             body: 'failed to fetch',
             type: 'error',
@@ -75,10 +74,8 @@ export function sendLocalRequest(endpoint, data={}, method='GET') {
     return sendRequest(url.toString(), data, method);
 }
 
-export async function getGlobalTime() {
-    let r = null
-    await axios.get('https://worldtimeapi.org/api/timezone/Europe/London').then(data => r = data);
-    return r;
+export function getGlobalTime() {
+    return axios.get('https://worldtimeapi.org/api/timezone/Europe/London').then(r => r.data);
 }
 
 interface IOrder {

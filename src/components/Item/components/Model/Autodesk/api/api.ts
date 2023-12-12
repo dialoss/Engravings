@@ -39,7 +39,7 @@ function processModel(id) {
     });
 }
 
-export async function uploadAutodeskFile(file) {
+export async function uploadAutodeskFile(file, callback) {
     const id = await uploadModel(file);
     processModel(id);
     return id;

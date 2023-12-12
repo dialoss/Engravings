@@ -24,63 +24,11 @@ export function format(style): string {
     return s;
 }
 
-const sides = ['top', 'right', 'bottom', 'left'];
-
-function format4String(s, name) {
-    let val = s[name];
-    console.log(s, name)
-    if (!val) return {}
-    let map = {};
-    val.split(' ').forEach((v, i) => {
-        let unit = v.match(/\D+/);
-        if (unit) unit = unit[0];
-        else unit = "px";
-        map[sides[i]] = {
-            value: +v.match(/\d+/)[0],
-            unit,
-        }
-    });
-    return {[name]: map};
-}
-
-function format1String(s) {
-
-}
-
-function ratio(s) {
-    if (!s || !s.match(/\d/)) return "auto";
-    return {
-        width: +(s.split('/')[0]),
-        height: +(s.split('/')[1])
-    }
-}
-
-const defaultStyle = {
-    backgroundColor: "#fff",
-    aspectRatio: "auto",
-    // boxShadow: "0 0 5px grey",
-    // zIndex: 1,
-    ...format4String({padding:"8px 8px 8px 8px"}, "borderRadius"),
-    ...format4String({padding:"4px 4px 4px 4px"}, "padding"),
-};
-
-function init(style) {
-    let s = JSON.parse(style);
-    return {
-        ...defaultStyle,
-        ...s,
-        aspectRatio: ratio(s.aspectRatio),
-        ...format4String(s, "padding"),
-        ...format4String(s, "margin"),
-    };
-}
-
 export const CSSEditor = ({style, setStyle}) => {
-    const [styles, setStyles] = useState(init(style));
+    const [styles, setStyles] = useState(style);
     useEffect(() => {
         setStyle(format(codegen.css(styles)));
     }, [styles]);
-    console.log(styles)
     return (
         <>
             <Editor styles={styles}

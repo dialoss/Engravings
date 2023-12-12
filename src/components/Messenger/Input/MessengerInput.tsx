@@ -80,7 +80,6 @@ export const InputEmoji = ({callback}) => {
         const height = ref.current.querySelector('.transform-item').getBoundingClientRect().height;
         setPosition({left: 0, top: -height - 10 + 'px'});
     }
-
     return (
         <div className={"icon icon-emojis"} ref={ref}>
             <p className={'modal__toggle-button'} onClick={open}>😃</p>
@@ -88,7 +87,7 @@ export const InputEmoji = ({callback}) => {
                               name={modalName.current}
                               closeConditions={['btn', 'esc', 'bg']}>
                     <TransformItem style={{position:'fixed', width:'auto', ...position}}
-                                   data-type={'modal'} className={modalName.current}>
+                                   type={'modal'} className={modalName.current}>
                         <Picker icons={'solid'}
                                 data={data}
                                 onEmojiSelect={(e) => callback(e.native)}/>

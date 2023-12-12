@@ -5,7 +5,6 @@ import {isMobileDevice} from "../../../helpers/events";
 
 interface IModal {
     name: string;
-    isOpened: React.Ref<boolean>;
     zindex: number;
     setOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -59,7 +58,7 @@ class Modals implements IModals {
         }, 10);
     }
     checkState(name: string) {
-        return this.all[name].isOpened.current;
+        return this.opened.find(m => m.name === name);
     }
     overlayBody(opened) {
         if (isMobileDevice() && this.top.name.match(/messenger|carousel|filemanager|element|login/)) {
@@ -82,7 +81,7 @@ class Modals implements IModals {
             if (!state) this.close(name);
             else this.open(name);
         } else {
-            if (this.all[name].isOpened.current) this.close(name);
+            if (this.checkState(name)) this.close(name);
             else this.open(name);
         }
     }
@@ -122,7 +121,6 @@ const ModalManager = ({name, children, style={},
     useLayoutEffect(() => {
         modals.add({
             name,
-            isOpened: openRef,
             setOpened,
             zindex: 10,
         });

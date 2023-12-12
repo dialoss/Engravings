@@ -54,7 +54,7 @@ function order() {
         }
     });
 
-    window.actions.request([
+    window.actions.request('POST', [
         {
             type: 'page',
             ...page,
@@ -104,7 +104,7 @@ function order() {
             },
             page_from: page,
         },
-    ].map(it => window.actions.prepareRequest('POST', it)));
+    ]);
 }
 
 async function actionMessage(text) {

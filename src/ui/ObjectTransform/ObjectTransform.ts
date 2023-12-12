@@ -4,6 +4,7 @@ import {initContainerDimensions} from "./helpers";
 import {actions} from "../../modules/ItemList/store/reducers";
 import store from "../../store";
 import {IPage} from "../../pages/AppRouter/store/reducers";
+import {getElementFromCursor} from "../../helpers/events";
 
 export interface ItemElement {
     id?: number;
@@ -131,5 +132,9 @@ export class ElementActions implements IElementActions {
                 transformItem(data);
             },
         });
+    }
+
+    selectFromCursor(event) {
+        this.selectItems(getElementFromCursor(event, "transform-item"), event);
     }
 }

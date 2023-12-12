@@ -102,7 +102,7 @@ const EventManager = () => {
     function setItemStyle(style) {
         const item = window.actions.elements.focused;
         if (!item) return;
-        window.actions.request([window.actions.prepareRequest("PATCH", {...item, style})]);
+        window.actions.request("PATCH", {...item, style});
     }
     const elements = useAppSelector(state => state.elements);
     const item = elements.focused;

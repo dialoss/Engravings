@@ -106,10 +106,7 @@ body {
 .scrollable {
   overscroll-behavior: none;
 }
-svg {
+.action-button svg {
   width: 100% !important;
   height: 100% !important;
-}
-img, video {
-  display: block;
 }

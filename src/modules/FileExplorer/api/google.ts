@@ -188,7 +188,6 @@ export interface StorageFile {
 }
 
 export function serializeObject(file: object) : StorageFile {
-    console.log(file)
     let mimeType = file.mimeType.split('.').slice(-1)[0];
     let props = (file.properties || []);
     let fileProps : MediaFileProps | ModelFileProps = {};

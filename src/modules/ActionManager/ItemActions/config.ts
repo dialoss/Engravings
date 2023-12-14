@@ -281,10 +281,10 @@ export const ActionData: IActionData = {
                                     height: "100px",
                                     top: "60px",
                                     left: "0px",
-                                    movable: false,
                                     boxShadow: "none"
                                 },
                                 data: {
+                                    movable: false,
                                     position: "absolute"
                                 },
                                 items: [],
@@ -307,9 +307,9 @@ export const ActionData: IActionData = {
                                             boxShadow: "none",
                                             width: "100%",
                                             height: "100px",
-                                            movable: false
                                         },
                                         data: {
+                                            movable: false,
                                             text: "<h1>Заголовок</h1>"
                                         },
                                         items: [],
@@ -320,9 +320,9 @@ export const ActionData: IActionData = {
                                             boxShadow: "none",
                                             width: "100%",
                                             height: "660px",
-                                            movable: false
                                         },
                                         data: {
+                                            movable: false,
                                             text: "Описание"
                                         },
                                         items: [],
@@ -392,9 +392,8 @@ export const ActionData: IActionData = {
                     width: "50%",
                     height: "100px",
                     boxShadow: "none",
-                    movable: false
                 },
-                data: {},
+                movable: false,
                 items: [],
                 type: "subscription"
             },
@@ -403,21 +402,20 @@ export const ActionData: IActionData = {
                     width: "50%",
                     height: "100px",
                     boxShadow: "none",
-                    movable: false
                 },
-                data: {},
+                movable: false,
                 items: [
                     {
                         style: {
                             width: "100%",
                             boxShadow: "none",
-                            movable: false
                         },
                         data: {
                             title: "Заголовок",
                             description: "Описание"
                         },
                         items: [],
+                        movable: false,
                         type: "subscription"
                     },
                     {

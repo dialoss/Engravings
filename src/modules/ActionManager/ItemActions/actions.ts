@@ -103,22 +103,25 @@ export default class Actions implements IActions{
     }
 
     create(item='') {
-        let data: ItemElement[] = [ActionData[item]];
-        if (!data[0]) {
+        let data = ActionData[item];
+        if (data.style) data.style = JSON.stringify({
+            css: JSON.stringify(data.style),
+        });
+        if (!data) {
             window.callbacks.call("element-form", getFormData("POST", this.elements.focused));
-            return [];
+            return;
         }
         let parent = this.elements.focused.type !== 'page' ? this.elements.focused.id : null;
-        return this.request('POST', data.map(d => ({parent, ...d})));
+        this.request('POST', ({parent, ...data}));
     }
 
     update(item='') {
         const focused = this.elements.focused;
         if (!item) {
             window.callbacks.call("element-form", getFormData('PATCH', focused));
-            return [];
+            return;
         }
-        return this.request('PATCH', {...focused, ...getSettings(item, focused.style)});
+        this.request('PATCH', {...focused, ...getSettings(item, focused.style)});
     }
 
     baseAction(type: ('copy'|'cut'), name: ('copied'|'cutted')) {

@@ -1,12 +1,10 @@
 //@ts-nocheck
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Transforms} from "../../config";
 import TransformButton from "./TransformButton";
 import "./TransformItem.scss";
 import {ItemsVerbose} from "../../../../modules/ActionForm/helpers/config";
 import {useAppSelector} from "../../../../hooks/redux";
-import {format} from "../../../../components/ItemList/CSSEditor/CSSEditor";
-
 
 export interface TransformItemStyle {
     height?: string;
@@ -32,7 +30,7 @@ export interface TransformItemProps {
 }
 
 const defaultStyle = {
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     aspectRatio: "auto",
     boxShadow: "0 0 5px grey",
     zIndex: 1,
@@ -43,15 +41,13 @@ const defaultStyle = {
 };
 
 function getStyle(style, type) {
-    console.log({...style})
     for (const s in defaultStyle) {
         if (style[s] === undefined) style[s] = defaultStyle[s];
     }
-    // console.log(style)
     return {
         ...style,
         height: 'auto',
-        // minHeight: style.height || 'auto',
+        minHeight: '30px',
     }
 }
 
@@ -75,10 +71,16 @@ const Borders = ({type}) => {
     );
 }
 
-const Info = ({type, style}) => {
+const Info = ({type}) => {
+    const [sizes, setSizes] = useState({width:0,height:0});
+    const ref = useRef();
+    useEffect(() => {
+        setSizes(ref.current.getBoundingClientRect());
+    }, []);
     return (
-        <div className="info">
-            {ItemsVerbose[type].text}
+        <div className="info" ref={ref}>
+            <p className="name">{ItemsVerbose[type].text}</p>
+            {!!sizes.width && <p className="sizes">{Math.floor(sizes.width)}x{Math.floor(sizes.height)}</p>}
         </div>
     )
 }
@@ -112,7 +114,7 @@ const TransformItem = ({children, style, type, className, id} : TransformItemPro
             {focused.id === id && <div className={"item__edit " + (focused.id === id ? 'focused' : '')}>
                 <Borders type={type}></Borders>
                 <Resizers></Resizers>
-                <Info type={type} style={style}></Info>
+                <Info type={type}></Info>
             </div>}
         </TransformButton>
     );

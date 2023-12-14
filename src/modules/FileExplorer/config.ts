@@ -222,5 +222,8 @@ function initTooltip() {
             tt.style.left = px + 'px';
             tt.style.top = e.clientY - block.top - 20 + 'px';
         });
+
+        root.addEventListener('click', () =>
+            navigator.clipboard.writeText("https://lh3.google.com/u/6/d/" + item.id))
     }
 }

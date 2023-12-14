@@ -8,6 +8,7 @@ import {isMobileDevice} from "../../helpers/events";
 import {initContainerDimensions} from "../../ui/ObjectTransform/helpers";
 import MyMasonry from "../../ui/Masonry/MyMasonry";
 import {ItemElement} from "../../ui/ObjectTransform/ObjectTransform";
+import {styled} from "@compai/css-gui";
 import {format} from "../ItemList/CSSEditor/CSSEditor";
 
 interface ItemProps {
@@ -49,10 +50,18 @@ export const SimpleItem = ({item, depth=0}: ItemProps) => {
     );
 }
 
+export function parse(s) {
+    try{
+        return JSON.parse(s || "{}");
+    } catch (e) {
+        return {};
+    }
+}
+
 const Item = ({item, depth=0} : ItemProps) => {
     return (
         <TransformItem key={item.id}
-                       style={JSON.parse(item.style || "{}")}
+                       style={parse(parse(item.style).css) || {}}
                        type={item.type}
                        depth={depth}
                        id={item.id}

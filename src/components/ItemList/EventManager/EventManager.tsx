@@ -16,6 +16,11 @@ import Hierarchy from "../../../ui/Hierarchy/Hierarchy";
 import AccordionContainer from "../../../ui/Accordion/AccordionContainer";
 import {ItemsVerbose} from "../../../modules/ActionForm/helpers/config";
 import {CSSEditor} from "../CSSEditor/CSSEditor";
+import {parse} from "../../Item/Item";
+import Slider from "../../../ui/Slider/Slider";
+import WindowButton from "../../../ui/Buttons/WindowButton/WindowButton";
+import ToggleButton from "../../../ui/Buttons/ToggleButton/ToggleButton";
+import {ReactComponent as IconChevronRight} from "../../../ui/Iconpack/icons/chevron-right.svg";
 
 function splitItem(item: ItemElement) {
     const baseFields = {...item};
@@ -110,27 +115,44 @@ const EventManager = () => {
     const state = useAppSelector(state => state.elements.pageItems);
     return (
         <div className={'page-editor'} onMouseDown={e => e.stopPropagation()}>
-            <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>
-            <ActionButton modalToggle={false} onClick={setEdit}><Edit></Edit></ActionButton>
-            <div className={"action-elements"}>
-                <ItemsInfo items={[item]}
-                           type={"focused"}
-                           title={"Выделенный предмет " + (item.type ? ItemsVerbose[item.type].text : '')}></ItemsInfo>
-                <ItemsInfo items={intermediate.filter(it => it.type === 'cut').map(it=>({id:it.item.id}))}
-                           type={"cutted"}
-                           title={"Вырезанные предметы"}></ItemsInfo>
-                <ItemsInfo items={intermediate.filter(it => it.type === 'copy').map(it=>({id:it.item.id}))}
-                           type={"copied"}
-                           title={"Скопированные предметы"}></ItemsInfo>
-                <Hierarchy data={Object.values(state)} config={{
-                    childSelector: "items",
-                    parentSelector: "parent",
-                    recursiveComponent: ItemInfo,
-                    componentDataProp: "data",
-                    accordion: true,
-                }}></Hierarchy>
+            <div className="buttons">
+                <ActionButton modalToggle={false} onClick={makeBackup}><Backup></Backup></ActionButton>
+                <ActionButton modalToggle={false} onClick={setEdit}><Edit></Edit></ActionButton>
             </div>
-            {item.style && <CSSEditor style={item.style} setStyle={setItemStyle}></CSSEditor>}
+
+            <div className="item__info">
+                <div className={"action-elements"}>
+                    <ItemsInfo items={[item]}
+                               type={"focused"}
+                               title={"Выделенный предмет " + (item.type ? ItemsVerbose[item.type].text : '')}></ItemsInfo>
+                    <ItemsInfo items={intermediate.filter(it => it.type === 'cut').map(it=>({id:it.item.id}))}
+                               type={"cutted"}
+                               title={"Вырезанные предметы"}></ItemsInfo>
+                    <ItemsInfo items={intermediate.filter(it => it.type === 'copy').map(it=>({id:it.item.id}))}
+                               type={"copied"}
+                               title={"Скопированные предметы"}></ItemsInfo>
+                    <Hierarchy data={Object.values(state)} config={{
+                        childSelector: "items",
+                        parentSelector: "parent",
+                        recursiveComponent: ItemInfo,
+                        componentDataProp: "data",
+                        accordion: true,
+                    }}></Hierarchy>
+                </div>
+            </div>
+            <div className="item__style">
+                <Slider togglers={[
+                    {
+                        element: <ToggleButton isOpened={true} width={40}>
+                            <IconChevronRight/>
+                        </ToggleButton>,
+                        action: 'toggle',
+                        callback: () => {}
+                    }
+                    ]}>
+                {item.id && <CSSEditor style={parse(item.style).editor || {}} setStyle={setItemStyle}></CSSEditor>}
+                </Slider>
+            </div>
         </div>
     );
 };

@@ -15,6 +15,8 @@ export interface ItemElement {
     items?: ItemElement[];
     page?: IPage;
     date_created?: string;
+    movable?: boolean;
+    resizable?: boolean;
     data?: {
         [key: string]: number | string | boolean;
     },

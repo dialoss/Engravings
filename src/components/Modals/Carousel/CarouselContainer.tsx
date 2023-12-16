@@ -1,21 +1,10 @@
 //@ts-nocheck
-import React, {
-    createContext,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useReducer,
-    useRef,
-    useState
-} from 'react';
+import React, {createContext, useRef, useState} from 'react';
 import Carousel from "./components/Carousel/Carousel";
-import {triggerEvent} from "helpers/events";
+import carousel from "./components/Carousel/Carousel";
 import {useAddEvent} from "hooks/useAddEvent";
-import {useAppSelector} from "hooks/redux";
 import {ModalManager} from "components/ModalManager";
 import {getCompressedImage} from "../../Item/components/Image/helpers";
-import carousel from "./components/Carousel/Carousel";
 
 function checkNear(n, items) {
     n = (n + items.length) % items.length;

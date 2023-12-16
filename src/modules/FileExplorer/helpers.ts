@@ -1,5 +1,4 @@
 //@ts-nocheck
-import {triggerEvent} from "../../helpers/events";
 import {StorageFile} from "./api/google";
 
 export class MediaDimensions {
@@ -48,12 +47,12 @@ export function fileToMedia(file: File | ArrayBuffer) : string {
 export function selectItems() {
     const itemsAll = window.filemanager.GetCurrentFolder().GetEntries();
     const selected = window.filemanager.GetSelectedItemIDs()
-        .map(id => itemsAll.find(it => it.id === id));
+        .map(id => itemsAll.find(it => it.id === id)).map(f => fileToItem(f));
     if (window.filemanager.selectItems) {
         window.filemanager.selectItems(selected);
         window.filemanager.selectItems = null;
     } else {
-        window.actions.request('POST', selected.map(f => fileToItem(f)));
+        window.actions.request('POST', selected);
     }
     window.filemanager.ClearSelectedItems();
     window.modals.close("filemanager");

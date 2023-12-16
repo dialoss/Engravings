@@ -1,7 +1,6 @@
 //@ts-nocheck
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import './ItemImage.scss';
-import {triggerEvent} from "helpers/events";
 import {preventOnTransformClick} from "ui/ObjectTransform/helpers";
 import InfoBlock from "../../../../ui/InfoBlock/InfoBlock";
 import {getCompressedImage} from "./helpers";

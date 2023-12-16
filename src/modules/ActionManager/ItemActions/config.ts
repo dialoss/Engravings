@@ -175,9 +175,6 @@ export const ActionData: IActionData = {
         data: {
             url: "https://view.genial.ly/6575ea77d853170013a7b268",
         },
-        style: {
-            width: "1000px"
-        }
     },
     section: {
         type: "section",
@@ -206,7 +203,7 @@ export const ActionData: IActionData = {
     empty: {
         type: 'base',
         data: {
-            modifiers: "masonry_1"
+            class_name: "masonry masonry_1"
         },
         style: {
             movable: false,

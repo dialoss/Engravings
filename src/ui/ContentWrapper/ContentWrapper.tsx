@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React from 'react';
 import "./ContentWrapper.scss";
-import {getElementByType, getElementFromCursor} from "../../helpers/events";
+import {getElementByType} from "../../helpers/events";
 import {useAppSelector} from "../../hooks/redux";
 import TransformItem from "../ObjectTransform/components/TransformItem/TransformItem";
 

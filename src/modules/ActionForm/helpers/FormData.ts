@@ -5,6 +5,7 @@ import allFields from './all.json';
 import {FieldsOrder, ItemsVerbose} from "./config";
 import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
 import {IPage} from "../../../pages/AppRouter/store/reducers";
+import {fileToItem} from "../../FileExplorer/helpers";
 
 export class FormSerializer {
     fields: IFormSerialized;
@@ -27,15 +28,13 @@ class ItemSerializer extends FormSerializer {
         super(...args);
     }
     serialize() {
+        let data = {...this.fields};
         if (this.fields.url) {
             if (this.form.method === 'POST') {
                 this.fields.items = structuredClone(newFields.url);
                 delete this.fields.url;
             } else {
-                // for (const field of ['width', 'height', 'filename', 'type']) {
-                //     this.fields[field] = this.fields.url[0][field] || this.fields[field];
-                // }
-                // this.fields.url = this.fields.url[0].url;
+                this.fields = this.fields.url[0];
             }
         }
         if (this.fields.page_from !== undefined) {
@@ -44,8 +43,8 @@ class ItemSerializer extends FormSerializer {
         }
         return {
             ...this.form.item,
-            data: {...this.fields},
-            style: {},
+            data,
+            ...this.fields,
         };
     }
 }
@@ -55,7 +54,10 @@ class PageSerializer extends FormSerializer {
         super(...args);
     }
     serialize() {
-        return this.fields as IPage;
+        return {
+            ...this.form.item,
+            ...this.fields
+        };
     }
 }
 
@@ -63,7 +65,6 @@ function getFieldData(field: string, item: ItemElement | IPage) {
     let flatItem = {
         ...item,
         ...item.data,
-        ...item.style,
     }
     if (field === 'url') {
         if (!['video', 'image', 'model', 'file'].includes(flatItem.type)) return [];
@@ -147,10 +148,12 @@ export function getFormData(method: "POST" | 'PATCH', item: ItemElement, extraFi
         data: {},
         item,
         submitCallback: fields => {
+            console.log('!!!!', fields)
             if (!fields) return;
             let data: IPage | ItemElement = {type};
             if (type === "page") data = new PageSerializer(form, fields).serialize();
             else data = new ItemSerializer(form, fields).serialize();
+            console.log(data)
             window.actions.request(form.method, data, type === 'page' ? "pages" : "items");
         },
         windowButton: true,

@@ -4,15 +4,12 @@ import {useAppDispatch, useAppSelector} from "hooks/redux";
 import ItemList from "components/ItemList/ItemList";
 import {actions, localReducer} from "../store/reducers";
 import {fetchItems} from "../api/fetchItems";
-import {useAddEvent} from "hooks/useAddEvent";
 import {sendLocalRequest} from "api/requests";
-import {getLocation} from "../../../hooks/getLocation";
-import {triggerEvent} from "../../../helpers/events";
-import {createItemsTree, links} from "../helpers";
+import {createItemsTree} from "../helpers";
 import DelayedVisibility from "../../../ui/DelayedVisibility/DelayedVisibility";
-import store from "../../../store";
 import {IRequest} from "../../ActionManager/ItemActions/actions";
 import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
+import store from "../../../store";
 
 interface Itemlist {
     request: (url:string, request: IRequest) => void;
@@ -37,10 +34,13 @@ const ItemListContainer = () => {
     let page = useAppSelector(state => state.location.relativeURL);
     async function addItems({newItems, count}, fromCache=false) {
         if (count) setTotalItems(count);
+        let cachedItems: ItemElement[] = store.getState().elements.cache[page];
+        if (cachedItems) cachedItems = Object.values(cachedItems);
+        else cachedItems = [];
         if (!fromCache) {
             globalDispatch(actions.setItemsAll({items: !fromCache ? newItems : [], page}));
         }
-        dispatch({method: 'SET', payload: createItemsTree([...itemsRef.current, ...newItems])});
+        dispatch({method: 'SET', payload: createItemsTree([...cachedItems, ...newItems])});
     }
 
     const limit = useRef<number>();
@@ -60,14 +60,16 @@ const ItemListContainer = () => {
 
     async function handleElements(url:string, request: IRequest) {
         console.log('REQUEST', request)
-        const response = await sendLocalRequest(url, request.item, request.method);
-        console.log('RESPONSE', response)
-        if (request.method === 'PATCH') dispatch({method: request.method, payload: [request.item]})
-        else {
-            response && dispatch({method: request.method, payload: [response]});
-            if (request.method !== 'DELETE')
-                globalDispatch(actions.setItemsAll({items: [response], page}));
+        if (request.instant && request.method === 'PATCH' && request.endpoint !== 'pages') {
+            dispatch({method: request.method, payload: [request.item]});
+            return;
         }
+        const response = await sendLocalRequest(url, request.item, request.method);
+        if (request.endpoint === 'pages') return;
+        console.log('RESPONSE', response)
+        dispatch({method: request.method, payload: [response || request.item]});
+        if (request.method !== 'DELETE')
+            globalDispatch(actions.setItemsAll({items: [response], page}));
     }
 
     useEffect(() => {

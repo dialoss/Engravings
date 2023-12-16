@@ -1,7 +1,7 @@
 //@ts-nocheck
-import {initContainerDimensions, isResizable} from "./helpers";
-import {triggerEvent} from "../../helpers/events";
+import {getFirstItems, initContainerDimensions} from "./helpers";
 import {Axis} from "./config";
+import {parse} from "../../components/Item/Item";
 
 let item = null;
 let container = null;
@@ -12,7 +12,7 @@ let deltaY = 0;
 
 function checkNears(px, py) {
     let curBlock = item.getBoundingClientRect();
-    let items = container.querySelector('.items-wrapper').children;
+    let items = getFirstItems(container);
     let ch = curBlock.height;
     let ox = false;
     let oy = false;
@@ -147,21 +147,25 @@ export function setItemTransform(event, type, _item, _btn, config) {
         }, 200)
 
         mouseMoved = false;
-        config.onSwipeEnd({item});
+        config.onSwipeEnd(item);
     }
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
 }
 
-export function getTransformData({item}) {
+export function getTransformData(item, itemData) {
     let top = item.style.top;
 
-    window.actions.request('PATCH', [{style: {
+    let newStyle = parse(itemData.style);
+    newStyle = {
+        ...newStyle,
         position: item.style.position,
         aspectRatio: item.style.aspectRatio,
         width: item.style.width || "0",
         top,
         left: item.style.left || "0",
-    }}]);
+    }
+
+    window.actions.request('PATCH', [{style: newStyle}]);
 }

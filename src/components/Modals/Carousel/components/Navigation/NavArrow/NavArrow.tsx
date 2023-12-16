@@ -1,7 +1,6 @@
 //@ts-nocheck
-import React, {useCallback, useContext} from 'react';
+import React, {useContext} from 'react';
 import rightArrow from './right.svg';
-import {triggerEvent} from "helpers/events";
 import {CarouselContext} from "../../../CarouselContainer";
 
 const CarouselNavArrow = ({side}) => {

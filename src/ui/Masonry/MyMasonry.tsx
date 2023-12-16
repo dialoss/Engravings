@@ -4,8 +4,6 @@ import "./MyMasonry.scss";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 import {getViewportSize} from "ui/helpers/viewport";
 import {useAddEvent} from "../../hooks/useAddEvent";
-import {triggerEvent} from "../../helpers/events";
-import {initContainerDimensions} from "../ObjectTransform/helpers";
 import ActionButton from "../Buttons/ActionButton/ActionButton";
 import {ReactComponent as Columns} from "./columns.svg";
 

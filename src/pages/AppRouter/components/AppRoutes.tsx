@@ -1,10 +1,8 @@
 //@ts-nocheck
-import React, {useEffect, useLayoutEffect} from 'react';
-import {Navigate, Route, Routes, useNavigate, useSearchParams} from "react-router-dom";
+import React, {useLayoutEffect} from 'react';
+import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import {routes} from "../constants/routes";
-import {useAddEvent} from "../../../hooks/useAddEvent";
 import ItemListContainer from "../../../modules/ItemList/components/ItemListContainer";
-import store from "../../../store";
 import {useAppSelector} from "hooks/redux";
 
 const AppRoutes = () => {

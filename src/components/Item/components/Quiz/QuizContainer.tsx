@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, {createContext, ReducerState, useLayoutEffect, useReducer, useState} from 'react';
+import React, {createContext, ReducerState, useLayoutEffect, useReducer} from 'react';
 import Quiz from "./Quiz";
 import {fetchRequest} from "api/requests";
 

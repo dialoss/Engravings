@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import "./DelayedVisibility.scss";
 
 const DelayedVisibility = ({trigger, timeout, children, className, style={}}) => {

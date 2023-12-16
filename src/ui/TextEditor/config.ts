@@ -1,8 +1,7 @@
 //@ts-nocheck
-import { Quill } from 'react-quill';
-import {triggerEvent} from "../../helpers/events";
+import {Quill} from 'react-quill';
 
-const fontSizeArr = ['8px','9px','10px','12px','14px','16px','20px','24px','32px','42px','54px','68px','84px','98px'];
+const fontSizeArr = ['16px','20px','24px','32px', '36px','42px','54px','68px','84px','98px'];
 
 export function configQuill() {
     var DirectionAttribute = Quill.import('attributors/attribute/direction');

@@ -1,9 +1,9 @@
 //@ts-nocheck
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import "./ImageEditor.scss";
-import {doc} from "firebase/firestore";
 import {fetchRequest} from "../../../api/requests";
 import {fileToMedia} from "../helpers";
+
 const { TABS, TOOLS } = window.FilerobotImageEditor;
 
 export function ImageEditor() {

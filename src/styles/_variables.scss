@@ -12,7 +12,9 @@ $color-current-background: blue;
 $border-radius-global: 8px;
 
 $style-border: 2px solid grey;
-$color-main: #fdfdfd;
+$color-main: rgba(9, 48, 87, 1);
+$color-bg: rgba(246, 242, 239, 1);
+
 
 @mixin mobile {
   @media screen and (max-width: 500px) {

@@ -17,6 +17,7 @@ export interface ItemElement {
     date_created?: string;
     movable?: boolean;
     resizable?: boolean;
+    class_name?: string;
     data?: {
         [key: string]: number | string | boolean;
     },
@@ -125,10 +126,10 @@ export class ElementActions implements IElementActions {
         }
         this.clickCount++;
         if (alreadyFocused) setItemTransform(event, type, item, origin, {
-            onSwipeEnd: (d) => {
+            onSwipeEnd: (item) => {
                 this.clickCount--;
-                if (d.item.getAttribute('data-type') === 'modal') return;
-                getTransformData(d);
+                if (item.getAttribute('data-type') === 'modal') return;
+                getTransformData(item, this.focused);
             },
             onSwipeStart: data => {
                 transformItem(data);
@@ -138,5 +139,9 @@ export class ElementActions implements IElementActions {
 
     selectFromCursor(event) {
         this.selectItems(getElementFromCursor(event, "transform-item"), event);
+    }
+
+    initContainer(container) {
+        initContainerDimensions(container);
     }
 }

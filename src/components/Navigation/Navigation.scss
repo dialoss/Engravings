@@ -1,0 +1,33 @@
+@import "styles/variables";
+
+.navigation {
+    position: fixed;
+    top: 0;
+    background-color: rgba(10, 36, 69, calc(min(200, var(--scroll)) / 200));
+    z-index: 2;
+    width: 100vw;
+    left: 0;
+    &__inner {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        //column-gap: 20px;
+        a {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 25px;
+            text-decoration: none;
+            color: #fff;
+            text-transform: capitalize;
+            padding: 0 30px;
+            transition: all 0.1s linear;
+            &:hover {
+                background-color: rgb(10, 51, 92);
+            }
+        }
+    }
+}

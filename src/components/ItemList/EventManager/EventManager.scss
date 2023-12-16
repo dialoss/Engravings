@@ -35,6 +35,9 @@
     }
   }
   .item__style {
+    .editor {
+      max-width: 300px;
+    }
     .editor__inner {
       max-height: 80vh;
       overflow: auto;
@@ -42,11 +45,17 @@
     .preview pre {
       width: 100%;
       white-space: pre-wrap;
-
     }
     background-color: #fff;
     left: 5px;
     top: 60px;
-    width: 300px;
+  }
+  .code-editor {
+    bottom: 0;
+    height: 250px;
+    width: 50vw;
+    & > div {
+      height: 100%;
+    }
   }
 }

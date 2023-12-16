@@ -3,7 +3,8 @@ import React from 'react';
 import {ContextMenu} from "components/Modals/ContextMenu";
 import {ContextActions, DefaultEdit, IContextAction} from "./config";
 import {useAppSelector} from "hooks/redux";
-import {getSettingText, serializeActions} from "./helpers";
+import {serializeActions} from "./helpers";
+
 const ItemActions = () => {
     const actionElement = useAppSelector(state => state.elements.focused);
     let actions: IContextAction = ContextActions;

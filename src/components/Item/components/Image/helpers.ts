@@ -6,6 +6,8 @@ interface Image {
     media_width: number,
     media_height: number,
 }
+export const IMAGE_URL = 'https://drive.google.com/uc?id=';
+// const IMAGE_URL = 'https://lh3.google.com/u/6/d/';
 
 export function getCompressedImage(img: Image, targetWidth: number) : string {
     if (!img.url) return '';
@@ -16,7 +18,7 @@ export function getCompressedImage(img: Image, targetWidth: number) : string {
         if (targetWidth) new_w = Math.min(w, targetWidth);
         const new_h = Math.floor(new_w / r);
         new_w = Math.floor(new_w);
-        return `https://lh3.google.com/u/6/d/${img.url}=w${new_w}-h${new_h}`;
+        return IMAGE_URL + `${img.url}`;
     }
-    return `https://lh3.google.com/u/6/d/${img.url}`;
+    return IMAGE_URL + img.url;
 }

@@ -5,6 +5,8 @@ import TransformButton from "./TransformButton";
 import "./TransformItem.scss";
 import {ItemsVerbose} from "../../../../modules/ActionForm/helpers/config";
 import {useAppSelector} from "../../../../hooks/redux";
+import {isMobileDevice} from "../../../../helpers/events";
+import {initContainerDimensions} from "../../helpers";
 
 export interface TransformItemStyle {
     height?: string;
@@ -29,21 +31,8 @@ export interface TransformItemProps {
     id?: number;
 }
 
-const defaultStyle = {
-    // backgroundColor: "#fff",
-    aspectRatio: "auto",
-    boxShadow: "0 0 5px grey",
-    zIndex: 1,
-    resizable: true,
-    movable: true,
-    borderRadius: "8px",
-    padding: "0",
-};
-
-function getStyle(style, type) {
-    for (const s in defaultStyle) {
-        if (style[s] === undefined) style[s] = defaultStyle[s];
-    }
+function getStyle(style) {
+    // console.log(style)
     return {
         ...style,
         height: 'auto',
@@ -79,7 +68,7 @@ const Info = ({type}) => {
     }, []);
     return (
         <div className="info" ref={ref}>
-            <p className="name">{ItemsVerbose[type].text}</p>
+            {ItemsVerbose[type]&&<p className="name">{ItemsVerbose[type].text}</p>}
             {!!sizes.width && <p className="sizes">{Math.floor(sizes.width)}x{Math.floor(sizes.height)}</p>}
         </div>
     )
@@ -88,18 +77,23 @@ const Info = ({type}) => {
 const TransformItem = ({children, style, type, className, id} : TransformItemProps) => {
     const focused = useAppSelector(state => state.elements.focused);
     const edit = useAppSelector(state => state.elements.editPage);
+    // useEffect(() => {
+    //     if (!style.top) return;
+    //     let it = document.querySelector(`.transform-item[data-id="${id}"]`);
+    //     if (!it) return;
+    //     if (!edit) {
+    //         let t = style.top.replace("px", '');
+    //         const cont = it.parentElement.closest('.transform-item');
+    //         if (t) it.style.top = t / cont.getBoundingClientRect().height * 100 + "%";
+    //     } else {
+    //         it.style.top = style.top;
+    //     }
+    // }, [edit]);
     useEffect(() => {
-        if (!style.top) return;
-        let it = document.querySelector(`.transform-item[data-id="${id}"]`);
-        if (!it) return;
-        if (!edit) {
-            let t = style.top.replace("px", '');
-            const cont = it.parentElement.closest('.transform-item');
-            if (t) it.style.top = t / cont.getBoundingClientRect().height * 100 + "%";
-        } else {
-            it.style.top = style.top;
-        }
-    }, [edit]);
+        setTimeout(()=>{
+            initContainerDimensions(document.querySelector(`.transform-item[data-id="${id}"]`));
+        },0)
+    }, [style]);
     return (
         <TransformButton className={`transform-item transform--move ${edit ? "edit" : ''} ` + className || ''}
                          type={'move'}
@@ -108,10 +102,9 @@ const TransformItem = ({children, style, type, className, id} : TransformItemPro
                          data-id={id}
                          data-width={style.width}
                          data-height={style.height}
-                         style={getStyle(style, type)}
-        >
+                         style={getStyle(style)}>
             {children}
-            {focused.id === id && <div className={"item__edit " + (focused.id === id ? 'focused' : '')}>
+            {edit && focused.id === id && <div className={"item__edit " + (focused.id === id ? 'focused' : '')}>
                 <Borders type={type}></Borders>
                 <Resizers></Resizers>
                 <Info type={type}></Info>

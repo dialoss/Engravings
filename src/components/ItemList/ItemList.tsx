@@ -1,12 +1,10 @@
 //@ts-nocheck
-import React, {useEffect, useRef, useState} from 'react';
+import React from 'react';
 import Item from "components/Item/Item";
-import NavButton from "../../ui/Buttons/NavButton/NavButton";
 import "./ItemList.scss";
 import "./Themes/main.scss";
 import {getLocation} from "../../hooks/getLocation";
 import {useAppSelector} from "hooks/redux";
-import Hierarchy from "../../ui/Hierarchy/Hierarchy";
 
 const ItemList = ({items, className, loadMore=null}) => {
     const edit = useAppSelector(state => state.elements.editPage);

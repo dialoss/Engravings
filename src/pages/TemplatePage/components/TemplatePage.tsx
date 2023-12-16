@@ -1,23 +1,23 @@
 //@ts-nocheck
-import React, {useState} from 'react';
-import {Footer} from "modules/Footer";
+import React from 'react';
 import ContentWrapper from "ui/ContentWrapper/ContentWrapper";
 import {AppRouter} from "pages/AppRouter";
-import {BrowserRouter, HashRouter} from "react-router-dom";
-import StaticContent from "../../StaticContent/StaticContent";
-import NavbarContainer from "../../../components/Navbar/NavbarContainer";
+import {BrowserRouter} from "react-router-dom";
+import Footer from "../../../ui/gravur/Footer";
+import Navigation from "../../../components/Navigation/Navigation";
+import ActionManager from "../../../modules/ActionManager/components/ActionManager";
 
 const TemplatePage = () => {
     return (
         <BrowserRouter>
             <ContentWrapper>
-                <NavbarContainer></NavbarContainer>
+                <Navigation></Navigation>
+                <ActionManager></ActionManager>
                 <div style={{minHeight: '100dvh'}}>
                     <AppRouter/>
                     <div style={{flexGrow: 1, minHeight:1}}></div>
                 </div>
                 <div style={{flexGrow: 1, minHeight:1}}></div>
-                <StaticContent></StaticContent>
             </ContentWrapper>
             <Footer></Footer>
         </BrowserRouter>

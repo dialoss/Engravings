@@ -1,6 +1,5 @@
 //@ts-nocheck
 import React from "react";
-import { Quill } from "react-quill";
 
 export const CustomUndo = () => (
     <svg viewBox="0 0 18 18">

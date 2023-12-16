@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import "./ItemVideo.scss";
 import InfoBlock from "ui/InfoBlock/InfoBlock";
 

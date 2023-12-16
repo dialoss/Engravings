@@ -1,14 +1,12 @@
 //@ts-nocheck
-import React, {createContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 import './MyForm.scss';
 
 import FormComponent from "./FormComponent";
-import WindowButton from "ui/Buttons/WindowButton/WindowButton";
 import ActionButton from "ui/Buttons/ActionButton/ActionButton";
 import {isMobileDevice} from "../../../helpers/events";
-import {IFormField} from "../../../modules/ActionForm/helpers/FormData";
-import {IForm, IFormFields} from "../../../modules/ActionForm/helpers/FormData";
+import {IForm, IFormField, IFormFields} from "../../../modules/ActionForm/helpers/FormData";
 
 const FormBlock = ({formField} : {formField: IFormField}) => {
     return (

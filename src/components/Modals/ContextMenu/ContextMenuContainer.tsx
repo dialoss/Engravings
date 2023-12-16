@@ -1,7 +1,7 @@
 //@ts-nocheck
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 import ContextMenu from "./components/ContextMenu/ContextMenu";
-import {getElementByType, getElementFromCursor, triggerEvent} from "helpers/events";
+import {getElementByType, getElementFromCursor} from "helpers/events";
 import {ModalManager} from "components/ModalManager";
 import {useAddEvent} from "hooks/useAddEvent";
 import {getCorrectedPosition} from "../../../ui/helpers/viewport";

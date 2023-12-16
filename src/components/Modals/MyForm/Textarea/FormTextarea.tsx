@@ -1,7 +1,6 @@
 //@ts-nocheck
 import React, {useEffect} from 'react';
 import './FormTextarea.scss';
-import {isMobileDevice} from "../../../../helpers/events";
 
 const FormTextarea = ({data}) => {
     const ref = React.createRef();

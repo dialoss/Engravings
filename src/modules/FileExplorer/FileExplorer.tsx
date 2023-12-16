@@ -1,10 +1,8 @@
 //@ts-nocheck
 import React, {useEffect, useState} from 'react';
-import "./file-explorer/file-explorer.css";
-import "./file-explorer/file-explorer";
 import {init, initItems} from "./config";
 import "./Custom.scss";
-import {getElementFromCursor, isMobileDevice, triggerEvent} from "../../helpers/events";
+import {isMobileDevice} from "../../helpers/events";
 import {ModalManager} from "../../components/ModalManager";
 import TransformItem from "../../ui/ObjectTransform/components/TransformItem/TransformItem";
 import {ImageEditor} from "./ImageEditor/ImageEditor";
@@ -17,6 +15,7 @@ import View from "./components/View";
 const FileExplorer = () => {
     const location = useAppSelector(state => state.location);
     useEffect(() => {
+        if (window.filemanager) return;
         init();
         window.filemanager.changeFolder = () => {
             const f = window.filemanager.GetCurrentFolder();
@@ -25,12 +24,12 @@ const FileExplorer = () => {
     }, []);
 
     useEffect(() => {
-        if (!window.modals.checkState("filemanager")) {
-            storage.newFolderWithPath(['site', 'storage', location.pageSlug]).then(folder =>
-                    window.filemanager.SetPath([...window.filemanager.settings.initpath,
-                        [ folder.id, folder.name, { canmodify: true } ]])
-            )
-        }
+        // if (!window.modals.checkState("filemanager")) {
+        //     storage.newFolderWithPath(['site', 'storage', location.pageSlug]).then(folder =>
+        //             window.filemanager.SetPath([...window.filemanager.settings.initpath,
+        //                 [ folder.id, folder.name, { canmodify: true } ]])
+        //     )
+        // }
     }, [location]);
 
     const [folder, setFolder] = useState([]);

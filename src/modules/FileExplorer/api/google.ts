@@ -1,10 +1,9 @@
 //@ts-nocheck
-import Credentials from "../../Authorization/api/googleapi";
 import dayjs from "dayjs";
 import axios from 'axios'
-import {call, mul} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
 import {getCompressedImage} from "../../../components/Item/components/Image/helpers";
 import {getFileType} from "../helpers";
+import Credentials from "../../../api/requests";
 
 enum GoogleDrive {
     BASE_URL = "https://www.googleapis.com/drive/v2/files/",
@@ -90,19 +89,17 @@ export class GoogleDriveAPI implements StorageAPI {
         return await this.request(GoogleDrive.BASE_URL, {
             method: 'POST',
             body: {
-                parents: [{
-                    id: file.parent || GoogleDrive.ROOT_FOLDER,
-                }],
+                parents: [{id:file.parent || GoogleDrive.ROOT_FOLDER}],
                 title: file.name,
                 kind: 'drive#file',
-                mimeType: 'application/vnd.google-apps.' + file.mimeType,
+                mimeType: file.mimeType === 'file' ? "application/octet-stream" :
+                    'application/vnd.google-apps.folder'
             }
         });
     }
 
     copy(file: StorageFile) {
-        let q = `?q='${file.parent || GoogleDrive.ROOT_FOLDER}'+in+parents`;
-        return this.request(GoogleDrive.BASE_URL + file.id + '/copy' + q);
+        return this.request(GoogleDrive.BASE_URL + file.id + '/copy', {method: "POST", body: file});
     }
 
     delete(file: StorageFile) {
@@ -188,6 +185,7 @@ export interface StorageFile {
 }
 
 export function serializeObject(file: object) : StorageFile {
+    if (!file.mimeType) return {};
     let mimeType = file.mimeType.split('.').slice(-1)[0];
     let props = (file.properties || []);
     let fileProps : MediaFileProps | ModelFileProps = {};

@@ -2,9 +2,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import './FormUpload.scss';
 import FormMedia from "./FormMedia";
-import {triggerEvent} from "../../../../helpers/events";
 import {FormContext} from "../../../../modules/ActionForm/FormContainer";
-import ActionButton from "../../../../ui/Buttons/ActionButton/ActionButton";
 import FormInput from "../Input/FormInput";
 
 const FormUpload = ({data}) => {

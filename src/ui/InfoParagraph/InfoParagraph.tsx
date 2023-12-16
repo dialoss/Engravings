@@ -1,12 +1,11 @@
 //@ts-nocheck
-import React, {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import "./InfoParagraph.scss";
-import {triggerEvent} from "helpers/events";
 import InlineEditor from "../../components/InlineEditor/InlineEditor";
 import {clearTextFromHTML} from "../TextEditor/helpers";
 import store from "../../store";
 import {pageEditable} from "../../modules/ItemList/store/reducers";
-import {emptyItem, ItemElement} from "../ObjectTransform/ObjectTransform";
+import {ItemElement} from "../ObjectTransform/ObjectTransform";
 
 
 const InfoParagraph = ({type, children, id, ...props}) => {
@@ -36,13 +35,6 @@ const InfoParagraph = ({type, children, id, ...props}) => {
         window.actions.request('PATCH', data);
         setEditor({isOpened: false, value: text});
     }
-
-    useEffect(() => {
-        if (type === 'textfield') {
-            let cont = ref.current.closest(".transform-container");
-            triggerEvent("container:init", {container: cont});
-        }
-    }, [editor.isOpened]);
 
     return (
         <span ref={ref} {...props} key={type}

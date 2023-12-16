@@ -1,7 +1,7 @@
 //@ts-nocheck
-import React, {useLayoutEffect, useState} from 'react';
+import React from 'react';
 import "./FormMedia.scss";
-import ItemData, {Components} from "../../../Item/components/ItemData";
+import ItemData from "../../../Item/components/ItemData";
 
 const FormMedia = ({files}) => {
     return (

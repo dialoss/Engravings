@@ -1,16 +1,10 @@
 //@ts-nocheck
-import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useContext, useLayoutEffect, useRef, useState} from 'react';
 import "./Carousel.scss";
 import InfoBlock from "../../../../../ui/InfoBlock/InfoBlock";
-import CarouselNav from "../Navigation/Navigation";
-import WindowButton from "../../../../../ui/Buttons/WindowButton/WindowButton";
-import Spinner from "../../../../../ui/Spinner/Spinner";
 import {useSwipeable} from "react-swipeable";
-import {config} from "../../../../../ui/Swipes/config";
 import {CarouselContext} from "../../CarouselContainer";
-import {getViewportWidth} from "../../../../../ui/helpers/viewport";
 import {TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
-import {triggerEvent} from "../../../../../helpers/events";
 
 const emptyPosition = {pos: 0, dx: 0, translate: 0, index: 0, side:0, moved:false};
 

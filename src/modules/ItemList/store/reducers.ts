@@ -2,9 +2,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import store from "../../../store";
 import {ItemElement} from "../../../ui/ObjectTransform/ObjectTransform";
-import {IPage} from "../../../pages/AppRouter/store/reducers";
 import {Intermediate} from "../../ActionManager/ItemActions/actions";
-import {links} from "../helpers";
 
 interface IElements {
     itemsAll: {
@@ -60,7 +58,7 @@ let found = {
 function findItem(id, parent) {
     if (found.item) return;
     for (const it of parent.items) {
-        if (it.id === id) {
+        if (it && it.id === id) {
             found = {item: it, parent};
             return;
         }
@@ -91,8 +89,8 @@ export function localReducer(state, action) {
         case "POST":
             findItem(item.parent, {items: state});
             if (!found.item) return [...state, item];
-            found.item.items.push(item);
-            found.item.items.sort((a, b) => a.order - b.order);
+            console.log(found);
+            found.item.items = [...found.item.items, item].sort((a, b) => a.order - b.order);
             return structuredClone(state);
         case 'DELETE':
             findItem(item.id, {items: state});
@@ -100,6 +98,7 @@ export function localReducer(state, action) {
             for (let i = 0; i < items.length; i++) {
                 if (items[i].id === item.id) {
                     delete items[i];
+                    found.parent.items = items.filter(Boolean);
                     break;
                 }
             }

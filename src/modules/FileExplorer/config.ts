@@ -4,10 +4,10 @@ import prettyBytes from "pretty-bytes";
 import {UploadStatus} from "./api/google";
 import {createRoot} from "react-dom/client";
 import Tooltip from "./Tooltip";
-import {useAddEvent} from "../../hooks/useAddEvent";
 import React from "react";
 import {fileToItem} from "./helpers";
-import {IAlertData} from "../../ui/Alert/AlertContainer";
+import "./file-explorer/file-explorer.css";
+import "./file-explorer/file-explorer.js";
 
 declare global {
     interface Window {
@@ -67,116 +67,120 @@ function initLayout() {
 
 function updateStorageSpace() {
     storage.getSpace().then(d => {
-        const space = `Места занято: ${prettyBytes(d.used)} из ${prettyBytes(d.total)}`;
+        const space = `Занято: ${prettyBytes(d.used)} из ${prettyBytes(d.total)}`;
         window.filemanager.SetNamedStatusBarText('space', space);
     });
 }
 
-let uploadAlerts: {status: UploadStatus, alert: number}[] = [];
-function findAlertID(status: UploadStatus) {
-    for (const al of uploadAlerts) {
-        if (al.status.uploadID === status.uploadID) {
-            return al.alert;
-        }
-    }
+function refresh(folder) {
+    folder && setTimeout(() => {
+        options.onrefresh(folder);
+    }, 2000);
 }
 
-export function changeUploadStatus(status: UploadStatus) {
-    let alert: IAlertData = {
-        type: "message",
-        body: '',
-        timeout: 0,
-    };
-    if (!status.rate) uploadAlerts.push({status, alert: window.alerts.open(alert)});
-    else if (status.progress === 1) {
-        window.alerts.update(findAlertID(status),
-            {...alert, body: "Файл загружен! " + status.filename});
-        setTimeout(() => {
-            window.alerts.close(findAlertID(status));
-        }, 1000);
-    }
-    else window.alerts.update(findAlertID(status),
-            {...alert, body: `Прогресс: ${String(+status.progress * 100).slice(0, 2)}% ${status.filename}`});
-}
+const options = {
+    tools: {
+        item_checkboxes: true,
+        download: true,
+    },
+    initpath: [
+        [ '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb', 'Mymount', { canmodify: true } ],
+        [ '1G2OZ6qaAEHhVWv9VmpeURv1mOnGobHtl', 'site', { canmodify: true } ],
+        [ '1eqHekdRFxl8A_WCQkf7g9Cg9xSZP9ZJh', 'storage', { canmodify: true } ],
+    ],
+    onrefresh: function(folder) {
+        storage.listFiles(folder.GetPathIDs().slice(-1)[0]).then(data => {
+            folder.SetEntries(data.map(f => ({...f, type: f.mimeType})));
+            initLayout();
+            window.filemanager.changeFolder();
+            updateStorageSpace();
+        })
+    },
+    onrename: function(renamed, folder, entry, newname) {
+        storage.update({id: entry.id, title: newname})
+            .then(data => renamed(...data))
+            .catch(er => renamed('Server/network error.'));
+    },
+    onnewfolder: function(created, folder) {
+        storage.newFile([], {
+            name: 'New Folder',
+            mimeType: 'folder',
+            parent: folder.GetPathIDs().slice(-1)[0],
+        })
+            .then(data => {
+                created(data);
+                refresh(folder);
+            })
+            .catch(() => created('Server/network error.'));
+    },
+    onnewfile: function(created, folder) {
+        storage.newFile([], {
+            name: 'text.txt',
+            mimeType: 'file',
+            parent: folder.GetPathIDs().slice(-1)[0],
+        }).then(data => {
+            created(data);
+            refresh(folder);
+        }).catch(() => created('Server/network error.'));
+    },
+    oncopy: function(copied, srcpath, srcids, destfolder) {
+        Promise.all(srcids.map(el => storage.copy(el, destfolder.GetPathIDs().slice(-1)[0]))).then(data => {
+            copied(true, data);
+            updateStorageSpace();
+            refresh(destfolder);
+        }).catch(() => copied(false, 'Server/network error.'));
+    },
+    ondelete: function(deleted, folder, ids, entries, recycle, force=false) {
+        function deleteFiles() {
+            Promise.all(ids.map(id => storage.delete({id}))).then(data => {
+                deleted(!!data.length);
+                refresh(folder)
+                updateStorageSpace();
+            }).catch(() => deleted('Server/network error.'));
+        }
+        if (!force) {
+            window.callbacks.call("user-prompt", {
+                title: "Подтвердить удаление", button: 'ок', submitCallback: (submit) => {
+                    if (!!submit) deleteFiles();
+                }});
+        } else {
+            deleteFiles();
+        }
+    },
+    onmove: function(moved, srcpath, srcids, destfolder) {
+        options.oncopy((copied, data) => {
+            options.ondelete(() => {
+                moved(true, data);
+                refresh(destfolder)
+            }, srcpath, srcids, null, null, true);
+        }, srcpath, srcids, destfolder);
+    },
+    oninitupload: function(startupload, fileinfo) {
+        if (fileinfo.type === 'dir') return;
+        const folder = fileinfo.folder.valueOf();
+        fileinfo.file.parent = folder.GetPathIDs().slice(-1)[0];
+        storage.uploadFile(fileinfo.file, [], (status: UploadStatus) => {
+            if (status.progress === 1) {
+                refresh(folder)
+            }
+            changeUploadStatus(status);
+        });
+    },
+    oninitdownload: function(startdownload, folder, ids, entries) {
+        for (const id of ids) {
+            const url = 'https://drive.google.com/uc?id=' + id + '&export=download';
+            const link = document.createElement('a');
+            link.href = url;
+            link.click();
+            setTimeout(() => {
+                link.remove();
+            }, 0);
+        }
+    },
+};
 
 export function init() {
     let elem = document.querySelector('.filemanager-left');
-
-    let options = {
-        tools: {
-            item_checkboxes: true,
-            download: true,
-        },
-        initpath: [
-            [ '12dZHb2PW4UfLePKrEZnYAikZpoQqSPVb', 'Mymount', { canmodify: true } ],
-            [ '1G2OZ6qaAEHhVWv9VmpeURv1mOnGobHtl', 'site', { canmodify: true } ],
-            [ '1eqHekdRFxl8A_WCQkf7g9Cg9xSZP9ZJh', 'storage', { canmodify: true } ],
-        ],
-        onrefresh: function(folder) {
-            storage.listFiles(folder.GetPathIDs().slice(-1)[0]).then(data => {
-                folder.SetEntries(data.map(f => ({...f, type: f.mimeType})));
-                initLayout();
-                window.filemanager.changeFolder();
-                updateStorageSpace();
-            })
-        },
-        onrename: function(renamed, folder, entry, newname) {
-            storage.update(newname)
-                .then(data => renamed(...data))
-                .catch(er => renamed('Server/network error.'));
-        },
-        onnewfolder: function(created, folder) {
-            storage.newFile([], {
-                name: 'New Folder',
-                mimeType: 'folder',
-                parent: folder.GetPathIDs().slice(-1)[0],
-            })
-                .then(data => created(data))
-                .catch(() => created('Server/network error.'));
-        },
-        oncopy: function(copied, srcpath, srcids, destfolder) {
-            Promise.all(srcids.map(el => storage.copy({id: el, parent:destfolder.GetPathIDs().slice(-1)[0]}))).then(data => {
-                    copied(true, data);
-                    updateStorageSpace();
-                }).catch(() => copied(false, 'Server/network error.'));
-        },
-        ondelete: function(deleted, folder, ids, entries, recycle) {
-            Promise.resolve(storage.delete(ids.map(id => ({id})))).then(data => {
-                deleted(!!data.length);
-                options.onrefresh(folder);
-                updateStorageSpace();
-            }).catch(() => deleted('Server/network error.'))
-        },
-        onmove: function(moved, srcpath, srcids, destfolder) {
-            Promise.all(srcids.map(el => storage.copy({id: el, parent:destfolder.GetPathIDs().slice(-1)[0]}))).then(data => {
-                moved(true, data);
-            }).catch(() => moved(false, 'Server/network error.'));
-        },
-        oninitupload: function(startupload, fileinfo) {
-            if (fileinfo.type === 'dir') return;
-            const folder = fileinfo.folder.valueOf();
-            fileinfo.file.parent = folder.GetPathIDs().slice(-1)[0];
-            storage.uploadFile(fileinfo.file, [], (status: UploadStatus) => {
-                if (status.progress === 1) {
-                    folder && setTimeout(() => {
-                        options.onrefresh(folder);
-                    }, 2000);
-                }
-                changeUploadStatus(status);
-            });
-        },
-        oninitdownload: function(startdownload, folder, ids, entries) {
-            for (const id of ids) {
-                const url = 'https://drive.google.com/uc?id=' + id + '&export=download';
-                const link = document.createElement('a');
-                link.href = url;
-                link.click();
-                setTimeout(() => {
-                    link.remove();
-                }, 0);
-            }
-        },
-    };
     window.filemanager = new window.FileExplorer(elem, options);
 
     window.addEventListener("keydown", e => {
@@ -223,7 +227,9 @@ function initTooltip() {
             tt.style.top = e.clientY - block.top - 20 + 'px';
         });
 
-        root.addEventListener('click', () =>
-            navigator.clipboard.writeText("https://lh3.google.com/u/6/d/" + item.id))
+        root.addEventListener('click', () => {
+            const url = 'https://drive.google.com/uc?id=' + item.id;
+            navigator.clipboard.writeText(url);
+        });
     }
 }

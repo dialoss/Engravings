@@ -1,6 +1,5 @@
 //@ts-nocheck
 import React from 'react';
-import {ItemElement} from "../../../../ui/ObjectTransform/ObjectTransform";
 import "./Print.scss";
 
 const Print = ({data}) => {

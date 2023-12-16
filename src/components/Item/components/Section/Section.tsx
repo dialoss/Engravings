@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, {useCallback} from 'react';
+import React from 'react';
 
 const Section = ({data}) => {
     return (

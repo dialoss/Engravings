@@ -33,7 +33,12 @@ export function childItemsTree(current) {
     function traverseTree(current) {
         let items = [];
         for (const item in itemsAll) {
-            if (itemsAll[item].parent === current.id) items.push(childItemsTree(itemsAll[item]));
+            if (itemsAll[item].parent === current.id) {
+                const it = {...childItemsTree(itemsAll[item])};
+                delete it.parent;
+                delete it.id;
+                items.push(it);
+            }
         }
         return {...current, items};
     }

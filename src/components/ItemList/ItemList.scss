@@ -93,6 +93,12 @@ p {
     border-radius: 8px;
     display: flex;
     justify-content: center;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.9;
+      transition: all 0.2s ease-out;
+    }
   }
 }
 

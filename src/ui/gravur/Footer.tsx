@@ -54,7 +54,7 @@ const Footer = () => {
                 <div className="social">
                     {
                         social.map(s =>
-                            <a className="item" href={s.link} target={"_blank"}>
+                            <a className="item" href={s.link} target={"_blank"} key={s.link}>
                                 <img src={require('./assets/' + s.name + ".png")} alt=""/>
                             </a>
                         )

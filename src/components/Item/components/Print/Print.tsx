@@ -2,7 +2,7 @@
 import React from 'react';
 import "./Print.scss";
 
-const Print = ({data}) => {
+const Print = ({url}) => {
     return (
         <div className={"item__print"}>
             <div className={"item__overlay"}>
@@ -10,7 +10,7 @@ const Print = ({data}) => {
                 <div className="hide" style={{bottom:0}}></div>
             </div>
             <iframe title="Луна Китаяма" onDragStart={e => e.preventDefault()}
-                    src={data.url}
+                    src={url}
                     allowtransparency={"always"} allowFullScreen={true}></iframe>
         </div>
     );

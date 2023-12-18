@@ -4,6 +4,9 @@ import "./ItemList.scss";
 import Carousel from "../../ui/gravur/Carousel";
 import {PRINTS, SECTIONS} from "./config";
 import MyMasonry from "../../ui/Masonry/MyMasonry";
+import Print from "../Item/components/Print/Print";
+import {useNavigate} from "react-router-dom";
+import {triggerEvent} from "../../hooks/events";
 
 const Section = ({className, id='', children}) => {
     return (
@@ -59,7 +62,7 @@ export const Main = () => {
 
 const Gravur = ({data}) => {
     return (
-        <div className={"print-wrapper"}>
+        <div className={"print-wrapper"} onClick={() => triggerEvent("navigation", "description/" + data.id)}>
             <div className="gravur shadow">
                 <img src={data.image} alt=""/>
             </div>
@@ -74,9 +77,23 @@ export const All = () => {
     return (
         <Section className={'yl'}>
             <MyMasonry maxColumns={2}>
-                {PRINTS.map(p => <Gravur data={p}></Gravur>)}
+                {PRINTS.map((p,i) => <Gravur data={{...p,id:i}} key={p.title}></Gravur>)}
             </MyMasonry>
         </Section>
     );
 }
 
+export const DescriptionPage = ({id}) => {
+    const data = PRINTS[id];
+    return (
+        <Section className={'yl'}>
+            <div className="wrapper">
+                <Print url={data.url}></Print>
+                <div className="text">
+                    <p className="title">{data.title}</p>
+                    <p>{data.text}</p>
+                </div>
+            </div>
+        </Section>
+    );
+}

@@ -9,16 +9,16 @@ const MyMasonry = ({maxColumns=1, children}) => {
     const [count, setCount] = useState(maxColumns);
     const widthPoints = [400, 600, 800];
     function setColumns() {
-        const [vw, vh] = [1200, 10];
-        let newColumns = 0;
-        widthPoints.forEach((point, index) => {
-            if (vw >= point) {
-                newColumns = index;
-            }
-        });
-        if (newColumns + 1 <= maxColumns) {
-            setCount(newColumns + 1);
-        }
+        // const vw = 1200;
+        // let newColumns = 0;
+        // widthPoints.forEach((point, index) => {
+        //     if (vw >= point) {
+        //         newColumns = index;
+        //     }
+        // });
+        // if (newColumns + 1 <= maxColumns) {
+        //     setCount(newColumns + 1);
+        // }
     }
 
     useLayoutEffect(() => {

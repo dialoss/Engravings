@@ -3,7 +3,10 @@
 .navigation {
     position: fixed;
     top: 0;
-    background-color: rgba(10, 36, 69, calc(min(200, var(--scroll)) / 200));
+    background-color: rgba(10, 36, 69, 1);
+    &.hide {
+        background-color: rgba(10, 36, 69, calc(min(200, var(--scroll)) / 200));
+    }
     z-index: 2;
     width: 100vw;
     left: 0;

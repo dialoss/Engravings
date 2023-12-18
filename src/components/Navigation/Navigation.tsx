@@ -1,22 +1,28 @@
 //@ts-nocheck
-import React, {useState} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import Container from "../../ui/Container/Container";
 import "./Navigation.scss";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useAddEvent} from "../../hooks/useAddEvent";
 import {ROUTES} from "../../pages/AppRoutes";
 
 const Navigation = () => {
+    const nav = useNavigate();
+    const [page, setPage] = useState({hide:true});
+    useLayoutEffect(() => {
+        setPage(ROUTES.find(r => r.path === window.location.pathname) || {});
+    }, [nav]);
     const [scroll,setScroll]=useState(0);
     useAddEvent("scroll", (e) => {
         setScroll(window.scrollY);
-    })
+    });
+    useAddEvent("navigation", e => nav(e.detail));
     return (
-        <div className={"navigation"} style={{'--scroll':scroll}}>
+        <div className={"navigation " + (page.hide ? "hide" : "")} style={{'--scroll': scroll}}>
             <Container>
                 <div className="navigation__inner">
                     {
-                        ROUTES.map(r => <Link to={r.path}>{r.text}</Link>)
+                        ROUTES.map(r => r.text && <Link to={r.path} key={r.path}>{r.text}</Link>)
                     }
                 </div>
             </Container>

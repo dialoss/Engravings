@@ -1,7 +1,6 @@
 //@ts-nocheck
 import React, {createContext, ReducerState, useLayoutEffect, useReducer} from 'react';
 import Quiz from "./Quiz";
-import {fetchRequest} from "api/requests";
 
 interface QuizData {
     question: string,
@@ -79,7 +78,7 @@ function reducer(state=emptyQuiz, action : QuizAction) {
             return {...state};
         case QuizActions.START:
             const quiz = {...emptyQuiz};
-            quiz.dataAll = state.dataAll;
+            quiz.dataAll = shuffle([...state.dataAll]).slice(0, 10);
             quiz.all = quiz.dataAll.length;
             quiz.started = true;
             quiz.data = prepareData(0, state.dataAll);
@@ -96,8 +95,8 @@ export const QuizContext = createContext<(...args: any[]) => void>(()=>{});
 const QuizContainer = ({data}) => {
     const [quiz, dispatch] = useReducer(reducer, emptyQuiz as ReducerState<IQuiz>);
     useLayoutEffect(() => {
-        fetchRequest(data.url).then((data) => {
-            dispatch({type: QuizActions.SET_DATA, payload: data.data as QuizData[]});
+        fetch("./data/quiz.json").then((data) => {
+            dispatch({type: QuizActions.SET_DATA, payload: data as QuizData[]});
             dispatch({type: QuizActions.START});
         })
     }, []);

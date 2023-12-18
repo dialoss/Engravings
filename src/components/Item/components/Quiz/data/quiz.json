@@ -1,0 +1,244 @@
+[
+  {
+    "question": "В честь кого была названа главная героиня гравюры Югао из «Повести о Гэндзи»?",
+    "choices": [
+      "Звезды",
+      "Реки",
+      "Лунного цветка",
+      "Богини красоты"
+    ],
+    "answer": "Лунного цветка",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV84fNfY5oEKMDdIgVAo2WFrbPYVi-Jpm1eDX2YYS1fu5sr4XxE1Mr7rHtn9EuQernm_Iwo1MHfzlM2Pf5jQrHEa8iEg0jVoLQRx24RBMxgCUY1I4Vtg=w1920-h1080"
+  },
+  {
+    "question": "Художник изображает главную героиню картины Югао из «Повести о Гэндзи» в образе Юрэй. Кто такие Юрэи?",
+    "choices": [
+      "Сверхъестественные существа, духи",
+      "Не упокоенные души в обличье призраков",
+      "Демоны",
+      "Святые"
+    ],
+    "answer": "Не упокоенные души в обличье призраков",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV84fNfY5oEKMDdIgVAo2WFrbPYVi-Jpm1eDX2YYS1fu5sr4XxE1Mr7rHtn9EuQernm_Iwo1MHfzlM2Pf5jQrHEa8iEg0jVoLQRx24RBMxgCUY1I4Vtg=w1920-h1080"
+  },
+  {
+    "question": "Что изображено на картине, созданной по легенде «О Хидэсато и водной принцессе»?",
+    "choices": [
+      "Хидэсато возвращается домой после спасения принцессы",
+      "Путешественник на крыше храма играет для принцессы на флейте",
+      "Хидэсато отдыхает на крыше своего дома накануне спасения принцессы",
+      "Главный герой отправляется в новое путешествие"
+    ],
+    "answer": "Хидэсато возвращается домой после спасения принцессы",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86nJzRVjYpUvKiOoYseGyq4lreYIKYXY2ZJ8zufz8TUFLvG_CEVqCnp-QhJ4G_YRsbD1nhA4L1LjjDpWDss5Pr0oeqW7n1lOGehD_14clxwk57l7Gg=w1920-h1080"
+  },
+  {
+    "question": "Каким подарком принцесса из легенды «О Хидэсато и водной принцессе» НЕ наградила главного героя?",
+    "choices": [
+      "Жемчужное ожерелье",
+      "Бронзовый колокол",
+      "Рулон шелка",
+      "Мешок риса"
+    ],
+    "answer": "Жемчужное ожерелье",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86nJzRVjYpUvKiOoYseGyq4lreYIKYXY2ZJ8zufz8TUFLvG_CEVqCnp-QhJ4G_YRsbD1nhA4L1LjjDpWDss5Pr0oeqW7n1lOGehD_14clxwk57l7Gg=w1920-h1080"
+  },
+  {
+    "question": "Что сделал демон с картины «Цуненобу и демон» после того, как показался придворному?",
+    "choices": [
+      "Прочитал стихотворение",
+      "Предложил заключить сделку",
+      "Упрекнул в содеянных грехах",
+      "Помог выбить сушившуюся неподалеку ткань"
+    ],
+    "answer": "Прочитал стихотворение",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV844soyoBMQlcTVdERuZ5I2HFBxKIjYwXFnjoUkaTf09-WS9nN4Buf-8FjwwLQ5Gjb4qJkwzkXyvbRDiGNfnYvHCfpyIEsqSwtScaRvRgxg27FP-2ac=w1920-h1080"
+  },
+  {
+    "question": "Что на картине «Луна в полночь на горе Йосино» делает изображенная девушка, Ига но Цубонэ?",
+    "choices": [
+      "Договаривается с демоном",
+      "Изгоняет демона",
+      "Отдает свою душу демону",
+      "Слушает демона, похитившего ее из дома"
+    ],
+    "answer": "Изгоняет демона",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85_7Ol3uEY8VtFMlOSL8rXwZwF0g_lvjkoJDw_CHkvNejRwWWnIHIUmQ_I3KzcdtPvA1F2Ub_v2kkuQkUtdJS3L_O2LKjgHsbVWi-bAr5C0buBthZ4=w1920-h1080"
+  },
+  {
+    "question": "Какое сверхъестественное существо изображено на картине «Луна в полночь на горе Йосино»?",
+    "choices": [
+      "Ёкай",
+      "Юрэй",
+      "Демон мононокэ",
+      "Йорогумо"
+    ],
+    "answer": "Демон мононокэ",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85_7Ol3uEY8VtFMlOSL8rXwZwF0g_lvjkoJDw_CHkvNejRwWWnIHIUmQ_I3KzcdtPvA1F2Ub_v2kkuQkUtdJS3L_O2LKjgHsbVWi-bAr5C0buBthZ4=w1920-h1080"   
+  },
+  {
+    "question": "Основателем какого учения стал Дарума, изображенный на картине «Бодхидхарма»?",
+    "choices": [
+      "Оммёдо",
+      "Мистический Даосизм",
+      "Сюгэндо",
+      "Дзен-буддизм"
+    ],
+    "answer": "Дзен-буддизм",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85oXnpOIwdNOLjYr-XyrBvfRDeiuvBhtxuspxLEUbmsiRwAH1m9zno6HyXpAx5IKTHD-E7UTM79ZCbT0usv6HQZ33MqZoTVE8wT3QIqJUORtG9GoY4=w1920-h1080"
+  },
+  {
+    "question": "Что произошло с храмом, в котором медитировал Дарума, изображенный на картине «Бодхидхарма»?",
+    "choices": [
+      "Сквозь стены начали прорастать цветы",
+      "Стена напротив Дарумы разрушилась",
+      "Храм стал пристанищем для духов",
+      "Ничего не произошло"
+    ],
+    "answer": "Стена напротив Дарумы разрушилась",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85oXnpOIwdNOLjYr-XyrBvfRDeiuvBhtxuspxLEUbmsiRwAH1m9zno6HyXpAx5IKTHD-E7UTM79ZCbT0usv6HQZ33MqZoTVE8wT3QIqJUORtG9GoY4=w1920-h1080"
+  },
+  {
+    "question": "Что происходит на картине «Луна Китаяма»?",
+    "choices": [
+      "Главный герой играет окружившим его волкам на флейте, чтобы очаровать их и сбежать",
+      "Сумиаки играет на флейте чтобы заманить волков в болота и поймать их",
+      "Музыкант призывает духов-волков для совершения ритуала",
+      "Сумиаки, услышав вой волков, решает дополнить их мелодию своей"
+    ],
+    "answer": "Главный герой играет окружившим его волкам на флейте, чтобы очаровать их и сбежать",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86_V5gjdup_oPoiTrzb-i9Q4OfLJMgwDEZ9Ie0yW5U8TnvLxquj19MH_6pEm63z0RsOPO3xDW0XcF3K7N7ZbppyKumlrm9fEgicD2xIPpAUryPvz_c=w1920-h1080"
+  },
+  {
+    "question": "Как называется популярный Японский фестиваль, который проводится в июне и во время которого происходят события, изображенные на картине?",
+    "choices": [
+      "Фестиваль Гион",
+      "Танатата (ночь пятого)",
+      "Танабата (ночь седьмого)",
+      "Праздник олухи"
+    ],
+    "answer": "Танабата (ночь седьмого)",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86saj5yhISCvkfUl3lb10UR-t5yqM6NX9Jgf62ihbZxvOciMDhmS0OD-9t0S0PXHCSlmEx-S_GBugoUC2T8eFg8HvtaeoNAhGR5nhfj8D-bMfqezo8=w1920-h1080"
+  },
+  {
+    "question": "Кто изображен на картине “Луна млечного пути”?",
+    "choices": [
+      "Влюбленные",
+      "Враги",
+      "Родственники",
+      "Друзья"
+    ],
+    "answer": "Влюбленные",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86saj5yhISCvkfUl3lb10UR-t5yqM6NX9Jgf62ihbZxvOciMDhmS0OD-9t0S0PXHCSlmEx-S_GBugoUC2T8eFg8HvtaeoNAhGR5nhfj8D-bMfqezo8=w1920-h1080"
+  },
+  {
+    "question": "Почему главная героиня - Очиё сошла с ума?",
+    "choices": [
+      "Получила известие о смерти своего возлюбленного",
+      "Получила известие о смерти родителей",
+      "Получила известие о начале войны ",
+      "Получила известие о смерти правителя"
+    ],
+    "answer": "Получила известие о смерти своего возлюбленного",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86t1KcRawhRNKkQyyRl00BIJ50trtMiRoCp6sTa4xS3KzBAQ1CITiGtfHShuuTom8rsT6PthbffMDAECh0NG4ThLo8l_9_qTrdiqPLhVABc0Vwvg9s=w1920-h1080"
+  },
+  {
+    "question": "Что обозначает бумажный свиток, разорванный в клочья после многократного чтения?",
+    "choices": [
+      "Образует круг, который заменяет солнце",
+      "Надежду",
+      "Образует круг, который заменяет отсутствующую луну",
+      "Вечную любовь"
+    ],
+    "answer": "Образует круг, который заменяет отсутствующую луну",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86t1KcRawhRNKkQyyRl00BIJ50trtMiRoCp6sTa4xS3KzBAQ1CITiGtfHShuuTom8rsT6PthbffMDAECh0NG4ThLo8l_9_qTrdiqPLhVABc0Vwvg9s=w1920-h1080"
+  },
+  {
+    "question": "Как называется эта гравюра?",
+    "choices": [
+      "Луна в полночь на горе Йосино",
+      "Туманно-ночная луна Кумасака",
+      "Бодхидхарма",
+      "Луна Китаяма"
+    ],
+    "answer": "Туманно-ночная луна Кумасака",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV87VVecywcqi1rZuFZwj8sWbVD0666Y1gVhFjRIpXo4WU9FdHCNwD1aQyngoRelhZ2xkYDB_DP-T5_RnD_clm_eaztp_xdKdcwGrQQBMC-yXAEQP3R4=w1920-h1080"
+  },
+  {
+   "question": "На кого по ошибке напал Бандит-призрак Кумасака?",
+    "choices": [
+      "На путешественника Хидэсато",
+      "На молодую красавицу",
+      "На торговца золотом, которого сопровождал Ёсицунэ",
+      "На сына императора"
+    ],
+    "answer": "На торговца золотом, которого сопровождал Ёсицунэ",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV87VVecywcqi1rZuFZwj8sWbVD0666Y1gVhFjRIpXo4WU9FdHCNwD1aQyngoRelhZ2xkYDB_DP-T5_RnD_clm_eaztp_xdKdcwGrQQBMC-yXAEQP3R4=w1920-h1080"
+  },
+  {
+   "question": "Кем является красный ребёнок?",
+    "choices": [
+      "Магом",
+      "Добрым духом",
+      "Оборотнем",
+      "Злым духом"
+    ],
+    "answer": "Оборотнем",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV84n6cv4_N3k3anmsSBZkRGJOrCgQyUYjslB17FsRfM0Wl469FrqezSluCqQdD-rpKjZXbeGZDb5nsmG6wM6HHCE-2EyVDVwo8GaugJxZHI6MGex6Xo=w1920-h1080"
+  },
+  {
+    "question": "Как называется эта гравюра?",
+    "choices": [
+      "Сюжет с Югао из “Гендзи моногатари”",
+      "Луна горы Кинтоки",
+      "Легенда о Хидэсато и водной принцессе",
+      "Цуненобу и демон"
+    ],
+    "answer": "Луна горы Кинтоки",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV84n6cv4_N3k3anmsSBZkRGJOrCgQyUYjslB17FsRfM0Wl469FrqezSluCqQdD-rpKjZXbeGZDb5nsmG6wM6HHCE-2EyVDVwo8GaugJxZHI6MGex6Xo=w1920-h1080"
+  },
+  {
+   "question": "Как называется буддистский фестиваль, который чествует духов мертвых и отмечается летом 3 дня?",
+    "choices": [
+      "Обон",
+      "Весак",
+      "Асалха",
+      "Саагалган"
+    ],
+    "answer": "Обон",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86kxkPvO9_xFHp1cxNUzk3ANfQRAfrxpE8nMpzSw_CzrSqeGbjDIu4BNAQsp25UU1MkwvqeLrY2TxPcrYnZn2lT6YQNVmx5mw7if6Yt7xwESOIymOo=w1920-h1080"
+  },
+  {
+    "question": "Как называется танец, изображенный на этой гравюре?",
+    "choices": [
+      "Танец луны",
+      "Танец Кумасака",
+      "Танец Бон Одори",
+      "Танец жизни"
+    ],
+    "answer": "Танец Бон Одори",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV86kxkPvO9_xFHp1cxNUzk3ANfQRAfrxpE8nMpzSw_CzrSqeGbjDIu4BNAQsp25UU1MkwvqeLrY2TxPcrYnZn2lT6YQNVmx5mw7if6Yt7xwESOIymOo=w1920-h1080"
+  },
+  {
+    "question": "Кто такие Нефритовый кролик и Сунь Укун?",
+    "choices": [
+      "Метафорические образы",
+      "Дух и король леса",
+      "Дух ветра и дух воды",
+      "Дух и король обезьян"
+    ],
+    "answer": "Дух и король обезьян",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85Hw1p5taNoRJa4iyENNLRUPAzBVdawYiVgOOtugCblQpkfZPY4KzigwXT539BoKTcE1UtGRtiXdRuBN_Qu3lhHnD0w23BemkjH0nJw18Xur20g0Dw=w1920-h1080"
+  },
+  {
+    "question": "Что сделал шакра в знак благодарности кролику?",
+    "choices": [
+      "Рассказал о кролике всему миру",
+      "Нарисовал контур кролика на луне",
+      "Накормил его",
+      "Сделал его скульптуру"
+    ],
+    "answer": "Нарисовал контур кролика на луне",
+    "image": "https://lh3.googleusercontent.com/pw/ABLVV85Hw1p5taNoRJa4iyENNLRUPAzBVdawYiVgOOtugCblQpkfZPY4KzigwXT539BoKTcE1UtGRtiXdRuBN_Qu3lhHnD0w23BemkjH0nJw18Xur20g0Dw=w1920-h1080"
+  }
+]

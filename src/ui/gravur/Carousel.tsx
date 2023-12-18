@@ -1,22 +1,34 @@
 //@ts-nocheck
 import React from 'react';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel as RCarousel } from 'react-responsive-carousel';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 
-const config = {
-    showThumbs: false,
-    emulateTouch: true,
-    infiniteLoop:true,
-    autoPlay:true,
-    swipeable:true,
-}
-
-const Carousel = ({items}) => {
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import "./Carousel.scss";
+const Slides = ({items, element}) => {
     return (
-        <RCarousel {...config}>
-            {items}
-        </RCarousel>
+        <div>
+            <Swiper
+                spaceBetween={0}
+                slidesPerView={3}
+                pagination={{
+                    dynamicBullets: true,
+                }}
+                modules={[Pagination, Navigation]}
+                onSlideChange={() => console.log('slide change')}
+                onSwiper={(swiper) => console.log(swiper)}
+            >
+                {
+                    items && items.map((img,i) =>
+                        <SwiperSlide key={i}>
+                            {React.createElement(element, {data: img})}
+                        </SwiperSlide>)
+                }
+            </Swiper>
+        </div>
     );
 };
 
-export default Carousel;
+export default Slides;

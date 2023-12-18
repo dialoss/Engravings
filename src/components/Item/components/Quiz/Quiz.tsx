@@ -11,7 +11,7 @@ const Quiz = ({quiz} : {quiz: IQuiz}) => {
         <div className={"quiz"}>
             <div className={"quiz__container"}>
                 <div className={"quiz__image"}>
-                    <img src={require("./data/image 4.png")} alt=""/>
+                    <img src={quiz.data.image} alt=""/>
                 </div>
                 <DelayedVisibility timeout={300} trigger={quiz.started} style={{width:"100%"}}>
                     <TransitionGroup component={null}>

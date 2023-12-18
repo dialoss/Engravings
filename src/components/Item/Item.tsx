@@ -17,7 +17,7 @@ interface ItemProps {
 export const SimpleItem = ({item, depth=0}: ItemProps) => {
     const itemData = <ItemData data={{...item.data, type: item.type, id: item.id}}></ItemData>;
 
-    let items = item.items.map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
+    let items = item.items.sort((a,b)=>a.order-b.order).map(item => <Item depth={depth + 1} item={item} key={item.id}></Item>);
     if (item.class_name) {
         if (item.class_name.match(/masonry/)) items = <MyMasonry
             maxColumns={+item.class_name.split("_")[1]}>{items}</MyMasonry>;

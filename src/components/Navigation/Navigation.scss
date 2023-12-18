@@ -8,6 +8,7 @@
     width: 100vw;
     left: 0;
     &__inner {
+        max-width: $container-width;
         height: 70px;
         display: flex;
         align-items: center;

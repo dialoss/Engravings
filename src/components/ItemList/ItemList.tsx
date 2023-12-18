@@ -1,28 +1,82 @@
 //@ts-nocheck
 import React from 'react';
-import Item from "components/Item/Item";
 import "./ItemList.scss";
-import "./Themes/main.scss";
-import {getLocation} from "../../hooks/getLocation";
-import {useAppSelector} from "hooks/redux";
+import Carousel from "../../ui/gravur/Carousel";
+import {PRINTS, SECTIONS} from "./config";
+import MyMasonry from "../../ui/Masonry/MyMasonry";
 
-const ItemList = ({items, className, loadMore=null}) => {
-    const edit = useAppSelector(state => state.elements.editPage);
+const Section = ({className, id='', children}) => {
     return (
-        <div className={`item-list ${className} ${getLocation().pageSlug} ${edit ? 'edit' : ''}`}>
-            {/*<Hierarchy data={items} config={{*/}
-            {/*    childSelector: "items",*/}
-            {/*    parentSelector: "parent",*/}
-            {/*    componentDataProp: "item",*/}
-            {/*    recursiveComponent: Item,*/}
-            {/*    accordion: false,*/}
-            {/*}}></Hierarchy>*/}
-            {
-                items.map(it=><Item item={it} depth={0}></Item>)
-            }
-            {/*{loadMore && <NavButton className={"load-more"} data={{text: 'Показать больше', callback:loadMore}}></NavButton>}*/}
+        <div id={id} className={className + " section"}>
+            <div className={'item-container'}>
+                {children}
+            </div>
         </div>
     );
-};
+}
 
-export default ItemList;
+export const Description = ({i, children}) => {
+    const d = SECTIONS[i];
+    return (
+        <div className={"description " + d.order} data-id={i}>
+            <div className="text">
+                <p className="title">{d.title}</p>
+                <p>{d.text}</p>
+                <div className="text extra">
+                    {children}
+                </div>
+            </div>
+            <img src={d.image} alt=""/>
+        </div>
+    );
+}
+
+export const Main = () => {
+    return (
+        <div className="wrapper">
+            <Section className={'bl intro'}>
+                <div className="text">
+                    <p className="title">Японские гравюры</p>
+                    <p>Цукиока Ёситоси</p>
+                </div>
+            </Section>
+            <Section className={'yl wide'}>
+                <div className="title" style={{textAlign:'center'}}>Гравюры</div>
+                <Carousel items={PRINTS.slice(0, 6)} element={Gravur}></Carousel>
+                <Carousel items={PRINTS.slice(6, 12)} element={Gravur}></Carousel>
+            </Section>
+            <Section className={'bl'} id={"about"}>
+                {[0, 1].map(i => <Description i={i}></Description>)}
+            </Section>
+            <Section className={'yl'}>
+                {[2, 3, 4, 5].map(i => <Description i={i}>
+                    {i === 5 && <Description i={6}></Description>}
+                </Description>)}
+            </Section>
+        </div>
+    );
+}
+
+const Gravur = ({data}) => {
+    return (
+        <div className={"print-wrapper"}>
+            <div className="gravur shadow">
+                <img src={data.image} alt=""/>
+            </div>
+            <p className="title">{data.title}</p>
+            <p>{data.text}</p>
+        </div>
+    )
+}
+
+
+export const All = () => {
+    return (
+        <Section className={'yl'}>
+            <MyMasonry maxColumns={2}>
+                {PRINTS.map(p => <Gravur data={p}></Gravur>)}
+            </MyMasonry>
+        </Section>
+    );
+}
+

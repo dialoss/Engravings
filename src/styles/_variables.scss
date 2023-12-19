@@ -16,7 +16,7 @@ $color-main: rgba(9, 48, 87, 1);
 $color-bg: rgba(246, 242, 239, 1);
 
 $container-width: 1200px;
-
+$height-navigation: 70px;
 
 @mixin mobile {
   @media screen and (max-width: 500px) {

@@ -2,7 +2,7 @@
   "name": "untitled",
   "version": "0.1.0",
   "private": false,
-  "homepage": "https://www.mymountmt.ru/",
+  "homepage": "https://dialoss.github.io/itmemory",
   "dependencies": {
     "@codemirror/lang-css": "^6.2.1",
     "@compai/css-gui": "^0.0.247",
@@ -28,11 +28,13 @@
     "disqus-react": "^1.1.5",
     "dotenv": "^16.3.1",
     "firebase": "^10.4.0",
+    "framer-motion": "^10.16.16",
     "jszip": "^3.10.1",
     "photoswipe": "^5.4.3",
     "plyr": "^3.7.8",
     "pretty-bytes": "^6.1.1",
     "react": "^18.2.0",
+    "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-dom": "^18.2.0",
     "react-filerobot-image-editor": "^4.5.2",
     "react-jdenticon": "^1.1.0",
@@ -85,7 +87,7 @@
   },
   "devDependencies": {
     "@emoji-mart/react": "^1.1.1",
-    "gh-pages": "^6.0.0",
+    "gh-pages": "^6.1.0",
     "identicon": "^3.1.1",
     "react-bootstrap": "^2.9.1",
     "vlitejs": "^6.0.0"

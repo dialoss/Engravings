@@ -1,25 +1,13 @@
 //@ts-nocheck
-import React, { useEffect } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/style.css';
-
-const images = [
-    {
-        url: 'https://drive.google.com/uc?id=1ylvZt3AnfeMEcdxHprYsuPosDxYOjSXV',
-        width: 400,
-        height: 400,
-    },
-    // {
-    //     url: 'https://drive.google.com/uc?id=1ylvZt3AnfeMEcdxHprYsuPosDxYOjSXV',
-    //     width: 400,
-    //     height: 400,
-    // },
-    // {
-    //     url: 'https://drive.google.com/uc?id=1ylvZt3AnfeMEcdxHprYsuPosDxYOjSXV',
-    //     width: 400,
-    //     height: 400,
-    // },
-]
+import "./ImageViewer.scss";
+declare global {
+    interface Window {
+        imageViewer: any;
+    }
+}
 
 export default function ImageViewer() {
     useEffect(() => {
@@ -36,22 +24,33 @@ export default function ImageViewer() {
         };
     }, []);
 
+    const [images, setImages] = useState([]);
+
+    window.imageViewer = (items) => {
+        setImages(items);
+    }
+
+    const ref = useRef();
+
+    useEffect(() => {
+        if (images.length) ref.current.click();
+    }, [images]);
+
     return (
-        <div>
-        <div className="pswp-gallery" id={'test'} >
+        <div className="pswp-gallery" id={'test'}>
             {images.map((image, index) => (
                 <a
                     href={image.url}
-                    data-pswp-width={image.width}
-                    data-pswp-height={image.height}
+                    data-pswp-width={300}
+                    // data-pswp-height={500}
                     key={'test-' + index}
                     target="_blank"
                     rel="noreferrer"
+                    ref={ref}
                 >
                     <img src={image.url} alt="" />
                 </a>
             ))}
-        </div>
         </div>
     );
 }

@@ -1,21 +1,29 @@
 .item__print {
-  margin: 0 auto;
+  min-height: 100%;
   height: 100%;
+  height: 400px;
   iframe {
     overflow: hidden !important;
     width: 100%;
     height: 100%;
   }
-  position: relative;
-  .hide {
-    width: 100%;
-    height: 40px;
-    background-color: #fff;
-    left: 0;
-    position: absolute;
+  .genially-embed {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: auto !important;
+  }
+
+  nav > div {
+    //display: none !important;
+  }
+
+  display: flex;
+  flex-direction: column;
+  .button {
+    flex-shrink: 0;
+    margin-left: auto;
   }
 }
-
 .carousel .item__print {
   width: 70%;
 }

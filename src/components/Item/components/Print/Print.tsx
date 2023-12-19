@@ -1,17 +1,21 @@
 //@ts-nocheck
-import React from 'react';
+import React, {useEffect} from 'react';
 import "./Print.scss";
+import Button from "../../../../ui/Button/Button";
+import ImageViewer from "../../../../ui/ImageViewer/ImageViewer";
 
-const Print = ({url}) => {
+const Print = ({data}) => {
+    useEffect(() => {
+        (function
+        (d) {var js, id = "genially-embed-js", ref = d.getElementsByClassName("genially-embed-"+data.id)[0]; if (d.getElementById(id)) {return;} js = d.createElement("script"); js.id = id; js.async = true; js.src = "https://view.genial.ly/static/embed/embed.js"; ref.parentNode.insertBefore(js, ref);}(document));
+    }, [])
     return (
         <div className={"item__print"}>
-            <div className={"item__overlay"}>
-                <div className="hide" style={{top:0}}></div>
-                <div className="hide" style={{bottom:0}}></div>
+            <div className="container-wrapper-genially">
+                <div id={data.genial} className={"genially-embed genially-embed-" + data.id}></div>
             </div>
-            <iframe title="Луна Китаяма" onDragStart={e => e.preventDefault()}
-                    src={url}
-                    allowtransparency={"always"} allowFullScreen={true}></iframe>
+            <Button>Раскрыть на весь экран</Button>
+            <ImageViewer></ImageViewer>
         </div>
     );
 };

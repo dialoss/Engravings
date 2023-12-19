@@ -12,7 +12,7 @@
     left: 0;
     &__inner {
         max-width: $container-width;
-        height: 70px;
+        height: $height-navigation;
         display: flex;
         align-items: center;
         justify-content: center;

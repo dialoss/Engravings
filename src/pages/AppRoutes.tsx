@@ -2,18 +2,19 @@
 import React, {useLayoutEffect} from 'react';
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import {All, DescriptionPage, Main} from "../components/ItemList/ItemList";
-import Print from "../components/Item/components/Print/Print";
 
 export const ROUTES = [
     {
         text: 'главная',
         path: '/main/',
+        anchor: "intro",
         element: Main,
         hide:true,
     },
     {
         text: 'о художнике',
-        path: '/main/#about',
+        path: '/main/',
+        anchor: "about",
         element: Main,
         hide:true,
     },
@@ -34,7 +35,9 @@ const AppRoutes = () => {
     return (
         <Routes>
             {
-                ROUTES.map(r => <Route path={r.path} element={React.createElement(r.element)} key={r.path}></Route>)
+                ROUTES.map(r => <Route path={r.path} element={
+                        React.createElement(r.element)
+                } key={r.path + r.anchor}></Route>)
             }
             <Route path={'*'} element={<Navigate to={'/main/'}/>}/>
         </Routes>

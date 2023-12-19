@@ -1,10 +1,5 @@
 .carousel {
-    padding: 0 50px;
-    .swiper-slide > div {
-        aspect-ratio: auto !important;
-        box-shadow: none;
-        background-color: none;
-        margin: 0 auto;
-        width: auto !important;
+    .swiper-wrapper {
+        padding-bottom: 40px;
     }
 }

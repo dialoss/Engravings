@@ -1,3 +1,3 @@
-(Посетить)[https://dialoss.github.io/itmemory/main/]
+[Посетить](https://dialoss.github.io/itmemory/main/)
 
 Сайт про японского художника Цукоики Ёситоси для Российской национальной библиотеки 

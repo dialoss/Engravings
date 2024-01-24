@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/itmemory/static/css/main.10ab5ffd.css",
-    "main.js": "/itmemory/static/js/main.9d42b85b.js",
-    "static/js/981.c71f8a0d.chunk.js": "/itmemory/static/js/981.c71f8a0d.chunk.js",
-    "static/media/head1.png": "/itmemory/static/media/head1.f5cca97c0df47532c85f.png",
-    "static/media/logo.png": "/itmemory/static/media/logo.3cdd1edc416188aecaca.png",
-    "index.html": "/itmemory/index.html",
-    "static/media/cross.svg": "/itmemory/static/media/cross.3f2e479ea69c7ed744e8777bd8530c97.svg",
-    "main.10ab5ffd.css.map": "/itmemory/static/css/main.10ab5ffd.css.map",
-    "main.9d42b85b.js.map": "/itmemory/static/js/main.9d42b85b.js.map",
-    "981.c71f8a0d.chunk.js.map": "/itmemory/static/js/981.c71f8a0d.chunk.js.map"
+    "main.css": "/Engravings/static/css/main.10ab5ffd.css",
+    "main.js": "/Engravings/static/js/main.c74bde5a.js",
+    "static/js/981.c71f8a0d.chunk.js": "/Engravings/static/js/981.c71f8a0d.chunk.js",
+    "static/media/head1.png": "/Engravings/static/media/head1.f5cca97c0df47532c85f.png",
+    "static/media/logo.png": "/Engravings/static/media/logo.3cdd1edc416188aecaca.png",
+    "index.html": "/Engravings/index.html",
+    "static/media/cross.svg": "/Engravings/static/media/cross.3f2e479ea69c7ed744e8777bd8530c97.svg",
+    "main.10ab5ffd.css.map": "/Engravings/static/css/main.10ab5ffd.css.map",
+    "main.c74bde5a.js.map": "/Engravings/static/js/main.c74bde5a.js.map",
+    "981.c71f8a0d.chunk.js.map": "/Engravings/static/js/981.c71f8a0d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.10ab5ffd.css",
-    "static/js/main.9d42b85b.js"
+    "static/js/main.c74bde5a.js"
   ]
 }

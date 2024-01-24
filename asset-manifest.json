@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/Engravings/static/css/main.10ab5ffd.css",
-    "main.js": "/Engravings/static/js/main.c74bde5a.js",
+    "main.js": "/Engravings/static/js/main.77d95a57.js",
     "static/js/981.c71f8a0d.chunk.js": "/Engravings/static/js/981.c71f8a0d.chunk.js",
     "static/media/head1.png": "/Engravings/static/media/head1.f5cca97c0df47532c85f.png",
     "static/media/logo.png": "/Engravings/static/media/logo.3cdd1edc416188aecaca.png",
     "index.html": "/Engravings/index.html",
     "static/media/cross.svg": "/Engravings/static/media/cross.3f2e479ea69c7ed744e8777bd8530c97.svg",
     "main.10ab5ffd.css.map": "/Engravings/static/css/main.10ab5ffd.css.map",
-    "main.c74bde5a.js.map": "/Engravings/static/js/main.c74bde5a.js.map",
+    "main.77d95a57.js.map": "/Engravings/static/js/main.77d95a57.js.map",
     "981.c71f8a0d.chunk.js.map": "/Engravings/static/js/981.c71f8a0d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.10ab5ffd.css",
-    "static/js/main.c74bde5a.js"
+    "static/js/main.77d95a57.js"
   ]
 }
